@@ -5,7 +5,7 @@ const withMDX = createMDX();
 /** @type {import('next').NextConfig} */
 const config = {
   output: "export", // <=== enables static exports
-  basePath: "/wordpress-plugin-boilerplate",
+  basePath: "/gutenform",
   reactStrictMode: true,
 };
 

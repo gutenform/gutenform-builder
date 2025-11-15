@@ -3,7 +3,7 @@ Create your WordPress plugin in weeks, not months. Rapidly prototype and deliver
 This boilerplate has a built-in marketing site and documentation setup that you can use to showcase your plugin.
 ## Preview
 
-<a href='https://prappo.github.io/wordpress-plugin-boilerplate/preview' target="_blank"><img alt='Wordpress' src='https://img.shields.io/badge/Live_Preview-100000?style=for-the-badge&logo=Wordpress&logoColor=white&labelColor=21759B&color=21759B'/></a>
+<a href='https://prappo.github.io/gutenform/preview' target="_blank"><img alt='Wordpress' src='https://img.shields.io/badge/Live_Preview-100000?style=for-the-badge&logo=Wordpress&logoColor=white&labelColor=21759B&color=21759B'/></a>
 
 ## Screenshots
 
@@ -52,7 +52,7 @@ To get started, you need to clone the repository and install the dependencies. T
 
 ## Clone the repository
 ```bash
-git clone https://github.com/prappo/wordpress-plugin-boilerplate.git
+git clone https://github.com/prappo/gutenform.git
 ```
 
 ## Install dependencies
@@ -69,10 +69,10 @@ You can easly rename the plugin by changing data in `plugin-config.json` file.
     "plugin_name":"WordPress Plugin Boilerplate",
     "plugin_description":"A boilerplate for WordPress plugins.",
     "plugin_version":"1.0.0",
-    "plugin_file_name":"wordpress-plugin-boilerplate.php",
+    "plugin_file_name":"gutenform.php",
     "author_name":"Prappo",
     "author_uri":"https://prappo.github.io",
-    "text_domain":"wordpress-plugin-boilerplate",
+    "text_domain":"gutenform",
     "domain_path":"/languages",
     "main_class_name":"WordPressPluginBoilerplate",
     "main_function_name":"wordpress_plugin_boilerplate_init",
@@ -100,7 +100,7 @@ It will install the component in `src/components` folder.
 ## Structure
 
 <details open>
-  <summary><strong>📂 wordpress-plugin-boilerplate</strong></summary>
+  <summary><strong>📂 gutenform</strong></summary>
   <ul>
     <li>
     <details>
@@ -170,7 +170,7 @@ It will install the component in `src/components` folder.
     <li><summary><strong>📂 vendor</strong></summary></li>
     <li><summary><strong> 📄 plugin.php</strong></summary></li>
     <li><summary><strong> 📄 uninstall.php</strong></summary></li>
-    <li><summary><strong> 📄 wordpress-plugin-boilerplate.php</strong></summary></li>
+    <li><summary><strong> 📄 gutenform.php</strong></summary></li>
   </ul>
 </details>
 
@@ -282,15 +282,15 @@ Just pass your data to the array in the Asset file.
 
 For example: For admin:
 
-https://github.com/prappo/wordpress-plugin-boilerplate/blob/8d982b63f50beb1dffd43c29bff894814b5e7945/includes/Assets/Frontend.php#L104-L110
+https://github.com/prappo/gutenform/blob/8d982b63f50beb1dffd43c29bff894814b5e7945/includes/Assets/Frontend.php#L104-L110
 
 And access data on react like this 
 
-https://github.com/prappo/wordpress-plugin-boilerplate/blob/8d982b63f50beb1dffd43c29bff894814b5e7945/src/frontend/components/application-layout/LayoutOne.jsx#L58
+https://github.com/prappo/gutenform/blob/8d982b63f50beb1dffd43c29bff894814b5e7945/src/frontend/components/application-layout/LayoutOne.jsx#L58
 
 Remember the object `wordpressPluginBoilerplateFrontend` name can be defined here 
 
-https://github.com/prappo/wordpress-plugin-boilerplate/blob/8d982b63f50beb1dffd43c29bff894814b5e7945/includes/Assets/Frontend.php#L30
+https://github.com/prappo/gutenform/blob/8d982b63f50beb1dffd43c29bff894814b5e7945/includes/Assets/Frontend.php#L30
 
 ## Shortcode
 

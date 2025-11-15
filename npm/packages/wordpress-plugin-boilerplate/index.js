@@ -33,10 +33,10 @@ const downloadAndExtractRepo = async (repoUrl, destFolder) => {
         }
 
         // Move the contents of the extracted directory to the destination directory
-        const files = fs.readdirSync(path.join(tempFolder, 'wordpress-plugin-boilerplate-main'));
+        const files = fs.readdirSync(path.join(tempFolder, 'gutenform-main'));
         for (const file of files) {
             fs.renameSync(
-                path.join(tempFolder, 'wordpress-plugin-boilerplate-main', file),
+                path.join(tempFolder, 'gutenform-main', file),
                 path.join(destFolder, file)
             );
         }
@@ -99,7 +99,7 @@ const main = async () => {
         { type: 'input', name: 'textDomain', message: 'Enter text domain:' },
     ]);
 
-    const repoUrl = 'https://github.com/prappo/wordpress-plugin-boilerplate/archive/main.zip';
+    const repoUrl = 'https://github.com/prappo/gutenform/archive/main.zip';
     const destFolder = path.join(process.cwd(), pluginName);
 
     await downloadAndExtractRepo(repoUrl, destFolder);

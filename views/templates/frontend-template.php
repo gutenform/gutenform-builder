@@ -4,10 +4,10 @@
  *
  * This file is used to markup the public facing aspects of the plugin.
  *
- * @package WordPressPluginBoilerplate
+ * @package Gutenform
  */
 
-use WordPressPluginBoilerplate\Assets\Frontend;
+use Gutenform\Assets\Frontend;
 
 
 

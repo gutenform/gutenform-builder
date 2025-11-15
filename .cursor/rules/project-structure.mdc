@@ -16,7 +16,7 @@ This is a WordPress Plugin Boilerplate project that follows modern development p
 
 ### Root Directory Structure
 ```
-wordpress-plugin-boilerplate/
+gutenform/
 ├── config/                 # PHP configuration files
 ├── database/              # Database migrations and seeders
 │   ├── Migrations/        # Database schema changes
@@ -167,7 +167,7 @@ npm run block:build        # Build blocks
 class Admin {
     public function bootstrap() {
         wp_enqueue_script(
-            'wordpress-plugin-boilerplate-admin',
+            'gutenform-admin',
             WORDPRESS_PLUGIN_BOILERPLATE_ASSETS_URL . '/admin/dist/main.js',
             array('wp-element', 'wp-components'),
             WORDPRESS_PLUGIN_BOILERPLATE_VERSION,
@@ -291,11 +291,11 @@ npm run release  # Creates release package in /release folder
 ### PHP i18n
 ```php
 // Load text domain
-load_plugin_textdomain('wordpress-plugin-boilerplate', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+load_plugin_textdomain('gutenform', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 
 // Use translation functions
-__('Hello World', 'wordpress-plugin-boilerplate');
-_e('Hello World', 'wordpress-plugin-boilerplate');
+__('Hello World', 'gutenform');
+_e('Hello World', 'gutenform');
 ```
 
 ### React i18n
@@ -304,7 +304,7 @@ _e('Hello World', 'wordpress-plugin-boilerplate');
 import { __ } from '@wordpress/i18n';
 
 const MyComponent = () => {
-  return <h1>{__('Hello World', 'wordpress-plugin-boilerplate')}</h1>;
+  return <h1>{__('Hello World', 'gutenform')}</h1>;
 };
 ```
 

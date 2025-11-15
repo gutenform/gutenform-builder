@@ -11,7 +11,8 @@ use Gutenform\Traits\Base;
  *
  * @package Gutenform\Admin
  */
-class Menu {
+class Menu
+{
 
 	use Base;
 
@@ -20,16 +21,17 @@ class Menu {
 	 *
 	 * @var string
 	 */
-	private $parent_slug = 'wordpress-plugin-boilerplate';
+	private $parent_slug = 'gutenform';
 
 	/**
 	 * Initializes the admin menu.
 	 *
 	 * @return void
 	 */
-	public function init() {
+	public function init()
+	{
 		// Hook the function to the admin menu.
-		add_action( 'admin_menu', array( $this, 'menu' ) );
+		add_action('admin_menu', array($this, 'menu'));
 	}
 
 	/**
@@ -37,39 +39,40 @@ class Menu {
 	 *
 	 * @return void
 	 */
-	public function menu() {
+	public function menu()
+	{
 
 		add_menu_page(
-			__( 'MyPlugin', 'gutenform' ),
-			__( 'MyPlugin', 'gutenform' ),
+			__('MyPlugin', 'gutenform'),
+			__('MyPlugin', 'gutenform'),
 			'manage_options',
 			$this->parent_slug,
-			array( $this, 'admin_page' ),
+			array($this, 'admin_page'),
 			'dashicons-email',
 			3
 		);
 
-		$plugin_url = admin_url( '/admin.php?page=' . $this->parent_slug );
+		$plugin_url = admin_url('/admin.php?page=' . $this->parent_slug);
 
 		$current_page = get_admin_page_parent();
 
-		if ( $current_page === $this->parent_slug ) {
+		if ($current_page === $this->parent_slug) {
 			$plugin_url = '';
 		}
 
 		$submenu_pages = array(
 			array(
 				'parent_slug' => $this->parent_slug,
-				'page_title'  => __( 'Dashboard', 'gutenform' ),
-				'menu_title'  => __( 'Dashboard', 'gutenform' ),
+				'page_title'  => __('Dashboard', 'gutenform'),
+				'menu_title'  => __('Dashboard', 'gutenform'),
 				'capability'  => 'manage_options',
 				'menu_slug'   => $this->parent_slug,
-				'function'    => array( $this, 'admin_page' ), // Uses the same callback function as parent menu.
+				'function'    => array($this, 'admin_page'), // Uses the same callback function as parent menu.
 			),
 			array(
 				'parent_slug' => $this->parent_slug,
-				'page_title'  => __( 'Inbox', 'gutenform' ),
-				'menu_title'  => __( 'Inbox', 'gutenform' ),
+				'page_title'  => __('Inbox', 'gutenform'),
+				'menu_title'  => __('Inbox', 'gutenform'),
 				'capability'  => 'manage_options',
 				'menu_slug'   => $plugin_url . '/#/inbox',
 				'function'    => null, // Uses the same callback function as parent menu.
@@ -77,8 +80,8 @@ class Menu {
 
 			array(
 				'parent_slug' => $this->parent_slug,
-				'page_title'  => __( 'Chart', 'gutenform' ),
-				'menu_title'  => __( 'Chart', 'gutenform' ),
+				'page_title'  => __('Chart', 'gutenform'),
+				'menu_title'  => __('Chart', 'gutenform'),
 				'capability'  => 'manage_options',
 				'menu_slug'   => $plugin_url . '/#/charts',
 				'function'    => null, // Uses the same callback function as parent menu.
@@ -86,17 +89,17 @@ class Menu {
 
 			array(
 				'parent_slug' => $this->parent_slug,
-				'page_title'  => __( 'Settings', 'gutenform' ),
-				'menu_title'  => __( 'Settings', 'gutenform' ),
+				'page_title'  => __('Settings', 'gutenform'),
+				'menu_title'  => __('Settings', 'gutenform'),
 				'capability'  => 'manage_options',
 				'menu_slug'   => $plugin_url . '/#/settings',
 				'function'    => null, // Uses the same callback function as parent menu.
 			),
 		);
 
-		$plugin_submenu_pages = apply_filters( 'gf_submenu_pages', $submenu_pages );
+		$plugin_submenu_pages = apply_filters('gf_submenu_pages', $submenu_pages);
 
-		foreach ( $plugin_submenu_pages as $submenu ) {
+		foreach ($plugin_submenu_pages as $submenu) {
 
 			add_submenu_page(
 				$submenu['parent_slug'],
@@ -114,9 +117,10 @@ class Menu {
 	 *
 	 * @return void
 	 */
-	public function admin_page() {
-		?>
+	public function admin_page()
+	{
+?>
 		<div id="myplugin" class="myplugin-app"></div>
-		<?php
+<?php
 	}
 }

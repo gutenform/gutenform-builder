@@ -4,7 +4,9 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { useBlockProps } from '@wordpress/block-editor';
+import { FormAttributes } from '@/blockTypes/form';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
+import { type BlockSaveProps } from '@wordpress/blocks';
 
 /**
  * The save function defines the way in which the different attributes should
@@ -15,10 +17,13 @@ import { useBlockProps } from '@wordpress/block-editor';
  *
  * @return {Element} Element to render.
  */
-export default function save() {
+export default function save(props: BlockSaveProps<FormAttributes>) {
+	const options = {
+		formTitle: props.attributes.formTitle,
+	};
 	return (
-		<p { ...useBlockProps.save() }>
-			{ 'Hello from the saved content!' }
-		</p>
+		<form { ...useBlockProps.save() } data-form-options={JSON.stringify(options)}>
+			<InnerBlocks.Content />
+		</form>
 	);
 }

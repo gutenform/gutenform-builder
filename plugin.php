@@ -2,8 +2,8 @@
 
 use Gutenform\Core\Api;
 use Gutenform\Admin\Menu;
-use Gutenform\Core\Template;
-use Gutenform\Assets\Frontend;
+// use Gutenform\Core\Template; // Not needed - using standard WordPress frontend
+// use Gutenform\Assets\Frontend; // Not needed - only blocks and admin page
 use Gutenform\Assets\Admin;
 use Gutenform\Traits\Base;
 
@@ -34,13 +34,13 @@ final class Gutenform
 		define('GF_DIR', plugin_dir_path(__FILE__));
 		define('GF_URL', plugin_dir_url(__FILE__));
 		define('GF_ASSETS_URL', GF_URL . '/assets');
-		define('GF_ROUTE_PREFIX', 'wordpress-plugin-boilerplate/v1');
+		define('GF_ROUTE_PREFIX', 'gutenform/v1');
 	}
 
 	/**
 	 * Main execution point where the plugin will fire up.
 	 *
-	 * Initializes necessary components for both admin and frontend.
+	 * Initializes necessary components for admin, blocks, and API.
 	 *
 	 * @since 1.0.0
 	 * @return void
@@ -53,9 +53,9 @@ final class Gutenform
 		}
 
 		// Initialze core functionalities.
-		Frontend::get_instance()->bootstrap();
+		// Frontend::get_instance()->bootstrap(); // Not needed - only blocks and admin page
 		API::get_instance()->init();
-		Template::get_instance()->init();
+		// Template::get_instance()->init(); // Not needed - using standard WordPress frontend
 
 		add_action('init', array($this, 'i18n'));
 		add_action('init', array($this, 'register_blocks'));

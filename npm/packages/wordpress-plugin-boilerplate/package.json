@@ -1,18 +1,18 @@
 {
-  "name": "wordpress-plugin-boilerplate",
+  "name": "gutenform",
   "version": "1.0.3",
   "description": "WordPress Plugin Boilerplate utilizing modern web technologies and tools such as React, TypeScript, SASS, Tailwind CSS, Shadcn UI, Vite, Storybook, and more.",
   "main": "index.js",
   "type": "module",
   "bin": {
-    "wordpress-plugin-boilerplate": "./index.js"
+    "gutenform": "./index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/prappo/wordpress-plugin-boilerplate.git"
+    "url": "git+https://github.com/prappo/gutenform.git"
   },
   "keywords": [
     "wordpress",
@@ -22,9 +22,9 @@
   "author": "prappo",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/prappo/wordpress-plugin-boilerplate/issues"
+    "url": "https://github.com/prappo/gutenform/issues"
   },
-  "homepage": "https://github.com/prappo/wordpress-plugin-boilerplate#readme",
+  "homepage": "https://github.com/prappo/gutenform#readme",
   "dependencies": {
     "axios": "^1.6.7",
     "extract-zip": "^2.0.1",

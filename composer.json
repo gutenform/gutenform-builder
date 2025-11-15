@@ -1,5 +1,5 @@
 {
-  "name": "prappo/wordpress-plugin-boilerplate",
+  "name": "prappo/gutenform",
   "description": "Wordpress Plugin boilerplate",
   "autoload": {
     "psr-4": {

@@ -6,6 +6,8 @@ import { router } from "./routes";
 import { ThemeProvider } from "@/components/theme-provider"
 const el = document.getElementById("myplugin-frontend");
 
+console.log('gutenform frontend loaded');
+
 if (el) {
   ReactDOM.createRoot(el).render(
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">

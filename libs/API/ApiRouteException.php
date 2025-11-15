@@ -1,8 +1,9 @@
 <?php
+
 /**
  * API route exception.
  *
- * @package WordpressPluginBoilerplate
+ * @package Gutenform
  * @since 1.0.0
  */
 
@@ -15,14 +16,16 @@ use Exception;
  *
  * @since 1.0.0
  */
-class ApiRouteException extends Exception {
+class ApiRouteException extends Exception
+{
 	/**
 	 * Constructor
 	 *
 	 * @param string  $message exception message.
 	 * @param integer $code code.
 	 */
-	public function __construct( $message = '', $code = 0 ) {
-		parent::__construct( $message, $code );
+	public function __construct($message = '', $code = 0)
+	{
+		parent::__construct($message, $code);
 	}
 }

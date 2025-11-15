@@ -15,7 +15,11 @@
     }
   },
   "supports": {
-    "html": false
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ]
   },
   "textdomain": "gutenform",
   "editorScript": "file:./index.js",

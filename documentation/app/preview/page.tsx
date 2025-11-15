@@ -12,7 +12,7 @@ export default function PreviewPage() {
         iframe: wpPlayground.current,
         remoteUrl: `https://playground.wordpress.net/remote.html`,
         blueprint: {
-          landingPage: '/wp-admin/admin.php?page=wordpress-plugin-boilerplate#/dashboard',
+          landingPage: '/wp-admin/admin.php?page=gutenform#/dashboard',
           preferredVersions: {
             php: '8.3',
             wp: 'latest',
@@ -30,7 +30,7 @@ export default function PreviewPage() {
               step: 'installPlugin',
               pluginZipFile: {
                 resource: 'url',
-                url: '/wordpress-plugin-boilerplate/plugin/wordpress-plugin-boilerplate.zip',
+                url: '/gutenform/plugin/gutenform.zip',
               },
             },
           ],
