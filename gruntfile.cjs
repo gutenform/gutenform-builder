@@ -57,7 +57,6 @@ const distFiles = [
     '!components.json',
     '!js/dist/assets/**/*.js.map',
     '!assets/admin/dist/**/*.js.map',
-    '!assets/frontend/dist/**/*.js.map',
 ];
 
 // Replace functionality

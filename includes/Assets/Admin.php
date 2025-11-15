@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Gutenform\Assets;
 
-use Gutenform\Core\Template;
 use Gutenform\Traits\Base;
 use Gutenform\Libs\Assets;
 
@@ -45,7 +44,7 @@ class Admin
 	);
 
 	/**
-	 * Frontend bootstrapper.
+	 * Admin bootstrapper.
 	 *
 	 * @return void
 	 */
@@ -61,27 +60,15 @@ class Admin
 	 */
 	public function enqueue_script($screen)
 	{
-		$current_screen     = $screen;
-		$template_file_name = Template::FRONTEND_TEMPLATE;
-
-		if (! is_admin()) {
-			$template_slug = get_page_template_slug();
-			if ($template_slug) {
-
-				if ($template_slug === $template_file_name) {
-					array_push($this->allowed_screens, $template_file_name);
-					$current_screen = $template_file_name;
-				}
-			}
-		}
-
-		if (in_array($current_screen, $this->allowed_screens, true)) {
-			Assets\enqueue_asset(
+		if (in_array($screen, $this->allowed_screens, true)) {
+			$enqueued = Assets\enqueue_asset(
 				GF_DIR . '/assets/admin/dist',
 				self::DEV_SCRIPT,
 				$this->get_config()
 			);
-			wp_localize_script(self::HANDLE, self::OBJ_NAME, $this->get_data());
+			if ($enqueued) {
+				wp_localize_script(self::HANDLE, self::OBJ_NAME, $this->get_data());
+			}
 		}
 	}
 

@@ -22,7 +22,7 @@ class Install {
 	 */
 	public function init() {
 
-		$this->install_pages();
+		// $this->install_pages(); // Not needed - using standard WordPress frontend
 		$this->install_tables();
 		$this->insert_data();
 	}
@@ -31,13 +31,10 @@ class Install {
 	 * Install the pages
 	 *
 	 * @return void
+	 * @deprecated Not needed - using standard WordPress frontend
 	 */
 	private function install_pages() {
-		gf_install_page(
-			Template::FRONTEND_TEMPLATE_NAME,
-			Template::FRONTEND_TEMPLATE_SLUG,
-			Template::FRONTEND_TEMPLATE
-		);
+		// Frontend page installation removed - using standard WordPress frontend
 	}
 
 	/**
