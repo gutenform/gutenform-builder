@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace WordPressPluginBoilerplate\Libs\Assets;
+namespace Gutenform\Libs\Assets;
 
 use Exception;
 use WP_HTML_Tag_Processor;

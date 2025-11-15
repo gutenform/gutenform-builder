@@ -1,15 +1,15 @@
 <?php
 
-namespace WordPressPluginBoilerplate\Controllers\Accounts;
+namespace Gutenform\Controllers\Accounts;
 
-use WordPressPluginBoilerplate\Models\Accounts;
+use Gutenform\Models\Accounts;
 
 /**
  * Class Actions
  *
  * Handles account-related actions such as creation, retrieval, deletion, and update.
  *
- * @package WordPressPluginBoilerplate\Controllers\Accounts
+ * @package Gutenform\Controllers\Accounts
  */
 class Actions {
 

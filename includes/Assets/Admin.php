@@ -2,35 +2,35 @@
 
 declare(strict_types=1);
 
-namespace WordPressPluginBoilerplate\Assets;
+namespace Gutenform\Assets;
 
-use WordPressPluginBoilerplate\Core\Template;
-use WordPressPluginBoilerplate\Traits\Base;
-use WordPressPluginBoilerplate\Libs\Assets;
+use Gutenform\Core\Template;
+use Gutenform\Traits\Base;
+use Gutenform\Libs\Assets;
 
 /**
  * Class Admin
  *
- * Handles admin functionalities for the WordPressPluginBoilerplate.
+ * Handles admin functionalities for the Gutenform.
  *
- * @package WordPressPluginBoilerplate\Admin
+ * @package Gutenform\Admin
  */
 class Admin {
 
 	use Base;
 
 	/**
-	 * Script handle for WordPressPluginBoilerplate.
+	 * Script handle for Gutenform.
 	 */
 	const HANDLE = 'wordpress-plugin-boilerplate';
 
 	/**
-	 * JS Object name for WordPressPluginBoilerplate.
+	 * JS Object name for Gutenform.
 	 */
 	const OBJ_NAME = 'wordpressPluginBoilerplate';
 
 	/**
-	 * Development script path for WordPressPluginBoilerplate.
+	 * Development script path for Gutenform.
 	 */
 	const DEV_SCRIPT = 'src/admin/main.jsx';
 
@@ -74,7 +74,7 @@ class Admin {
 
 		if ( in_array( $current_screen, $this->allowed_screens, true ) ) {
 			Assets\enqueue_asset(
-				WORDPRESS_PLUGIN_BOILERPLATE_DIR . '/assets/admin/dist',
+				GF_DIR . '/assets/admin/dist',
 				self::DEV_SCRIPT,
 				$this->get_config()
 			);

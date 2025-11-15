@@ -1,21 +1,23 @@
 <?php
-use WordPressPluginBoilerplate\Core\Api;
-use WordPressPluginBoilerplate\Admin\Menu;
-use WordPressPluginBoilerplate\Core\Template;
-use WordPressPluginBoilerplate\Assets\Frontend;
-use WordPressPluginBoilerplate\Assets\Admin;
-use WordPressPluginBoilerplate\Traits\Base;
 
-defined( 'ABSPATH' ) || exit;
+use Gutenform\Core\Api;
+use Gutenform\Admin\Menu;
+use Gutenform\Core\Template;
+use Gutenform\Assets\Frontend;
+use Gutenform\Assets\Admin;
+use Gutenform\Traits\Base;
+
+defined('ABSPATH') || exit;
 
 /**
- * Class WordPressPluginBoilerplate
+ * Class Gutenform
  *
  * The main class for the Coldmailar plugin, responsible for initialization and setup.
  *
  * @since 1.0.0
  */
-final class WordPressPluginBoilerplate {
+final class Gutenform
+{
 
 	use Base;
 
@@ -25,13 +27,14 @@ final class WordPressPluginBoilerplate {
 	 * @since 1.0.0
 	 * @return void
 	 */
-	public function __construct() {
-		define( 'WORDPRESS_PLUGIN_BOILERPLATE_VERSION', '1.0.0' );
-		define( 'WORDPRESS_PLUGIN_BOILERPLATE_PLUGIN_FILE', __FILE__ );
-		define( 'WORDPRESS_PLUGIN_BOILERPLATE_DIR', plugin_dir_path( __FILE__ ) );
-		define( 'WORDPRESS_PLUGIN_BOILERPLATE_URL', plugin_dir_url( __FILE__ ) );
-		define( 'WORDPRESS_PLUGIN_BOILERPLATE_ASSETS_URL', WORDPRESS_PLUGIN_BOILERPLATE_URL . '/assets' );
-		define( 'WORDPRESS_PLUGIN_BOILERPLATE_ROUTE_PREFIX', 'wordpress-plugin-boilerplate/v1' );
+	public function __construct()
+	{
+		define('GF_VERSION', '1.0.0');
+		define('GF_PLUGIN_FILE', __FILE__);
+		define('GF_DIR', plugin_dir_path(__FILE__));
+		define('GF_URL', plugin_dir_url(__FILE__));
+		define('GF_ASSETS_URL', GF_URL . '/assets');
+		define('GF_ROUTE_PREFIX', 'wordpress-plugin-boilerplate/v1');
 	}
 
 	/**
@@ -42,8 +45,9 @@ final class WordPressPluginBoilerplate {
 	 * @since 1.0.0
 	 * @return void
 	 */
-	public function init() {
-		if ( is_admin() ) {
+	public function init()
+	{
+		if (is_admin()) {
 			Menu::get_instance()->init();
 			Admin::get_instance()->bootstrap();
 		}
@@ -53,12 +57,24 @@ final class WordPressPluginBoilerplate {
 		API::get_instance()->init();
 		Template::get_instance()->init();
 
-		add_action( 'init', array( $this, 'i18n' ) );
-		add_action( 'init', array( $this, 'register_blocks' ) );
+		add_action('init', array($this, 'i18n'));
+		add_action('init', array($this, 'register_blocks'));
 	}
 
-	public function register_blocks() {
-		register_block_type( __DIR__ . '/assets/blocks/block-1' );
+	public function register_blocks()
+	{
+		$blocks_dir = __DIR__ . '/assets/blocks/';
+		if (is_dir($blocks_dir)) {
+			foreach (scandir($blocks_dir) as $block) {
+				if ($block === '.' || $block === '..') {
+					continue;
+				}
+				$block_path = $blocks_dir . $block;
+				if (is_dir($block_path) && file_exists($block_path . '/block.json')) {
+					register_block_type($block_path);
+				}
+			}
+		}
 	}
 
 
@@ -70,7 +86,8 @@ final class WordPressPluginBoilerplate {
 	 * @since 1.0.0
 	 * @return void
 	 */
-	public function i18n() {
-		load_plugin_textdomain( 'wordpress-plugin-boilerplate', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	public function i18n()
+	{
+		load_plugin_textdomain('gutenform', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 	}
 }

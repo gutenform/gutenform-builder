@@ -2,22 +2,22 @@
 /**
  * Class Accounts
  *
- * Represents the Accounts model for WordPressPluginBoilerplate.
+ * Represents the Accounts model for Gutenform.
  *
- * @package WordPressPluginBoilerplate\Models
+ * @package Gutenform\Models
  * @since 1.0.0
  */
 
-namespace WordPressPluginBoilerplate\Models;
+namespace Gutenform\Models;
 
 use Prappo\WpEloquent\Database\Eloquent\Model;
 
 /**
  * Class Accounts
  *
- * Represents the Accounts model for WordPressPluginBoilerplate.
+ * Represents the Accounts model for Gutenform.
  *
- * @package WordPressPluginBoilerplate\Models
+ * @package Gutenform\Models
  */
 class Accounts extends Model {
 

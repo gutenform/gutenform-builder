@@ -1,17 +1,23 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "wordpress-plugin-boilerplate/block-1",
+  "name": "gutenfrom/form",
   "version": "0.1.0",
-  "title": "WPB Block 1",
+  "title": "Form",
   "category": "widgets",
   "icon": "smiley",
-  "description": "Example block scaffolded with Create Block tool.",
+  "description": "Form Wrapper block for Gutenform.",
   "example": {},
+  "attributes": {
+    "formTitle": {
+      "type": "string",
+      "default": ""
+    }
+  },
   "supports": {
     "html": false
   },
-  "textdomain": "wordpress-plugin-boilerplate",
+  "textdomain": "gutenform",
   "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "style": "file:./style-index.css",

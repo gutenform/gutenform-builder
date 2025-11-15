@@ -2,11 +2,11 @@
 /**
  * Database configuration using Eloquent ORM.
  *
- * @package WordPressPluginBoilerplate
+ * @package Gutenform
  * @subpackage Database
  */
 
-namespace WordPressPluginBoilerplate\Database\Seeders;
+namespace Gutenform\Database\Seeders;
 
 use Prappo\WpEloquent\Database\Capsule\Manager as Capsule;
 /**
@@ -14,7 +14,7 @@ use Prappo\WpEloquent\Database\Capsule\Manager as Capsule;
  *
  * Represents the seeder for the 'accounts' table.
  *
- * @package WordPressPluginBoilerplate\Database\Seeders
+ * @package Gutenform\Database\Seeders
  * @since 1.0.0
  */
 class Accounts {
@@ -56,8 +56,8 @@ class Accounts {
 		);
 
 		foreach ( $accounts as $account ) {
-			if ( ! \WordPressPluginBoilerplate\Models\Accounts::where( 'user_id', $account['user_id'] )->exists() ) {
-				\WordPressPluginBoilerplate\Models\Accounts::create( $account );
+			if ( ! \Gutenform\Models\Accounts::where( 'user_id', $account['user_id'] )->exists() ) {
+				\Gutenform\Models\Accounts::create( $account );
 			}
 		}
 	}

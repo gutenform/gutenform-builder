@@ -1,15 +1,15 @@
 <?php
 
-namespace WordPressPluginBoilerplate\Admin;
+namespace Gutenform\Admin;
 
-use WordPressPluginBoilerplate\Traits\Base;
+use Gutenform\Traits\Base;
 
 /**
  * Class Menu
  *
- * Represents the admin menu management for the WordPressPluginBoilerplate plugin.
+ * Represents the admin menu management for the Gutenform plugin.
  *
- * @package WordPressPluginBoilerplate\Admin
+ * @package Gutenform\Admin
  */
 class Menu {
 
@@ -40,8 +40,8 @@ class Menu {
 	public function menu() {
 
 		add_menu_page(
-			__( 'MyPlugin', 'wordpress-plugin-boilerplate' ),
-			__( 'MyPlugin', 'wordpress-plugin-boilerplate' ),
+			__( 'MyPlugin', 'gutenform' ),
+			__( 'MyPlugin', 'gutenform' ),
 			'manage_options',
 			$this->parent_slug,
 			array( $this, 'admin_page' ),
@@ -60,16 +60,16 @@ class Menu {
 		$submenu_pages = array(
 			array(
 				'parent_slug' => $this->parent_slug,
-				'page_title'  => __( 'Dashboard', 'wordpress-plugin-boilerplate' ),
-				'menu_title'  => __( 'Dashboard', 'wordpress-plugin-boilerplate' ),
+				'page_title'  => __( 'Dashboard', 'gutenform' ),
+				'menu_title'  => __( 'Dashboard', 'gutenform' ),
 				'capability'  => 'manage_options',
 				'menu_slug'   => $this->parent_slug,
 				'function'    => array( $this, 'admin_page' ), // Uses the same callback function as parent menu.
 			),
 			array(
 				'parent_slug' => $this->parent_slug,
-				'page_title'  => __( 'Inbox', 'wordpress-plugin-boilerplate' ),
-				'menu_title'  => __( 'Inbox', 'wordpress-plugin-boilerplate' ),
+				'page_title'  => __( 'Inbox', 'gutenform' ),
+				'menu_title'  => __( 'Inbox', 'gutenform' ),
 				'capability'  => 'manage_options',
 				'menu_slug'   => $plugin_url . '/#/inbox',
 				'function'    => null, // Uses the same callback function as parent menu.
@@ -77,8 +77,8 @@ class Menu {
 
 			array(
 				'parent_slug' => $this->parent_slug,
-				'page_title'  => __( 'Chart', 'wordpress-plugin-boilerplate' ),
-				'menu_title'  => __( 'Chart', 'wordpress-plugin-boilerplate' ),
+				'page_title'  => __( 'Chart', 'gutenform' ),
+				'menu_title'  => __( 'Chart', 'gutenform' ),
 				'capability'  => 'manage_options',
 				'menu_slug'   => $plugin_url . '/#/charts',
 				'function'    => null, // Uses the same callback function as parent menu.
@@ -86,15 +86,15 @@ class Menu {
 
 			array(
 				'parent_slug' => $this->parent_slug,
-				'page_title'  => __( 'Settings', 'wordpress-plugin-boilerplate' ),
-				'menu_title'  => __( 'Settings', 'wordpress-plugin-boilerplate' ),
+				'page_title'  => __( 'Settings', 'gutenform' ),
+				'menu_title'  => __( 'Settings', 'gutenform' ),
 				'capability'  => 'manage_options',
 				'menu_slug'   => $plugin_url . '/#/settings',
 				'function'    => null, // Uses the same callback function as parent menu.
 			),
 		);
 
-		$plugin_submenu_pages = apply_filters( 'wordpress_plugin_boilerplate_submenu_pages', $submenu_pages );
+		$plugin_submenu_pages = apply_filters( 'gf_submenu_pages', $submenu_pages );
 
 		foreach ( $plugin_submenu_pages as $submenu ) {
 

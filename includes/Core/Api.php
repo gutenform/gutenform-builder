@@ -1,29 +1,29 @@
 <?php
 
-namespace WordPressPluginBoilerplate\Core;
+namespace Gutenform\Core;
 
-use WordPressPluginBoilerplate\Traits\Base;
-use WordPressPluginBoilerplate\Libs\API\Config;
+use Gutenform\Traits\Base;
+use Gutenform\Libs\API\Config;
 
 /**
  * Class API
  *
- * Initializes and configures the API for the WordPressPluginBoilerplate.
+ * Initializes and configures the API for the Gutenform.
  *
- * @package WordPressPluginBoilerplate\Core
+ * @package Gutenform\Core
  */
 class API {
 
 	use Base;
 
 	/**
-	 * Initializes the API for the WordPressPluginBoilerplate.
+	 * Initializes the API for the Gutenform.
 	 *
 	 * @return void
 	 */
 	public function init() {
-		Config::set_route_file( WORDPRESS_PLUGIN_BOILERPLATE_DIR . '/includes/Routes/Api.php' )
-			->set_namespace( 'WordPressPluginBoilerplate\Api' )
+		Config::set_route_file( GF_DIR . '/includes/Routes/Api.php' )
+			->set_namespace( 'Gutenform\Api' )
 			->init();
 	}
 }

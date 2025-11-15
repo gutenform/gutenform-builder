@@ -2,21 +2,21 @@
 /**
  * Class Users
  *
- * Represents the Users model for WordPressPluginBoilerplate.
+ * Represents the Users model for Gutenform.
  *
- * @package WordPressPluginBoilerplate\Models
+ * @package Gutenform\Models
  */
 
-namespace WordPressPluginBoilerplate\Models;
+namespace Gutenform\Models;
 
 use Prappo\WpEloquent\Database\Eloquent\Model;
 
 /**
  * Class Users
  *
- * Represents the Users model for WordPressPluginBoilerplate.
+ * Represents the Users model for Gutenform.
  *
- * @package WordPressPluginBoilerplate\Models
+ * @package Gutenform\Models
  */
 class Users extends Model {
 

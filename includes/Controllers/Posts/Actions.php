@@ -7,9 +7,9 @@
  * @since 1.0.0
  */
 
-namespace WordPressPluginBoilerplate\Controllers\Posts;
+namespace Gutenform\Controllers\Posts;
 
-use WordPressPluginBoilerplate\Models\Posts;
+use Gutenform\Models\Posts;
 
 class Actions {
 	public function get_all_posts() {

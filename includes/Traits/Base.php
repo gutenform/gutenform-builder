@@ -1,13 +1,13 @@
 <?php
 
-namespace WordPressPluginBoilerplate\Traits;
+namespace Gutenform\Traits;
 
 /**
  * Trait Base
  *
  * Provides a trait with a singleton pattern for obtaining an instance.
  *
- * @package WordPressPluginBoilerplate\Trait
+ * @package Gutenform\Trait
  */
 trait Base {
 

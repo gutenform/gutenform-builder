@@ -5,9 +5,9 @@
  * @since 1.0.0
  */
 
-namespace WordPressPluginBoilerplate\Libs\API;
+namespace Gutenform\Libs\API;
 
-use WordPressPluginBoilerplate\Libs\API\ApiRouteException;
+use Gutenform\Libs\API\ApiRouteException;
 
 /**
  * Class ApiConfig

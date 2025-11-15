@@ -1,5 +1,5 @@
 <?php
-namespace WordPressPluginBoilerplate\Libs\Utils;
+namespace Gutenform\Libs\Utils;
 
 /**
  * Custom Post Type

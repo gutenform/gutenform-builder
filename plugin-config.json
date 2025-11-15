@@ -1,15 +1,15 @@
 {
-    "plugin_name":"WordPress Plugin Boilerplate",
-    "plugin_description":"A boilerplate for WordPress plugins.",
+    "plugin_name":"Gutenform",
+    "plugin_description":"Gutenform is a plugin for creating and managing forms in WordPress.",
     "plugin_version":"1.0.0",
-    "plugin_file_name":"wordpress-plugin-boilerplate.php",
-    "author_name":"Prappo",
-    "author_uri":"https://prappo.github.io",
-    "text_domain":"wordpress-plugin-boilerplate",
+    "plugin_file_name":"gutenform.php",
+    "author_name":"Gutenform",
+    "author_uri":"https://gutenform.com",
+    "text_domain":"gutenform",
     "domain_path":"/languages",
-    "main_class_name":"WordPressPluginBoilerplate",
-    "main_function_name":"wordpress_plugin_boilerplate_init",
-    "namespace":"WordPressPluginBoilerplate",
-    "plugin_prefix":"wpb",
-    "constant_prefix":"WPB"
+    "main_class_name":"Gutenform",
+    "main_function_name":"gutenform_init",
+    "namespace":"Gutenform",
+    "plugin_prefix":"gf",
+    "constant_prefix":"GF"
 }

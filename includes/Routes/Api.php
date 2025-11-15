@@ -1,31 +1,31 @@
 <?php
 /**
- * WordPressPluginBoilerplate Routes
+ * Gutenform Routes
  *
- * Defines and registers custom API routes for the WordPressPluginBoilerplate using the Haruncpi\WpApi library.
+ * Defines and registers custom API routes for the Gutenform using the Haruncpi\WpApi library.
  *
- * @package WordPressPluginBoilerplate\Routes
+ * @package Gutenform\Routes
  */
 
-namespace WordPressPluginBoilerplate\Routes;
+namespace Gutenform\Routes;
 
-use WordPressPluginBoilerplate\Libs\API\Route;
+use Gutenform\Libs\API\Route;
 
 Route::prefix(
-	WORDPRESS_PLUGIN_BOILERPLATE_ROUTE_PREFIX,
+	GF_ROUTE_PREFIX,
 	function ( Route $route ) {
 
 		// Define accounts API routes.
 
-		$route->post( '/accounts/create', '\WordPressPluginBoilerplate\Controllers\Accounts\Actions@create' );
-		$route->get( '/accounts/get', '\WordPressPluginBoilerplate\Controllers\Accounts\Actions@get' );
-		$route->post( '/accounts/delete', '\WordPressPluginBoilerplate\Controllers\Accounts\Actions@delete' );
-		$route->post( '/accounts/update', '\WordPressPluginBoilerplate\Controllers\Accounts\Actions@update' );
+		$route->post( '/accounts/create', '\Gutenform\Controllers\Accounts\Actions@create' );
+		$route->get( '/accounts/get', '\Gutenform\Controllers\Accounts\Actions@get' );
+		$route->post( '/accounts/delete', '\Gutenform\Controllers\Accounts\Actions@delete' );
+		$route->post( '/accounts/update', '\Gutenform\Controllers\Accounts\Actions@update' );
 
 		// Posts routes.
-		$route->get( '/posts/get', '\WordPressPluginBoilerplate\Controllers\Posts\Actions@get_all_posts' );
-		$route->get( '/posts/get/{id}', '\WordPressPluginBoilerplate\Controllers\Posts\Actions@get_post' );
+		$route->get( '/posts/get', '\Gutenform\Controllers\Posts\Actions@get_all_posts' );
+		$route->get( '/posts/get/{id}', '\Gutenform\Controllers\Posts\Actions@get_post' );
 		// Allow hooks to add more custom API routes.
-		do_action( 'wordpress_plugin_boilerplate_api', $route );
+		do_action( 'gf_api', $route );
 	}
 );
