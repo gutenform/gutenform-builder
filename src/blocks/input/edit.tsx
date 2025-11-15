@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
-import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
-import { TextControl, PanelBody, TextareaControl } from '@wordpress/components';
+import { useBlockProps, InspectorControls, RichText } from '@wordpress/block-editor';
+import { TextControl, PanelBody } from '@wordpress/components';
 import { type BlockEditProps } from '@wordpress/blocks';
-import { type InputAttributes } from '../../blockTypes/input';
+import { type InputAttributes } from '@/blockTypes/input';
 import './editor.css';
+import { getFieldClasses } from '../../lib/utils';
 
 export default function Edit(props: BlockEditProps<InputAttributes>) {
 	const { attributes, setAttributes, clientId } = props;
@@ -17,13 +18,6 @@ export default function Edit(props: BlockEditProps<InputAttributes>) {
 		<>
 			<InspectorControls>
 				<PanelBody title="Form Settings">
-					<TextControl 
-						label="Label" 
-						value={attributes.label} 
-						onChange={(label) => setAttributes({ label })}
-						__next40pxDefaultSize={true}
-						__nextHasNoMarginBottom={true}
-					 />
 					 <TextControl 
 						label="Placeholder" 
 						value={attributes.placeholder} 
@@ -31,18 +25,25 @@ export default function Edit(props: BlockEditProps<InputAttributes>) {
 						__next40pxDefaultSize={true}
 						__nextHasNoMarginBottom={true}
 					 />
-					 <TextareaControl 
-						label="Help" 
-						value={attributes.help} 
-						onChange={(help) => setAttributes({ help })}
-						__nextHasNoMarginBottom={true}
-					 />
 				</PanelBody>
 			</InspectorControls>
-			<div { ...useBlockProps() }>
-				<label htmlFor={attributes.id}>{attributes.label}</label>
+			<div { ...useBlockProps({
+				className: getFieldClasses(attributes),
+			}) }>
+				<RichText
+					tagName="label"
+					value={attributes.label}
+					onChange={(label) => setAttributes({ label })}
+					placeholder={__('Enter label', 'gutenform')}
+				/>
 				<input type={attributes.type} placeholder={attributes.placeholder} name={attributes.name} id={attributes.id} required={attributes.required} defaultValue={attributes.defaultValue} />
-				{attributes.help && <p className="text-sm text-gray-500">{attributes.help}</p>}
+				<RichText
+					tagName="p"
+					value={attributes.help}
+					onChange={(help) => setAttributes({ help })}
+					className="gutenform-field__help"
+					placeholder={__('Enter help text', 'gutenform')}
+				/>
 			</div>
 		</>
 	);

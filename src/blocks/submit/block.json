@@ -1,22 +1,26 @@
 {
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 3,
-	"name": "gutenform/form",
+	"name": "gutenform/submit",
 	"version": "0.1.0",
-	"title": "Form",
+	"title": "Submit",
 	"category": "widgets",
-	"icon": "smiley",
-	"description": "Form Wrapper block for Gutenform.",
+	"icon": "marker",
+	"description": "Submit button block for Gutenform.",
 	"example": {},
 	"attributes": {
-		"formTitle": {
+		"label": {
+			"type": "string",
+			"default": "Submit"
+		},
+		"id": {
 			"type": "string",
 			"default": ""
 		}
 	},
 	"supports": {
 		"html": false,
-		"align": ["wide", "full"]
+		"align": true
 	},
 	"textdomain": "gutenform",
 	"editorScript": "file:./index.js",

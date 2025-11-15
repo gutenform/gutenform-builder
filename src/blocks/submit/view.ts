@@ -20,20 +20,6 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-metadata/#view-script
  */
  
-window.addEventListener('DOMContentLoaded', () => {
-	const form = document.querySelectorAll('.wp-block-gutenform-form');
-	form.forEach(form => {
-        const formDataOptions = form.getAttribute('data-form-options');
-        if (!formDataOptions) {
-            console.error('Form options not found');
-            return;
-        };
-        const formOptions = JSON.parse(formDataOptions);
-        console.log(formOptions);
-
-		form.addEventListener('submit', (e) => {
-			e.preventDefault();
-			console.log('form submitted');
-		});
-	});
-});
+/* eslint-disable no-console */
+console.log("GutenForm -> Submit block");
+/* eslint-enable no-console */

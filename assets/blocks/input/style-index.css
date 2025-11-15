@@ -9,9 +9,7 @@
  */
 
 .wp-block-gutenform-input {
-	background-color: #21759b;
-	color: #fff;
-	padding: 2px;
+	outline: 1px dotted #f0f;
 }
 
 

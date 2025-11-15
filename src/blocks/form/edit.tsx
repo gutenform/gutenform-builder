@@ -3,9 +3,11 @@ import { useBlockProps, InspectorControls, InnerBlocks } from '@wordpress/block-
 import { dispatch } from '@wordpress/data';
 import { TextControl, PanelBody } from '@wordpress/components';
 import { type BlockEditProps, createBlocksFromInnerBlocksTemplate } from '@wordpress/blocks';
-import { type FormAttributes } from '../../blockTypes/form';
+import { type FormAttributes } from '@/blockTypes/form';
 import TemplateSelect from '../../components/block-atoms/TemplateSelect';
+import { allowedBlocks } from './allowedBlocks';
 import './editor.css';
+import { getFieldClasses } from '../../lib/utils';
 
 export default function Edit(props: BlockEditProps<FormAttributes>) {
 	const { attributes, setAttributes, clientId } = props;
@@ -32,9 +34,13 @@ export default function Edit(props: BlockEditProps<FormAttributes>) {
 					 />
 				</PanelBody>
 			</InspectorControls>
-			<div { ...useBlockProps() }>
+			<div { ...useBlockProps({
+				className: getFieldClasses(attributes),
+			}) }>
 				{innerBlockItems?.length > 0 ? (
 					<InnerBlocks
+						allowedBlocks={allowedBlocks}
+						renderAppender={InnerBlocks.ButtonBlockAppender}
 						template={[
 							['core/columns', {}, [
 								['core/column', {}, [

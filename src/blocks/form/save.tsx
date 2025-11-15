@@ -5,6 +5,7 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
 import { FormAttributes } from '@/blockTypes/form';
+import { getFieldClasses } from '../../lib/utils';
 import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import { type BlockSaveProps } from '@wordpress/blocks';
 
@@ -21,8 +22,11 @@ export default function save(props: BlockSaveProps<FormAttributes>) {
 	const options = {
 		formTitle: props.attributes.formTitle,
 	};
+	const className = getFieldClasses(props.attributes);
 	return (
-		<form { ...useBlockProps.save() } data-form-options={JSON.stringify(options)}>
+		<form { ...useBlockProps.save({
+			className,
+		}) } data-form-options={JSON.stringify(options)}>
 			<InnerBlocks.Content />
 		</form>
 	);

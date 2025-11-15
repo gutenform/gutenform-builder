@@ -24,9 +24,23 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-metadata/#view-script
  */
 
-/* eslint-disable no-console */
-console.log("Hello World! from gutenform -> form block");
-/* eslint-enable no-console */
+window.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelectorAll('.wp-block-gutenform-form');
+  form.forEach(form => {
+    const formDataOptions = form.getAttribute('data-form-options');
+    if (!formDataOptions) {
+      console.error('Form options not found');
+      return;
+    }
+    ;
+    const formOptions = JSON.parse(formDataOptions);
+    console.log(formOptions);
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      console.log('form submitted');
+    });
+  });
+});
 /******/ })()
 ;
 //# sourceMappingURL=view.js.map

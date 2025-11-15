@@ -1,0 +1,58 @@
+.wp-block-gutenform-form{
+    --field-size: 100%;
+    --field-padding: 1rem;
+    --field-rounded: 0.5rem;
+    --field-border: 1px solid #ccc;
+    
+    * {
+        box-sizing: border-box;
+    }
+
+    input, textarea, select {
+        width: var(--field-size);
+        padding: var(--field-padding);
+        border-radius: var(--field-rounded);
+        border: var(--field-border);
+        font-size: var(--field-font-size, inherit);
+        font-family: inherit;
+    }
+
+    .gutenform-field{
+        label {
+            display: block;
+            font-size: var(--field-label-size, 0.875rem);
+            font-weight: var(--field-label-weight, 600);
+            color: var(--field-label-color, #333);
+            margin-bottom: var(--field-label-margin-bottom, 0.5rem);
+        }
+
+        .gutenform-field__help {
+            font-size: var(--field-help-size, 0.875rem);
+            color: var(--field-help-color, inherit);
+            margin-top: var(--field-help-margin-top, 0.5rem);
+            opacity: var(--field-help-opacity, 0.8);
+            margin-bottom: 0;
+        }
+    }
+
+    .wp-block-gutenform-submit {
+        button {
+            width: var(--field-size);
+            padding-inline: var(--field-padding-inline, 1.75rem);
+            padding-block: var(--field-padding-block, 0.75rem);
+            border-radius: var(--field-rounded, 0.5rem);
+            border: var(--field-border, 1px solid #ccc);
+            font-size: var(--field-font-size, inherit);
+            font-family: inherit;
+            background-color: var(--field-background-color, #000);
+            color: var(--field-color, #fff);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: var(--field-background-color-hover, #333);
+                color: var(--field-color-hover, #fff);
+            }
+        }
+    }
+}

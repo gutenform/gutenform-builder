@@ -9,8 +9,6 @@
  */
 
 .wp-block-gutenform-form {
-	background-color: #21759b;
-	color: #fff;
-	padding: 2px;
+	outline: 1px dotted #f00;
 }
 

@@ -7,7 +7,6 @@
 import { InputAttributes } from '@/blockTypes/input';
 import { useBlockProps } from '@wordpress/block-editor';
 import { type BlockSaveProps } from '@wordpress/blocks';
-import { getFieldClasses } from '../../lib/utils';
 
 /**
  * The save function defines the way in which the different attributes should
@@ -19,14 +18,11 @@ import { getFieldClasses } from '../../lib/utils';
  * @return {Element} Element to render.
  */
 export default function save(props: BlockSaveProps<InputAttributes>) {
-	const className = getFieldClasses(props.attributes);
 	return (
-		<div { ...useBlockProps.save({
-			className,
-		}) }>
-			<label htmlFor={props.attributes.id}>{props.attributes.label}</label>
-			<input type={props.attributes.type} placeholder={props.attributes.placeholder} name={props.attributes.name} id={props.attributes.id} required={props.attributes.required} defaultValue={props.attributes.defaultValue} />
-			{props.attributes.help && <p className="gutenform-field__help">{props.attributes.help}</p>}
+		<div { ...useBlockProps.save() }>
+			<button type="submit" id={props.attributes.id}>
+				<span>{props.attributes.label}</span>
+			</button>
 		</div>
 	);
 }

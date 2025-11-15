@@ -3,7 +3,7 @@
 use Gutenform\Core\Api;
 use Gutenform\Admin\Menu;
 // use Gutenform\Core\Template; // Not needed - using standard WordPress frontend
-// use Gutenform\Assets\Frontend; // Not needed - only blocks and admin page
+use Gutenform\Assets\Frontend;
 use Gutenform\Assets\Admin;
 use Gutenform\Traits\Base;
 
@@ -53,7 +53,7 @@ final class Gutenform
 		}
 
 		// Initialze core functionalities.
-		// Frontend::get_instance()->bootstrap(); // Not needed - only blocks and admin page
+		Frontend::get_instance()->bootstrap();
 		API::get_instance()->init();
 		// Template::get_instance()->init(); // Not needed - using standard WordPress frontend
 

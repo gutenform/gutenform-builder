@@ -5,7 +5,10 @@ import path from "path"
 export default {
   plugins: [
     v4wp({
-      input: "src/admin/main.jsx",
+      input: {
+        main: "src/admin/main.jsx",
+        skin: "src/skins/default/skin.js",
+      },
       outDir: "assets/admin/dist",
     }),
     // wp_scripts(),
