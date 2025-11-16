@@ -43,8 +43,8 @@ class Menu
 	{
 
 		add_menu_page(
-			__('MyPlugin', 'gutenform'),
-			__('MyPlugin', 'gutenform'),
+			__('Gutenform', 'gutenform'),
+			__('Gutenform', 'gutenform'),
 			'manage_options',
 			$this->parent_slug,
 			array($this, 'admin_page'),

@@ -27,7 +27,7 @@ class Admin
 	/**
 	 * JS Object name for Gutenform.
 	 */
-	const OBJ_NAME = 'wordpressPluginBoilerplate';
+	const OBJ_NAME = 'gutenForm';
 
 	/**
 	 * Development script path for Gutenform.
@@ -51,6 +51,7 @@ class Admin
 	public function bootstrap()
 	{
 		add_action('admin_enqueue_scripts', array($this, 'enqueue_script'));
+		add_action('enqueue_block_editor_assets', array($this, 'localize_editor_scripts'));
 	}
 
 	/**
@@ -100,6 +101,27 @@ class Admin
 			'apiUrl'    => rest_url(),
 			'userInfo'  => $this->get_user_data(),
 		);
+	}
+
+	/**
+	 * Localize editor scripts for block editor.
+	 *
+	 * @return void
+	 */
+	public function localize_editor_scripts()
+	{
+		// Get all registered block editor scripts
+		$editor_script_handles = array(
+			'gutenform-form-editor-script',
+			'gutenform-input-editor-script',
+			'gutenform-submit-editor-script',
+		);
+
+		foreach ($editor_script_handles as $handle) {
+			if (wp_script_is($handle, 'registered')) {
+				wp_localize_script($handle, self::OBJ_NAME, $this->get_data());
+			}
+		}
 	}
 
 	/**

@@ -9,6 +9,10 @@
   "description": "Input block for Gutenform.",
   "example": {},
   "attributes": {
+    "style": {
+      "type": "object",
+      "default": {}
+    },
     "type": {
       "type": "string",
       "default": "text"

@@ -1,9 +1,18 @@
 /**
  * The following styles get applied inside the editor only.
- *
- * Replace them with your own styles or remove the file completely.
  */
 
- .wp-block-gutenform-form {
-	border: 1px dotted #f00;
+.wp-block-gutenform-form {
+    > .block-editor-inner-blocks > .block-editor-block-list__layout {
+        .block-list-appender {
+            position: relative;
+            width: 100%;
+            margin-top: 1rem;
+        }
+    }
+
+    .is-layout-grid .gutenform-field.is-selected{
+        padding-block: 0.75rem;
+        padding-inline: 2px;
+    }
 }

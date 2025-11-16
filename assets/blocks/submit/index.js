@@ -8,7 +8,7 @@
   \**************************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/submit","version":"0.1.0","title":"Submit","category":"widgets","icon":"marker","description":"Submit button block for Gutenform.","example":{},"attributes":{"label":{"type":"string","default":"Submit"},"id":{"type":"string","default":""}},"supports":{"html":false,"align":true},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/submit","version":"0.1.0","title":"Submit","category":"widgets","icon":"marker","description":"Submit button block for Gutenform.","example":{},"attributes":{"style":{"type":"object","default":{}},"label":{"type":"string","default":"Submit"},"id":{"type":"string","default":""}},"supports":{"html":false,"align":true},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
 
 /***/ }),
 

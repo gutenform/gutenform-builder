@@ -1,7 +1,5 @@
 "use client"
 
-import * as React from "react"
-
 import { cn } from "@/lib/utils"
 import {
   Select,
@@ -10,23 +8,40 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useStore } from "@nanostores/react"
+import { setInboxFilters, $inboxFilters } from "@/admin/pages/inbox/stores"
+import { useMailboxes } from "@/hooks"
+import { Inbox, LucideIcon } from "lucide-react"
 
 interface AccountSwitcherProps {
   isCollapsed: boolean
-  accounts: {
-    label: string
-    email: string
-    icon: React.ReactNode
-  }[]
 }
 
 export function AccountSwitcher({
   isCollapsed,
-  accounts,
 }: AccountSwitcherProps) {
-  const [selectedAccount, setSelectedAccount] = React.useState<string>(
-    accounts[0].email
-  )
+  const { mailboxes } = useMailboxes();
+  const filter = useStore($inboxFilters);
+  const selectedAccount = filter.mailbox_id.toString();
+
+  const setSelectedAccount = (id: string) => {
+    setInboxFilters({ mailbox_id: parseInt(id) });
+  }
+  const accounts = mailboxes?.map((mailbox) => {
+    return {
+      id: mailbox.id.toString(),
+      label: mailbox.title,
+      icon: Inbox,
+    } as {
+      id: string
+      label: string
+      icon?: LucideIcon
+    }
+  }) || [];
+
+  if (accounts.length === 0) {
+    return null;
+  }
 
   return (
     <Select defaultValue={selectedAccount} onValueChange={setSelectedAccount}>
@@ -38,22 +53,14 @@ export function AccountSwitcher({
         )}
         aria-label="Select account"
       >
-        <SelectValue placeholder="Select an account">
-          {accounts.find((account) => account.email === selectedAccount)?.icon}
-          <span className={cn("ml-2", isCollapsed && "hidden")}>
-            {
-              accounts.find((account) => account.email === selectedAccount)
-                ?.label
-            }
-          </span>
-        </SelectValue>
+        <SelectValue placeholder="Select an account" />
       </SelectTrigger>
       <SelectContent>
         {accounts.map((account) => (
-          <SelectItem key={account.email} value={account.email}>
+          <SelectItem key={account.id} value={account.id}>
             <div className="flex items-center gap-3 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0 [&_svg]:text-foreground">
-              {account.icon}
-              {account.email}
+              {account.icon && <account.icon />}
+              {account.label as string}
             </div>
           </SelectItem>
         ))}

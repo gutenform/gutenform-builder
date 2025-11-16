@@ -55,7 +55,7 @@ const navigation = [
 ];
 
 export default function LayoutOne() {
-    let showApplicationLayout = !wordpressPluginBoilerplate.isAdmin;
+    let showApplicationLayout = !gutenForm.isAdmin;
     let location = useLocation();
     const navigate = useNavigate();
     const pageTitle = location.pathname.split("/")[1];

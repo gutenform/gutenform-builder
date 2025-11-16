@@ -7,7 +7,6 @@ export default {
     v4wp({
       input: {
         main: "src/admin/main.jsx",
-        skin: "src/skins/default/skin.js",
       },
       outDir: "assets/admin/dist",
     }),

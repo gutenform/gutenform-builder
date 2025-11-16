@@ -58,7 +58,7 @@ Route callbacks are functions defined as controller methods. Controller files ar
 * If it needs to store any data in database then add a new model in `includes/Models/{YourCustomModel}.php` file. And migration file in `/database/migrations` directory.
 * If it needs to manipulate data in database then add a new controller in `includes/Controllers/{YourCustomController}/Actions.php` file.
 * To make connection between frontend and backend, add a new endpoint in `includes/Routes/Api.php` file.
-* Alsway use javascript `fetch` function to fetch data from backend. Use `post` method to create/update/delete data.Use `get` method only for read-only purpose. The root url for api is `wordpressPluginBoilerplate.apiUrl + 'wordpressPluginBoilerplate/v1/{custom-route}'`.
+* Alsway use javascript `fetch` function to fetch data from backend. Use `post` method to create/update/delete data.Use `get` method only for read-only purpose. The root url for api is `gutenForm.apiUrl + 'gutenForm/v1/{custom-route}'`.
 
 ## Adding a New Component
 
@@ -67,7 +67,7 @@ Route callbacks are functions defined as controller methods. Controller files ar
 * ShadcnUI components are located in `src/admin/components/ui` directory.
 
 ## Passing Data from Backend to Frontend as a JavaScript Object
-* If you want to pass data from the backend to the frontend as a JavaScript object, add a key-value pair in includes/Frontend/Frontend.php in the get_data method. This data will be available in the frontend as the wordpressPluginBoilerplate object or the object defined in the const OBJ_NAME variable in Frontend.php.
+* If you want to pass data from the backend to the frontend as a JavaScript object, add a key-value pair in includes/Frontend/Frontend.php in the get_data method. This data will be available in the frontend as the gutenForm object or the object defined in the const OBJ_NAME variable in Frontend.php.
 
 
 

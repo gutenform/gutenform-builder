@@ -15,7 +15,7 @@ export const router = createHashRouter([
     children: [
       {
         path: "/",
-        element: <Dashboard />,
+        element: <Inbox />,
       },
       {
         path: "dashboard",

@@ -21,12 +21,15 @@ import { type BlockSaveProps } from '@wordpress/blocks';
 export default function save(props: BlockSaveProps<FormAttributes>) {
 	const options = {
 		formTitle: props.attributes.formTitle,
+		skin: props.attributes.skin || 'default',
+		mailboxId: props.attributes.mailboxId || '1',
+		formId: props.attributes.formId || '',
 	};
 	const className = getFieldClasses(props.attributes);
 	return (
 		<form { ...useBlockProps.save({
 			className,
-		}) } data-form-options={JSON.stringify(options)}>
+		}) } data-form-options={JSON.stringify(options)} data-skin={props.attributes.skin || 'default'}>
 			<InnerBlocks.Content />
 		</form>
 	);

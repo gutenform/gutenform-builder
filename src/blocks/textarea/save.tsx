@@ -1,0 +1,32 @@
+/**
+ * React hook that is used to mark the block wrapper element.
+ * It provides all the necessary props like the class name.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
+ */
+import { TextareaAttributes } from '@/blockTypes/textarea';
+import { useBlockProps } from '@wordpress/block-editor';
+import { type BlockSaveProps } from '@wordpress/blocks';
+import { getFieldClasses } from '../../lib/utils';
+
+/**
+ * The save function defines the way in which the different attributes should
+ * be combined into the final markup, which is then serialized by the block
+ * editor into `post_content`.
+ *
+ * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#save
+ *
+ * @return {Element} Element to render.
+ */
+export default function save(props: BlockSaveProps<TextareaAttributes>) {
+	const className = getFieldClasses(props.attributes);
+	return (
+		<div { ...useBlockProps.save({
+			className,
+		}) }>
+			<label htmlFor={props.attributes.id}>{props.attributes.label}</label>
+			<textarea rows={props.attributes.rows} placeholder={props.attributes.placeholder} name={props.attributes.name} id={props.attributes.id} required={props.attributes.required} defaultValue={props.attributes.defaultValue} />
+			{props.attributes.help && <p className="gutenform-field__help">{props.attributes.help}</p>}
+		</div>
+	);
+}

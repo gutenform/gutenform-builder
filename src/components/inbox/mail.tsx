@@ -1,18 +1,8 @@
 "use client"
 import * as React from "react"
 import {
-  AlertCircle,
-  Archive,
-  ArchiveX,
-  File,
-  Inbox,
-  MessagesSquare,
-  PenBox,
   Search,
-  Send,
-  ShoppingCart,
-  Trash2,
-  Users2,
+  LucideIcon,
 } from "lucide-react"
 
 import { AccountSwitcher } from "@/components/inbox/account-switcher"
@@ -26,28 +16,34 @@ import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import {
   Tabs,
-  TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
-
+import { setInboxFilters } from "@/admin/pages/inbox/stores"
+type NavLink = {
+  title: string
+  label?: string
+  icon?: React.ReactNode | LucideIcon
+  variant: "default" | "ghost"
+  onClick: () => void
+}
 interface MailProps {
-  accounts: {
-    label: string
-    email: string
-    icon: React.ReactNode
-  }[]
   mails: Mail[]
+  defaultNavLinks: NavLink[]
+  additionalNavLinks: NavLink[]
+  labelNavLinks: NavLink[]
   defaultLayout: number[] | undefined
   defaultCollapsed?: boolean
   navCollapsedSize: number
 }
 
 export function MailComp({
-  accounts,
   mails,
+  defaultNavLinks = [],  
+  additionalNavLinks = [],
+  labelNavLinks = [],
   defaultLayout = [265, 440, 655],
   defaultCollapsed = false,
   navCollapsedSize,
@@ -72,7 +68,7 @@ export function MailComp({
           collapsible={true}
           minSize={15}
           maxSize={20}
-          onCollapse={(collapsed) => {
+          onCollapse={(collapsed: boolean) => {
             setIsCollapsed(collapsed)
             document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
               collapsed
@@ -81,85 +77,22 @@ export function MailComp({
           className={cn(isCollapsed && "min-w-[50px] transition-all duration-300 ease-in-out")}
         >
           <div className={cn("flex h-[52px] items-center justify-center", isCollapsed ? 'h-[52px]': 'px-2')}>
-            <AccountSwitcher isCollapsed={isCollapsed} accounts={accounts} />
+            <AccountSwitcher isCollapsed={isCollapsed} />
           </div>
           <Separator />
           <Nav
             isCollapsed={isCollapsed}
-            links={[
-              {
-                title: "Inbox",
-                label: "128",
-                icon: Inbox,
-                variant: "default",
-              },
-              {
-                title: "Drafts",
-                label: "9",
-                icon: File,
-                variant: "ghost",
-              },
-              {
-                title: "Sent",
-                label: "",
-                icon: Send,
-                variant: "ghost",
-              },
-              {
-                title: "Junk",
-                label: "23",
-                icon: ArchiveX,
-                variant: "ghost",
-              },
-              {
-                title: "Trash",
-                label: "",
-                icon: Trash2,
-                variant: "ghost",
-              },
-              {
-                title: "Archive",
-                label: "",
-                icon: Archive,
-                variant: "ghost",
-              },
-            ]}
+            links={defaultNavLinks}
           />
           <Separator />
           <Nav
             isCollapsed={isCollapsed}
-            links={[
-              {
-                title: "Social",
-                label: "972",
-                icon: Users2,
-                variant: "ghost",
-              },
-              {
-                title: "Updates",
-                label: "342",
-                icon: AlertCircle,
-                variant: "ghost",
-              },
-              {
-                title: "Forums",
-                label: "128",
-                icon: MessagesSquare,
-                variant: "ghost",
-              },
-              {
-                title: "Shopping",
-                label: "8",
-                icon: ShoppingCart,
-                variant: "ghost",
-              },
-              {
-                title: "Promotions",
-                label: "21",
-                icon: Archive,
-                variant: "ghost",
-              },
-            ]}
+            links={additionalNavLinks}
+          />
+          <Separator />
+          <Nav
+            isCollapsed={isCollapsed}
+            links={labelNavLinks}
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
@@ -168,8 +101,8 @@ export function MailComp({
             <div className="flex items-center px-4 py-1.5">
               <h1 className="text-xl dark:text-white font-bold">Inbox</h1>
               <TabsList className="ml-auto">
-                <TabsTrigger value="all" className="text-zinc-600 dark:text-zinc-200">All mail</TabsTrigger>
-                <TabsTrigger value="unread" className="text-zinc-600 dark:text-zinc-200">Unread</TabsTrigger>
+                <TabsTrigger onClick={() => setInboxFilters({ is_read: undefined })} value="all" className="text-zinc-600 dark:text-zinc-200">All mail</TabsTrigger>
+                <TabsTrigger onClick={() => setInboxFilters({ is_read: 0 })} value="unread" className="text-zinc-600 dark:text-zinc-200">Unread</TabsTrigger>
               </TabsList>
             </div>
             <Separator />
@@ -181,15 +114,10 @@ export function MailComp({
                 </div>
               </form>
             </div>
-            <TabsContent value="all" className="m-0">
-              <MailList items={mails} />
-            </TabsContent>
-            <TabsContent value="unread" className="m-0">
-              <MailList items={mails.filter((item) => !item.read)} />
-            </TabsContent>
+            <MailList items={mails} />
           </Tabs>
         </ResizablePanel>
-        <ResizableHandle withHandle />
+        <ResizableHandle className={""} withHandle />
         <ResizablePanel defaultSize={defaultLayout[2]}>
           <MailDisplay
             mail={mails.find((item) => item.id === mail.selected) || null}

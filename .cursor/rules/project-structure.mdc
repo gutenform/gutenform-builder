@@ -323,7 +323,7 @@ add_action('plugins_loaded', 'wordpress_plugin_boilerplate_init');
 ```jsx
 // Access WordPress data
 const MyComponent = () => {
-  const wpData = window.wordpressPluginBoilerplateAdmin || {};
+  const wpData = window.gutenFormAdmin || {};
   
   return (
     <div>

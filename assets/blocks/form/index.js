@@ -2607,7 +2607,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   allowedBlocks: () => (/* binding */ allowedBlocks)
 /* harmony export */ });
-const allowedBlocks = ['gutenform/input', 'core/columns', 'core/column', 'core/heading', 'core/paragraph', 'core/image', 'core/list', 'core/list-item', 'core/quote', 'core/table', 'core/video', 'core/embed'];
+const allowedBlocks = ['gutenform/input', 'core/columns', 'core/column', 'core/heading', 'core/paragraph', 'core/image', 'core/list', 'core/list-item', 'core/quote', 'core/table', 'core/video', 'core/embed', 'core/group'];
 
 /***/ }),
 
@@ -2617,7 +2617,7 @@ const allowedBlocks = ['gutenform/input', 'core/columns', 'core/column', 'core/h
   \************************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/form","version":"0.1.0","title":"Form","category":"widgets","icon":"smiley","description":"Form Wrapper block for Gutenform.","example":{},"attributes":{"formTitle":{"type":"string","default":""}},"supports":{"html":false,"align":["wide","full"]},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/form","version":"0.1.0","title":"Form","category":"widgets","icon":"smiley","description":"Form Wrapper block for Gutenform.","example":{},"attributes":{"formTitle":{"type":"string","default":""},"mailboxId":{"type":"string","default":"1"},"formId":{"type":"string","default":""},"skin":{"type":"string","default":"default"}},"supports":{"html":false,"align":["wide","full"]},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
 
 /***/ }),
 
@@ -2631,20 +2631,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Edit)
 /* harmony export */ });
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
-/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _components_block_atoms_TemplateSelect__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../components/block-atoms/TemplateSelect */ "./src/components/block-atoms/TemplateSelect/index.tsx");
-/* harmony import */ var _allowedBlocks__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./allowedBlocks */ "./src/blocks/form/allowedBlocks.ts");
-/* harmony import */ var _editor_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./editor.css */ "./src/blocks/form/editor.css");
-/* harmony import */ var _lib_utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../lib/utils */ "./src/lib/utils.ts");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _components_block_atoms_TemplateSelect__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../components/block-atoms/TemplateSelect */ "./src/components/block-atoms/TemplateSelect/index.tsx");
+/* harmony import */ var _allowedBlocks__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./allowedBlocks */ "./src/blocks/form/allowedBlocks.ts");
+/* harmony import */ var _editor_css__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./editor.css */ "./src/blocks/form/editor.css");
+/* harmony import */ var _lib_utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../lib/utils */ "./src/lib/utils.ts");
+/* harmony import */ var _skins__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../skins */ "./src/skins/index.ts");
+/* harmony import */ var _hooks_useMailboxes__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../hooks/useMailboxes */ "./src/hooks/useMailboxes.ts");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__);
 
 
 
@@ -2654,6 +2660,41 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+const MailboxSelect = ({
+  value,
+  onChange
+}) => {
+  const {
+    mailboxes,
+    loading,
+    error
+  } = (0,_hooks_useMailboxes__WEBPACK_IMPORTED_MODULE_11__.useMailboxes)();
+  (0,react__WEBPACK_IMPORTED_MODULE_5__.useEffect)(() => {
+    if (mailboxes.length === 0) return;
+    if (!mailboxes.some(mailbox => mailbox.id === parseInt(value))) {
+      onChange(mailboxes[0].id.toString());
+    }
+  }, [mailboxes, value]);
+  if (loading) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Spinner, {});
+  if (error) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("p", {
+    children: ["Error: ", error.message]
+  });
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.SelectControl, {
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Mailbox', 'gutenform'),
+    value: value,
+    onChange: onChange,
+    options: mailboxes.map(mailbox => ({
+      label: mailbox.title,
+      value: mailbox.id.toString()
+    })),
+    __next40pxDefaultSize: true,
+    __nextHasNoMarginBottom: true
+  });
+};
 function Edit(props) {
   const {
     attributes,
@@ -2667,11 +2708,22 @@ function Edit(props) {
     useSelect
   } = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
   const innerBlockItems = useSelect(select => select('core/block-editor').getBlocks(clientId), [clientId]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.Fragment, {
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0__.InspectorControls, {
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+  (0,react__WEBPACK_IMPORTED_MODULE_5__.useEffect)(() => {
+    if (attributes.formId) return;
+    setAttributes({
+      formId: `gutenform-${clientId}`
+    });
+  }, [clientId]);
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.PanelBody, {
         title: "Form Settings",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(MailboxSelect, {
+          value: attributes.mailboxId,
+          onChange: mailboxId => setAttributes({
+            mailboxId
+          })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.TextControl, {
           label: "Form Title",
           value: attributes.formTitle,
           onChange: formTitle => setAttributes({
@@ -2680,20 +2732,41 @@ function Edit(props) {
           help: "This is the title of the form that will be displayed in the frontend.",
           __next40pxDefaultSize: true,
           __nextHasNoMarginBottom: true
-        })
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.TextControl, {
+          label: "Form Identifier",
+          value: attributes.formId,
+          onChange: formId => setAttributes({
+            formId
+          }),
+          help: "This is the identifier of the form that will be used to identify the form in the database.",
+          __next40pxDefaultSize: true,
+          __nextHasNoMarginBottom: true
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.SelectControl, {
+          label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Skin', 'gutenform'),
+          value: attributes.skin || 'default',
+          onChange: skin => setAttributes({
+            skin
+          }),
+          options: _skins__WEBPACK_IMPORTED_MODULE_10__["default"].map(skin => ({
+            label: skin.label,
+            value: skin.name
+          })),
+          __next40pxDefaultSize: true,
+          __nextHasNoMarginBottom: true
+        })]
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
-      ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0__.useBlockProps)({
-        className: (0,_lib_utils__WEBPACK_IMPORTED_MODULE_7__.getFieldClasses)(attributes)
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
+      ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)({
+        className: (0,_lib_utils__WEBPACK_IMPORTED_MODULE_9__.getFieldClasses)(attributes)
       }),
-      children: innerBlockItems?.length > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0__.InnerBlocks, {
-        allowedBlocks: _allowedBlocks__WEBPACK_IMPORTED_MODULE_5__.allowedBlocks,
-        renderAppender: _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0__.InnerBlocks.ButtonBlockAppender,
+      children: innerBlockItems?.length > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks, {
+        allowedBlocks: _allowedBlocks__WEBPACK_IMPORTED_MODULE_7__.allowedBlocks,
+        renderAppender: _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks.ButtonBlockAppender,
         template: [['core/columns', {}, [['core/column', {}, [['core/heading', {}]]]]]]
-      }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components_block_atoms_TemplateSelect__WEBPACK_IMPORTED_MODULE_4__["default"], {
+      }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_block_atoms_TemplateSelect__WEBPACK_IMPORTED_MODULE_6__["default"], {
         onSelect: template => {
-          const blocks = (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_3__.createBlocksFromInnerBlocksTemplate)(template);
-          (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_1__.dispatch)('core/block-editor').replaceInnerBlocks(clientId, blocks);
+          const blocks = (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_4__.createBlocksFromInnerBlocksTemplate)(template);
+          (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.dispatch)('core/block-editor').replaceInnerBlocks(clientId, blocks);
         }
       })
     })]
@@ -2776,7 +2849,10 @@ __webpack_require__.r(__webpack_exports__);
  */
 function save(props) {
   const options = {
-    formTitle: props.attributes.formTitle
+    formTitle: props.attributes.formTitle,
+    skin: props.attributes.skin || 'default',
+    mailboxId: props.attributes.mailboxId || '1',
+    formId: props.attributes.formId || ''
   };
   const className = (0,_lib_utils__WEBPACK_IMPORTED_MODULE_0__.getFieldClasses)(props.attributes);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("form", {
@@ -2784,6 +2860,7 @@ function save(props) {
       className
     }),
     "data-form-options": JSON.stringify(options),
+    "data-skin": props.attributes.skin || 'default',
     children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks.Content, {})
   });
 }
@@ -2853,6 +2930,279 @@ const SelectBox = ({
 
 /***/ }),
 
+/***/ "./src/hooks/useMailboxes.ts":
+/*!***********************************!*\
+  !*** ./src/hooks/useMailboxes.ts ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   useCreateMailbox: () => (/* binding */ useCreateMailbox),
+/* harmony export */   useDeleteMailbox: () => (/* binding */ useDeleteMailbox),
+/* harmony export */   useMailbox: () => (/* binding */ useMailbox),
+/* harmony export */   useMailboxes: () => (/* binding */ useMailboxes),
+/* harmony export */   useUpdateMailbox: () => (/* binding */ useUpdateMailbox)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _lib_api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../lib/api */ "./src/lib/api.ts");
+
+
+/**
+ * Hook to fetch all mailboxes with filters
+ */
+function useMailboxes(filters) {
+  const [mailboxes, setMailboxes] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const fetchMailboxes = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const params = new URLSearchParams();
+      if (filters?.user_id) params.append('user_id', filters.user_id.toString());
+      if (filters?.is_default !== undefined) params.append('is_default', filters.is_default.toString());
+      const queryString = params.toString();
+      const endpoint = queryString ? `mailboxes/get?${queryString}` : 'mailboxes/get';
+      const response = await (0,_lib_api__WEBPACK_IMPORTED_MODULE_1__.apiGet)(endpoint);
+      if (response.success && response.data) {
+        setMailboxes(response.data);
+      } else {
+        throw new Error(response.message || 'Failed to fetch mailboxes');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+      setMailboxes([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [filters]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    fetchMailboxes();
+  }, [fetchMailboxes]);
+  return {
+    mailboxes,
+    loading,
+    error,
+    refetch: fetchMailboxes
+  };
+}
+
+/**
+ * Hook to fetch a single mailbox
+ */
+function useMailbox(id) {
+  const [mailbox, setMailbox] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const fetchMailbox = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    if (!id) {
+      setMailbox(null);
+      return;
+    }
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await (0,_lib_api__WEBPACK_IMPORTED_MODULE_1__.apiGet)(`mailboxes/get/${id}`);
+      if (response.success && response.data) {
+        setMailbox(response.data);
+      } else {
+        throw new Error(response.message || 'Failed to fetch mailbox');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+      setMailbox(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    fetchMailbox();
+  }, [fetchMailbox]);
+  return {
+    mailbox,
+    loading,
+    error,
+    refetch: fetchMailbox
+  };
+}
+
+/**
+ * Hook to create a mailbox
+ */
+function useCreateMailbox() {
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const createMailbox = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async data => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await (0,_lib_api__WEBPACK_IMPORTED_MODULE_1__.apiPost)('mailboxes/create', data);
+      if (response.success && response.data) {
+        return response.data;
+      } else {
+        throw new Error(response.message || 'Failed to create mailbox');
+      }
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Unknown error');
+      setError(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  return {
+    createMailbox,
+    loading,
+    error
+  };
+}
+
+/**
+ * Hook to update a mailbox
+ */
+function useUpdateMailbox() {
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const updateMailbox = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async data => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await (0,_lib_api__WEBPACK_IMPORTED_MODULE_1__.apiPost)('mailboxes/update', data);
+      if (response.success && response.data) {
+        return response.data;
+      } else {
+        throw new Error(response.message || 'Failed to update mailbox');
+      }
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Unknown error');
+      setError(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  return {
+    updateMailbox,
+    loading,
+    error
+  };
+}
+
+/**
+ * Hook to delete a mailbox
+ */
+function useDeleteMailbox() {
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const deleteMailbox = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async id => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await (0,_lib_api__WEBPACK_IMPORTED_MODULE_1__.apiPost)('mailboxes/delete', {
+        id
+      });
+      if (response.success) {
+        return true;
+      } else {
+        throw new Error(response.message || 'Failed to delete mailbox');
+      }
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Unknown error');
+      setError(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  return {
+    deleteMailbox,
+    loading,
+    error
+  };
+}
+
+/***/ }),
+
+/***/ "./src/lib/api.ts":
+/*!************************!*\
+  !*** ./src/lib/api.ts ***!
+  \************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   apiGet: () => (/* binding */ apiGet),
+/* harmony export */   apiPost: () => (/* binding */ apiPost),
+/* harmony export */   apiRequest: () => (/* binding */ apiRequest),
+/* harmony export */   getApiUrl: () => (/* binding */ getApiUrl)
+/* harmony export */ });
+/**
+ * API utility functions for Gutenform
+ */
+
+const API_BASE_URL = gutenForm?.apiUrl || '';
+const API_NAMESPACE = 'gutenform/v1';
+
+/**
+ * Get the full API URL for an endpoint
+ */
+function getApiUrl(endpoint) {
+  // Remove leading slash if present
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+  return `${API_BASE_URL}${API_NAMESPACE}/${cleanEndpoint}`;
+}
+
+/**
+ * Make an API request
+ */
+async function apiRequest(endpoint, options = {}) {
+  const url = getApiUrl(endpoint);
+  const defaultHeaders = {
+    'Content-Type': 'application/json'
+  };
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      ...defaultHeaders,
+      ...options.headers
+    }
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({
+      message: `HTTP error! status: ${response.status}`
+    }));
+    throw new Error(error.message || `HTTP error! status: ${response.status}`);
+  }
+  return response.json();
+}
+
+/**
+ * GET request
+ */
+async function apiGet(endpoint) {
+  return apiRequest(endpoint, {
+    method: 'GET'
+  });
+}
+
+/**
+ * POST request
+ */
+async function apiPost(endpoint, data) {
+  return apiRequest(endpoint, {
+    method: 'POST',
+    body: data ? JSON.stringify(data) : undefined
+  });
+}
+
+/**
+ * API Response types
+ */
+
+/***/ }),
+
 /***/ "./src/lib/utils.ts":
 /*!**************************!*\
   !*** ./src/lib/utils.ts ***!
@@ -2874,6 +3224,63 @@ function cn(...inputs) {
 const getFieldClasses = attributes => {
   return cn('gutenform-field', attributes.type && `gutenform-field-type--${attributes.type.toLowerCase()}`, attributes.required && 'gutenform-field--required');
 };
+
+/***/ }),
+
+/***/ "./src/skins/default/index.css":
+/*!*************************************!*\
+  !*** ./src/skins/default/index.css ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "./src/skins/default/skin.ts":
+/*!***********************************!*\
+  !*** ./src/skins/default/skin.ts ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _index_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index.css */ "./src/skins/default/index.css");
+/**
+ * Gutenform Default Skin Entry Point
+ * 
+ * This file imports the skin CSS and can be used as an entry point
+ * for building the skin styles separately.
+ */
+
+
+console.log('default skin');
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  label: 'Default',
+  name: 'default',
+  description: 'Default skin for Gutenform.'
+});
+
+/***/ }),
+
+/***/ "./src/skins/index.ts":
+/*!****************************!*\
+  !*** ./src/skins/index.ts ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _default_skin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./default/skin */ "./src/skins/default/skin.ts");
+
+console.log('skins index');
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ([_default_skin__WEBPACK_IMPORTED_MODULE_0__["default"]]);
 
 /***/ }),
 
@@ -2924,6 +3331,16 @@ module.exports = window["wp"]["data"];
 /***/ ((module) => {
 
 module.exports = window["wp"]["i18n"];
+
+/***/ }),
+
+/***/ "react":
+/*!************************!*\
+  !*** external "React" ***!
+  \************************/
+/***/ ((module) => {
+
+module.exports = window["React"];
 
 /***/ }),
 

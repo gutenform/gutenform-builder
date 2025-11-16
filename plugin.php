@@ -1,6 +1,7 @@
 <?php
 
 use Gutenform\Core\Api;
+use Gutenform\Core\Deactivate;
 use Gutenform\Admin\Menu;
 // use Gutenform\Core\Template; // Not needed - using standard WordPress frontend
 use Gutenform\Assets\Frontend;
@@ -50,6 +51,7 @@ final class Gutenform
 		if (is_admin()) {
 			Menu::get_instance()->init();
 			Admin::get_instance()->bootstrap();
+			Deactivate::get_instance()->init();
 		}
 
 		// Initialze core functionalities.

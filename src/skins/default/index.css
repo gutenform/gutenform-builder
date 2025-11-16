@@ -1,6 +1,6 @@
 .wp-block-gutenform-form{
     --field-size: 100%;
-    --field-padding: 1rem;
+    --field-padding: 1rem 1.25rem;
     --field-rounded: 0.5rem;
     --field-border: 1px solid #ccc;
     
@@ -35,23 +35,29 @@
         }
     }
 
+    .gutenform-field--required {
+        label::after {
+            content: ' *';
+            color: var(--field-required-color, #f00);
+        }
+    }
+
     .wp-block-gutenform-submit {
         button {
-            width: var(--field-size);
-            padding-inline: var(--field-padding-inline, 1.75rem);
-            padding-block: var(--field-padding-block, 0.75rem);
-            border-radius: var(--field-rounded, 0.5rem);
-            border: var(--field-border, 1px solid #ccc);
-            font-size: var(--field-font-size, inherit);
+            width: var(--submit-width, var(--field-size));
+            padding: var(--submit-padding, var(--field-padding));
+            border-radius: var(--submit-rounded, var(--field-rounded, 0.5rem));
+            border: var(--submit-border, var(--field-border, 1px solid #ccc));
+            font-size: var(--submit-font-size, var(--field-font-size, inherit));
             font-family: inherit;
-            background-color: var(--field-background-color, #000);
-            color: var(--field-color, #fff);
+            background-color: var(--submit-background-color, var(--field-background-color, #000));
+            color: var(--submit-color, var(--field-color, #fff));
             cursor: pointer;
             transition: background-color 0.3s ease;
 
             &:hover {
-                background-color: var(--field-background-color-hover, #333);
-                color: var(--field-color-hover, #fff);
+                background-color: var(--submit-background-color-hover, var(--field-background-color-hover, #333));
+                color: var(--submit-color-hover, var(--field-color-hover, #fff));
             }
         }
     }

@@ -38,7 +38,7 @@ const distFiles = [
     '!phpcs.xml.dist',
     '!phpunit.xml.dist',
     '!phpstan.neon.dist',
-    '!webpack.config.js',
+    '!webpack.config.cjs',
     '!**/*~',
     '!tests/**',
     '!**/test',

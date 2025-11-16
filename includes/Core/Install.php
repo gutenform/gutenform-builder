@@ -2,15 +2,20 @@
 
 namespace Gutenform\Core;
 
-use Gutenform\Database\Migrations\Accounts;
-use Gutenform\Database\Seeders\Accounts as SeedersAccounts;
+use Gutenform\Database\Migrations\Mailboxes;
+use Gutenform\Database\Migrations\Entries;
+use Gutenform\Database\Migrations\EntryLabels;
+use Gutenform\Database\Migrations\Providers;
+use Gutenform\Database\Seeders\EntryLabelsSeeder as SeedersEntryLabels;
+use Gutenform\Database\Seeders\MailboxesSeeder as SeedersMailboxes;
 use Gutenform\Traits\Base;
 
 /**
  * This class is responsible for the functionality
  * which is required to set up after activating the plugin
  */
-class Install {
+class Install
+{
 
 
 	use Base;
@@ -20,7 +25,8 @@ class Install {
 	 *
 	 * @return void
 	 */
-	public function init() {
+	public function init()
+	{
 
 		// $this->install_pages(); // Not needed - using standard WordPress frontend
 		$this->install_tables();
@@ -33,7 +39,8 @@ class Install {
 	 * @return void
 	 * @deprecated Not needed - using standard WordPress frontend
 	 */
-	private function install_pages() {
+	private function install_pages()
+	{
 		// Frontend page installation removed - using standard WordPress frontend
 	}
 
@@ -42,8 +49,12 @@ class Install {
 	 *
 	 * @return void
 	 */
-	private function install_tables() {
-		Accounts::up();
+	private function install_tables()
+	{
+		Mailboxes::up();
+		Entries::up();
+		EntryLabels::up();
+		Providers::up();
 	}
 
 	/**
@@ -51,8 +62,10 @@ class Install {
 	 *
 	 * @return void
 	 */
-	private function insert_data() {
+	private function insert_data()
+	{
 		// Insert data to the tables.
-		SeedersAccounts::run();
+		SeedersEntryLabels::run();
+		SeedersMailboxes::run();
 	}
 }

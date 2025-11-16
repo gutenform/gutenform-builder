@@ -4,12 +4,10 @@
 /**
  * The following styles get applied both on the front of your site
  * and in the editor.
- *
- * Replace them with your own styles or remove the file completely.
  */
 
 .wp-block-gutenform-form {
-	outline: 1px dotted #f00;
+	/* styles for the form block */
 }
 
 

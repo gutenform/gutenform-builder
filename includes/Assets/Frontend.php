@@ -48,41 +48,137 @@ class Frontend
 	 */
 	public function bootstrap()
 	{
-		// Load skin styles in frontend
-		add_action('wp_enqueue_scripts', array($this, 'enqueue_skin_styles'));
+		// Localize script with assets URL
+		add_action('wp_enqueue_scripts', array($this, 'localize_script'));
 
 		// Load skin styles in block editor
-		add_action('enqueue_block_editor_assets', array($this, 'enqueue_skin_styles'));
-
-		// Load skin styles in admin area
-		add_action('admin_enqueue_scripts', array($this, 'enqueue_skin_styles'));
+		add_action('enqueue_block_editor_assets', array($this, 'enqueue_editor_skin_styles'));
 	}
 
 	/**
-	 * Enqueue skin styles.
+	 * Localize script with assets URL for frontend.
 	 *
 	 * @return void
 	 */
-	public function enqueue_skin_styles()
+	public function localize_script()
 	{
-		$skin = $this->get_active_skin();
+		// Get REST API URL and nonce
+		$api_url = rest_url();
+		$nonce = wp_create_nonce('wp_rest');
 
-		// Only load if skin is 'default' or exists
-		if ($skin === 'default' || file_exists(GF_DIR . "/src/skins/{$skin}/skin.js")) {
-			$skin_entry = $skin === 'default'
-				? self::DEV_SKIN_SCRIPT
-				: "src/skins/{$skin}/skin.js";
+		// Always set the gutenform object inline so it's available before view scripts run
+		$inline_script = sprintf(
+			'window.gutenform = window.gutenform || {}; window.gutenform.assetsUrl = %s; window.gutenform.pluginUrl = %s; window.gutenform.apiUrl = %s; window.gutenform.nonce = %s; window.gutenform.namespace = %s;',
+			wp_json_encode(GF_ASSETS_URL),
+			wp_json_encode(GF_URL),
+			wp_json_encode($api_url),
+			wp_json_encode($nonce),
+			wp_json_encode(GF_ROUTE_PREFIX)
+		);
 
-			Assets\enqueue_asset(
-				GF_DIR . '/assets/admin/dist',
-				$skin_entry,
+		// Try to add inline script to wp-blocks, fallback to wp-util if not available
+		if (wp_script_is('wp-blocks', 'registered')) {
+			wp_add_inline_script(
+				'wp-blocks',
+				$inline_script,
+				'before'
+			);
+		} else {
+			// Fallback: add directly to head
+			add_action('wp_head', function () use ($inline_script) {
+				echo '<script>' . $inline_script . '</script>' . "\n";
+			}, 1);
+		}
+
+		// Enqueue the Entries API class script
+		// Check for built file in assets folder first, fallback to src for development
+		// wp-scripts outputs to assets/blocks, so the file will be at assets/blocks/lib/gutenform-entries.js
+		$entries_script_path = GF_DIR . '/assets/blocks/lib/gutenform-entries.js';
+		if (file_exists($entries_script_path)) {
+			$entries_script_url = GF_ASSETS_URL . '/blocks/lib/gutenform-entries.js';
+		} else {
+			// Fallback to src for development
+			$entries_script_url = GF_URL . '/src/lib/gutenform-entries.js';
+		}
+
+		wp_enqueue_script(
+			'gutenform-entries',
+			$entries_script_url,
+			array(),
+			GF_VERSION,
+			true
+		);
+
+		// Also try to localize the view script if it's registered
+		// WordPress generates handles like: gutenform-form-view-script
+		$view_script_handle = 'gutenform-form-view-script';
+		if (wp_script_is($view_script_handle, 'registered')) {
+			wp_localize_script(
+				$view_script_handle,
+				'gutenform',
 				array(
-					'handle'           => self::SKIN_HANDLE,
-					'css-only'         => true,
-					'css-dependencies' => array(),
-					'css-media'        => 'all',
+					'assetsUrl' => GF_ASSETS_URL,
+					'pluginUrl' => GF_URL,
+					'apiUrl'    => $api_url,
+					'nonce'     => $nonce,
+					'namespace' => GF_ROUTE_PREFIX,
 				)
 			);
+		}
+	}
+
+	/**
+	 * Enqueue skin styles in block editor.
+	 * This loads all available skins for preview in the editor.
+	 *
+	 * @return void
+	 */
+	public function enqueue_editor_skin_styles()
+	{
+		// Get all available skins from assets directory (built skins)
+		$skins_dir = GF_DIR . '/assets/blocks/skins';
+		if (!is_dir($skins_dir)) {
+			// Fallback to src/skins for development
+			$skins_dir = GF_DIR . '/src/skins';
+			if (!is_dir($skins_dir)) {
+				return;
+			}
+		}
+
+		$skin_dirs = scandir($skins_dir);
+
+		foreach ($skin_dirs as $skin_dir) {
+			if ($skin_dir === '.' || $skin_dir === '..') {
+				continue;
+			}
+
+			$skin_path = $skins_dir . '/' . $skin_dir;
+			if (is_dir($skin_path)) {
+				// Check for built CSS file first (assets/skins/{skin}/index.css)
+				$css_file = $skins_dir . '/blocks/skins/' . $skin_dir . '/index.css';
+				$is_built = strpos($skins_dir, 'assets/') !== false;
+
+				if (!file_exists($css_file) && !$is_built) {
+					// Fallback: check src/skins for development
+					$src_css_file = GF_DIR . '/src/skins/' . $skin_dir . '/index.css';
+					if (file_exists($src_css_file)) {
+						$css_file = $src_css_file;
+						$css_url = GF_URL . '/src/skins/' . $skin_dir . '/index.css';
+					} else {
+						continue;
+					}
+				} else {
+					$css_url = GF_ASSETS_URL . '/blocks/skins/' . $skin_dir . '/index.css';
+				}
+
+				$handle = 'gutenform-skin-' . $skin_dir;
+				wp_enqueue_style(
+					$handle,
+					$css_url,
+					array(),
+					GF_VERSION
+				);
+			}
 		}
 	}
 }

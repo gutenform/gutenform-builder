@@ -19,6 +19,7 @@ import { Overview } from "@/components/dashboard/overview"
 import { RecentSales } from "@/components/dashboard/recent-sales"
 import { Search } from "@/components/dashboard/search"
 import TeamSwitcher from "@/components/dashboard/team-switcher"
+import { DemoSeedBanner } from "@/components/dashboard/demo-seed-banner"
 // import { UserNav } from "@/app/examples/dashboard/components/user-nav"
 
 export default function DashboardPage() {
@@ -52,6 +53,7 @@ export default function DashboardPage() {
           </div>
         </div>
         <div className="flex-1 space-y-4 p-8 pt-6">
+          <DemoSeedBanner />
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl dark:text-white font-bold tracking-tight">Dashboard</h2>
             <div className="flex items-center space-x-2">

@@ -288,7 +288,7 @@ And access data on react like this
 
 https://github.com/prappo/gutenform/blob/8d982b63f50beb1dffd43c29bff894814b5e7945/src/frontend/components/application-layout/LayoutOne.jsx#L58
 
-Remember the object `wordpressPluginBoilerplateFrontend` name can be defined here 
+Remember the object `gutenFormFrontend` name can be defined here 
 
 https://github.com/prappo/gutenform/blob/8d982b63f50beb1dffd43c29bff894814b5e7945/includes/Assets/Frontend.php#L30
 

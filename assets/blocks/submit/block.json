@@ -9,6 +9,10 @@
   "description": "Submit button block for Gutenform.",
   "example": {},
   "attributes": {
+    "style": {
+      "type": "object",
+      "default": {}
+    },
     "label": {
       "type": "string",
       "default": "Submit"

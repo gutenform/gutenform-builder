@@ -11,4 +11,5 @@ export const allowedBlocks = [
     'core/table',
     'core/video',
     'core/embed',
+    'core/group',
 ];

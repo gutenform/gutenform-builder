@@ -12,6 +12,18 @@
 		"formTitle": {
 			"type": "string",
 			"default": ""
+		},
+		"mailboxId": {
+			"type": "string",
+			"default": "1"
+		},
+		"formId": {
+			"type": "string",
+			"default": ""
+		},
+		"skin": {
+			"type": "string",
+			"default": "default"
 		}
 	},
 	"supports": {
