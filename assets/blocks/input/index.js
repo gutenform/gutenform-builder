@@ -2650,7 +2650,7 @@ function Edit(props) {
     setAttributes({
       id: `gutenform-input-${clientId}`
     });
-  }, [clientId]);
+  }, [clientId, attributes.id]);
 
   //name -> label sanitize
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
@@ -2735,6 +2735,7 @@ function Edit(props) {
         }),
         placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Enter label', 'gutenform')
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("input", {
+        disabled: true,
         type: attributes.type,
         placeholder: attributes.placeholder,
         name: attributes.name,

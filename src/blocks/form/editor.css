@@ -11,7 +11,7 @@
         }
     }
 
-    .is-layout-grid .gutenform-field.is-selected{
+    .is-layout-grid .gutenform-field{
         padding-block: 0.75rem;
         padding-inline: 2px;
     }

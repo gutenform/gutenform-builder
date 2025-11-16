@@ -110,7 +110,7 @@ class Actions
 				$label_ids = explode(',', $request->get_param('labels'));
 				$label_ids = array_map('trim', $label_ids);
 				$label_ids = array_filter($label_ids, 'is_numeric');
-				
+
 				if (!empty($label_ids)) {
 					$query->whereHas('labels', function ($q) use ($label_ids) {
 						$q->whereIn('id', $label_ids);
@@ -230,6 +230,14 @@ class Actions
 			}
 			if ($request->has_param('is_read')) {
 				$entry->is_read = $request->get_param('is_read');
+			}
+
+			if ($request->has_param('status')) {
+				$entry->status = $request->get_param('status');
+			}
+
+			if ($request->has_param('labels')) {
+				$entry->labels()->sync($request->get_param('labels'));
 			}
 
 			$entry->save();
@@ -374,9 +382,17 @@ class Actions
 	public function get_statuses(\WP_REST_Request $request)
 	{
 		try {
+			$mailbox_id = $request->get_param('mailbox_id');
+
 			$query = Entries::selectRaw('status, COUNT(*) as count')
 				->whereNotNull('status')
-				->where('status', '!=', '')
+				->where('status', '!=', '');
+
+			if (!empty($mailbox_id)) {
+				$query = $query->where('mailbox_id', $mailbox_id);
+			}
+
+			$query = $query
 				->groupBy('status')
 				->orderBy('count', 'DESC')
 				->get();

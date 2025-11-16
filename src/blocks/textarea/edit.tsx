@@ -74,7 +74,7 @@ export default function Edit(props: BlockEditProps<TextareaAttributes>) {
 					onChange={(label) => setAttributes({ label })}
 					placeholder={__('Enter label', 'gutenform')}
 				/>
-				<textarea rows={attributes.rows} placeholder={attributes.placeholder} name={attributes.name} id={attributes.id} required={attributes.required} defaultValue={attributes.defaultValue} />
+				<textarea disabled rows={attributes.rows} placeholder={attributes.placeholder} name={attributes.name} id={attributes.id} required={attributes.required} defaultValue={attributes.defaultValue} />
 				<RichText
 					tagName="p"
 					value={attributes.help}

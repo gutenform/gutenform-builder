@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-import { Mail } from "@/admin/pages/inbox/data"
 import { useMail } from "@/admin/pages/inbox/use-mail"
+import { Mail as MailType } from "@/components/inbox/mail-display"
 
 interface MailListProps {
-  items: Mail[]
+  items: MailType[]
 }
 
 export function MailList({ items }: MailListProps) {
@@ -61,8 +61,8 @@ export function MailList({ items }: MailListProps) {
             {item.labels.length ? (
               <div className="flex items-center gap-2">
                 {item.labels.map((label) => (
-                  <Badge key={label} variant={getBadgeVariantFromLabel(label)}>
-                    {label}
+                  <Badge key={label} variant="default" style={{ backgroundColor: label.color }}>
+                    {label.name}
                   </Badge>
                 ))}
               </div>
@@ -72,18 +72,4 @@ export function MailList({ items }: MailListProps) {
       </div>
     </ScrollArea>
   )
-}
-
-function getBadgeVariantFromLabel(
-  label: string
-): ComponentProps<typeof Badge>["variant"] {
-  if (["work"].includes(label.toLowerCase())) {
-    return "default"
-  }
-
-  if (["personal"].includes(label.toLowerCase())) {
-    return "outline"
-  }
-
-  return "secondary"
 }

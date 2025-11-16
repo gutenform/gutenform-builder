@@ -2719,6 +2719,7 @@ function Edit(props) {
         }),
         placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Enter label', 'gutenform')
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("textarea", {
+        disabled: true,
         rows: attributes.rows,
         placeholder: attributes.placeholder,
         name: attributes.name,

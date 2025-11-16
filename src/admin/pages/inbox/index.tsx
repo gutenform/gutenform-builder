@@ -4,6 +4,7 @@ import { File, Inbox, ArchiveX, Trash2, Archive } from "lucide-react";
 import { useStore } from "@nanostores/react";
 import { $inboxFilters, setInboxFilters } from "./stores";
 import { NavLink } from "@/components/inbox/nav";
+import { useEffect } from "react";
 
 const getStatusCount = (statuses: StatusCount[], status: string = 'new') => {
   return statuses.find((s) => s.status === status)?.count || 0;
@@ -11,12 +12,21 @@ const getStatusCount = (statuses: StatusCount[], status: string = 'new') => {
 
 export default function MailPage() {
   const filter = useStore($inboxFilters);
-  const { entries, loading, error, total } = useEntries(filter);
-  const { formIdentifiers } = useFormIdentifiers();
-  const {statuses} = useStatuses(); 
-  const { labels } = useEntryLabels();
+  const { entries, refetch: refetchEntries } = useEntries();
+  const { formIdentifiers, refetch: refetchFormIdentifiers } = useFormIdentifiers();
+  const {statuses, refetch: refetchStatuses} = useStatuses(); 
+  const { labels, refetch: refetchLabels } = useEntryLabels();
 
-  console.log(labels);
+  //refresh every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      refetchEntries();
+      refetchFormIdentifiers();
+      refetchStatuses();
+      refetchLabels();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   /* @ts-ignore */
   const makeDataToReadableString = (data) => {
@@ -32,11 +42,12 @@ export default function MailPage() {
     return {
       date: new Date(entry.date_created).toDateString(),
       read: entry.is_read,
-      labels: entry.labels?.map((label) => label.name) || [],
-      id: entry.id.toString(),
+      labels: entry.labels || [],
+      id: entry.id,
       name: entry.data?.name || '',
       email: entry.data?.email || '',
       subject: entry.data?.subject || '',
+      status: entry.status || 'inbox',
       text: makeDataToReadableString(entry.data),
     }
   }) || [];
@@ -75,15 +86,6 @@ export default function MailPage() {
       },
     },
     {
-      title: "Drafts",
-      label: getStatusCount(statuses, 'draft').toString(),
-      icon: File,
-      variant: filter.status === 'draft' ? "default" : "ghost",
-      onClick: () => {
-        setStatus('draft');
-      },
-    },
-    {
       title: "Junk",
       label: getStatusCount(statuses, 'junk').toString(),
       icon: ArchiveX,
@@ -93,21 +95,21 @@ export default function MailPage() {
       },
     },
     {
-      title: "Trash",
-      label: getStatusCount(statuses, 'trash').toString(),
-      icon: Trash2,
-      variant: filter.status === 'trash' ? "default" : "ghost",
-      onClick: () => {
-        setStatus('trash');
-      },
-    },
-    {
       title: "Archive",
       label: getStatusCount(statuses, 'archive').toString(),
       icon: Archive,
       variant: filter.status === 'archive' ? "default" : "ghost",
       onClick: () => {
         setStatus('archive');
+      },
+    },
+    {
+      title: "Trash",
+      label: getStatusCount(statuses, 'trash').toString(),
+      icon: Trash2,
+      variant: filter.status === 'trash' ? "default" : "ghost",
+      onClick: () => {
+        setStatus('trash');
       },
     },
   ]
@@ -132,8 +134,6 @@ export default function MailPage() {
     <>
      
       <div className="hidden dark:bg-gray-900 flex-col md:flex">
-        {loading && <div>Loading...</div>}
-        {error && <div dangerouslySetInnerHTML={{ __html: error.message }} />}
         <MailComp
           defaultNavLinks={defaultNavLinks}
           additionalNavLinks={additionalNavLinks}

@@ -2607,7 +2607,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   allowedBlocks: () => (/* binding */ allowedBlocks)
 /* harmony export */ });
-const allowedBlocks = ['gutenform/input', 'core/columns', 'core/column', 'core/heading', 'core/paragraph', 'core/image', 'core/list', 'core/list-item', 'core/quote', 'core/table', 'core/video', 'core/embed', 'core/group'];
+const allowedBlocks = ['gutenform/input', 'gutenform/textarea', 'gutenform/submit', 'core/columns', 'core/column', 'core/heading', 'core/paragraph', 'core/image', 'core/list', 'core/list-item', 'core/quote', 'core/table', 'core/video', 'core/embed', 'core/group'];
 
 /***/ }),
 

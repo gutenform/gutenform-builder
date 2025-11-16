@@ -9,7 +9,7 @@ import { AccountSwitcher } from "@/components/inbox/account-switcher"
 import { MailDisplay } from "@/components/inbox/mail-display"
 import { MailList } from "@/components/inbox/mail-list"
 import { Nav } from "@/components/inbox/nav"
-import { Mail } from "@/admin/pages/inbox/data"
+import { Mail as MailType } from "@/components/inbox/mail-display"
 import { useMail } from "@/admin/pages/inbox/use-mail"
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
@@ -30,7 +30,7 @@ type NavLink = {
   onClick: () => void
 }
 interface MailProps {
-  mails: Mail[]
+  mails: MailType[]
   defaultNavLinks: NavLink[]
   additionalNavLinks: NavLink[]
   labelNavLinks: NavLink[]

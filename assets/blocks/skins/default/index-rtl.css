@@ -12,6 +12,7 @@
     }
 
     input, textarea, select {
+        display: block;
         width: var(--field-size);
         padding: var(--field-padding);
         border-radius: var(--field-rounded);
@@ -35,6 +36,10 @@
             margin-top: var(--field-help-margin-top, 0.5rem);
             opacity: var(--field-help-opacity, 0.8);
             margin-bottom: 0;
+
+            &:empty {
+                display: none;
+            }
         }
     }
 

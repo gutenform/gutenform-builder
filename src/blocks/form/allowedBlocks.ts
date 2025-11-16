@@ -1,5 +1,7 @@
 export const allowedBlocks = [
 	'gutenform/input',
+    'gutenform/textarea',
+    'gutenform/submit',
     'core/columns',
     'core/column',
     'core/heading',

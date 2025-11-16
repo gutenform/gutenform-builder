@@ -1,20 +1,30 @@
 import { Separator } from "@/components/ui/separator"
-import { ProfileForm } from "@/admin/pages/settings/profile-form"
+import { GeneralForm } from "@/admin/pages/settings/general-form"
 import SettingsLayout from "@/admin/pages/settings/layout"
+import { Outlet, useLocation } from "react-router-dom"
 
 export default function Settings() {
+  const location = useLocation()
+  
+  // Check if we have nested routes (mailboxes, providers, or labels)
+  const hasNestedRoute = location.pathname.includes("/mailboxes") || location.pathname.includes("/providers") || location.pathname.includes("/labels")
+  
   return (
     <SettingsLayout>
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium">Profile</h3>
-        <p className="text-sm text-muted-foreground">
-          This is how others will see you on the site.
-        </p>
-      </div>
-      <Separator />
-      <ProfileForm />
-    </div>
+      {hasNestedRoute ? (
+        <Outlet />
+      ) : (
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-medium">General Settings</h3>
+            <p className="text-sm text-muted-foreground">
+              Manage your general plugin settings and preferences.
+            </p>
+          </div>
+          <Separator />
+          <GeneralForm />
+        </div>
+      )}
     </SettingsLayout>
   )
 }

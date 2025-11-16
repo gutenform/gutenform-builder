@@ -14,7 +14,7 @@ export default function Edit(props: BlockEditProps<InputAttributes>) {
 	useEffect(() => {
 		if (attributes.id) return;
 		setAttributes({ id: `gutenform-input-${clientId}` });
-	}, [clientId]);
+	}, [clientId, attributes.id]);
 
 	//name -> label sanitize
 	useEffect(() => {
@@ -79,7 +79,7 @@ export default function Edit(props: BlockEditProps<InputAttributes>) {
 					onChange={(label) => setAttributes({ label })}
 					placeholder={__('Enter label', 'gutenform')}
 				/>
-				<input type={attributes.type} placeholder={attributes.placeholder} name={attributes.name} id={attributes.id} required={attributes.required} defaultValue={attributes.defaultValue} />
+				<input disabled type={attributes.type} placeholder={attributes.placeholder} name={attributes.name} id={attributes.id} required={attributes.required} defaultValue={attributes.defaultValue} />
 				<RichText
 					tagName="p"
 					value={attributes.help}

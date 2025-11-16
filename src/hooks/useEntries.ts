@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiGet, apiPost, ApiResponse } from '@/lib/api';
-import { InboxFilters } from '@/admin/pages/inbox/stores';
+import { $inboxFilters, InboxFilters } from '@/admin/pages/inbox/stores';
+import { useStore } from '@nanostores/react';
 
 export interface EntryLabel {
   id: number;
@@ -20,6 +21,7 @@ export interface Entry {
   is_read: boolean;
   date_created: string;
   labels?: EntryLabel[];
+  status?: string;
 }
 
 export interface CreateEntryData {
@@ -29,6 +31,7 @@ export interface CreateEntryData {
   data: Record<string, any>;
   ip_address?: string;
   is_read?: boolean;
+  status?: string;
 }
 
 export interface UpdateEntryData {
@@ -39,20 +42,24 @@ export interface UpdateEntryData {
   data?: Record<string, any>;
   ip_address?: string;
   is_read?: boolean;
+  status?: string;
+  labels?: number[];
 }
 
 /**
  * Hook to fetch all entries with filters
  */
-export function useEntries(filters?: InboxFilters) {
+export function useEntries(inboxFilters?: (InboxFilters | undefined)) {
+  const defaultFilters = useStore($inboxFilters);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(filters?.page || 1);
-  const [perPage, setPerPage] = useState(filters?.per_page || 10);
+  const [page, setPage] = useState(inboxFilters?.page || 1);
+  const [perPage, setPerPage] = useState(inboxFilters?.per_page || 10);
 
   const fetchEntries = useCallback(async () => {
+    const filters = $inboxFilters.get();
     try {
       setLoading(true);
       setError(null);
@@ -81,11 +88,11 @@ export function useEntries(filters?: InboxFilters) {
     } finally {
       setLoading(false);
     }
-  }, [JSON.stringify(filters), page, perPage]);
+  }, [JSON.stringify(defaultFilters), page, perPage]);
 
   useEffect(() => {
     fetchEntries();
-  }, [JSON.stringify(filters), page, perPage]);
+  }, [JSON.stringify(defaultFilters), page, perPage]);
 
   return {
     entries,
@@ -193,6 +200,8 @@ export function useUpdateEntry() {
       setError(null);
 
       const response = await apiPost<ApiResponse<Entry>>('entries/update', data);
+
+      console.log('response', response);
       
       if (response.success && response.data) {
         return response.data;
@@ -342,16 +351,18 @@ export interface StatusCount {
  * Hook to fetch all unique statuses with their entry counts
  */
 export function useStatuses() {
+  const defaultFilters = useStore($inboxFilters);
   const [statuses, setStatuses] = useState<StatusCount[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchStatuses = useCallback(async () => {
     try {
+      const filters = $inboxFilters.get();
       setLoading(true);
       setError(null);
 
-      const response = await apiGet<ApiResponse<StatusCount[]>>('entries/statuses');
+      const response = await apiGet<ApiResponse<StatusCount[]>>(`entries/statuses?mailbox_id=${filters.mailbox_id}`);
       
       if (response.success && response.data) {
         setStatuses(response.data);
@@ -364,11 +375,11 @@ export function useStatuses() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [defaultFilters.mailbox_id]);
 
   useEffect(() => {
     fetchStatuses();
-  }, [fetchStatuses]);
+  }, [defaultFilters.mailbox_id]);
 
   return {
     statuses,

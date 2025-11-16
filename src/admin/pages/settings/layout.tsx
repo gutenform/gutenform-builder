@@ -1,30 +1,22 @@
-
-
 import { Separator } from "@/components/ui/separator"
 import { SidebarNav } from "@/components/settings/sidebar-nav"
 
-
-
 const sidebarNavItems = [
   {
-    title: "Profile",
+    title: "General",
     href: "#/settings",
   },
   {
-    title: "Account",
-    href: "#/account",
+    title: "Mailboxes",
+    href: "#/settings/mailboxes",
   },
   {
-    title: "Appearance",
-    href: "#/appearance",
+    title: "Providers",
+    href: "#/settings/providers",
   },
   {
-    title: "Notifications",
-    href: "#/notifications",
-  },
-  {
-    title: "Display",
-    href: "#/display",
+    title: "Labels",
+    href: "#/settings/labels",
   },
 ]
 
