@@ -18,14 +18,14 @@ export function MailList({ items }: MailListProps) {
     <ScrollArea className="h-screen">
       <div className="flex flex-col gap-2 p-4 pt-0">
         {items.map((item) => (
-          <MailItem key={item.id} item={item} isSelected={mail.selected === item.id.toString()} setMail={setMail} />
+          <MailItem key={item.id} item={item} mail={mail} isSelected={mail.selected === item.id.toString()} setMail={setMail} />
         ))}
       </div>
     </ScrollArea>
   )
 }
 
-const MailItem = ({ item, isSelected, setMail }: { item: MailType, isSelected: boolean, setMail: (mail: MailType) => void }) => {
+const MailItem = ({ item, mail, isSelected, setMail }: { item: MailType, mail: MailType, isSelected: boolean, setMail: (mail: MailType) => void }) => {
   //fix the date to be in the correct timezone
   const date = new Date(item.date);
   date.setHours(date.getHours() + 1);
