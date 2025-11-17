@@ -42,7 +42,7 @@ class Entries extends Model
      *
      * @var bool
      */
-    public $timestamps = false;
+    public $timestamps = true;
 
     /**
      * The attributes that are mass assignable.
@@ -68,8 +68,29 @@ class Entries extends Model
     protected $casts = array(
         'data'        => 'array',
         'is_read'     => 'boolean',
-        'date_created' => 'datetime',
+        //'date_created' => 'datetime',
     );
+
+    /**
+     * The storage format of the model's date fields.
+     *
+     * @var string
+     */
+    protected $dateFormat = 'Y-m-d H:i:s';
+
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param  mixed  $date
+     * @return string
+     */
+    protected function serializeDate($date)
+    {
+        if ($date instanceof \DateTimeInterface) {
+            return $date->format('Y-m-d H:i:s');
+        }
+        return $date;
+    }
 
     /**
      * Get the mailbox that owns the entry.

@@ -40,7 +40,7 @@ export default function MailPage() {
 
   const entriesListing = entries?.map((entry) => {
     return {
-      date: new Date(entry.date_created).toDateString(),
+      date: entry.date_created,
       read: entry.is_read,
       labels: entry.labels || [],
       id: entry.id,

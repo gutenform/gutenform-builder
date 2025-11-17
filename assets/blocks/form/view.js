@@ -24,7 +24,6 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-metadata/#view-script
  */
 
-const win = window;
 window.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelectorAll('.wp-block-gutenform-form');
   form.forEach(form => {
@@ -53,11 +52,11 @@ window.addEventListener('DOMContentLoaded', () => {
       const formData = new FormData(form);
       const data = Object.fromEntries(formData);
       console.log(data);
-      if (!win.gutenform?.Entries) {
+      if (!window.gutenform?.Entries) {
         console.error('Entries API not found');
         return;
       }
-      win.gutenform?.Entries.create({
+      window.gutenform?.Entries.create({
         mailbox_id: mailboxId,
         form_identifier: formIdentifier,
         data
@@ -80,7 +79,8 @@ function loadSkinCSS(skinName) {
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   // Load from assets/skins (built skins)
-  const assetsUrl = win.gutenform?.assetsUrl || '';
+  // @ts-expect-error - assetsUrl is not defined in the window object
+  const assetsUrl = window.gutenform?.assetsUrl || '';
   link.href = `${assetsUrl}/blocks/skins/${skinName}/index.css`;
   link.setAttribute('data-gutenform-skin', skinName);
   document.head.appendChild(link);
