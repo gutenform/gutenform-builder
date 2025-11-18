@@ -44,6 +44,9 @@ class Entries extends Model
      */
     public $timestamps = true;
 
+    const CREATED_AT = 'date_created';
+    const UPDATED_AT = null;
+
     /**
      * The attributes that are mass assignable.
      *
