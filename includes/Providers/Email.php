@@ -169,7 +169,7 @@ class Email extends AbstractProvider
             array(
                 'name'        => 'from_email',
                 'label'       => __('Absender E-Mail', 'gutenform'),
-                'type'        => 'email',
+                'type'        => 'text',
                 'required'    => false,
                 'default'     => get_option('admin_email'),
                 'description' => __('E-Mail-Adresse des Absenders.', 'gutenform'),

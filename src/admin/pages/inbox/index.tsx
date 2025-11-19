@@ -134,7 +134,7 @@ export default function MailPage() {
   return (
     <>
      
-      <div className="hidden dark:bg-gray-900 flex-col md:flex">
+      <div className="hidden dark:bg-gray-900 flex-col md:flex h-full">
         <MailComp
           defaultNavLinks={defaultNavLinks}
           additionalNavLinks={additionalNavLinks}

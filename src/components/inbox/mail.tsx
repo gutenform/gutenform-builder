@@ -60,7 +60,7 @@ export function MailComp({
             sizes
           )}`
         }}
-        className="h-full max-h-[800px] items-stretch"
+        className="h-full items-stretch"
       >
         <ResizablePanel
           defaultSize={defaultLayout[0]}
@@ -68,6 +68,7 @@ export function MailComp({
           collapsible={true}
           minSize={15}
           maxSize={20}
+          className="h-full overflow-y-auto"
           onCollapse={(collapsed: boolean) => {
             setIsCollapsed(collapsed)
             document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
@@ -96,7 +97,8 @@ export function MailComp({
           />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={defaultLayout[1]} minSize={30}>
+        <ResizablePanel defaultSize={defaultLayout[1]} minSize={30} className="h-full overflow-y-auto"
+        >
           <Tabs defaultValue="all">
             <div className="flex items-center px-4 py-1.5">
               <h1 className="text-xl dark:text-white font-bold">Inbox</h1>

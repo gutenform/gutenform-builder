@@ -31,13 +31,13 @@ const navigation = [
         name: "Dashboard",
         href: "dashboard",
         icon: Home,
-        current: true,
+        current: false,
     },
     {
         name: "Inbox",
         href: "inbox",
         icon: Mail,
-        current: false,
+        current: true,
     },
 
     {
@@ -71,7 +71,7 @@ export default function LayoutOne() {
       }, []);
 
     return (
-        <div className={`grid min-h-screen w-full ${showApplicationLayout ? 'md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]' : ''}`}>
+        <div className={`grid w-full ${showApplicationLayout ? 'md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]' : 'grid-cols-1 h-full'}`}>
             {showApplicationLayout && <div className="hidden border-r bg-muted/40 md:block">
                 <div className="flex h-full max-h-screen flex-col gap-2">
                     <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
@@ -108,7 +108,7 @@ export default function LayoutOne() {
                 </div>
             </div>
             }
-            <div className="flex flex-col">
+            <div className="flex flex-col" style={{ height: 'calc(100vh - 32px)', overflow: 'hidden' }}>
                 {showApplicationLayout && 
                 <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
                     <Sheet>
@@ -176,7 +176,7 @@ export default function LayoutOne() {
                     </DropdownMenu>
                 </header>
                 }
-                <main>
+                <main className="h-full">
                     <Outlet />
                 </main>
             </div>
