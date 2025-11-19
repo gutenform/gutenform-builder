@@ -1,402 +1,266 @@
-# WordPress Plugin Boilerplate
-Create your WordPress plugin in weeks, not months. Rapidly prototype and deliver your plugin with confidence!
-This boilerplate has a built-in marketing site and documentation setup that you can use to showcase your plugin.
-## Preview
+<div align="center">
+  <img src="readme-assets/logo-color.svg" alt="Gutenform Logo" width="400">
+</div>
 
-<a href='https://prappo.github.io/gutenform/preview' target="_blank"><img alt='Wordpress' src='https://img.shields.io/badge/Live_Preview-100000?style=for-the-badge&logo=Wordpress&logoColor=white&labelColor=21759B&color=21759B'/></a>
+# Gutenform
 
-## Screenshots
+A modern WordPress form builder plugin built with Gutenberg blocks. Create beautiful, responsive forms directly in the WordPress block editor and manage all submissions through an intuitive inbox interface.
 
-<table>
- 
-  <tr>
-  <td><img src="documentation/public/artworks/images/chart.png" /></td>
-  <td><img src="documentation/public/artworks/images/dashboard-light.png" /></td>
-  </tr>
-  <tr>
-    <td><img src="documentation/public/artworks/images/inbox-light.png" /></td>
-    <td><img src="documentation/public/artworks/images/settings-light.png" /></td>
-    
-  </tr>
-  
-</table>
+## Features
 
-## ☕️ Buy me a coffee
+### 🎨 Gutenberg Block-Based Forms
+- **Form Block**: Create form containers with customizable settings
+- **Input Block**: Text, email, and other input field types
+- **Textarea Block**: Multi-line text input fields
+- **Submit Block**: Customizable submit buttons
+- **Customizable Skins**: Style your forms with different visual themes
 
-Whether you use this project, have learned something from it, or just like it, please consider supporting it by buying
-me a coffee, so I can dedicate more time on open-source projects like this :)
+### 📬 Submission Management
+- **Inbox Interface**: Gmail-like inbox for managing form submissions
+- **Entry Labels**: Organize submissions with custom color-coded labels
+- **Status Management**: Track submissions with statuses (Inbox, Junk, Archive, Trash)
+- **Form Filtering**: Filter submissions by form identifier
+- **Real-time Updates**: Auto-refresh inbox every 5 seconds
 
-<a href="https://buymeacoffee.com/prappo" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+### 🔌 Provider System
+- **Extensible Architecture**: Plugin-based provider system for handling form submissions
+- **Built-in Providers**:
+  - **Email Provider**: Send form submissions via email
+  - **Database Provider**: Store submissions in the database
+- **Custom Providers**: Easily extend with your own providers using WordPress filters
 
-## Install using CLI tool
+### 🎯 Additional Features
+- **Mailboxes**: Organize forms into different mailboxes
+- **Entry Labels**: Color-coded labels for better organization
+- **Dashboard**: Overview of form statistics and activity
+- **Settings**: Comprehensive settings panel for configuration
+- **Modern Admin UI**: Built with React, TypeScript, and Tailwind CSS
 
-Install [PlugKit](https://github.com/prappo/plugkit). You can find the installation instructions from here [https://github.com/prappo/plugkit](https://github.com/prappo/plugkit)
+## Requirements
 
-To create a new WordPress plugin boilerplate.
+- WordPress 5.9 or higher
+- PHP 7.2 or higher
+- Node.js and npm (for development)
 
+## Installation
+
+### From Source
+
+1. Clone the repository:
 ```bash
-plugkit create my-plugin
-```
-https://github.com/user-attachments/assets/39ab761e-ca40-4613-a88c-40620a1b2523
-
-Or you can follow the manual installation process.
-<details>
-<summary><strong>Manual installation</strong></summary>
-
-## Get Started
-The plugin consists of two main components: the frontend, built with React, and the backend, which communicates via an API.
-
-To get started, you need to clone the repository and install the dependencies. Then you can rename the plugin and start development. It's that simple!
-
-<img width="100%" src="documentation/public/artworks/plugin-dev-process.svg" />
-
-## Clone the repository
-```bash
-git clone https://github.com/prappo/gutenform.git
+git clone https://github.com/yourusername/gutenform.git
 ```
 
-## Install dependencies
+2. Install dependencies:
 ```bash
 npm install
 composer install
 ```
-## Plugin renaming
 
-You can easly rename the plugin by changing data in `plugin-config.json` file.
-
-```json
-{
-    "plugin_name":"WordPress Plugin Boilerplate",
-    "plugin_description":"A boilerplate for WordPress plugins.",
-    "plugin_version":"1.0.0",
-    "plugin_file_name":"gutenform.php",
-    "author_name":"Prappo",
-    "author_uri":"https://prappo.github.io",
-    "text_domain":"gutenform",
-    "domain_path":"/languages",
-    "main_class_name":"WordPressPluginBoilerplate",
-    "main_function_name":"wordpress_plugin_boilerplate_init",
-    "namespace":"WordPressPluginBoilerplate",
-    "plugin_prefix":"wpb",
-    "constant_prefix":"WPB"
-}
+3. Build the plugin:
+```bash
+npm run build
 ```
 
-Then run the following command to rename the plugin
+4. Copy the plugin folder to your WordPress `wp-content/plugins/` directory
+
+5. Activate the plugin through the WordPress admin panel
+
+## Usage
+
+### Creating a Form
+
+1. In the WordPress block editor, search for "Form" in the block inserter
+2. Add the Form block to your page
+3. Configure the form settings:
+   - **Form Title**: Set a title for your form
+   - **Form ID**: Unique identifier for the form
+   - **Mailbox**: Select which mailbox should receive submissions
+   - **Providers**: Choose how submissions should be handled (Email, Database, or both)
+   - **Skin**: Select a visual style for your form
+
+4. Add form fields:
+   - Add **Input** blocks for text, email, and other input types
+   - Add **Textarea** blocks for multi-line text
+   - Add a **Submit** block to complete your form
+
+### Managing Submissions
+
+1. Navigate to **Gutenform > Inbox** in the WordPress admin
+2. View all form submissions in the inbox interface
+3. Use filters to:
+   - Filter by form identifier
+   - Filter by status (Inbox, Junk, Archive, Trash)
+   - Filter by labels
+4. Click on any submission to view full details
+5. Organize submissions with labels and status changes
+
+### Configuring Providers
+
+1. Go to **Gutenform > Settings > Providers**
+2. Configure your Email provider settings
+3. Configure your Database provider settings
+4. Enable or disable providers as needed
+
+### Managing Mailboxes
+
+1. Navigate to **Gutenform > Settings > Mailboxes**
+2. Create and manage mailboxes for organizing forms
+3. Assign forms to specific mailboxes
+
+### Managing Labels
+
+1. Go to **Gutenform > Settings > Labels**
+2. Create custom labels with colors
+3. Apply labels to submissions for better organization
+
+## Development
+
+### Setup
 
 ```bash
-npm run rename
+# Install dependencies
+npm install
+composer install
 ```
-</details>
 
-## Add Shadcn UI
+### Development Commands
 
 ```bash
-npx shadcn@latest add accordion
-```
-It will install the component in `src/components` folder.
+# Start development servers (admin and frontend)
+npm run dev
 
+# Start admin development server only
+npm run dev:admin
 
-## Structure
+# Start frontend development server only
+npm run dev:frontend
 
-<details open>
-  <summary><strong>📂 gutenform</strong></summary>
-  <ul>
-    <li>
-    <details>
-    <summary><strong>📂 config</strong></summary>
-    <summary>
-      <ul>
-        <li><summary><strong>📄 plugin.php</strong></summary></li>
-      </ul>
-    </summary>
-    </details>
-    </li>
-    <li>
-    <details>
-    <summary><strong>📂 database</strong></summary>
-    <summary>
-      <ul>
-        <li>
-        <details>
-        <summary><strong>📂 Migrations</strong></summary>
-        <ul>
-          <li><summary><strong>📄 create_posts_table.php</strong></summary></li>
-          <li><summary><strong>📄 create_users_table.php</strong></summary></li>
-        </ul>
-        </details>
-        </li>
-        <li>
-        <details>
-        <summary><strong>📂 Seeders</strong></summary>
-        <ul>
-          <li><summary><strong>📄 PostSeeder.php</strong></summary></li>
-          <li><summary><strong>📄 UserSeeder.php</strong></summary></li>
-        </ul>
-        </details>
-        </li>
-      </ul>
-    </summary>
-    </details>
-    </li>
-    <li><details>
-    <summary><strong>📂 includes</strong></summary>
-    <ul>
-      <li><summary><strong>📂 Admin</strong></summary></li>
-      <li><summary><strong>📂 Controllers</strong></summary></li>
-      <li><summary><strong>📂 Core</strong></summary></li>
-      <li><summary><strong>📂 Frontend</strong></summary></li>
-      <li><summary><strong>📂 Interfaces</strong></summary></li>
-      <li><summary><strong>📂 Models</strong></summary></li>
-      <li><summary><strong>📂 Routes</strong></summary></li>
-      <li><summary><strong>📂 Traits</strong></summary></li>
-      <li><summary><strong>📄 functions.php</strong></summary></li>
-    </ul>
-    </details>
-    </li>
-    <li><details>
-    <summary><strong>📂 src</strong></summary>
-    <ul>
-      <li><summary><strong>📂 admin</strong></summary></li>
-      <li><summary><strong>📂 frontend</strong></summary></li>
-      <li><summary><strong>📂 components</strong></summary></li>
-      <li><summary><strong>📂 lib</strong></summary></li>
-      <li><summary><strong>📂 blocks</strong></summary></li>
-    </ul>
-    </details>
-    </li>
-    <li><summary><strong>📂 libs</strong></summary></li>
-    <li><summary><strong>📂 views</strong></summary></li>
-    <li><summary><strong>📂 vendor</strong></summary></li>
-    <li><summary><strong> 📄 plugin.php</strong></summary></li>
-    <li><summary><strong> 📄 uninstall.php</strong></summary></li>
-    <li><summary><strong> 📄 gutenform.php</strong></summary></li>
-  </ul>
-</details>
+# Start development with WordPress server
+npm run dev:server
 
-### API Route
+# Build blocks for development
+npm run block:start
 
-Add your API route in `includes/Routes/Api.php`
+# Build blocks for production
+npm run block:build
 
-```php
-Route::get( $prefix, $endpoint, $callback, $auth = false );
-Route::post( $prefix, $endpoint, $callback, $auth = false );
-
-// Route grouping.
-Route::prefix( $prefix, function( Route $route ) {
-    $route->get( $endpoint, $callback, $auth = false );
-    $route->post( $endpoint, $callback, $auth = false );
-});
-
-// Authentication.
-Route::prefix( $prefix, function( Route $route ) 
-    $route->post( $endpoint, $callback, $auth = false );
-})->auth( 'AuthController@check' );
-```
-#### API Example
-```php
-// Get All posts
-$route->get( '/posts/get', '\WordPressPluginBoilerplate\Controllers\Posts\Actions@get_all_posts' );
-
-// Get Single Posts
-$route->get( '/posts/get/{id}', '\WordPressPluginBoilerplate\Controllers\Posts\Actions@get_post' );
+# Build for production
+npm run build
 ```
 
-## ORM ( Object Relational Mapping )
+### Project Structure
 
-If you are familiar with Laravel, you will find this ORM very familiar. It is a simple and easy-to-use ORM for WordPress.
+```
+gutenform/
+├── assets/              # Built assets (generated)
+├── config/             # Plugin configuration
+├── database/           # Database migrations and seeders
+│   ├── Migrations/     # Database schema changes
+│   └── Seeders/        # Database seeding files
+├── includes/           # Core PHP classes
+│   ├── Admin/          # Admin functionality
+│   ├── Assets/         # Asset management
+│   ├── Controllers/    # Business logic controllers
+│   ├── Core/           # Core plugin functionality
+│   ├── Models/         # Data models (Entries, Mailboxes, Providers, etc.)
+│   ├── Providers/      # Form submission providers
+│   └── Routes/         # API route definitions
+├── src/                # Frontend source code
+│   ├── admin/          # Admin React application
+│   ├── blocks/         # Gutenberg blocks
+│   ├── components/     # Shared React components
+│   └── hooks/          # React hooks
+└── views/              # PHP templates
+```
 
-You can find the ORM documentation [here](https://github.com/prappo/wp-eloquent)
+## API
 
-Create your model in `includes/Models` folder.
+### REST API Endpoints
 
-Example: `includes/Models/Posts.php`
+All API endpoints are prefixed with `/gutenform/v1/`
+
+#### Entries
+- `GET /entries` - Get all entries
+- `GET /entries/{id}` - Get a specific entry
+- `POST /entries` - Create a new entry
+- `PUT /entries/{id}` - Update an entry
+- `DELETE /entries/{id}` - Delete an entry
+
+#### Mailboxes
+- `GET /mailboxes` - Get all mailboxes
+- `POST /mailboxes` - Create a mailbox
+- `PUT /mailboxes/{id}` - Update a mailbox
+- `DELETE /mailboxes/{id}` - Delete a mailbox
+
+#### Providers
+- `GET /providers` - Get all providers
+- `POST /providers` - Create a provider
+- `PUT /providers/{id}` - Update a provider
+
+#### Entry Labels
+- `GET /entry-labels` - Get all labels
+- `POST /entry-labels` - Create a label
+- `PUT /entry-labels/{id}` - Update a label
+- `DELETE /entry-labels/{id}` - Delete a label
+
+## Extending Gutenform
+
+### Creating Custom Providers
+
+You can create custom providers to handle form submissions in different ways:
 
 ```php
 <?php
 
-namespace WordPressPluginBoilerplate\Models;
+namespace YourNamespace\Providers;
 
-use Prappo\WpEloquent\Database\Eloquent\Model;
+use Gutenform\Providers\AbstractProvider;
 
-class Posts extends Model {
-	/**
-	 * The table associated with the model.
-	 *
-	 * @var string
-	 */
-	protected $table = 'posts';
-
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
-	protected $fillable = array( 'post_title', 'post_content' );
+class CustomProvider extends AbstractProvider {
+    
+    public function get_slug(): string {
+        return 'custom-provider';
+    }
+    
+    public function get_name(): string {
+        return 'Custom Provider';
+    }
+    
+    public function handle_submission( array $data, array $config ): bool {
+        // Your custom submission handling logic
+        return true;
+    }
 }
-
 ```
 
-You can access all your posts like this:
+Then register your provider:
 
 ```php
-$posts = Posts::all();
+add_filter( 'gutenform/available_providers', function( $providers ) {
+    $providers[] = YourNamespace\Providers\CustomProvider::class;
+    return $providers;
+} );
 ```
 
-You can also create a new post like this:
+## Contributing
 
-```php
-$post = Posts::create( array( 'post_title' => 'Hello World', 'post_content' => 'This is a test post' ) );
-```
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-You can also update a post like this:
+## License
 
-```php
-$post = Posts::find( 1 );
-$post->post_title = 'Hello World';
-$post->save();
-```
+GPLv2 or later
 
-You can also delete a post like this:
+## Support
 
-```php
-$post = Posts::find( 1 );
-$post->delete();
-```
+For support, please open an issue on the [GitHub repository](https://github.com/yourusername/gutenform).
 
-You can also use the `where` method to filter your posts.
+## Changelog
 
-```php
-$posts = Posts::where( 'post_title', 'like', '%hello%' )->get();
-```
-
-You can also use the `orderBy` method to sort your posts.
-
-```php
-$posts = Posts::orderBy( 'post_title', 'desc' )->get();
-```
-
-## Passing data from backend to frontend
-
-Just pass your data to the array in the Asset file.
-
-For example: For admin:
-
-https://github.com/prappo/gutenform/blob/8d982b63f50beb1dffd43c29bff894814b5e7945/includes/Assets/Frontend.php#L104-L110
-
-And access data on react like this 
-
-https://github.com/prappo/gutenform/blob/8d982b63f50beb1dffd43c29bff894814b5e7945/src/frontend/components/application-layout/LayoutOne.jsx#L58
-
-Remember the object `gutenFormFrontend` name can be defined here 
-
-https://github.com/prappo/gutenform/blob/8d982b63f50beb1dffd43c29bff894814b5e7945/includes/Assets/Frontend.php#L30
-
-## Shortcode
-
-You can create a shortcode by using the `Shortcode` class.
-
-```php
-
-/**
- * Example Usage
- * 
- * Registering a shortcode that renders a PHP view file
- */
-Shortcode::add()
-    ->tag('myshortcode')
-    ->attrs(['id', 'name'])
-    ->render( plugin_dir_path( __FILE__ ) . 'views/shortcode/myshortcode.php');
-
-/**
- * Registering a shortcode that renders with a function
- */
-Shortcode::add()
-    ->tag('customshortcode')
-    ->attrs(['title', 'class'])
-    ->render(function($atts, $content) {
-        return "<div class='{$atts['class']}'><h3>{$atts['title']}</h3><p>{$content}</p></div>";
-    });
-```
-
-The php render file should be in the `views/shortcode` folder.
-
-For example: `views/shortcode/myshortcode.php`
-
-```php
-<div id="<?= isset($id) ? esc_attr($id) : '' ?>" class="shortcode-box">
-    <h3><?= isset($name) ? esc_html($name) : 'Default Title' ?></h3>
-    <p><?= isset($shortcode_content) ? esc_html($shortcode_content) : '' ?></p>
-</div>
-```
-
-### Example Usage in WordPress editor
-
-```
-
-[myshortcode id="box1" name="Example Shortcode"]
-This is the content inside the shortcode.
-[/myshortcode]
-
-[customshortcode title="Dynamic Title" class="highlight"]
-Some highlighted content.
-[/customshortcode]
-```
-
-## Development
-
-```bash
-npm run dev
-```
-If you want to run only frontend or admin you can use the following commands:
-
-```bash
-npm run dev:frontend
-npm run dev:admin
-```
-
-## Development with server
-
-```bash
-npm run dev:server
-```
-
-## Build
-
-```bash
-npm run build
-```
-## Developing block
-
-```bash
-npm run block:start
-```
-
-## Build block
-
-```bash
-npm run block:build
-```
-
-## Release
-
-```bash
-npm run release
-```
-
-It will create a relase plugin in `release` folder
-
-## Trouble shooting
-
-If you are facing any issue with the development server, you can try the following steps:
-
-1. If you are using Local WP you might see dev server is not working because of SSL certificate issue or domain mismatch.You can fix this by chaning your `Router mode` to `localhost`.
-
-2. Sometimes you might see on the first run of `npm run dev` you might see nothing is happening. You can try to run `npm run dev` again.
-
-
-## Made with WordPress Plugin Boilerplate
-[WordPress AI Assistant](https://github.com/prappo/wordpress-ai-assistant)
-
-<img src="https://github.com/prappo/wordpress-ai-assistant/blob/main/docs/screenshots/wordpress-assistant-chat.png" />
-
+### 1.0.0
+- Initial release
+- Gutenberg block-based form builder
+- Inbox interface for submission management
+- Email and Database providers
+- Mailbox and label management
+- Modern React admin interface
