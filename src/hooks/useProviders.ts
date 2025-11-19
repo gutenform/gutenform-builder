@@ -1,13 +1,35 @@
 import { useState, useEffect, useCallback } from 'react';
-import { apiGet, apiPost, ApiResponse } from '@/lib/api';
+import { apiGet, apiPost, ApiResponse } from '../lib/api';
 
 export interface Provider {
   id: number;
   name: string;
   provider_type: string;
+  form_identifier?: string | null;
   settings: Record<string, any>;
   is_active: boolean;
   date_created: string;
+}
+
+export interface ProviderTypeField {
+  name: string;
+  label: string;
+  type: 'text' | 'email' | 'number' | 'textarea' | 'select' | 'checkbox' | 'url' | 'password';
+  required?: boolean;
+  default?: any;
+  description?: string;
+  placeholder?: string;
+  options?: Array<{ value: string; label: string }>;
+  rows?: number;
+  min?: number;
+  max?: number;
+  pattern?: string;
+}
+
+export interface ProviderType {
+  slug: string;
+  title: string;
+  fields: ProviderTypeField[];
 }
 
 export interface ProviderFilters {
@@ -18,6 +40,7 @@ export interface ProviderFilters {
 export interface CreateProviderData {
   name: string;
   provider_type: string;
+  form_identifier?: string | null;
   settings?: Record<string, any>;
   is_active?: boolean;
 }
@@ -26,6 +49,7 @@ export interface UpdateProviderData {
   id: number;
   name?: string;
   provider_type?: string;
+  form_identifier?: string | null;
   settings?: Record<string, any>;
   is_active?: boolean;
 }
@@ -63,11 +87,11 @@ export function useProviders(filters?: ProviderFilters) {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, [JSON.stringify(filters)]);
 
   useEffect(() => {
     fetchProviders();
-  }, [fetchProviders]);
+  }, []);
 
   return {
     providers,
@@ -269,6 +293,46 @@ export function useDeleteProvider() {
     deleteProvider,
     loading,
     error,
+  };
+}
+
+/**
+ * Hook to fetch all available provider types with their field definitions
+ */
+export function useProviderTypes() {
+  const [types, setTypes] = useState<ProviderType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchTypes = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await apiGet<ApiResponse<ProviderType[]>>('providers/types');
+      
+      if (response.success && response.data) {
+        setTypes(response.data);
+      } else {
+        throw new Error(response.message || 'Failed to fetch provider types');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+      setTypes([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTypes();
+  }, [fetchTypes]);
+
+  return {
+    types,
+    loading,
+    error,
+    refetch: fetchTypes,
   };
 }
 

@@ -37,29 +37,101 @@ window.addEventListener('DOMContentLoaded', () => {
 			loadSkinCSS(skinName);
 		}
 
-		form.addEventListener('submit', (e) => {
+		form.addEventListener('submit', async (e) => {
 			e.preventDefault();
 			const formIdentifier = formOptions.formId;
 			const mailboxId = formOptions.mailboxId;
+			const providerIds = formOptions.providerIds || [];
+			
 			if (!formIdentifier) {
 				console.error('Form identifier not found');
 				return;
 			}
+			
 			const formData = new FormData(form as HTMLFormElement);
 			const data = Object.fromEntries(formData);
 			console.log(data);
-			if (!window.gutenform?.Entries) {
-				console.error('Entries API not found');
-				return;
+			
+			// Feature Flag prüfen
+			// @ts-expect-error - useProviderSystem is added dynamically by PHP
+			const useProviderSystem = window.gutenform?.useProviderSystem ?? false;
+			
+			if (useProviderSystem) {
+				// Neuer Provider-basierter Flow
+				const result = await submitFormWithProviders(data, formIdentifier, providerIds);
+				
+				if (result.success) {
+					// Success-Handling (z.B. Success-Message anzeigen)
+					console.log('Form submitted successfully', result);
+					// TODO: Show success message to user
+				} else {
+					// Error-Handling
+					console.error('Form submission failed', result.errors);
+					// TODO: Show error message to user
+				}
+			} else {
+				// Legacy-Flow (aktueller Code)
+				if (!window.gutenform?.Entries) {
+					console.error('Entries API not found');
+					return;
+				}
+				window.gutenform?.Entries.create({
+					mailbox_id: mailboxId,
+					form_identifier: formIdentifier,
+					data,
+				});
 			}
-			window.gutenform?.Entries.create({
-				mailbox_id: mailboxId,
-				form_identifier: formIdentifier,
-				data,
-			});
 		});
 	});
 });
+
+/**
+ * Submits form using the new provider system
+ */
+async function submitFormWithProviders(
+	formData: Record<string, FormDataEntryValue>,
+	formIdentifier: string,
+	providerIds: number[]
+): Promise<{ success: boolean; message?: string; errors?: string[] }> {
+	try {
+		const apiUrl = window.gutenform?.apiUrl || '';
+		const nonce = window.gutenform?.nonce || '';
+		const namespace = window.gutenform?.namespace || 'gutenform/v1';
+		
+		const response = await fetch(
+			`${apiUrl}${namespace}/submit`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-WP-Nonce': nonce,
+				},
+				body: JSON.stringify({
+					form_identifier: formIdentifier,
+					provider_ids: providerIds,
+					submission_data: formData,
+				}),
+			}
+		);
+		
+		const result = await response.json();
+		
+		if (result.success) {
+			return { success: true, message: result.message };
+		} else {
+			return {
+				success: false,
+				errors: result.data?.errors || [result.message || 'Unknown error'],
+			};
+		}
+	} catch (error) {
+		console.error('Form submission error', error);
+		return {
+			success: false,
+			errors: ['Network error: ' + (error instanceof Error ? error.message : 'Unknown error')],
+		};
+	}
+}
 
 /**
  * Load skin CSS dynamically

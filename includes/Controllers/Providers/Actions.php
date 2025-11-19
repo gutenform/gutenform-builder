@@ -29,21 +29,16 @@ class Actions {
 	 */
 	public function create( \WP_REST_Request $request ) {
 		try {
-			// Check if provider_type already exists (unique constraint).
-			if ( Providers::where( 'provider_type', $request->get_param( 'provider_type' ) )->exists() ) {
-				return new \WP_Error(
-					'provider_type_exists',
-					__( 'A provider with this type already exists.', 'gutenform' ),
-					array( 'status' => 400 )
-				);
-			}
+			// UNIQUE constraint on provider_type removed - multiple providers per type allowed
+			// form_identifier is optional (NULL = global provider)
 
 			$provider = new Providers();
-			$provider->name         = $request->get_param( 'name' );
-			$provider->provider_type = $request->get_param( 'provider_type' );
-			$provider->settings      = $request->get_param( 'settings' ) ?? array();
-			$provider->is_active     = $request->get_param( 'is_active' ) ?? true;
-			$provider->date_created  = current_time( 'mysql' );
+			$provider->name            = $request->get_param( 'name' );
+			$provider->provider_type   = $request->get_param( 'provider_type' );
+			$provider->form_identifier  = $request->get_param( 'form_identifier' ) ? sanitize_text_field( $request->get_param( 'form_identifier' ) ) : null;
+			$provider->settings         = $request->get_param( 'settings' ) ?? array();
+			$provider->is_active       = $request->get_param( 'is_active' ) ?? true;
+			$provider->date_created    = current_time( 'mysql' );
 
 			$provider->save();
 
@@ -79,6 +74,17 @@ class Actions {
 			// Filter by provider_type.
 			if ( $request->get_param( 'provider_type' ) ) {
 				$query->where( 'provider_type', $request->get_param( 'provider_type' ) );
+			}
+
+			// Filter by form_identifier (optional).
+			if ( $request->has_param( 'form_identifier' ) ) {
+				$form_identifier = $request->get_param( 'form_identifier' );
+				if ( $form_identifier === null || $form_identifier === '' ) {
+					// NULL or empty = global providers
+					$query->whereNull( 'form_identifier' );
+				} else {
+					$query->where( 'form_identifier', sanitize_text_field( $form_identifier ) );
+				}
 			}
 
 			$providers = $query->orderBy( 'date_created', 'DESC' )->get();
@@ -182,22 +188,17 @@ class Actions {
 		}
 
 		try {
-			// Check if provider_type is being changed and if new type already exists.
-			if ( $request->has_param( 'provider_type' ) && $request->get_param( 'provider_type' ) !== $provider->provider_type ) {
-				if ( Providers::where( 'provider_type', $request->get_param( 'provider_type' ) )->exists() ) {
-					return new \WP_Error(
-						'provider_type_exists',
-						__( 'A provider with this type already exists.', 'gutenform' ),
-						array( 'status' => 400 )
-					);
-				}
-			}
+			// UNIQUE constraint on provider_type removed - multiple providers per type allowed
 
 			if ( $request->has_param( 'name' ) ) {
 				$provider->name = $request->get_param( 'name' );
 			}
 			if ( $request->has_param( 'provider_type' ) ) {
 				$provider->provider_type = $request->get_param( 'provider_type' );
+			}
+			if ( $request->has_param( 'form_identifier' ) ) {
+				$form_identifier = $request->get_param( 'form_identifier' );
+				$provider->form_identifier = ( $form_identifier === null || $form_identifier === '' ) ? null : sanitize_text_field( $form_identifier );
 			}
 			if ( $request->has_param( 'settings' ) ) {
 				$provider->settings = $request->get_param( 'settings' );
@@ -252,6 +253,39 @@ class Actions {
 			return new \WP_Error(
 				'provider_deletion_failed',
 				__( 'Failed to delete provider: ', 'gutenform' ) . $e->getMessage(),
+				array( 'status' => 500 )
+			);
+		}
+	}
+
+	/**
+	 * Gibt alle verfügbaren Provider-Typen mit ihren Feld-Definitionen zurück.
+	 *
+	 * @param \WP_REST_Request $request
+	 * @return array|\WP_Error
+	 */
+	public function get_provider_types( \WP_REST_Request $request ) {
+		try {
+			$registry = \Gutenform\Providers\Registry::get_instance();
+			$providers = $registry->get_all_providers();
+
+			$types = array();
+			foreach ( $providers as $slug => $provider ) {
+				$types[] = array(
+					'slug'  => $slug,
+					'title' => $provider->get_title(),
+					'fields' => $provider->get_settings_fields(),
+				);
+			}
+
+			return array(
+				'success' => true,
+				'data'    => $types,
+			);
+		} catch ( \Exception $e ) {
+			return new \WP_Error(
+				'provider_types_retrieval_failed',
+				__( 'Fehler beim Laden der Provider-Typen: ', 'gutenform' ) . $e->getMessage(),
 				array( 'status' => 500 )
 			);
 		}

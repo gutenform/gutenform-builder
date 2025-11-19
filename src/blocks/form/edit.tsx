@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls, InnerBlocks } from '@wordpress/block-editor';
 import { dispatch } from '@wordpress/data';
-import { TextControl, PanelBody, SelectControl, Spinner } from '@wordpress/components';
+import { TextControl, PanelBody, SelectControl, Spinner, CheckboxControl } from '@wordpress/components';
 import { type BlockEditProps, createBlocksFromInnerBlocksTemplate } from '@wordpress/blocks';
 import { type FormAttributes } from '@/blockTypes/form';
 import { useEffect } from 'react';
@@ -11,6 +11,7 @@ import './editor.css';
 import { getFieldClasses } from '../../lib/utils';
 import skins from '../../skins';
 import { useMailboxes } from '../../hooks/useMailboxes';
+import { useProviders } from '../../hooks/useProviders';
 
 const MailboxSelect = ({value, onChange}: {value: string, onChange: (value: string) => void}) => {
 	const { mailboxes, loading, error } = useMailboxes();
@@ -36,6 +37,62 @@ const MailboxSelect = ({value, onChange}: {value: string, onChange: (value: stri
 			__next40pxDefaultSize={true}
 			__nextHasNoMarginBottom={true}
 		/>
+	);
+};
+
+const ProviderMultiSelect = ({value, onChange}: {value: number[], onChange: (value: number[]) => void}) => {
+	const { providers, loading, error } = useProviders({ is_active: true });
+
+	if (loading) return <Spinner />;
+	if (error) return <p>Error: {error.message}</p>;
+	
+	if (providers.length === 0) {
+		return (
+			<div>
+				<p style={{ marginTop: 0, marginBottom: '8px', fontSize: '13px' }}>
+					{__('No active providers found.', 'gutenform')}
+				</p>
+				<p style={{ marginTop: 0, fontSize: '12px', color: '#757575' }}>
+					{__('Create providers in Settings → Providers first.', 'gutenform')}
+				</p>
+			</div>
+		);
+	}
+
+	const handleChange = (providerId: number, checked: boolean) => {
+		if (checked) {
+			onChange([...value, providerId]);
+		} else {
+			onChange(value.filter(id => id !== providerId));
+		}
+	};
+
+	return (
+		<div>
+			<label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 500 }}>
+				{__('Providers', 'gutenform')}
+			</label>
+			<div style={{ marginBottom: '8px', fontSize: '12px', color: '#757575' }}>
+				{__('Select which providers should process form submissions. Database provider runs automatically.', 'gutenform')}
+			</div>
+			<div style={{ 
+				border: '1px solid #ddd', 
+				borderRadius: '2px', 
+				padding: '8px',
+				maxHeight: '200px',
+				overflowY: 'auto'
+			}}>
+				{providers.map((provider) => (
+					<CheckboxControl
+						key={provider.id}
+						label={`${provider.name} (${provider.provider_type})${provider.form_identifier ? ` - ${provider.form_identifier}` : ' - Global'}`}
+						checked={value.includes(provider.id)}
+						onChange={(checked) => handleChange(provider.id, checked)}
+						__nextHasNoMarginBottom={true}
+					/>
+				))}
+			</div>
+		</div>
 	);
 };
 
@@ -89,6 +146,10 @@ export default function Edit(props: BlockEditProps<FormAttributes>) {
 						}))}
 						__next40pxDefaultSize={true}
 						__nextHasNoMarginBottom={true}
+					/>
+					<ProviderMultiSelect
+						value={attributes.providerIds || []}
+						onChange={(providerIds) => setAttributes({ providerIds })}
 					/>
 				</PanelBody>
 			</InspectorControls>

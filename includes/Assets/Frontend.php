@@ -68,12 +68,13 @@ class Frontend
 
 		// Always set the gutenform object inline so it's available before view scripts run
 		$inline_script = sprintf(
-			'window.gutenform = window.gutenform || {}; window.gutenform.assetsUrl = %s; window.gutenform.pluginUrl = %s; window.gutenform.apiUrl = %s; window.gutenform.nonce = %s; window.gutenform.namespace = %s;',
+			'window.gutenform = window.gutenform || {}; window.gutenform.assetsUrl = %s; window.gutenform.pluginUrl = %s; window.gutenform.apiUrl = %s; window.gutenform.nonce = %s; window.gutenform.namespace = %s; window.gutenform.useProviderSystem = %s;',
 			wp_json_encode(GF_ASSETS_URL),
 			wp_json_encode(GF_URL),
 			wp_json_encode($api_url),
 			wp_json_encode($nonce),
-			wp_json_encode(GF_ROUTE_PREFIX)
+			wp_json_encode(GF_ROUTE_PREFIX),
+			wp_json_encode(gutenform_use_provider_system())
 		);
 
 		// Try to add inline script to wp-blocks, fallback to wp-util if not available
@@ -117,11 +118,12 @@ class Frontend
 				$view_script_handle,
 				'gutenform',
 				array(
-					'assetsUrl' => GF_ASSETS_URL,
-					'pluginUrl' => GF_URL,
-					'apiUrl'    => $api_url,
-					'nonce'     => $nonce,
-					'namespace' => GF_ROUTE_PREFIX,
+					'assetsUrl'        => GF_ASSETS_URL,
+					'pluginUrl'        => GF_URL,
+					'apiUrl'           => $api_url,
+					'nonce'            => $nonce,
+					'namespace'        => GF_ROUTE_PREFIX,
+					'useProviderSystem' => gutenform_use_provider_system(),
 				)
 			);
 		}

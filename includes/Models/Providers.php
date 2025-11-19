@@ -52,6 +52,7 @@ class Providers extends Model
 	protected $fillable = array(
 		'name',
 		'provider_type',
+		'form_identifier',
 		'settings',
 		'is_active',
 		'date_created',

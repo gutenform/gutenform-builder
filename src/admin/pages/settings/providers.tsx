@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -35,59 +35,229 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { toast } from "@/components/ui/use-toast"
-import { useProviders, useCreateProvider, useUpdateProvider, useDeleteProvider, type Provider } from "@/hooks/useProviders"
+import { 
+  useProviders, 
+  useCreateProvider, 
+  useUpdateProvider, 
+  useDeleteProvider, 
+  useProviderTypes,
+  type Provider,
+  type ProviderTypeField 
+} from "@/hooks/useProviders"
 import { Plus, Trash2, Edit2, Settings } from "lucide-react"
 
-const providerFormSchema = z.object({
+// Dynamic schema - will be extended based on provider type
+const baseProviderFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
   provider_type: z.string().min(1, "Provider type is required"),
+  form_identifier: z.string().optional().nullable(),
   is_active: z.boolean().default(true),
-  settings: z.string().optional(),
 })
 
-type ProviderFormValues = z.infer<typeof providerFormSchema>
+type ProviderFormValues = z.infer<typeof baseProviderFormSchema> & {
+  settings: Record<string, any>
+}
 
-const providerTypes = [
-  { value: "smtp", label: "SMTP" },
-  { value: "sendgrid", label: "SendGrid" },
-  { value: "mailgun", label: "Mailgun" },
-  { value: "ses", label: "Amazon SES" },
-]
+// Component for rendering dynamic fields based on field definition
+function DynamicField({ 
+  field, 
+  value, 
+  onChange,
+  formFieldName
+}: { 
+  field: ProviderTypeField
+  value: any
+  onChange: (value: any) => void
+  formFieldName: string
+}) {
+  switch (field.type) {
+    case 'text':
+    case 'email':
+    case 'url':
+    case 'password':
+      return (
+        <FormItem>
+          <FormLabel>
+            {field.label}
+            {field.required && <span className="text-destructive ml-1">*</span>}
+          </FormLabel>
+          <FormControl>
+            <Input
+              type={field.type}
+              value={value ?? field.default ?? ''}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder={field.placeholder}
+              required={field.required}
+            />
+          </FormControl>
+          {field.description && (
+            <FormDescription>{field.description}</FormDescription>
+          )}
+        </FormItem>
+      )
+    
+    case 'textarea':
+      return (
+        <FormItem>
+          <FormLabel>
+            {field.label}
+            {field.required && <span className="text-destructive ml-1">*</span>}
+          </FormLabel>
+          <FormControl>
+            <Textarea
+              value={value ?? field.default ?? ''}
+              onChange={(e) => onChange(e.target.value)}
+              placeholder={field.placeholder}
+              rows={field.rows || 4}
+              required={field.required}
+            />
+          </FormControl>
+          {field.description && (
+            <FormDescription>{field.description}</FormDescription>
+          )}
+        </FormItem>
+      )
+    
+    case 'select':
+      return (
+        <FormItem>
+          <FormLabel>
+            {field.label}
+            {field.required && <span className="text-destructive ml-1">*</span>}
+          </FormLabel>
+          <Select
+            value={value ?? field.default ?? ''}
+            onValueChange={onChange}
+          >
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder={`Select ${field.label}`} />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              {field.options?.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {field.description && (
+            <FormDescription>{field.description}</FormDescription>
+          )}
+        </FormItem>
+      )
+    
+    case 'number':
+      return (
+        <FormItem>
+          <FormLabel>
+            {field.label}
+            {field.required && <span className="text-destructive ml-1">*</span>}
+          </FormLabel>
+          <FormControl>
+            <Input
+              type="number"
+              value={value ?? field.default ?? ''}
+              onChange={(e) => onChange(Number(e.target.value))}
+              min={field.min}
+              max={field.max}
+              required={field.required}
+            />
+          </FormControl>
+          {field.description && (
+            <FormDescription>{field.description}</FormDescription>
+          )}
+        </FormItem>
+      )
+    
+    case 'checkbox':
+      return (
+        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+          <div className="space-y-0.5">
+            <FormLabel>{field.label}</FormLabel>
+            {field.description && (
+              <FormDescription>{field.description}</FormDescription>
+            )}
+          </div>
+          <FormControl>
+            <Switch
+              checked={value ?? field.default ?? false}
+              onCheckedChange={onChange}
+            />
+          </FormControl>
+        </FormItem>
+      )
+    
+    default:
+      return null
+  }
+}
 
 export default function ProvidersPage() {
   const { providers, loading, error, refetch } = useProviders()
+  const { types: providerTypes, loading: typesLoading } = useProviderTypes()
   const { createProvider, loading: creating } = useCreateProvider()
   const { updateProvider, loading: updating } = useUpdateProvider()
   const { deleteProvider, loading: deleting } = useDeleteProvider()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingProvider, setEditingProvider] = useState<Provider | null>(null)
+  const [selectedProviderType, setSelectedProviderType] = useState<string>('')
+  const [settings, setSettings] = useState<Record<string, any>>({})
 
   const form = useForm<ProviderFormValues>({
-    resolver: zodResolver(providerFormSchema),
+    resolver: zodResolver(baseProviderFormSchema),
     defaultValues: {
       name: "",
       provider_type: "",
+      form_identifier: null,
       is_active: true,
-      settings: "",
+      settings: {},
     },
   })
+
+  // When provider type is selected, initialize settings with default values
+  useEffect(() => {
+    if (selectedProviderType) {
+      const selectedType = providerTypes.find(t => t.slug === selectedProviderType)
+      if (selectedType) {
+        const defaultSettings: Record<string, any> = {}
+        selectedType.fields.forEach(field => {
+          if (field.default !== undefined) {
+            defaultSettings[field.name] = field.default
+          }
+        })
+        setSettings(defaultSettings)
+      } else {
+        setSettings({})
+      }
+    } else {
+      setSettings({})
+    }
+  }, [selectedProviderType, providerTypes])
 
   const handleOpenDialog = (provider?: Provider) => {
     if (provider) {
       setEditingProvider(provider)
+      setSelectedProviderType(provider.provider_type)
+      setSettings(provider.settings || {})
       form.reset({
         name: provider.name,
         provider_type: provider.provider_type,
+        form_identifier: provider.form_identifier || null,
         is_active: provider.is_active,
-        settings: JSON.stringify(provider.settings || {}, null, 2),
+        settings: provider.settings || {},
       })
     } else {
       setEditingProvider(null)
+      setSelectedProviderType('')
+      setSettings({})
       form.reset({
         name: "",
         provider_type: "",
+        form_identifier: null,
         is_active: true,
-        settings: "",
+        settings: {},
       })
     }
     setIsDialogOpen(true)
@@ -96,30 +266,26 @@ export default function ProvidersPage() {
   const handleCloseDialog = () => {
     setIsDialogOpen(false)
     setEditingProvider(null)
+    setSelectedProviderType('')
+    setSettings({})
     form.reset()
+  }
+
+  const handleSettingChange = (fieldName: string, value: any) => {
+    setSettings(prev => ({
+      ...prev,
+      [fieldName]: value
+    }))
   }
 
   const onSubmit = async (data: ProviderFormValues) => {
     try {
-      let settings = {}
-      if (data.settings) {
-        try {
-          settings = JSON.parse(data.settings)
-        } catch {
-          toast({
-            title: "Invalid JSON",
-            description: "Settings must be valid JSON format.",
-            variant: "destructive",
-          })
-          return
-        }
-      }
-
       if (editingProvider) {
         await updateProvider({
           id: editingProvider.id,
           name: data.name,
           provider_type: data.provider_type,
+          form_identifier: data.form_identifier || null,
           is_active: data.is_active,
           settings,
         })
@@ -131,6 +297,7 @@ export default function ProvidersPage() {
         await createProvider({
           name: data.name,
           provider_type: data.provider_type,
+          form_identifier: data.form_identifier || null,
           is_active: data.is_active,
           settings,
         })
@@ -171,7 +338,9 @@ export default function ProvidersPage() {
     }
   }
 
-  if (loading) {
+  const selectedType = providerTypes.find(t => t.slug === selectedProviderType)
+
+  if (loading || typesLoading) {
     return <div>Loading providers...</div>
   }
 
@@ -183,9 +352,9 @@ export default function ProvidersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-medium">Email Providers</h3>
+          <h3 className="text-lg font-medium">Providers</h3>
           <p className="text-sm text-muted-foreground">
-            Manage email service providers for sending form submissions.
+            Manage form submission providers (Email, Webhook, etc.).
           </p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
@@ -206,7 +375,7 @@ export default function ProvidersPage() {
               <DialogDescription>
                 {editingProvider
                   ? "Update the provider details below."
-                  : "Configure a new email service provider."}
+                  : "Configure a new provider for form submissions."}
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -218,7 +387,7 @@ export default function ProvidersPage() {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="My SMTP Provider" {...field} />
+                        <Input placeholder="My Email Provider" {...field} />
                       </FormControl>
                       <FormDescription>
                         A descriptive name for this provider.
@@ -233,7 +402,13 @@ export default function ProvidersPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Provider Type</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select 
+                        onValueChange={(value) => {
+                          field.onChange(value)
+                          setSelectedProviderType(value)
+                        }}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a provider type" />
@@ -241,19 +416,52 @@ export default function ProvidersPage() {
                         </FormControl>
                         <SelectContent>
                           {providerTypes.map((type) => (
-                            <SelectItem key={type.value} value={type.value}>
-                              {type.label}
+                            <SelectItem key={type.slug} value={type.slug}>
+                              {type.title}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                       <FormDescription>
-                        Select the type of email service provider.
+                        Select the type of provider.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                
+                {/* Dynamic fields based on selected provider type */}
+                {selectedType && selectedType.fields.map((field) => (
+                  <DynamicField
+                    key={field.name}
+                    field={field}
+                    value={settings[field.name]}
+                    onChange={(value) => handleSettingChange(field.name, value)}
+                    formFieldName={`settings.${field.name}`}
+                  />
+                ))}
+                
+                <FormField
+                  control={form.control}
+                  name="form_identifier"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Form Identifier (optional)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field}
+                          value={field.value || ''}
+                          placeholder="Leave empty for global provider"
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Form-specific provider. Leave empty for global provider that can be used by all forms.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
                 <FormField
                   control={form.control}
                   name="is_active"
@@ -271,27 +479,6 @@ export default function ProvidersPage() {
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="settings"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Settings (JSON)</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder='{"host": "smtp.example.com", "port": 587, "username": "user", "password": "pass"}'
-                          className="font-mono text-sm"
-                          rows={6}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Provider-specific settings in JSON format.
-                      </FormDescription>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -343,7 +530,10 @@ export default function ProvidersPage() {
                       )}
                     </CardTitle>
                     <CardDescription>
-                      Type: {provider.provider_type} • Created{" "}
+                      Type: {provider.provider_type}
+                      {provider.form_identifier && ` • Form: ${provider.form_identifier}`}
+                      {!provider.form_identifier && ' • Global Provider'}
+                      {' • Created '}
                       {new Date(provider.date_created).toLocaleDateString()}
                     </CardDescription>
                   </div>
@@ -373,4 +563,3 @@ export default function ProvidersPage() {
     </div>
   )
 }
-

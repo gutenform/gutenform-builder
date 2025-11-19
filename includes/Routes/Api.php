@@ -47,6 +47,7 @@ Route::prefix(
 		$route->get('/providers/get', '\Gutenform\Controllers\Providers\Actions@get');
 		$route->get('/providers/get/{id}', '\Gutenform\Controllers\Providers\Actions@get_single');
 		$route->get('/providers/get-by-type/{provider_type}', '\Gutenform\Controllers\Providers\Actions@get_by_type');
+		$route->get('/providers/types', '\Gutenform\Controllers\Providers\Actions@get_provider_types');
 		$route->post('/providers/update', '\Gutenform\Controllers\Providers\Actions@update');
 		$route->post('/providers/delete', '\Gutenform\Controllers\Providers\Actions@delete');
 
@@ -58,6 +59,9 @@ Route::prefix(
 		$route->post('/entry-labels/delete', '\Gutenform\Controllers\EntryLabels\Actions@delete');
 		$route->post('/entry-labels/attach', '\Gutenform\Controllers\EntryLabels\Actions@attach_to_entry');
 		$route->post('/entry-labels/detach', '\Gutenform\Controllers\EntryLabels\Actions@detach_from_entry');
+
+		// Submissions route (NEU)
+		$route->post('/submit', '\Gutenform\Controllers\Submissions\Actions@submit');
 
 		// Allow hooks to add more custom API routes.
 		do_action('gf_api', $route);

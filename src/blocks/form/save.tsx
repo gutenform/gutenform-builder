@@ -24,6 +24,7 @@ export default function save(props: BlockSaveProps<FormAttributes>) {
 		skin: props.attributes.skin || 'default',
 		mailboxId: props.attributes.mailboxId || '1',
 		formId: props.attributes.formId || '',
+		providerIds: props.attributes.providerIds || [],
 	};
 	const className = getFieldClasses(props.attributes);
 	return (

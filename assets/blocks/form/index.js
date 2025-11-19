@@ -2617,7 +2617,7 @@ const allowedBlocks = ['gutenform/input', 'gutenform/textarea', 'gutenform/submi
   \************************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/form","version":"0.1.0","title":"Form","category":"widgets","icon":"smiley","description":"Form Wrapper block for Gutenform.","example":{},"attributes":{"formTitle":{"type":"string","default":""},"mailboxId":{"type":"string","default":"1"},"formId":{"type":"string","default":""},"skin":{"type":"string","default":"default"}},"supports":{"html":false,"align":["wide","full"]},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/form","version":"0.1.0","title":"Form","category":"widgets","icon":"smiley","description":"Form Wrapper block for Gutenform.","example":{},"attributes":{"formTitle":{"type":"string","default":""},"mailboxId":{"type":"string","default":"1"},"formId":{"type":"string","default":""},"skin":{"type":"string","default":"default"},"providerIds":{"type":"array","default":[],"items":{"type":"number"}}},"supports":{"html":false,"align":["wide","full"]},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
 
 /***/ }),
 
@@ -2649,8 +2649,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lib_utils__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../lib/utils */ "./src/lib/utils.ts");
 /* harmony import */ var _skins__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../skins */ "./src/skins/index.ts");
 /* harmony import */ var _hooks_useMailboxes__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../hooks/useMailboxes */ "./src/hooks/useMailboxes.ts");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var _hooks_useProviders__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../hooks/useProviders */ "./src/hooks/useProviders.ts");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__);
+
 
 
 
@@ -2679,11 +2681,11 @@ const MailboxSelect = ({
       onChange(mailboxes[0].id.toString());
     }
   }, [mailboxes, value]);
-  if (loading) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Spinner, {});
-  if (error) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)("p", {
+  if (loading) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Spinner, {});
+  if (error) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("p", {
     children: ["Error: ", error.message]
   });
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.SelectControl, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.SelectControl, {
     label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Mailbox', 'gutenform'),
     value: value,
     onChange: onChange,
@@ -2693,6 +2695,80 @@ const MailboxSelect = ({
     })),
     __next40pxDefaultSize: true,
     __nextHasNoMarginBottom: true
+  });
+};
+const ProviderMultiSelect = ({
+  value,
+  onChange
+}) => {
+  const {
+    providers,
+    loading,
+    error
+  } = (0,_hooks_useProviders__WEBPACK_IMPORTED_MODULE_12__.useProviders)({
+    is_active: true
+  });
+  if (loading) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Spinner, {});
+  if (error) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("p", {
+    children: ["Error: ", error.message]
+  });
+  if (providers.length === 0) {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("div", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("p", {
+        style: {
+          marginTop: 0,
+          marginBottom: '8px',
+          fontSize: '13px'
+        },
+        children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('No active providers found.', 'gutenform')
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("p", {
+        style: {
+          marginTop: 0,
+          fontSize: '12px',
+          color: '#757575'
+        },
+        children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Create providers in Settings → Providers first.', 'gutenform')
+      })]
+    });
+  }
+  const handleChange = (providerId, checked) => {
+    if (checked) {
+      onChange([...value, providerId]);
+    } else {
+      onChange(value.filter(id => id !== providerId));
+    }
+  };
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)("div", {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("label", {
+      style: {
+        display: 'block',
+        marginBottom: '8px',
+        fontSize: '13px',
+        fontWeight: 500
+      },
+      children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Providers', 'gutenform')
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
+      style: {
+        marginBottom: '8px',
+        fontSize: '12px',
+        color: '#757575'
+      },
+      children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Select which providers should process form submissions. Database provider runs automatically.', 'gutenform')
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
+      style: {
+        border: '1px solid #ddd',
+        borderRadius: '2px',
+        padding: '8px',
+        maxHeight: '200px',
+        overflowY: 'auto'
+      },
+      children: providers.map(provider => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.CheckboxControl, {
+        label: `${provider.name} (${provider.provider_type})${provider.form_identifier ? ` - ${provider.form_identifier}` : ' - Global'}`,
+        checked: value.includes(provider.id),
+        onChange: checked => handleChange(provider.id, checked),
+        __nextHasNoMarginBottom: true
+      }, provider.id))
+    })]
   });
 };
 function Edit(props) {
@@ -2714,16 +2790,16 @@ function Edit(props) {
       formId: `gutenform-${clientId}`
     });
   }, [clientId]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.Fragment, {
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.PanelBody, {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.PanelBody, {
         title: "Form Settings",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(MailboxSelect, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(MailboxSelect, {
           value: attributes.mailboxId,
           onChange: mailboxId => setAttributes({
             mailboxId
           })
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.TextControl, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.TextControl, {
           label: "Form Title",
           value: attributes.formTitle,
           onChange: formTitle => setAttributes({
@@ -2732,7 +2808,7 @@ function Edit(props) {
           help: "This is the title of the form that will be displayed in the frontend.",
           __next40pxDefaultSize: true,
           __nextHasNoMarginBottom: true
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.TextControl, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.TextControl, {
           label: "Form Identifier",
           value: attributes.formId,
           onChange: formId => setAttributes({
@@ -2741,7 +2817,7 @@ function Edit(props) {
           help: "This is the identifier of the form that will be used to identify the form in the database.",
           __next40pxDefaultSize: true,
           __nextHasNoMarginBottom: true
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.SelectControl, {
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.SelectControl, {
           label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Skin', 'gutenform'),
           value: attributes.skin || 'default',
           onChange: skin => setAttributes({
@@ -2753,17 +2829,22 @@ function Edit(props) {
           })),
           __next40pxDefaultSize: true,
           __nextHasNoMarginBottom: true
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(ProviderMultiSelect, {
+          value: attributes.providerIds || [],
+          onChange: providerIds => setAttributes({
+            providerIds
+          })
         })]
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)("div", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)("div", {
       ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)({
         className: (0,_lib_utils__WEBPACK_IMPORTED_MODULE_9__.getFieldClasses)(attributes)
       }),
-      children: innerBlockItems?.length > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks, {
+      children: innerBlockItems?.length > 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks, {
         allowedBlocks: _allowedBlocks__WEBPACK_IMPORTED_MODULE_7__.allowedBlocks,
         renderAppender: _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks.ButtonBlockAppender,
         template: [['core/columns', {}, [['core/column', {}, [['core/heading', {}]]]]]]
-      }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_12__.jsx)(_components_block_atoms_TemplateSelect__WEBPACK_IMPORTED_MODULE_6__["default"], {
+      }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_13__.jsx)(_components_block_atoms_TemplateSelect__WEBPACK_IMPORTED_MODULE_6__["default"], {
         onSelect: template => {
           const blocks = (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_4__.createBlocksFromInnerBlocksTemplate)(template);
           (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.dispatch)('core/block-editor').replaceInnerBlocks(clientId, blocks);
@@ -2852,7 +2933,8 @@ function save(props) {
     formTitle: props.attributes.formTitle,
     skin: props.attributes.skin || 'default',
     mailboxId: props.attributes.mailboxId || '1',
-    formId: props.attributes.formId || ''
+    formId: props.attributes.formId || '',
+    providerIds: props.attributes.providerIds || []
   };
   const className = (0,_lib_utils__WEBPACK_IMPORTED_MODULE_0__.getFieldClasses)(props.attributes);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("form", {
@@ -3120,6 +3202,277 @@ function useDeleteMailbox() {
     deleteMailbox,
     loading,
     error
+  };
+}
+
+/***/ }),
+
+/***/ "./src/hooks/useProviders.ts":
+/*!***********************************!*\
+  !*** ./src/hooks/useProviders.ts ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   useCreateProvider: () => (/* binding */ useCreateProvider),
+/* harmony export */   useDeleteProvider: () => (/* binding */ useDeleteProvider),
+/* harmony export */   useProvider: () => (/* binding */ useProvider),
+/* harmony export */   useProviderByType: () => (/* binding */ useProviderByType),
+/* harmony export */   useProviderTypes: () => (/* binding */ useProviderTypes),
+/* harmony export */   useProviders: () => (/* binding */ useProviders),
+/* harmony export */   useUpdateProvider: () => (/* binding */ useUpdateProvider)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _lib_api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../lib/api */ "./src/lib/api.ts");
+
+
+/**
+ * Hook to fetch all providers with filters
+ */
+function useProviders(filters) {
+  const [providers, setProviders] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const fetchProviders = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const params = new URLSearchParams();
+      if (filters?.is_active !== undefined) params.append('is_active', filters.is_active.toString());
+      if (filters?.provider_type) params.append('provider_type', filters.provider_type);
+      const queryString = params.toString();
+      const endpoint = queryString ? `providers/get?${queryString}` : 'providers/get';
+      const response = await (0,_lib_api__WEBPACK_IMPORTED_MODULE_1__.apiGet)(endpoint);
+      if (response.success && response.data) {
+        setProviders(response.data);
+      } else {
+        throw new Error(response.message || 'Failed to fetch providers');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+      setProviders([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [JSON.stringify(filters)]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    fetchProviders();
+  }, []);
+  return {
+    providers,
+    loading,
+    error,
+    refetch: fetchProviders
+  };
+}
+
+/**
+ * Hook to fetch a single provider
+ */
+function useProvider(id) {
+  const [provider, setProvider] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const fetchProvider = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    if (!id) {
+      setProvider(null);
+      return;
+    }
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await (0,_lib_api__WEBPACK_IMPORTED_MODULE_1__.apiGet)(`providers/get/${id}`);
+      if (response.success && response.data) {
+        setProvider(response.data);
+      } else {
+        throw new Error(response.message || 'Failed to fetch provider');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+      setProvider(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    fetchProvider();
+  }, [fetchProvider]);
+  return {
+    provider,
+    loading,
+    error,
+    refetch: fetchProvider
+  };
+}
+
+/**
+ * Hook to fetch a provider by type
+ */
+function useProviderByType(providerType) {
+  const [provider, setProvider] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const fetchProvider = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    if (!providerType) {
+      setProvider(null);
+      return;
+    }
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await (0,_lib_api__WEBPACK_IMPORTED_MODULE_1__.apiGet)(`providers/get-by-type/${providerType}`);
+      if (response.success && response.data) {
+        setProvider(response.data);
+      } else {
+        throw new Error(response.message || 'Failed to fetch provider');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+      setProvider(null);
+    } finally {
+      setLoading(false);
+    }
+  }, [providerType]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    fetchProvider();
+  }, [fetchProvider]);
+  return {
+    provider,
+    loading,
+    error,
+    refetch: fetchProvider
+  };
+}
+
+/**
+ * Hook to create a provider
+ */
+function useCreateProvider() {
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const createProvider = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async data => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await (0,_lib_api__WEBPACK_IMPORTED_MODULE_1__.apiPost)('providers/create', data);
+      if (response.success && response.data) {
+        return response.data;
+      } else {
+        throw new Error(response.message || 'Failed to create provider');
+      }
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Unknown error');
+      setError(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  return {
+    createProvider,
+    loading,
+    error
+  };
+}
+
+/**
+ * Hook to update a provider
+ */
+function useUpdateProvider() {
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const updateProvider = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async data => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await (0,_lib_api__WEBPACK_IMPORTED_MODULE_1__.apiPost)('providers/update', data);
+      if (response.success && response.data) {
+        return response.data;
+      } else {
+        throw new Error(response.message || 'Failed to update provider');
+      }
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Unknown error');
+      setError(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  return {
+    updateProvider,
+    loading,
+    error
+  };
+}
+
+/**
+ * Hook to delete a provider
+ */
+function useDeleteProvider() {
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const deleteProvider = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async id => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await (0,_lib_api__WEBPACK_IMPORTED_MODULE_1__.apiPost)('providers/delete', {
+        id
+      });
+      if (response.success) {
+        return true;
+      } else {
+        throw new Error(response.message || 'Failed to delete provider');
+      }
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Unknown error');
+      setError(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  return {
+    deleteProvider,
+    loading,
+    error
+  };
+}
+
+/**
+ * Hook to fetch all available provider types with their field definitions
+ */
+function useProviderTypes() {
+  const [types, setTypes] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const fetchTypes = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await (0,_lib_api__WEBPACK_IMPORTED_MODULE_1__.apiGet)('providers/types');
+      if (response.success && response.data) {
+        setTypes(response.data);
+      } else {
+        throw new Error(response.message || 'Failed to fetch provider types');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+      setTypes([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    fetchTypes();
+  }, [fetchTypes]);
+  return {
+    types,
+    loading,
+    error,
+    refetch: fetchTypes
   };
 }
 
