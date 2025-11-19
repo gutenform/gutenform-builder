@@ -9,8 +9,10 @@ import Charts from "./pages/charts";
 import MailboxesPage from "./pages/settings/mailboxes";
 import ProvidersPage from "./pages/settings/providers";
 import LabelsPage from "./pages/settings/labels";
+import WelcomePage from "./pages/welcome";
 
 export const router = createHashRouter([
+
   {
     path: "/",
     element: <ApplicationLayout />,
@@ -18,7 +20,8 @@ export const router = createHashRouter([
     children: [
       {
         path: "/",
-        element: <Inbox />,
+        element: <WelcomePage />,
+        errorElement: <ErrorPage />,
       },
       {
         path: "dashboard",
