@@ -1,1 +1,1 @@
-{"version":3,"file":"textarea/index.css","mappings":";;;AAAA;;EAEE","sources":["webpack://gutenform/./src/blocks/textarea/editor.css"],"sourcesContent":["/**\n * The following styles get applied inside the editor only.\n */\n\n"],"names":[],"sourceRoot":""}
+{"version":3,"file":"textarea/index.css","mappings":";;;AAAA;;EAEE","sources":["webpack://gutenform-builder/./src/blocks/textarea/editor.css"],"sourcesContent":["/**\n * The following styles get applied inside the editor only.\n */\n\n"],"names":[],"ignoreList":[],"sourceRoot":""}

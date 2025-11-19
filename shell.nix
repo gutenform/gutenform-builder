@@ -11,8 +11,8 @@ pkgs.mkShell {
     php83
     php83Packages.composer
     
-    # WordPress CLI tools (if available)
-    # wp-cli  # Uncomment if you have wp-cli in nixpkgs
+    # WordPress CLI tools
+    wp-cli
     
     # Development tools
     git
@@ -23,19 +23,33 @@ pkgs.mkShell {
     bash-completion
   ];
 
-  # Set environment variables
+  # Set environment variables and bootstrap project
   shellHook = ''
     echo "🚀 Gutenform Development Environment"
     echo "Node.js: $(node --version)"
     echo "npm: $(npm --version)"
     echo "PHP: $(php --version | head -n 1)"
     echo "Composer: $(composer --version | head -n 1)"
+    if command -v wp >/dev/null 2>&1; then
+      echo "WP-CLI: $(wp --info | head -n 1)"
+    fi
     echo ""
     echo "Available commands:"
     echo "  npm run dev          - Start development servers"
     echo "  npm run build         - Build for production"
     echo "  composer install     - Install PHP dependencies"
     echo ""
+    # Auto-install Node dependencies if missing
+    if [ -f package.json ] && [ ! -d node_modules ]; then
+      echo "Installing Node.js dependencies (npm install)..."
+      npm install
+    fi
+
+    # Auto-install PHP dependencies if missing
+    if [ -f composer.json ] && [ ! -d vendor ]; then
+      echo "Installing PHP dependencies (composer install)..."
+      composer install
+    fi
   '';
 
   # Ensure npm uses the correct Node.js version

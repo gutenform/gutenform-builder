@@ -68,14 +68,13 @@ export function MailComp({
           collapsible={true}
           minSize={15}
           maxSize={20}
-          className="h-full overflow-y-auto"
           onCollapse={(collapsed: boolean) => {
             setIsCollapsed(collapsed)
             document.cookie = `react-resizable-panels:collapsed=${JSON.stringify(
               collapsed
             )}`
           }}
-          className={cn(isCollapsed && "min-w-[50px] transition-all duration-300 ease-in-out")}
+          className={cn('h-full overflow-y-auto', isCollapsed && "min-w-[50px] transition-all duration-300 ease-in-out")}
         >
           <div className={cn("flex h-[52px] items-center justify-center", isCollapsed ? 'h-[52px]': 'px-2')}>
             <AccountSwitcher isCollapsed={isCollapsed} />

@@ -1,12 +1,14 @@
 <?php
 
 /**
- * Plugin Name: Gutenform
+ * Plugin Name: Gutenform Builder
+ * Plugin URI: https://gutenform.de
  * Description: A modern WordPress form builder plugin built with Gutenberg blocks. Create beautiful, responsive forms directly in the WordPress block editor and manage all submissions through an intuitive inbox interface. Features an extensible provider system for handling form submissions via email, database, or custom providers.
  * Author: Streamery
- * Author URI: https://gutenform.de
- * License: GPLv2
+ * Author URI: https://streamery.de
+ * License: GPL-2.0-or-later
  * Version: 0.0.1
+ * Update URI: false
  * Text Domain: gutenform
  * Domain Path: /languages
  *

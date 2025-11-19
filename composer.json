@@ -1,6 +1,6 @@
 {
-  "name": "prappo/gutenform",
-  "description": "Wordpress Plugin boilerplate",
+  "name": "streamery/gutenform-builder",
+  "description": "Gutenform Builder",
   "autoload": {
     "psr-4": {
       "Gutenform\\": "includes/",
