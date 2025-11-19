@@ -112,7 +112,7 @@ abstract class AbstractProvider
             return '';
         }
 
-        $formatted_fields = array();
+        $rows = '';
         foreach ($submission_data as $key => $value) {
             // Format value
             if (is_array($value)) {
@@ -123,11 +123,15 @@ abstract class AbstractProvider
                 $formatted_value = (string) $value;
             }
 
-            // Format as "key: value"
-            $formatted_fields[] = $key . ': ' . $formatted_value;
+            $rows .= '<tr style="border-bottom:1px solid #eee;"><td style="padding: 5px 10px; font-weight:bold; text-align:left;">' . esc_html($key) . '</td><td style="padding: 5px 10px;">' . esc_html($formatted_value) . '</td></tr>';
         }
 
-        return implode("\n", $formatted_fields);
+        $table = '<table style="border-collapse:collapse;width:100%;background:#fafbfc;border:1px solid #eaeaea;font-family:sans-serif;font-size:14px;margin:10px 0 15px 0;">';
+        $table .= '<thead><tr style="background:#f0f4f8;"><th style="padding:8px 10px; text-align:left; border-bottom:2px solid #eaeaea;">' . __('Field', 'gutenform') . '</th><th style="padding:8px 10px;text-align:left; border-bottom:2px solid #eaeaea;">' . __('Value', 'gutenform') . '</th></tr></thead>';
+        $table .= '<tbody>' . $rows . '</tbody>';
+        $table .= '</table>';
+
+        return $table;
     }
 
     /**

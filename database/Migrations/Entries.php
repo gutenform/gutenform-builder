@@ -53,6 +53,8 @@ class Entries implements Migration
 			`ip_address` VARCHAR(45) DEFAULT NULL COMMENT 'IP-Adresse des Absenders (oder anonymisiert).',
 			`is_read` TINYINT(1) DEFAULT 0 COMMENT 'Status: 0=Ungelesen, 1=Gelesen.',
 			`status` VARCHAR(32) DEFAULT 'inbox' COMMENT 'Status des Eintrags, z.B. new, archived, deleted.',
+			`subject` VARCHAR(255) DEFAULT NULL COMMENT 'Betreff des Eintrags (z.B. für E-Mail-Anzeige).',
+			`from_mail` VARCHAR(255) DEFAULT NULL COMMENT 'E-Mail-Adresse des Absenders.',
 			`date_created` DATETIME NOT NULL,
 			PRIMARY KEY (`id`),
 			KEY `idx_mailbox_id` (`mailbox_id`),

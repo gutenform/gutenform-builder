@@ -45,10 +45,11 @@ export default function MailPage() {
       labels: entry.labels || [],
       id: entry.id,
       name: entry.data?.name || '',
-      email: entry.data?.email || '',
-      subject: entry.data?.subject || '',
+      email: entry.from_mail || entry.data?.email || '',
+      subject: entry.subject || entry.data?.subject || '',
       status: entry.status || 'inbox',
       text: makeDataToReadableString(entry.data),
+      entry: entry, // Pass full entry for body rendering
     }
   }) || [];
 

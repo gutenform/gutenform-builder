@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API Route
  *
@@ -15,7 +16,8 @@ use Gutenform\Libs\API\ApiRouteException;
  *
  * @since 1.0.0
  */
-class Route {
+class Route
+{
 
 	private const METHOD_GET  = 'GET';
 	private const METHOD_POST = 'POST';
@@ -51,16 +53,17 @@ class Route {
 	 *
 	 * @return void
 	 */
-	public function __call( $name, $arguments ) {
+	public function __call($name, $arguments)
+	{
 		$self  = $this;
-		$count = count( $arguments );
+		$count = count($arguments);
 
-		if ( 'get' === $name && in_array( $count, array( 2, 3 ), true ) ) {
-			$self->get_normal( ...$arguments );
+		if ('get' === $name && in_array($count, array(2, 3), true)) {
+			$self->get_normal(...$arguments);
 		}
 
-		if ( 'post' === $name && in_array( $count, array( 2, 3 ), true ) ) {
-			$self->post_normal( ...$arguments );
+		if ('post' === $name && in_array($count, array(2, 3), true)) {
+			$self->post_normal(...$arguments);
 		}
 	}
 
@@ -74,24 +77,25 @@ class Route {
 	 *
 	 * @return self
 	 */
-	public static function __callStatic( $name, $arguments ) {
+	public static function __callStatic($name, $arguments)
+	{
 		$self  = new self();
-		$count = count( $arguments );
+		$count = count($arguments);
 
-		if ( 'get' === $name && in_array( $count, array( 3, 4 ), true ) ) {
-			$self->get_with_namespace( ...$arguments );
+		if ('get' === $name && in_array($count, array(3, 4), true)) {
+			$self->get_with_namespace(...$arguments);
 		}
 
-		if ( 'post' === $name && in_array( $count, array( 3, 4 ), true ) ) {
-			$self->post_with_namespace( ...$arguments );
+		if ('post' === $name && in_array($count, array(3, 4), true)) {
+			$self->post_with_namespace(...$arguments);
 		}
 
-		if ( 'prefix' === $name && 1 === $count ) {
-			return $self->prefix_one( ...$arguments );
+		if ('prefix' === $name && 1 === $count) {
+			return $self->prefix_one(...$arguments);
 		}
 
-		if ( 'prefix' === $name && 2 === $count ) {
-			return $self->prefix_two( ...$arguments );
+		if ('prefix' === $name && 2 === $count) {
+			return $self->prefix_two(...$arguments);
 		}
 	}
 
@@ -103,7 +107,8 @@ class Route {
 	 * @param string $namespace namespace.
 	 * @return void
 	 */
-	public static function set_class_namespace( $namespace ) {
+	public static function set_class_namespace($namespace)
+	{
 		self::$namespace = $namespace;
 	}
 
@@ -114,7 +119,8 @@ class Route {
 	 *
 	 * @return array
 	 */
-	public static function get_routes() {
+	public static function get_routes()
+	{
 		return self::$routes;
 	}
 
@@ -131,7 +137,8 @@ class Route {
 	 *
 	 * @return array
 	 */
-	private function prepare_route_data( $method, $prefix, $endpoint, $callback, $auth = false ) {
+	private function prepare_route_data($method, $prefix, $endpoint, $callback, $auth = false)
+	{
 		$data = array(
 			'prefix'   => $prefix,
 			'method'   => $method,
@@ -140,7 +147,7 @@ class Route {
 			'auth'     => $auth,
 		);
 
-		if ( isset( $this->current['group'] ) ) {
+		if (isset($this->current['group'])) {
 			$data['group'] = $this->current['group'];
 		}
 
@@ -158,11 +165,12 @@ class Route {
 	 *
 	 * @return void
 	 */
-	private function get_normal( $endpoint, $callback, $auth = false ) {
+	private function get_normal($endpoint, $callback, $auth = false)
+	{
 		$prefix = $this->current['prefix'];
-		$route  = $this->prepare_route_data( self::METHOD_GET, $prefix, $endpoint, $callback, $auth );
+		$route  = $this->prepare_route_data(self::METHOD_GET, $prefix, $endpoint, $callback, $auth);
 
-		self::$routes[ $prefix ][] = $route;
+		self::$routes[$prefix][] = $route;
 	}
 
 	/**
@@ -177,8 +185,9 @@ class Route {
 	 *
 	 * @return void
 	 */
-	private function get_with_namespace( $prefix, $endpoint, $callback, $auth = false ) {
-		self::$routes[ $prefix ][] = $this->prepare_route_data( self::METHOD_GET, $prefix, $endpoint, $callback, $auth );
+	private function get_with_namespace($prefix, $endpoint, $callback, $auth = false)
+	{
+		self::$routes[$prefix][] = $this->prepare_route_data(self::METHOD_GET, $prefix, $endpoint, $callback, $auth);
 	}
 
 	/**
@@ -192,11 +201,12 @@ class Route {
 	 *
 	 * @return void
 	 */
-	public function post_normal( $endpoint, $callback, $auth = false ) {
+	public function post_normal($endpoint, $callback, $auth = false)
+	{
 		$prefix = $this->current['prefix'];
-		$route  = $this->prepare_route_data( self::METHOD_POST, $prefix, $endpoint, $callback, $auth );
+		$route  = $this->prepare_route_data(self::METHOD_POST, $prefix, $endpoint, $callback, $auth);
 
-		self::$routes[ $prefix ][] = $route;
+		self::$routes[$prefix][] = $route;
 	}
 
 	/**
@@ -211,8 +221,9 @@ class Route {
 	 *
 	 * @return void
 	 */
-	private function post_with_namespace( $prefix, $endpoint, $callback, $auth = false ) {
-		self::$routes[ $prefix ][] = $this->prepare_route_data( self::METHOD_POST, $prefix, $endpoint, $callback, $auth );
+	private function post_with_namespace($prefix, $endpoint, $callback, $auth = false)
+	{
+		self::$routes[$prefix][] = $this->prepare_route_data(self::METHOD_POST, $prefix, $endpoint, $callback, $auth);
 	}
 
 	/**
@@ -224,7 +235,8 @@ class Route {
 	 *
 	 * @return self
 	 */
-	private function prefix_one( $name ) {
+	private function prefix_one($name)
+	{
 		$this->current['prefix'] = $name;
 		return $this;
 	}
@@ -241,19 +253,20 @@ class Route {
 	 *
 	 * @throws ApiRouteException If invalid callback provided.
 	 */
-	private function prefix_two( $name, $callback ) {
-		if ( ! is_callable( $callback ) ) {
-			throw new ApiRouteException( 'Invalid callback for prefix' );
+	private function prefix_two($name, $callback)
+	{
+		if (! is_callable($callback)) {
+			throw new ApiRouteException('Invalid callback for prefix');
 		}
 
 		$this->current['prefix'] = $name;
-		$this->current['group']  = microtime( true ) * 1000 + wp_rand( 0, 999 );
+		$this->current['group']  = microtime(true) * 1000 + wp_rand(0, 999);
 
 		/**
 		 * The invokation of $callback must be under prefix set.
 		 * Callback has one or more routes.
 		 */
-		$callback( $this );
+		$callback($this);
 
 		return $this;
 	}
@@ -267,25 +280,28 @@ class Route {
 	 *
 	 * @return void
 	 */
-	public function auth( $callback ) {
+	public function auth($callback)
+	{
 		$target_prefix = $this->current['prefix'];
-		foreach ( self::$routes as &$prefix ) {
-			foreach ( $prefix as &$route ) {
+		foreach (self::$routes as &$prefix) {
+			foreach ($prefix as &$route) {
 				/**
 				 * The authorization callback is overridden
 				 * only when no previous auth callback has been registered.
 				 */
-				if ( isset( $this->current['group'] )
+				if (
+					isset($this->current['group'])
 					&& $this->current['group'] === $route['group']
 					&& $target_prefix === $route['prefix']
-					&& empty( $route['auth'] ) ) {
+					&& empty($route['auth'])
+				) {
 					$route['auth'] = $callback;
 				}
 			}
 		}
 
-		if ( isset( $this->current['group'] ) ) {
-			unset( $this->current['group'] );
+		if (isset($this->current['group'])) {
+			unset($this->current['group']);
 		}
 	}
 
@@ -299,8 +315,9 @@ class Route {
 	 *
 	 * @return bool
 	 */
-	private static function str_has( $str, $find ) {
-		return strpos( $str, $find ) !== false;
+	private static function str_has($str, $find)
+	{
+		return strpos($str, $find) !== false;
 	}
 
 	/**
@@ -314,20 +331,21 @@ class Route {
 	 *
 	 * @throws ApiRouteException If invalid callback.
 	 */
-	private static function prepare_callback( $callback ) {
-		if ( false === $callback ) {
+	private static function prepare_callback($callback)
+	{
+		if (false === $callback) {
 			return '__return_false';
 		}
 
-		if ( true === $callback ) {
+		if (true === $callback) {
 			return '__return_false';
 		}
 
-		if ( ! is_array( $callback ) && is_callable( $callback ) ) {
+		if (! is_array($callback) && is_callable($callback)) {
 			return $callback;
 		}
 
-		if ( is_array( $callback ) ) {
+		if (is_array($callback)) {
 			$class  = $callback[0];
 			$method = $callback[1];
 
@@ -337,12 +355,12 @@ class Route {
 			);
 		}
 
-		if ( is_string( $callback ) && self::str_has( $callback, '@' ) ) {
-			$arr    = explode( '@', $callback, 2 );
+		if (is_string($callback) && self::str_has($callback, '@')) {
+			$arr    = explode('@', $callback, 2);
 			$class  = $arr[0];
 			$method = $arr[1];
 
-			if ( ! empty( self::$namespace ) && ! self::str_has( $class, '\\' ) ) {
+			if (! empty(self::$namespace) && ! self::str_has($class, '\\')) {
 				$class = self::$namespace . '\\' . $class;
 			}
 
@@ -352,7 +370,7 @@ class Route {
 			);
 		}
 
-		throw new ApiRouteException( 'Invalid callback' );
+		throw new ApiRouteException('Invalid callback');
 	}
 
 	/**
@@ -364,13 +382,14 @@ class Route {
 	 *
 	 * @throws ApiRouteException If route does not have a prefix.
 	 */
-	public static function dispatch() {
-		foreach ( self::$routes as $prefix ) {
-			foreach ( $prefix as $route ) {
+	public static function dispatch()
+	{
+		foreach (self::$routes as $prefix) {
+			foreach ($prefix as $route) {
 
 				$route    = (object) $route;
-				$callback = self::prepare_callback( $route->callback );
-				$auth     = self::prepare_callback( $route->auth );
+				$callback = self::prepare_callback($route->callback);
+				$auth     = self::prepare_callback($route->auth);
 
 				$args = array(
 					'methods'             => $route->method,
@@ -378,17 +397,17 @@ class Route {
 					'callback'            => $callback,
 				);
 
-				if ( false === $route->auth ) {
+				if (false === $route->auth) {
 					$args['permission_callback'] = '__return_true';
 				}
 
-				if ( ! isset( $route->prefix ) ) {
-					throw new ApiRouteException( "{$route->endpoint} must have a prefix" );
+				if (! isset($route->prefix)) {
+					throw new ApiRouteException("{$route->endpoint} must have a prefix");
 				}
 
-				$endpoint = self::convert_to_regex( $route->endpoint );
+				$endpoint = self::convert_to_regex($route->endpoint);
 
-				register_rest_route( $route->prefix, $endpoint, $args );
+				register_rest_route($route->prefix, $endpoint, $args);
 			}
 		}
 	}
@@ -398,12 +417,14 @@ class Route {
 	 *
 	 * @since 1.0.0
 	 */
-	private static function convert_to_regex( $url ) {
+	private static function convert_to_regex($url)
+	{
 		// Replace placeholders with regex patterns.
+		// Use [^/]+ to match any characters except slashes (works for both numbers and strings).
 		$regex = preg_replace_callback(
 			'/\{(\w+)\}/',
-			function ( $matches ) {
-				return '(?P<' . $matches[1] . '>\d+)'; // Capture numeric values.
+			function ($matches) {
+				return '(?P<' . $matches[1] . '>[^/]+)'; // Capture any characters except slashes.
 			},
 			$url
 		);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Function file.
  *
@@ -7,7 +8,7 @@
  * @package WordPress Plugin Boilerplate
  */
 
-defined( 'ABSPATH' ) || exit;
+defined('ABSPATH') || exit;
 
 /**
  * Installs a custom page with the specified title, name, and template file.
@@ -17,9 +18,10 @@ defined( 'ABSPATH' ) || exit;
  * @param string $page_template_file_name The filename of the page template.
  * @return void
  */
-function gf_install_page( $page_title, $page_name, $page_template_file_name ) {
+function gf_install_page($page_title, $page_name, $page_template_file_name)
+{
 	// Check if a page with the specified name does not exist.
-	if ( ! get_page_by_path( $page_name ) ) {
+	if (! get_page_by_path($page_name)) {
 		$args = array(
 			'post_title'  => $page_title,
 			'post_name'   => $page_name,
@@ -28,9 +30,9 @@ function gf_install_page( $page_title, $page_name, $page_template_file_name ) {
 			'post_type'   => 'page',
 		);
 		// Insert a new page.
-		$id = wp_insert_post( $args );
+		$id = wp_insert_post($args);
 		// Add post meta for the page template.
-		add_post_meta( $id, '_wp_page_template', $page_template_file_name );
+		add_post_meta($id, '_wp_page_template', $page_template_file_name);
 	}
 }
 
@@ -42,9 +44,10 @@ function gf_install_page( $page_title, $page_name, $page_template_file_name ) {
  *
  * @since 1.0.0
  */
-function gf_get_config( $config_file_name ) {
+function gf_get_config($config_file_name)
+{
 	$config_file_path = __DIR__ . '/../config/' . $config_file_name . '.php';
-	if ( file_exists( $config_file_path ) ) {
+	if (file_exists($config_file_path)) {
 		return require $config_file_path;
 	}
 	return array();
@@ -56,6 +59,7 @@ function gf_get_config( $config_file_name ) {
  * @return bool True if provider system should be used, false otherwise.
  * @since 1.0.0
  */
-function gutenform_use_provider_system(): bool {
-	return get_option( 'gutenform_use_provider_system', false );
+function gutenform_use_provider_system(): bool
+{
+	return get_option('gutenform_use_provider_system', true);
 }

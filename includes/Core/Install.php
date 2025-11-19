@@ -9,6 +9,7 @@ use Gutenform\Database\Migrations\Providers;
 use Gutenform\Database\Migrations\AddFormIdentifierToProviders;
 use Gutenform\Database\Seeders\EntryLabelsSeeder as SeedersEntryLabels;
 use Gutenform\Database\Seeders\MailboxesSeeder as SeedersMailboxes;
+use Gutenform\Database\Seeders\DatabaseProviderSeeder;
 use Gutenform\Traits\Base;
 
 /**
@@ -70,5 +71,7 @@ class Install
 		// Insert data to the tables.
 		SeedersEntryLabels::run();
 		SeedersMailboxes::run();
+		// Create default Database Provider
+		DatabaseProviderSeeder::run();
 	}
 }

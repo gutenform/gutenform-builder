@@ -60,6 +60,8 @@ class Entries extends Model
         'ip_address',
         'is_read',
         'status',
+        'subject',
+        'from_mail',
         'date_created',
     );
 

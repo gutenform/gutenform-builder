@@ -81,9 +81,29 @@ class Email extends AbstractProvider
             )
         );
 
+        // Log start of email processing
+        error_log(sprintf(
+            'GutenForm Email Provider: Starting email processing for form "%s"',
+            $form_identifier
+        ));
+
+        // Log email details (without sensitive body content)
+        error_log(sprintf(
+            'GutenForm Email Provider: To: %s, From: %s <%s>, Subject: %s',
+            $to_email,
+            $from_name,
+            $from_email,
+            $subject
+        ));
+
         // Validierung
         if (empty($to_email) || ! is_email($to_email)) {
-            error_log('GutenForm Email Provider Error: Invalid to_email address');
+            error_log('GutenForm Email Provider Error: Invalid to_email address: ' . $to_email);
+            return false;
+        }
+
+        if (empty($from_email) || ! is_email($from_email)) {
+            error_log('GutenForm Email Provider Error: Invalid from_email address: ' . $from_email);
             return false;
         }
 
@@ -94,10 +114,19 @@ class Email extends AbstractProvider
         );
 
         // 3. E-Mail versenden
+        error_log('GutenForm Email Provider: Attempting to send email via wp_mail()');
         $result = wp_mail($to_email, $subject, $body, $headers);
 
-        if (! $result) {
-            error_log('GutenForm Email Provider Error: wp_mail() failed');
+        if ($result) {
+            error_log(sprintf(
+                'GutenForm Email Provider: Email sent successfully to %s',
+                $to_email
+            ));
+        } else {
+            error_log(sprintf(
+                'GutenForm Email Provider Error: wp_mail() failed for %s. Check WordPress mail configuration.',
+                $to_email
+            ));
         }
 
         return $result;

@@ -44,9 +44,17 @@ class Handler
         // 2. Database Provider IMMER zuerst ausführen (läuft automatisch)
         $database_provider = $registry->get_provider('database');
         if ($database_provider) {
+            // Load Database Provider settings from database
+            $database_provider_feed = $this->get_database_provider_feed();
             $database_settings = array(
                 'mailbox_id' => $this->get_default_mailbox_id(),
             );
+            
+            // Merge settings from database provider feed if it exists
+            if ($database_provider_feed && ! empty($database_provider_feed->settings)) {
+                $database_settings = array_merge($database_settings, $database_provider_feed->settings);
+            }
+            
             try {
                 $success = $database_provider->process_submission(
                     $submission_data,
@@ -161,5 +169,48 @@ class Handler
         // Fallback: Erste Mailbox oder ID 1
         $first_mailbox = Mailboxes::orderBy('id', 'ASC')->first();
         return $first_mailbox ? (int) $first_mailbox->id : 1;
+    }
+
+    /**
+     * Lädt den Database Provider Feed aus der Datenbank.
+     * Erstellt ihn automatisch, falls er nicht existiert.
+     *
+     * @return \Gutenform\Models\Providers|null
+     */
+    private function get_database_provider_feed() {
+        // Suche nach Database Provider (provider_type = 'database')
+        $provider = Providers::where( 'provider_type', 'database' )
+            ->whereNull( 'form_identifier' ) // Globaler Provider
+            ->first();
+
+        // Falls nicht vorhanden, erstelle Standard-Provider
+        if ( ! $provider ) {
+            $provider = $this->create_default_database_provider();
+        }
+
+        return $provider;
+    }
+
+    /**
+     * Erstellt den Standard-Database Provider in der Datenbank.
+     *
+     * @return \Gutenform\Models\Providers
+     */
+    private function create_default_database_provider() {
+        $provider = new Providers();
+        $provider->name            = __( 'Database Provider (Standard)', 'gutenform' );
+        $provider->provider_type   = 'database';
+        $provider->form_identifier = null; // Global
+        $provider->settings        = array(
+            'mailbox_id'  => $this->get_default_mailbox_id(),
+            'subject'     => __( 'Neue Formular-Übermittlung: {form_title}', 'gutenform' ),
+            'body'        => '{all_fields}',
+            'from_email'  => get_option( 'admin_email' ),
+        );
+        $provider->is_active       = true;
+        $provider->date_created    = current_time( 'mysql' );
+        $provider->save();
+
+        return $provider;
     }
 }

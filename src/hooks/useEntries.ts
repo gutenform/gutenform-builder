@@ -22,6 +22,8 @@ export interface Entry {
   date_created: string;
   labels?: EntryLabel[];
   status?: string;
+  subject?: string;
+  from_mail?: string;
 }
 
 export interface CreateEntryData {
