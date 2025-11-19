@@ -14,7 +14,7 @@
 		"WP_ENVIRONMENT_TYPE": "local"
 	},
 	"mappings": {
-		"wp-content/plugins/gutenform": "."
+		"wp-content/plugins/gutenform-builder": "."
 	}
 }
 

@@ -96,7 +96,7 @@ grunt.initConfig({
     pkg,
     move: {
         rename_plugin_file: {
-          src: 'gutenform.php',
+          src: 'gutenform-builder.php',
           dest: config.plugin_file_name
         }
       },
@@ -282,13 +282,13 @@ grunt.initConfig({
         main: {
             expand: true,
             src: distFiles,
-            dest: 'release/gutenform',
+            dest: 'release/gutenform-builder',
         },
     },
 
      // Task to delete .js.map files
     clean: {
-        mapFiles: ['release/gutenform/js/dist/assets/**/*.js.map']
+        mapFiles: ['release/gutenform-builder/js/dist/assets/**/*.js.map']
     },
 
     // Task to compress the release directory into a zip file
@@ -296,29 +296,29 @@ grunt.initConfig({
         main: {
             options: {
                 mode: 'zip',
-                archive: `./release/gutenform.zip`,
+                archive: `./release/gutenform-builder.zip`,
             },
             expand: true,
             src: distFiles,
-            dest: '/gutenform',
+            dest: '/gutenform-builder',
         },
         version: {
             options: {
                 mode: 'zip',
-                archive: `./release/gutenform-${pkg.version}.zip`,
+                archive: `./release/gutenform-builder-${pkg.version}.zip`,
             },
             expand: true,
             src: distFiles,
-            dest: '/gutenform',
+            dest: '/gutenform-builder',
         },
         todocs: {
             options: {
                 mode: 'zip',
-                archive: `./documentation/public/plugin/gutenform.zip`,
+                archive: `./documentation/public/plugin/gutenform-builder.zip`,
             },
             expand: true,
             src: distFiles,
-            dest: '/gutenform',
+            dest: '/gutenform-builder',
         },
     },
 });

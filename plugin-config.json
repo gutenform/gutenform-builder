@@ -2,7 +2,7 @@
     "plugin_name":"Gutenform",
     "plugin_description":"Gutenform is a plugin for creating and managing forms in WordPress.",
     "plugin_version":"1.0.0",
-    "plugin_file_name":"gutenform.php",
+    "plugin_file_name":"gutenform-builder.php",
     "author_name":"Gutenform",
     "author_uri":"https://gutenform.com",
     "text_domain":"gutenform",

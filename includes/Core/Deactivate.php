@@ -40,13 +40,13 @@ class Deactivate
 			return;
 		}
 
-		// Get plugin basename - the main plugin file is gutenform.php, not plugin.php
-		// GF_PLUGIN_FILE points to plugin.php, but we need gutenform.php for the basename
+		// Get plugin basename - the main plugin file is gutenform-builder.php, not plugin.php
+		// GF_PLUGIN_FILE points to plugin.php, but we need gutenform-builder.php for the basename
 		if (defined('GF_DIR')) {
-			$plugin_file = GF_DIR . '/gutenform.php';
+			$plugin_file = GF_DIR . '/gutenform-builder.php';
 		} else {
-			// Fallback: try to find gutenform.php relative to this file
-			$plugin_file = __DIR__ . '/../../gutenform.php';
+			// Fallback: try to find gutenform-builder.php relative to this file
+			$plugin_file = __DIR__ . '/../../gutenform-builder.php';
 		}
 		$plugin_basename = plugin_basename($plugin_file);
 		$rest_url = rest_url(GF_ROUTE_PREFIX . '/database/remove');
