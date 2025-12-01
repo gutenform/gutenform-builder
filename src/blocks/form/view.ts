@@ -63,6 +63,11 @@ window.addEventListener('DOMContentLoaded', () => {
 				if (result.success) {
 					// Success-Handling (z.B. Success-Message anzeigen)
 					console.log('Form submitted successfully', result);
+					form.classList.add('gutenform-form--success-view');
+					//clear form
+					if (form instanceof HTMLFormElement) {
+						form.reset();
+					}
 					// TODO: Show success message to user
 				} else {
 					// Error-Handling

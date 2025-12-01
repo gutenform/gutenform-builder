@@ -4,4 +4,5 @@ export type FormAttributes = {
 	formId: string;
 	skin?: string;
 	providerIds?: number[];
+	successView?: boolean;
 };

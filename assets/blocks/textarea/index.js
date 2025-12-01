@@ -2860,7 +2860,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   cn: () => (/* binding */ cn),
-/* harmony export */   getFieldClasses: () => (/* binding */ getFieldClasses)
+/* harmony export */   getFieldClasses: () => (/* binding */ getFieldClasses),
+/* harmony export */   getFormClasses: () => (/* binding */ getFormClasses)
 /* harmony export */ });
 /* harmony import */ var clsx__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.mjs");
 /* harmony import */ var tailwind_merge__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! tailwind-merge */ "./node_modules/tailwind-merge/dist/bundle-mjs.mjs");
@@ -2869,6 +2870,9 @@ __webpack_require__.r(__webpack_exports__);
 function cn(...inputs) {
   return (0,tailwind_merge__WEBPACK_IMPORTED_MODULE_1__.twMerge)((0,clsx__WEBPACK_IMPORTED_MODULE_0__.clsx)(inputs));
 }
+const getFormClasses = attributes => {
+  return cn('gutenform-form', attributes.successView && 'gutenform-form--success-view');
+};
 const getFieldClasses = attributes => {
   return cn('gutenform-field', attributes.type && `gutenform-field-type--${attributes.type.toLowerCase()}`, attributes.required && 'gutenform-field--required');
 };

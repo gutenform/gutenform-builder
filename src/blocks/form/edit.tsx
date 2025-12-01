@@ -1,17 +1,18 @@
 import { __ } from '@wordpress/i18n';
-import { useBlockProps, InspectorControls, InnerBlocks } from '@wordpress/block-editor';
+import { useBlockProps, InspectorControls, InnerBlocks, BlockControls } from '@wordpress/block-editor';
 import { dispatch } from '@wordpress/data';
-import { TextControl, PanelBody, SelectControl, Spinner, CheckboxControl } from '@wordpress/components';
+import { TextControl, PanelBody, SelectControl, Spinner, CheckboxControl, ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import { type BlockEditProps, createBlocksFromInnerBlocksTemplate } from '@wordpress/blocks';
 import { type FormAttributes } from '@/blockTypes/form';
 import { useEffect } from 'react';
 import TemplateSelect from '../../components/block-atoms/TemplateSelect';
 import { allowedBlocks } from './allowedBlocks';
 import './editor.css';
-import { getFieldClasses } from '../../lib/utils';
+import { getFormClasses } from '../../lib/utils';
 import skins from '../../skins';
 import { useMailboxes } from '../../hooks/useMailboxes';
 import { useProviders } from '../../hooks/useProviders';
+import { Eye, EyeOff } from 'lucide-react';
 
 const MailboxSelect = ({value, onChange}: {value: string, onChange: (value: string) => void}) => {
 	const { mailboxes, loading, error } = useMailboxes();
@@ -114,6 +115,16 @@ export default function Edit(props: BlockEditProps<FormAttributes>) {
 
 	return (
 		<>
+			<BlockControls>
+				<ToolbarGroup>
+					<ToolbarButton
+						icon={attributes.successView ? <Eye /> : <EyeOff />}
+						label={__('Toggle Success View', 'gutenform')}
+						onClick={() => setAttributes({ successView: !attributes.successView })}
+						isActive={attributes.successView}
+					/>
+				</ToolbarGroup>
+			</BlockControls>
 			<InspectorControls>
 				<PanelBody title="Form Settings">
 					<MailboxSelect 
@@ -154,7 +165,7 @@ export default function Edit(props: BlockEditProps<FormAttributes>) {
 				</PanelBody>
 			</InspectorControls>
 			<div { ...useBlockProps({
-				className: getFieldClasses(attributes),
+				className: getFormClasses(attributes),
 			}) }>
 				{innerBlockItems?.length > 0 ? (
 					<InnerBlocks

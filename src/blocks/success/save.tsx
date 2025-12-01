@@ -4,8 +4,7 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { FormAttributes } from '@/blockTypes/form';
-import { getFormClasses } from '../../lib/utils';
+import { SuccessAttributes } from '@/blockTypes/success';
 import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import { type BlockSaveProps } from '@wordpress/blocks';
 
@@ -18,20 +17,11 @@ import { type BlockSaveProps } from '@wordpress/blocks';
  *
  * @return {Element} Element to render.
  */
-export default function save(props: BlockSaveProps<FormAttributes>) {
-	const options = {
-		formTitle: props.attributes.formTitle,
-		skin: props.attributes.skin || 'default',
-		mailboxId: props.attributes.mailboxId || '1',
-		formId: props.attributes.formId || '',
-		providerIds: props.attributes.providerIds || [],
-	};
-	const className = getFormClasses(props.attributes);
+export default function save(props: BlockSaveProps<SuccessAttributes>) {
+	console.log(props); // eslint-disable-line no-console
 	return (
-		<form { ...useBlockProps.save({
-			className,
-		}) } data-form-options={JSON.stringify(options)} data-skin={props.attributes.skin || 'default'}>
+		<div { ...useBlockProps.save() }>
 			<InnerBlocks.Content />
-		</form>
+		</div>
 	);
 }

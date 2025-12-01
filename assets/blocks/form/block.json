@@ -31,6 +31,10 @@
       "items": {
         "type": "number"
       }
+    },
+    "successView": {
+      "type": "boolean",
+      "default": false
     }
   },
   "supports": {
