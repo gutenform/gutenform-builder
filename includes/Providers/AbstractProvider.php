@@ -116,14 +116,20 @@ abstract class AbstractProvider
         foreach ($submission_data as $key => $value) {
             // Format value
             if (is_array($value)) {
-                $formatted_value = implode(', ', $value);
+                // Check if this is a file array (has 'url' key in first element)
+                if (!empty($value) && is_array($value[0]) && isset($value[0]['url'])) {
+                    // This is a file upload field
+                    $formatted_value = $this->format_file_field($value);
+                } else {
+                    $formatted_value = implode(', ', $value);
+                }
             } elseif (is_bool($value)) {
                 $formatted_value = $value ? __('Yes', 'gutenform') : __('No', 'gutenform');
             } else {
                 $formatted_value = (string) $value;
             }
 
-            $rows .= '<tr style="border-bottom:1px solid #eee;"><td style="padding: 5px 10px; font-weight:bold; text-align:left;">' . esc_html($key) . '</td><td style="padding: 5px 10px;">' . esc_html($formatted_value) . '</td></tr>';
+            $rows .= '<tr style="border-bottom:1px solid #eee;"><td style="padding: 5px 10px; font-weight:bold; text-align:left;">' . esc_html($key) . '</td><td style="padding: 5px 10px;">' . $formatted_value . '</td></tr>';
         }
 
         $table = '<table style="border-collapse:collapse;width:100%;background:#fafbfc;border:1px solid #eaeaea;font-family:sans-serif;font-size:14px;margin:10px 0 15px 0;">';
@@ -177,5 +183,86 @@ abstract class AbstractProvider
         }
 
         return $_SERVER['REMOTE_ADDR'] ?? '';
+    }
+
+    /**
+     * Formats file field data as HTML with thumbnails and download links.
+     *
+     * @param array $files Array of file data objects.
+     * @return string HTML formatted file list.
+     */
+    protected function format_file_field(array $files): string
+    {
+        if (empty($files)) {
+            return '';
+        }
+
+        $file_list = '<div style="display: flex; flex-direction: column; gap: 8px;">';
+
+        foreach ($files as $file) {
+            if (!isset($file['url']) || !isset($file['name'])) {
+                continue;
+            }
+
+            $file_url = esc_url($file['url']);
+            $file_name = esc_html($file['original_name'] ?? $file['name']);
+            $file_type = $file['type'] ?? '';
+            $is_image = strpos($file_type, 'image/') === 0;
+
+            $file_list .= '<div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 4px;">';
+
+            if ($is_image) {
+                // Show thumbnail for images
+                $file_list .= sprintf(
+                    '<img src="%s" alt="%s" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px; flex-shrink: 0;" />',
+                    esc_url($file_url),
+                    esc_attr($file_name)
+                );
+            } else {
+                // Show file icon for non-images
+                $file_list .= '<div style="width: 60px; height: 60px; background: #e5e7eb; border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">';
+                $file_list .= '<span style="font-size: 24px;">📄</span>';
+                $file_list .= '</div>';
+            }
+
+            $file_list .= '<div style="flex: 1; min-width: 0;">';
+            $file_list .= sprintf(
+                '<a href="%s" target="_blank" style="color: #3b82f6; text-decoration: none; font-weight: 500; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">%s</a>',
+                $file_url,
+                $file_name
+            );
+
+            if (isset($file['size'])) {
+                $file_size = $this->format_file_size($file['size']);
+                $file_list .= sprintf(
+                    '<span style="font-size: 12px; color: #6b7280;">%s</span>',
+                    esc_html($file_size)
+                );
+            }
+
+            $file_list .= '</div>';
+            $file_list .= '</div>';
+        }
+
+        $file_list .= '</div>';
+
+        return $file_list;
+    }
+
+    /**
+     * Formats file size in human-readable format.
+     *
+     * @param int $bytes File size in bytes.
+     * @return string Formatted file size.
+     */
+    protected function format_file_size(int $bytes): string
+    {
+        $units = array('B', 'KB', 'MB', 'GB');
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= pow(1024, $pow);
+
+        return round($bytes, 2) . ' ' . $units[$pow];
     }
 }

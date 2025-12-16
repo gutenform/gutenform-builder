@@ -55,25 +55,30 @@ class Email extends AbstractProvider
         string $form_identifier
     ): bool {
         // 1. Replace placeholders
-        $to_email   = sanitize_email($provider_settings['to_email'] ?? '');
-        $subject    = $this->replace_placeholders(
+        $to_email_raw = $provider_settings['to_email'] ?? '';
+        $to_email     = sanitize_email($to_email_raw);
+        
+        $subject = $this->replace_placeholders(
             $provider_settings['subject'] ?? '',
             $submission_data,
             $form_identifier
         );
-        $body       = $this->replace_placeholders(
+        
+        $body = $this->replace_placeholders(
             $provider_settings['body'] ?? '',
             $submission_data,
             $form_identifier
         );
-        $from_email = sanitize_email(
-            $this->replace_placeholders(
-                $provider_settings['from_email'] ?? get_option('admin_email'),
-                $submission_data,
-                $form_identifier
-            )
+        
+        // Replace placeholders in from_email BEFORE validation
+        $from_email_raw = $this->replace_placeholders(
+            $provider_settings['from_email'] ?? get_option('admin_email'),
+            $submission_data,
+            $form_identifier
         );
-        $from_name  = sanitize_text_field(
+        $from_email = sanitize_email($from_email_raw);
+        
+        $from_name = sanitize_text_field(
             $this->replace_placeholders(
                 $provider_settings['from_name'] ?? get_bloginfo('name'),
                 $submission_data,
@@ -98,12 +103,17 @@ class Email extends AbstractProvider
 
         // Validation
         if (empty($to_email) || ! is_email($to_email)) {
-            error_log('GutenForm Email Provider Error: Invalid to_email address: ' . $to_email);
+            error_log('GutenForm Email Provider Error: Invalid to_email address: ' . $to_email_raw);
             return false;
         }
 
+        // Validate from_email after placeholder replacement
         if (empty($from_email) || ! is_email($from_email)) {
-            error_log('GutenForm Email Provider Error: Invalid from_email address: ' . $from_email);
+            error_log(sprintf(
+                'GutenForm Email Provider Error: Invalid from_email address after placeholder replacement. Original: "%s", Replaced: "%s"',
+                $provider_settings['from_email'] ?? '',
+                $from_email_raw
+            ));
             return false;
         }
 
@@ -113,9 +123,18 @@ class Email extends AbstractProvider
             'Content-Type: text/html; charset=UTF-8',
         );
 
-        // 3. Send email
+        // 3. Collect file attachments
+        $attachments = $this->get_file_attachments($submission_data);
+
+        // 4. Send email
         error_log('GutenForm Email Provider: Attempting to send email via wp_mail()');
-        $result = wp_mail($to_email, $subject, $body, $headers);
+        if (!empty($attachments)) {
+            error_log(sprintf(
+                'GutenForm Email Provider: Attaching %d file(s) to email',
+                count($attachments)
+            ));
+        }
+        $result = wp_mail($to_email, $subject, $body, $headers, $attachments);
 
         if ($result) {
             error_log(sprintf(
@@ -172,7 +191,7 @@ class Email extends AbstractProvider
                 'type'        => 'text',
                 'required'    => false,
                 'default'     => get_option('admin_email'),
-                'description' => __('Email address of the sender.', 'gutenform'),
+                'description' => __('Email address of the sender. Placeholders like {field_email} can be used.', 'gutenform'),
             ),
             array(
                 'name'        => 'from_name',
@@ -183,5 +202,96 @@ class Email extends AbstractProvider
                 'description' => __('Name of the sender.', 'gutenform'),
             ),
         );
+    }
+
+    /**
+     * Extracts file attachments from submission data.
+     *
+     * @param array $submission_data The form submission data.
+     * @return array Array of file paths for wp_mail() attachments.
+     */
+    private function get_file_attachments(array $submission_data): array
+    {
+        $attachments = array();
+
+        foreach ($submission_data as $field_name => $field_value) {
+            // Check if field value is an array of file objects
+            if (is_array($field_value)) {
+                // Check if it's a file array (has 'url' key in first element)
+                if (!empty($field_value) && is_array($field_value[0]) && isset($field_value[0]['url'])) {
+                    foreach ($field_value as $file_data) {
+                        if (isset($file_data['url']) && isset($file_data['attachment_id'])) {
+                            // Use WordPress attachment ID if available
+                            $attachment_path = get_attached_file($file_data['attachment_id']);
+                            if ($attachment_path && file_exists($attachment_path)) {
+                                $attachments[] = $attachment_path;
+                            } elseif (isset($file_data['url'])) {
+                                // Fallback: download from URL
+                                $file_path = $this->download_file_for_attachment($file_data['url']);
+                                if ($file_path) {
+                                    $attachments[] = $file_path;
+                                }
+                            }
+                        } elseif (isset($file_data['url'])) {
+                            // No attachment ID, try to download from URL
+                            $file_path = $this->download_file_for_attachment($file_data['url']);
+                            if ($file_path) {
+                                $attachments[] = $file_path;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $attachments;
+    }
+
+    /**
+     * Downloads a file from URL for email attachment.
+     *
+     * @param string $file_url The file URL.
+     * @return string|false The temporary file path or false on failure.
+     */
+    private function download_file_for_attachment(string $file_url)
+    {
+        // Check if URL is local (same domain)
+        $upload_dir = wp_upload_dir();
+        $site_url = site_url();
+        
+        if (strpos($file_url, $site_url) === 0) {
+            // Local file - convert URL to path
+            $file_path = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $file_url);
+            if (file_exists($file_path)) {
+                return $file_path;
+            }
+        }
+
+        // Remote file - download to temporary location
+        $response = wp_remote_get($file_url, array(
+            'timeout' => 30,
+            'sslverify' => true,
+        ));
+
+        if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
+            error_log('GutenForm Email Provider: Failed to download file for attachment: ' . $file_url);
+            return false;
+        }
+
+        $file_content = wp_remote_retrieve_body($response);
+        $file_name = basename(parse_url($file_url, PHP_URL_PATH));
+        
+        if (empty($file_name)) {
+            $file_name = 'attachment-' . time();
+        }
+
+        // Create temporary file
+        $temp_file = wp_tempnam($file_name);
+        if ($temp_file) {
+            file_put_contents($temp_file, $file_content);
+            return $temp_file;
+        }
+
+        return false;
     }
 }

@@ -12,6 +12,7 @@
 namespace Gutenform\Providers;
 
 use Gutenform\Models\Entries;
+use Gutenform\Models\Mailboxes;
 
 defined('ABSPATH') || exit;
 
@@ -71,8 +72,17 @@ class Database extends AbstractProvider
                 )
             );
 
+            $mailbox_id = absint($provider_settings['mailbox_id'] ?? 1);
+            
+            // Log mailbox assignment
+            error_log(sprintf(
+                'GutenForm Database Provider: Saving entry to mailbox_id: %d for form "%s"',
+                $mailbox_id,
+                $form_identifier
+            ));
+            
             $entry = new Entries();
-            $entry->mailbox_id      = absint($provider_settings['mailbox_id'] ?? 1);
+            $entry->mailbox_id      = $mailbox_id;
             $entry->form_identifier = $form_identifier;
             $entry->wp_post_id      = isset($provider_settings['wp_post_id']) ? absint($provider_settings['wp_post_id']) : null;
             $entry->data            = $submission_data;
@@ -86,8 +96,9 @@ class Database extends AbstractProvider
 
             if ($result) {
                 error_log(sprintf(
-                    'GutenForm Database Provider: Entry saved successfully (ID: %d) for form "%s"',
+                    'GutenForm Database Provider: Entry saved successfully (ID: %d, Mailbox ID: %d) for form "%s"',
                     $entry->id,
+                    $entry->mailbox_id,
                     $form_identifier
                 ));
             } else {
@@ -108,15 +119,34 @@ class Database extends AbstractProvider
      */
     public function get_settings_fields(): array
     {
+        // Get all mailboxes for select options
+        $mailboxes = Mailboxes::orderBy('title', 'ASC')->get();
+        $mailbox_options = array();
+        
+        foreach ($mailboxes as $mailbox) {
+            $mailbox_options[] = array(
+                'value' => (string) $mailbox->id,
+                'label' => $mailbox->title . ($mailbox->is_default ? ' (' . __('Default', 'gutenform') . ')' : ''),
+            );
+        }
+        
+        // If no mailboxes exist, add default option
+        if (empty($mailbox_options)) {
+            $mailbox_options[] = array(
+                'value' => '1',
+                'label' => __('Default Mailbox', 'gutenform'),
+            );
+        }
+
         return array(
             array(
                 'name'        => 'mailbox_id',
-                'label'       => __('Mailbox ID', 'gutenform'),
-                'type'        => 'number',
+                'label'       => __('Mailbox', 'gutenform'),
+                'type'        => 'select',
                 'required'    => true,
-                'default'     => 1,
-                'description' => __('ID of the mailbox where the entry will be stored.', 'gutenform'),
-                'min'         => 1,
+                'default'     => $this->get_default_mailbox_id(),
+                'description' => __('Select the mailbox where the entry will be stored.', 'gutenform'),
+                'options'     => $mailbox_options,
             ),
             array(
                 'name'        => 'subject',
@@ -141,8 +171,26 @@ class Database extends AbstractProvider
                 'type'        => 'text',
                 'required'    => false,
                 'default'     => get_option('admin_email'),
-                'description' => __('Email address of the sender that will be stored in the entry.', 'gutenform'),
+                'description' => __('Email address of the sender that will be stored in the entry. Placeholders like {field_email} can be used.', 'gutenform'),
             ),
         );
+    }
+
+    /**
+     * Gets the default mailbox ID.
+     *
+     * @return int The mailbox ID (default: 1)
+     */
+    private function get_default_mailbox_id(): int
+    {
+        $default_mailbox = Mailboxes::where('is_default', true)->first();
+
+        if ($default_mailbox) {
+            return (int) $default_mailbox->id;
+        }
+
+        // Fallback: First mailbox or ID 1
+        $first_mailbox = Mailboxes::orderBy('id', 'ASC')->first();
+        return $first_mailbox ? (int) $first_mailbox->id : 1;
     }
 }

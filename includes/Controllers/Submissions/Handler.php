@@ -14,6 +14,7 @@ namespace Gutenform\Controllers\Submissions;
 use Gutenform\Models\Providers;
 use Gutenform\Models\Mailboxes;
 use Gutenform\Providers\Registry;
+use Gutenform\Core\Debug;
 
 defined('ABSPATH') || exit;
 
@@ -54,6 +55,20 @@ class Handler
             if ($database_provider_feed && ! empty($database_provider_feed->settings)) {
                 $database_settings = array_merge($database_settings, $database_provider_feed->settings);
             }
+            
+            // Ensure mailbox_id is set and is an integer
+            if (isset($database_settings['mailbox_id'])) {
+                $database_settings['mailbox_id'] = absint($database_settings['mailbox_id']);
+            } else {
+                $database_settings['mailbox_id'] = $this->get_default_mailbox_id();
+            }
+            
+            // Log mailbox assignment for debugging
+            error_log(sprintf(
+                'GutenForm Handler: Processing submission for form "%s" with mailbox_id: %d',
+                $form_identifier,
+                $database_settings['mailbox_id']
+            ));
             
             try {
                 $success = $database_provider->process_submission(
@@ -146,11 +161,24 @@ class Handler
         );
         $overall_success = ! empty($results) && count($successful_results) > 0;
 
-        return array(
+        // 5. Collect debug data if debug mode is enabled
+        $response = array(
             'success' => $overall_success,
             'errors'  => $errors,
             'results' => $results,
         );
+
+        if (Debug::is_enabled()) {
+            $debug_data = Debug::collect_debug_data(
+                $submission_data,
+                $form_identifier,
+                $results,
+                $errors
+            );
+            $response['debug'] = $debug_data;
+        }
+
+        return $response;
     }
 
     /**
