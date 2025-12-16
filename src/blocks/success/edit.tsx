@@ -26,15 +26,39 @@ export default function Edit(props: BlockEditProps<SuccessAttributes>) {
 		}
 	}, [formBlock, updateBlockAttributes]);
 
+	// IMPORTANT: useBlockProps() must be called unconditionally to follow Rules of Hooks
+	// It must be called before any conditional returns
+	const blockProps = useBlockProps();
+
 	// Find the form element in the DOM
+	// Re-run when successView changes to ensure we find the form when needed
 	useEffect(() => {
-		if (successRef.current) {
-			const formElement = successRef.current.closest('.wp-block-gutenform-form');
-			if (formElement) {
-				setForm(formElement as HTMLDivElement);
+		const findForm = () => {
+			if (successRef.current) {
+				const formElement = successRef.current.closest('.wp-block-gutenform-form');
+				if (formElement) {
+					setForm(formElement as HTMLDivElement);
+					return true;
+				}
 			}
+			return false;
+		};
+
+		// Try to find immediately
+		if (findForm()) {
+			return;
 		}
-	}, []);
+
+		// If not found and successView is active, try again after a short delay
+		// This handles cases where the DOM hasn't updated yet
+		if (successView) {
+			const timeoutId = setTimeout(() => {
+				findForm();
+			}, 0);
+
+			return () => clearTimeout(timeoutId);
+		}
+	}, [successView]);
 
 	// Handle modal click events
 	useEffect(() => {
@@ -66,20 +90,9 @@ export default function Edit(props: BlockEditProps<SuccessAttributes>) {
 		};
 	}, [successView, closeModal]);
 
-	// Hidden state when success view is not active
-	if (!successView) {
-		return (
-			<div ref={successRef}>
-				<div style={{ padding: '1rem', border: '1px dashed #ccc', textAlign: 'center' }}>
-					{__('successModalHiddenInPreview')}
-				</div>
-			</div>
-		);
-	}
-
 	// Success modal content
 	const SuccessContent = (
-		<div { ...useBlockProps() }>
+		<div {...blockProps}>
 			<InnerBlocks
 				allowedBlocks={['core/heading', 'core/paragraph']}
 				template={[
@@ -100,7 +113,6 @@ export default function Edit(props: BlockEditProps<SuccessAttributes>) {
 					</div>
 				</div>
 			), form)}
-			{!form && <div>No form found</div>}
 		</div>
 	);
 }

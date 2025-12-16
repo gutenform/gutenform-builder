@@ -13,7 +13,7 @@ export const FormBlockControls = ({ attributes, setAttributes }: FormBlockContro
 		<BlockControls>
 			<ToolbarGroup>
 				<ToolbarButton
-					icon={attributes.successView ? <BlockIcon icon={Eye} /> : <BlockIcon icon={EyeOff} />}
+					icon={attributes.successView ? <BlockIcon icon={Eye} clean={true} /> : <BlockIcon icon={EyeOff} clean={true} />}
 					label={__('toggleSuccessView')}
 					onClick={() => setAttributes({ successView: !attributes.successView })}
 					isActive={attributes.successView}
