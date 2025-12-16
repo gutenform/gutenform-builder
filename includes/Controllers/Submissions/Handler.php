@@ -26,22 +26,22 @@ class Handler
 {
 
     /**
-     * Verarbeitet eine Formular-Submission.
+     * Processes a form submission.
      *
-     * @param array  $submission_data Die Formulardaten
-     * @param string $form_identifier Der Formular-Identifier
-     * @param array  $provider_ids Array von Provider-Feed-IDs (optional)
-     * @return array Ergebnis mit success, errors, results
+     * @param array  $submission_data The form data
+     * @param string $form_identifier The form identifier
+     * @param array  $provider_ids Array of provider feed IDs (optional)
+     * @return array Result with success, errors, results
      */
     public function process(array $submission_data, string $form_identifier, array $provider_ids = array()): array
     {
         $errors  = array();
         $results = array();
 
-        // 1. Registry abrufen
+        // 1. Get registry
         $registry = Registry::get_instance();
 
-        // 2. Database Provider IMMER zuerst ausführen (läuft automatisch)
+        // 2. Database Provider ALWAYS executes first (runs automatically)
         $database_provider = $registry->get_provider('database');
         if ($database_provider) {
             // Load Database Provider settings from database
@@ -67,11 +67,11 @@ class Handler
                 );
 
                 if (! $success) {
-                    $errors[] = __('Database Provider konnte die Submission nicht verarbeiten.', 'gutenform');
+                    $errors[] = __('Database Provider could not process the submission.', 'gutenform');
                 }
             } catch (\Exception $e) {
                 $errors[] = sprintf(
-                    __('Database Provider Fehler: %s', 'gutenform'),
+                    __('Database Provider Error: %s', 'gutenform'),
                     $e->getMessage()
                 );
                 $results['database'] = array(
@@ -81,7 +81,7 @@ class Handler
             }
         }
 
-        // 3. Dann alle konfigurierten Provider-Feeds aus DB
+        // 3. Then all configured provider feeds from DB
         if (! empty($provider_ids)) {
             $provider_feeds = Providers::whereIn('id', $provider_ids)
                 ->where('is_active', true)
@@ -93,13 +93,13 @@ class Handler
 
                 if (! $provider) {
                     $errors[] = sprintf(
-                        __('Provider "%s" nicht gefunden.', 'gutenform'),
+                        __('Provider "%s" not found.', 'gutenform'),
                         $provider_slug
                     );
                     continue;
                 }
 
-                // Überspringe Database Provider (wurde bereits ausgeführt)
+                // Skip Database Provider (already executed)
                 if ($provider_slug === 'database') {
                     continue;
                 }
@@ -118,13 +118,13 @@ class Handler
 
                     if (! $success) {
                         $errors[] = sprintf(
-                            __('Provider "%s" konnte die Submission nicht verarbeiten.', 'gutenform'),
+                            __('Provider "%s" could not process the submission.', 'gutenform'),
                             $provider->get_title()
                         );
                     }
                 } catch (\Exception $e) {
                     $errors[] = sprintf(
-                        __('Fehler in Provider "%s": %s', 'gutenform'),
+                        __('Error in Provider "%s": %s', 'gutenform'),
                         $provider->get_title(),
                         $e->getMessage()
                     );
@@ -136,8 +136,8 @@ class Handler
             }
         }
 
-        // 4. Ergebnis zusammenstellen
-        // Submission gilt als erfolgreich, wenn mindestens ein Provider erfolgreich war
+        // 4. Compile result
+        // Submission is considered successful if at least one provider was successful
         $successful_results = array_filter(
             $results,
             function ($result) {
@@ -154,9 +154,9 @@ class Handler
     }
 
     /**
-     * Ermittelt die Standard-Mailbox-ID.
+     * Gets the default mailbox ID.
      *
-     * @return int Die Mailbox-ID (Standard: 1)
+     * @return int The mailbox ID (default: 1)
      */
     private function get_default_mailbox_id(): int
     {
@@ -166,24 +166,24 @@ class Handler
             return (int) $default_mailbox->id;
         }
 
-        // Fallback: Erste Mailbox oder ID 1
+        // Fallback: First mailbox or ID 1
         $first_mailbox = Mailboxes::orderBy('id', 'ASC')->first();
         return $first_mailbox ? (int) $first_mailbox->id : 1;
     }
 
     /**
-     * Lädt den Database Provider Feed aus der Datenbank.
-     * Erstellt ihn automatisch, falls er nicht existiert.
+     * Loads the Database Provider feed from the database.
+     * Creates it automatically if it doesn't exist.
      *
      * @return \Gutenform\Models\Providers|null
      */
     private function get_database_provider_feed() {
-        // Suche nach Database Provider (provider_type = 'database')
+        // Search for Database Provider (provider_type = 'database')
         $provider = Providers::where( 'provider_type', 'database' )
-            ->whereNull( 'form_identifier' ) // Globaler Provider
+            ->whereNull( 'form_identifier' ) // Global provider
             ->first();
 
-        // Falls nicht vorhanden, erstelle Standard-Provider
+        // If not found, create default provider
         if ( ! $provider ) {
             $provider = $this->create_default_database_provider();
         }
@@ -192,18 +192,18 @@ class Handler
     }
 
     /**
-     * Erstellt den Standard-Database Provider in der Datenbank.
+     * Creates the default Database Provider in the database.
      *
      * @return \Gutenform\Models\Providers
      */
     private function create_default_database_provider() {
         $provider = new Providers();
-        $provider->name            = __( 'Database Provider (Standard)', 'gutenform' );
+        $provider->name            = __( 'Database Provider (Default)', 'gutenform' );
         $provider->provider_type   = 'database';
         $provider->form_identifier = null; // Global
         $provider->settings        = array(
             'mailbox_id'  => $this->get_default_mailbox_id(),
-            'subject'     => __( 'Neue Formular-Übermittlung: {form_title}', 'gutenform' ),
+            'subject'     => __( 'New Form Submission: {form_title}', 'gutenform' ),
             'body'        => '{all_fields}',
             'from_email'  => get_option( 'admin_email' ),
         );

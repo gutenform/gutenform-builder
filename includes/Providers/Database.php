@@ -24,7 +24,7 @@ class Database extends AbstractProvider
 {
 
     /**
-     * Gibt den eindeutigen Slug des Providers zurück.
+     * Returns the unique slug of the provider.
      *
      * @return string
      */
@@ -34,22 +34,22 @@ class Database extends AbstractProvider
     }
 
     /**
-     * Gibt den Anzeigenamen des Providers zurück.
+     * Returns the display name of the provider.
      *
      * @return string
      */
     public function get_title(): string
     {
-        return __('Datenbank-Speicherung', 'gutenform');
+        return __('Database Storage', 'gutenform');
     }
 
     /**
-     * Verarbeitet eine Formular-Submission.
+     * Processes a form submission.
      *
-     * @param array  $submission_data Die Formulardaten
-     * @param array  $provider_settings Die individuellen Einstellungen für diesen Provider
-     * @param string $form_identifier Der Formular-Identifier
-     * @return bool Erfolg der Verarbeitung
+     * @param array  $submission_data The form data
+     * @param array  $provider_settings The individual settings for this provider
+     * @param string $form_identifier The form identifier
+     * @return bool Success of processing
      */
     public function process_submission(
         array $submission_data,
@@ -59,7 +59,7 @@ class Database extends AbstractProvider
         try {
             // Replace placeholders in subject and from_email
             $subject = $this->replace_placeholders(
-                $provider_settings['subject'] ?? __('Neue Formular-Übermittlung: {form_title}', 'gutenform'),
+                $provider_settings['subject'] ?? __('New Form Submission: {form_title}', 'gutenform'),
                 $submission_data,
                 $form_identifier
             );
@@ -102,9 +102,9 @@ class Database extends AbstractProvider
     }
 
     /**
-     * Gibt die Feld-Definitionen für die Settings zurück.
+     * Returns the field definitions for the settings.
      *
-     * @return array Array von Feld-Definitionen
+     * @return array Array of field definitions
      */
     public function get_settings_fields(): array
     {
@@ -115,33 +115,33 @@ class Database extends AbstractProvider
                 'type'        => 'number',
                 'required'    => true,
                 'default'     => 1,
-                'description' => __('ID der Mailbox, in der der Eintrag gespeichert wird.', 'gutenform'),
+                'description' => __('ID of the mailbox where the entry will be stored.', 'gutenform'),
                 'min'         => 1,
             ),
             array(
                 'name'        => 'subject',
-                'label'       => __('Betreff', 'gutenform'),
+                'label'       => __('Subject', 'gutenform'),
                 'type'        => 'text',
                 'required'    => false,
-                'default'     => __('Neue Formular-Übermittlung: {form_title}', 'gutenform'),
-                'description' => __('Betreff für den Eintrag. Platzhalter wie {form_title} werden ersetzt.', 'gutenform'),
+                'default'     => __('New Form Submission: {form_title}', 'gutenform'),
+                'description' => __('Subject for the entry. Placeholders like {form_title} will be replaced.', 'gutenform'),
             ),
             array(
                 'name'        => 'body',
-                'label'       => __('Nachricht', 'gutenform'),
+                'label'       => __('Message', 'gutenform'),
                 'type'        => 'textarea',
                 'required'    => false,
                 'default'     => '{all_fields}',
-                'description' => __('Nachricht für den Eintrag. Platzhalter wie {field_name} werden ersetzt.', 'gutenform'),
+                'description' => __('Message for the entry. Placeholders like {field_name} will be replaced.', 'gutenform'),
                 'rows'        => 6,
             ),
             array(
                 'name'        => 'from_email',
-                'label'       => __('Absender E-Mail', 'gutenform'),
+                'label'       => __('From Email', 'gutenform'),
                 'type'        => 'text',
                 'required'    => false,
                 'default'     => get_option('admin_email'),
-                'description' => __('E-Mail-Adresse des Absenders, die im Eintrag gespeichert wird.', 'gutenform'),
+                'description' => __('Email address of the sender that will be stored in the entry.', 'gutenform'),
             ),
         );
     }

@@ -22,7 +22,7 @@ class Email extends AbstractProvider
 {
 
     /**
-     * Gibt den eindeutigen Slug des Providers zurück.
+     * Returns the unique slug of the provider.
      *
      * @return string
      */
@@ -32,29 +32,29 @@ class Email extends AbstractProvider
     }
 
     /**
-     * Gibt den Anzeigenamen des Providers zurück.
+     * Returns the display name of the provider.
      *
      * @return string
      */
     public function get_title(): string
     {
-        return __('E-Mail Benachrichtigung', 'gutenform');
+        return __('Email Notification', 'gutenform');
     }
 
     /**
-     * Verarbeitet eine Formular-Submission.
+     * Processes a form submission.
      *
-     * @param array  $submission_data Die Formulardaten
-     * @param array  $provider_settings Die individuellen Einstellungen für diesen Provider
-     * @param string $form_identifier Der Formular-Identifier
-     * @return bool Erfolg der Verarbeitung
+     * @param array  $submission_data The form data
+     * @param array  $provider_settings The individual settings for this provider
+     * @param string $form_identifier The form identifier
+     * @return bool Success of processing
      */
     public function process_submission(
         array $submission_data,
         array $provider_settings,
         string $form_identifier
     ): bool {
-        // 1. Platzhalter ersetzen
+        // 1. Replace placeholders
         $to_email   = sanitize_email($provider_settings['to_email'] ?? '');
         $subject    = $this->replace_placeholders(
             $provider_settings['subject'] ?? '',
@@ -96,7 +96,7 @@ class Email extends AbstractProvider
             $subject
         ));
 
-        // Validierung
+        // Validation
         if (empty($to_email) || ! is_email($to_email)) {
             error_log('GutenForm Email Provider Error: Invalid to_email address: ' . $to_email);
             return false;
@@ -107,13 +107,13 @@ class Email extends AbstractProvider
             return false;
         }
 
-        // 2. Header erstellen
+        // 2. Create headers
         $headers = array(
             'From: ' . $from_name . ' <' . $from_email . '>',
             'Content-Type: text/html; charset=UTF-8',
         );
 
-        // 3. E-Mail versenden
+        // 3. Send email
         error_log('GutenForm Email Provider: Attempting to send email via wp_mail()');
         $result = wp_mail($to_email, $subject, $body, $headers);
 
@@ -133,54 +133,54 @@ class Email extends AbstractProvider
     }
 
     /**
-     * Gibt die Feld-Definitionen für die Settings zurück.
+     * Returns the field definitions for the settings.
      *
-     * @return array Array von Feld-Definitionen
+     * @return array Array of field definitions
      */
     public function get_settings_fields(): array
     {
         return array(
             array(
                 'name'        => 'to_email',
-                'label'       => __('E-Mail-Adresse', 'gutenform'),
+                'label'       => __('Email Address', 'gutenform'),
                 'type'        => 'email',
                 'required'    => true,
                 'default'     => '',
-                'description' => __('E-Mail-Adresse, an die die Benachrichtigung gesendet wird.', 'gutenform'),
+                'description' => __('Email address to which the notification will be sent.', 'gutenform'),
                 'placeholder' => 'admin@example.com',
             ),
             array(
                 'name'        => 'subject',
-                'label'       => __('Betreff', 'gutenform'),
+                'label'       => __('Subject', 'gutenform'),
                 'type'        => 'text',
                 'required'    => true,
-                'default'     => __('Neue Formular-Übermittlung: {form_title}', 'gutenform'),
-                'description' => __('Betreff der E-Mail. Platzhalter wie {form_title} werden ersetzt.', 'gutenform'),
+                'default'     => __('New Form Submission: {form_title}', 'gutenform'),
+                'description' => __('Email subject. Placeholders like {form_title} will be replaced.', 'gutenform'),
             ),
             array(
                 'name'        => 'body',
-                'label'       => __('Nachricht', 'gutenform'),
+                'label'       => __('Message', 'gutenform'),
                 'type'        => 'textarea',
                 'required'    => true,
                 'default'     => '{all_fields}',
-                'description' => __('E-Mail-Nachricht. HTML erlaubt. Platzhalter wie {field_name} werden ersetzt.', 'gutenform'),
+                'description' => __('Email message. HTML allowed. Placeholders like {field_name} will be replaced.', 'gutenform'),
                 'rows'        => 6,
             ),
             array(
                 'name'        => 'from_email',
-                'label'       => __('Absender E-Mail', 'gutenform'),
+                'label'       => __('From Email', 'gutenform'),
                 'type'        => 'text',
                 'required'    => false,
                 'default'     => get_option('admin_email'),
-                'description' => __('E-Mail-Adresse des Absenders.', 'gutenform'),
+                'description' => __('Email address of the sender.', 'gutenform'),
             ),
             array(
                 'name'        => 'from_name',
-                'label'       => __('Absender Name', 'gutenform'),
+                'label'       => __('From Name', 'gutenform'),
                 'type'        => 'text',
                 'required'    => false,
                 'default'     => get_bloginfo('name'),
-                'description' => __('Name des Absenders.', 'gutenform'),
+                'description' => __('Name of the sender.', 'gutenform'),
             ),
         );
     }

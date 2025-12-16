@@ -26,54 +26,54 @@ class Actions {
 	 * @return array|\WP_Error
 	 */
 	public function submit( \WP_REST_Request $request ) {
-		// 1. Nonce-Prüfung
+		// 1. Nonce verification
 		$nonce = $request->get_header( 'X-WP-Nonce' );
 		if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
 			return new \WP_Error(
 				'invalid_nonce',
-				__( 'Ungültiger Nonce.', 'gutenform' ),
+				__( 'Invalid nonce.', 'gutenform' ),
 				array( 'status' => 403 )
 			);
 		}
 
-		// 2. Daten extrahieren
+		// 2. Extract data
 		$submission_data = $request->get_param( 'submission_data' ) ?? array();
 		$form_identifier = sanitize_text_field( $request->get_param( 'form_identifier' ) ?? '' );
 		$provider_ids     = $request->get_param( 'provider_ids' ) ?? array();
 
-		// 3. Validierung
+		// 3. Validation
 		if ( empty( $form_identifier ) ) {
 			return new \WP_Error(
 				'missing_form_identifier',
-				__( 'Formular-Identifier fehlt.', 'gutenform' ),
+				__( 'Form identifier is missing.', 'gutenform' ),
 				array( 'status' => 400 )
 			);
 		}
 
-		// Validierung: provider_ids muss ein Array sein
+		// Validation: provider_ids must be an array
 		if ( ! is_array( $provider_ids ) ) {
 			$provider_ids = array();
 		}
 
 		// Sanitize provider_ids
 		$provider_ids = array_map( 'absint', $provider_ids );
-		$provider_ids = array_filter( $provider_ids ); // Entferne 0 und negative Werte
+		$provider_ids = array_filter( $provider_ids ); // Remove 0 and negative values
 
-		// 4. Submission Handler aufrufen
+		// 4. Call Submission Handler
 		$handler = new Handler();
 		$result  = $handler->process( $submission_data, $form_identifier, $provider_ids );
 
-		// 5. Antwort zurückgeben
+		// 5. Return response
 		if ( $result['success'] ) {
 			return array(
 				'success' => true,
-				'message' => __( 'Formular erfolgreich übermittelt.', 'gutenform' ),
+				'message' => __( 'Form submitted successfully.', 'gutenform' ),
 				'data'    => $result,
 			);
 		} else {
 			return new \WP_Error(
 				'submission_failed',
-				__( 'Fehler bei der Formular-Übermittlung.', 'gutenform' ),
+				__( 'Form submission failed.', 'gutenform' ),
 				array(
 					'status'  => 500,
 					'errors'  => $result['errors'],

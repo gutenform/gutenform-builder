@@ -301,7 +301,7 @@ class Actions
 		} catch (\Exception $e) {
 			return new \WP_Error(
 				'provider_types_retrieval_failed',
-				__('Fehler beim Laden der Provider-Typen: ', 'gutenform') . $e->getMessage(),
+				__('Failed to retrieve provider types: ', 'gutenform') . $e->getMessage(),
 				array('status' => 500)
 			);
 		}

@@ -22,26 +22,26 @@ abstract class AbstractProvider
 {
 
     /**
-     * Gibt den eindeutigen Slug des Providers zurück.
+     * Returns the unique slug of the provider.
      *
      * @return string
      */
     abstract public function get_slug(): string;
 
     /**
-     * Gibt den Anzeigenamen des Providers zurück.
+     * Returns the display name of the provider.
      *
      * @return string
      */
     abstract public function get_title(): string;
 
     /**
-     * Verarbeitet eine Formular-Submission.
+     * Processes a form submission.
      *
-     * @param array  $submission_data Die Formulardaten
-     * @param array  $provider_settings Die individuellen Einstellungen für diesen Provider
-     * @param string $form_identifier Der Formular-Identifier
-     * @return bool Erfolg der Verarbeitung
+     * @param array  $submission_data The form data
+     * @param array  $provider_settings The individual settings for this provider
+     * @param string $form_identifier The form identifier
+     * @return bool Success of processing
      */
     abstract public function process_submission(
         array $submission_data,
@@ -50,30 +50,30 @@ abstract class AbstractProvider
     ): bool;
 
     /**
-     * Gibt die Feld-Definitionen für die Settings zurück.
-     * Wird im Admin-Interface verwendet, um dynamische Formulare zu generieren.
+     * Returns the field definitions for the settings.
+     * Used in the admin interface to generate dynamic forms.
      *
-     * @return array Array von Feld-Definitionen
+     * @return array Array of field definitions
      */
     abstract public function get_settings_fields(): array;
 
     /**
-     * Ersetzt Platzhalter in einem String.
+     * Replaces placeholders in a string.
      *
-     * Unterstützt:
-     * - {field_slug} - Formularfeld-Werte
-     * - {form_identifier} - Formular-Identifier
-     * - {form_title} - Formular-Titel (aus Post Meta)
-     * - {site_name} - Site-Name
-     * - {date} - Aktuelles Datum
-     * - {time} - Aktuelle Uhrzeit
-     * - {ip_address} - IP-Adresse des Clients
-     * - {all_fields} - Alle Formularfelder als Liste (key: value)
+     * Supports:
+     * - {field_slug} - Form field values
+     * - {form_identifier} - Form identifier
+     * - {form_title} - Form title (from Post Meta)
+     * - {site_name} - Site name
+     * - {date} - Current date
+     * - {time} - Current time
+     * - {ip_address} - Client IP address
+     * - {all_fields} - All form fields as a list (key: value)
      *
-     * @param string $content Der String mit Platzhaltern
-     * @param array  $submission_data Die Formulardaten
-     * @param string $form_identifier Der Formular-Identifier
-     * @return string String mit ersetzten Platzhaltern
+     * @param string $content The string with placeholders
+     * @param array  $submission_data The form data
+     * @param string $form_identifier The form identifier
+     * @return string String with replaced placeholders
      */
     protected function replace_placeholders(
         string $content,
@@ -82,12 +82,12 @@ abstract class AbstractProvider
     ): string {
         $replacements = array();
 
-        // Formularfeld-Werte ersetzen
+        // Replace form field values
         foreach ($submission_data as $key => $value) {
             $replacements['{' . $key . '}'] = is_array($value) ? implode(', ', $value) : $value;
         }
 
-        // Standard-Platzhalter
+        // Standard placeholders
         $replacements['{form_identifier}'] = $form_identifier;
         $replacements['{form_title}']     = $this->get_form_title($form_identifier);
         $replacements['{site_name}']      = get_bloginfo('name');
@@ -96,15 +96,15 @@ abstract class AbstractProvider
         $replacements['{ip_address}']    = $this->get_client_ip();
         $replacements['{all_fields}']    = $this->format_all_fields($submission_data);
 
-        // Alle Platzhalter ersetzen
+        // Replace all placeholders
         return str_replace(array_keys($replacements), array_values($replacements), $content);
     }
 
     /**
-     * Formatiert alle Formularfelder als Liste im Format "key: value".
+     * Formats all form fields as a list in "key: value" format.
      *
-     * @param array $submission_data Die Formulardaten
-     * @return string Formatierte Liste aller Felder
+     * @param array $submission_data The form data
+     * @return string Formatted list of all fields
      */
     protected function format_all_fields(array $submission_data): string
     {
@@ -135,23 +135,23 @@ abstract class AbstractProvider
     }
 
     /**
-     * Ermittelt den Formular-Titel aus dem Form-Identifier.
+     * Gets the form title from the form identifier.
      *
-     * @param string $form_identifier Der Formular-Identifier
-     * @return string Der Formular-Titel oder der Identifier als Fallback
+     * @param string $form_identifier The form identifier
+     * @return string The form title or the identifier as fallback
      */
     protected function get_form_title(string $form_identifier): string
     {
-        // Versuche, den Titel aus Post Meta zu holen
-        // Dies ist eine vereinfachte Implementierung - kann später erweitert werden
-        // z.B. durch Speicherung der Form-Titel in einer separaten Tabelle oder Meta
+        // Try to get the title from Post Meta
+        // This is a simplified implementation - can be extended later
+        // e.g. by storing form titles in a separate table or meta
         return $form_identifier;
     }
 
     /**
-     * Ermittelt die Client-IP-Adresse.
+     * Gets the client IP address.
      *
-     * @return string Die IP-Adresse
+     * @return string The IP address
      */
     protected function get_client_ip(): string
     {
