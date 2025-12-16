@@ -5,6 +5,7 @@ import { useStore } from "@nanostores/react";
 import { $inboxFilters, setInboxFilters } from "./stores";
 import { NavLink } from "@/components/inbox/nav";
 import { useEffect } from "react";
+import { __ } from "@/lib/i18n";
 
 const getStatusCount = (statuses: StatusCount[], status: string = 'new') => {
   return statuses.find((s) => s.status === status)?.count || 0;
@@ -31,11 +32,11 @@ export default function MailPage() {
   /* @ts-ignore */
   const makeDataToReadableString = (data) => {
     if (typeof data !== 'object') {
-      return data?.toString() || 'No data';
+      return data?.toString() || __('noData');
     }
     return Object.entries(data || {}).map(([key, value]) => {
       return `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`;
-    }).join('\n') || 'No data';
+    }).join('\n') || __('noData');
   }
 
   const entriesListing = entries?.map((entry) => {
@@ -78,7 +79,7 @@ export default function MailPage() {
 
   const defaultNavLinks: NavLink[] = [
     {
-      title: "Inbox",
+      title: __('inbox'),
       label: getStatusCount(statuses, 'inbox').toString(),
       icon: Inbox,
       variant: filter.status === 'inbox' ? "default" : "ghost",
@@ -87,7 +88,7 @@ export default function MailPage() {
       },
     },
     {
-      title: "Junk",
+      title: __('junk'),
       label: getStatusCount(statuses, 'junk').toString(),
       icon: ArchiveX,
       variant: filter.status === 'junk' ? "default" : "ghost",
@@ -96,7 +97,7 @@ export default function MailPage() {
       },
     },
     {
-      title: "Archive",
+      title: __('archive'),
       label: getStatusCount(statuses, 'archive').toString(),
       icon: Archive,
       variant: filter.status === 'archive' ? "default" : "ghost",
@@ -105,7 +106,7 @@ export default function MailPage() {
       },
     },
     {
-      title: "Trash",
+      title: __('trash'),
       label: getStatusCount(statuses, 'trash').toString(),
       icon: Trash2,
       variant: filter.status === 'trash' ? "default" : "ghost",

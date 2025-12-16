@@ -24,30 +24,31 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../Icons/Logo";
 import { clsx } from "clsx";
+import { __ } from "@/lib/i18n";
 
 
 const navigation = [
     {
-        name: "Dashboard",
+        name: "dashboard",
         href: "dashboard",
         icon: Home,
         current: false,
     },
     {
-        name: "Inbox",
+        name: "inbox",
         href: "inbox",
         icon: Mail,
         current: true,
     },
 
     {
-        name: "Settings",
+        name: "settings",
         href: "settings",
         icon: SlidersHorizontal,
         current: false,
     },
     {
-        name: "Charts",
+        name: "charts",
         href: "charts",
         icon: BarChart,
         current: false,
@@ -77,7 +78,7 @@ export default function LayoutOne() {
                     <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
                         <NavLink to="inbox" className="flex items-center gap-2 font-semibold">
                             <Logo />
-                            <span className="">Plugin Name</span>
+                            <span className="">{__('pluginName')}</span>
                         </NavLink>
                        
                     </div>
@@ -97,7 +98,7 @@ export default function LayoutOne() {
                                     }
                                 >
                                     <item.icon className="h-5 w-5" />
-                                    {item.name}
+                                    {__(item.name)}
                                 </NavLink>
                             })}
 
@@ -119,7 +120,7 @@ export default function LayoutOne() {
                                 className="shrink-0 md:hidden"
                             >
                                 <Menu className="h-5 w-5" />
-                                <span className="sr-only">Toggle navigation menu</span>
+                                <span className="sr-only">{__('toggleNavigationMenu')}</span>
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="left" className="flex flex-col">
@@ -129,7 +130,7 @@ export default function LayoutOne() {
                                     className="flex items-center gap-2 text-lg font-semibold"
                                 >
                                     <Package2 className="h-6 w-6" />
-                                    <span className="sr-only">Plugin Name</span>
+                                    <span className="sr-only">{__('pluginName')}</span>
                                 </a>
                                 {navigation.map((item,index) => {
                                     return <NavLink
@@ -162,16 +163,16 @@ export default function LayoutOne() {
                         <DropdownMenuTrigger asChild>
                             <Button variant="secondary" size="icon" className="rounded-full">
                                 <CircleUser className="h-5 w-5" />
-                                <span className="sr-only">Toggle user menu</span>
+                                <span className="sr-only">{__('toggleUserMenu')}</span>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                            <DropdownMenuLabel>{__('myAccount')}</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>Settings</DropdownMenuItem>
-                            <DropdownMenuItem>Support</DropdownMenuItem>
+                            <DropdownMenuItem>{__('settings')}</DropdownMenuItem>
+                            <DropdownMenuItem>{__('support')}</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>Logout</DropdownMenuItem>
+                            <DropdownMenuItem>{__('logout')}</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </header>

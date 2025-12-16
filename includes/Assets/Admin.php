@@ -6,6 +6,7 @@ namespace Gutenform\Assets;
 
 use Gutenform\Traits\Base;
 use Gutenform\Libs\Assets;
+use Gutenform\Assets\Strings;
 
 /**
  * Class Admin
@@ -69,6 +70,10 @@ class Admin
 			);
 			if ($enqueued) {
 				wp_localize_script(self::HANDLE, self::OBJ_NAME, $this->get_data());
+				// Load translations for JavaScript
+				// Use same path format as load_plugin_textdomain
+				$plugin_rel_path = dirname(plugin_basename(GF_PLUGIN_FILE)) . '/languages';
+				wp_set_script_translations(self::HANDLE, 'gutenform', $plugin_rel_path);
 			}
 		}
 	}
@@ -81,7 +86,7 @@ class Admin
 	public function get_config()
 	{
 		return array(
-			'dependencies' => array('react', 'react-dom'),
+			'dependencies' => array('react', 'react-dom', 'wp-i18n'),
 			'handle'       => self::HANDLE,
 			'in-footer'    => true,
 		);
@@ -100,6 +105,7 @@ class Admin
 			'isAdmin'   => is_admin(),
 			'apiUrl'    => rest_url(),
 			'userInfo'  => $this->get_user_data(),
+			'strings'   => Strings::get_strings(),
 		);
 	}
 
@@ -114,11 +120,20 @@ class Admin
 		$editor_script_handles = array(
 			'gutenform-form-editor-script',
 			'gutenform-input-editor-script',
+			'gutenform-textarea-editor-script',
+			'gutenform-select-editor-script',
 			'gutenform-submit-editor-script',
+			'gutenform-success-editor-script',
 		);
 
 		foreach ($editor_script_handles as $handle) {
 			if (wp_script_is($handle, 'registered')) {
+				// Pass strings to block editor via gutenform object (lowercase)
+				$editor_data = array(
+					'strings' => Strings::get_strings(),
+				);
+				wp_localize_script($handle, 'gutenform', $editor_data);
+				// Also pass via gutenForm for consistency
 				wp_localize_script($handle, self::OBJ_NAME, $this->get_data());
 			}
 		}

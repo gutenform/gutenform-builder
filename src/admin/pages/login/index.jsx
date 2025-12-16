@@ -1,3 +1,4 @@
+import { __ } from "@/lib/i18n";
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -13,15 +14,15 @@ export default function LoginPage() {
   return (
     <Card className="mx-auto my-auto max-w-sm">
       <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
+        <CardTitle className="text-2xl">{__('login')}</CardTitle>
         <CardDescription>
-          Enter your email below to login to your account
+          {__('loginDescription')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{__('email')}</Label>
             <Input
               id="email"
               type="email"
@@ -31,24 +32,24 @@ export default function LoginPage() {
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{__('password')}</Label>
               <a href="#" className="ml-auto inline-block text-sm underline">
-                Forgot your password?
+                {__('forgotPassword')}
               </a>
             </div>
             <Input id="password" type="password" required />
           </div>
           <Button type="submit" className="w-full">
-            Login
+            {__('login')}
           </Button>
           <Button variant="outline" className="w-full">
-            Login with Google
+            {__('loginWithGoogle')}
           </Button>
         </div>
         <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
+          {__('dontHaveAccount')}{" "}
           <a href="#" className="underline">
-            Sign up
+            {__('signUp')}
           </a>
         </div>
       </CardContent>

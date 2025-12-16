@@ -1,5 +1,6 @@
 "use client"
 
+import { __ } from "@/lib/i18n";
 import { useState } from "react"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
@@ -37,9 +38,9 @@ import {
 import { Plus, Trash2, Edit2, Tag } from "lucide-react"
 
 const labelFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(1, __("nameRequired")),
   description: z.string().optional(),
-  color: z.string().regex(/^#[0-9A-F]{6}$/i, "Color must be a valid hex color (e.g., #FF0000)").default("#000000"),
+  color: z.string().regex(/^#[0-9A-F]{6}$/i, __("colorInvalid")).default("#000000"),
 })
 
 type LabelFormValues = z.infer<typeof labelFormSchema>
@@ -96,8 +97,8 @@ export default function LabelsPage() {
           color: data.color,
         })
         toast({
-          title: "Label updated",
-          description: "The label has been updated successfully.",
+          title: __("labelUpdated"),
+          description: __("labelUpdatedDesc"),
         })
       } else {
         await createLabel({
@@ -106,57 +107,57 @@ export default function LabelsPage() {
           color: data.color,
         })
         toast({
-          title: "Label created",
-          description: "The label has been created successfully.",
+          title: __("labelCreated"),
+          description: __("labelCreatedDesc"),
         })
       }
       refetch()
       handleCloseDialog()
     } catch (err) {
       toast({
-        title: "Error",
-        description: err instanceof Error ? err.message : "An error occurred",
+        title: __("error"),
+        description: err instanceof Error ? err.message : __("errorOccurred"),
         variant: "destructive",
       })
     }
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this label?")) {
+    if (!confirm(__("confirmDeleteLabel"))) {
       return
     }
 
     try {
       await deleteLabel(id)
       toast({
-        title: "Label deleted",
-        description: "The label has been deleted successfully.",
+        title: __("labelDeleted"),
+        description: __("labelDeletedDesc"),
       })
       refetch()
     } catch (err) {
       toast({
-        title: "Error",
-        description: err instanceof Error ? err.message : "An error occurred",
+        title: __("error"),
+        description: err instanceof Error ? err.message : __("errorOccurred"),
         variant: "destructive",
       })
     }
   }
 
   if (loading) {
-    return <div>Loading labels...</div>
+    return <div>{__('loadingLabels')}</div>
   }
 
   if (error) {
-    return <div className="text-destructive">Error: {error.message}</div>
+    return <div className="text-destructive">{__('errorLabels')} {error.message}</div>
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-medium">Entry Labels</h3>
+          <h3 className="text-lg font-medium">{__('entryLabels')}</h3>
           <p className="text-sm text-muted-foreground">
-            Manage labels for organizing and categorizing form entries.
+            {__('manageLabelsDescription')}
           </p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
@@ -167,17 +168,17 @@ export default function LabelsPage() {
         }}>
           <Button onClick={() => handleOpenDialog()}>
             <Plus className="mr-2 h-4 w-4" />
-            Add Label
+            {__('addLabel')}
           </Button>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {editingLabel ? "Edit Label" : "Create Label"}
+                {editingLabel ? __("editLabel") : __("createLabel")}
               </DialogTitle>
               <DialogDescription>
                 {editingLabel
-                  ? "Update the label details below."
-                  : "Create a new label to organize your form entries."}
+                  ? __("updateLabelDetails")
+                  : __("createNewLabel")}
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -187,12 +188,12 @@ export default function LabelsPage() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel>{__('name')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Important" {...field} />
+                        <Input placeholder={__("important")} {...field} />
                       </FormControl>
                       <FormDescription>
-                        A unique name for this label.
+                        {__('uniqueNameForLabel')}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -203,16 +204,16 @@ export default function LabelsPage() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel>{__('description')}</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Optional description for this label"
+                          placeholder={__("optionalDescriptionForLabel")}
                           className="resize-none"
                           {...field}
                         />
                       </FormControl>
                       <FormDescription>
-                        An optional description to help identify this label.
+                        {__('optionalDescriptionHelp')}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -223,7 +224,7 @@ export default function LabelsPage() {
                   name="color"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Color</FormLabel>
+                      <FormLabel>{__('color')}</FormLabel>
                       <div className="flex items-center gap-3">
                         <FormControl>
                           <div className="flex items-center gap-2">
@@ -243,7 +244,7 @@ export default function LabelsPage() {
                         </FormControl>
                       </div>
                       <FormDescription>
-                        Choose a color to visually identify this label.
+                        {__('chooseColorForLabel')}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -255,10 +256,10 @@ export default function LabelsPage() {
                     variant="outline"
                     onClick={handleCloseDialog}
                   >
-                    Cancel
+                    {__('cancel')}
                   </Button>
                   <Button type="submit" disabled={creating || updating}>
-                    {editingLabel ? "Update" : "Create"}
+                    {editingLabel ? __("update") : __("create")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -272,7 +273,7 @@ export default function LabelsPage() {
           <CardContent className="flex flex-col items-center justify-center py-10">
             <Tag className="h-12 w-12 text-muted-foreground mb-4" />
             <p className="text-sm text-muted-foreground">
-              No labels found. Create your first label to get started.
+              {__('noLabelsFound')}
             </p>
           </CardContent>
         </Card>
@@ -290,7 +291,7 @@ export default function LabelsPage() {
                     <div>
                       <CardTitle>{label.name}</CardTitle>
                       <CardDescription>
-                        {label.description || `Created ${new Date(label.date_created).toLocaleDateString()}`}
+                        {label.description || __("created") + ' ' + new Date(label.date_created).toLocaleDateString()}
                       </CardDescription>
                     </div>
                   </div>

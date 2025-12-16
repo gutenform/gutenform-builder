@@ -1,5 +1,6 @@
 "use client"
 
+import { __ } from "@/lib/i18n";
 import { useState, useEffect } from "react"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
@@ -48,8 +49,8 @@ import { Plus, Trash2, Edit2, Settings } from "lucide-react"
 
 // Dynamic schema - will be extended based on provider type
 const baseProviderFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  provider_type: z.string().min(1, "Provider type is required"),
+  name: z.string().min(1, __("nameRequired")),
+  provider_type: z.string().min(1, __("providerTypeRequired")),
   form_identifier: z.string().optional().nullable(),
   is_active: z.boolean().default(true),
 })
@@ -131,7 +132,7 @@ function DynamicField({
           >
             <FormControl>
               <SelectTrigger>
-                <SelectValue placeholder={`Select ${field.label}`} />
+                <SelectValue placeholder={__('select') + ' ' + field.label} />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
@@ -290,8 +291,8 @@ export default function ProvidersPage() {
           settings,
         })
         toast({
-          title: "Provider updated",
-          description: "The provider has been updated successfully.",
+          title: __("providerUpdated"),
+          description: __("providerUpdatedDesc"),
         })
       } else {
         await createProvider({
@@ -302,37 +303,37 @@ export default function ProvidersPage() {
           settings,
         })
         toast({
-          title: "Provider created",
-          description: "The provider has been created successfully.",
+          title: __("providerCreated"),
+          description: __("providerCreatedDesc"),
         })
       }
       refetch()
       handleCloseDialog()
     } catch (err) {
       toast({
-        title: "Error",
-        description: err instanceof Error ? err.message : "An error occurred",
+        title: __("error"),
+        description: err instanceof Error ? err.message : __("errorOccurred"),
         variant: "destructive",
       })
     }
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this provider?")) {
+    if (!confirm(__("confirmDeleteProvider"))) {
       return
     }
 
     try {
       await deleteProvider(id)
       toast({
-        title: "Provider deleted",
-        description: "The provider has been deleted successfully.",
+        title: __("providerDeleted"),
+        description: __("providerDeletedDesc"),
       })
       refetch()
     } catch (err) {
       toast({
-        title: "Error",
-        description: err instanceof Error ? err.message : "An error occurred",
+        title: __("error"),
+        description: err instanceof Error ? err.message : __("errorOccurred"),
         variant: "destructive",
       })
     }
@@ -341,20 +342,20 @@ export default function ProvidersPage() {
   const selectedType = providerTypes.find(t => t.slug === selectedProviderType)
 
   if (loading || typesLoading) {
-    return <div>Loading providers...</div>
+    return <div>{__('loadingProviders')}</div>
   }
 
   if (error) {
-    return <div className="text-destructive">Error: {error.message}</div>
+    return <div className="text-destructive">{__('errorProviders')} {error.message}</div>
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-medium">Providers</h3>
+          <h3 className="text-lg font-medium">{__('providers')}</h3>
           <p className="text-sm text-muted-foreground">
-            Manage form submission providers (Email, Webhook, etc.).
+            {__('manageProvidersDescription')}
           </p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
@@ -365,17 +366,17 @@ export default function ProvidersPage() {
         }}>
           <Button onClick={() => handleOpenDialog()}>
             <Plus className="mr-2 h-4 w-4" />
-            Add Provider
+            {__('addProvider')}
           </Button>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {editingProvider ? "Edit Provider" : "Create Provider"}
+                {editingProvider ? __("editProvider") : __("createProvider")}
               </DialogTitle>
               <DialogDescription>
                 {editingProvider
-                  ? "Update the provider details below."
-                  : "Configure a new provider for form submissions."}
+                  ? __("updateProviderDetails")
+                  : __("configureNewProvider")}
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -385,12 +386,12 @@ export default function ProvidersPage() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel>{__('name')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="My Email Provider" {...field} />
+                        <Input placeholder={__("myEmailProvider")} {...field} />
                       </FormControl>
                       <FormDescription>
-                        A descriptive name for this provider.
+                        {__('providerNameDescription')}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -401,7 +402,7 @@ export default function ProvidersPage() {
                   name="provider_type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Provider Type</FormLabel>
+                      <FormLabel>{__('providerType')}</FormLabel>
                       <Select 
                         onValueChange={(value) => {
                           field.onChange(value)
@@ -411,7 +412,7 @@ export default function ProvidersPage() {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a provider type" />
+                            <SelectValue placeholder={__("selectProviderType")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -423,7 +424,7 @@ export default function ProvidersPage() {
                         </SelectContent>
                       </Select>
                       <FormDescription>
-                        Select the type of provider.
+                        {__('selectProviderTypeDescription')}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -446,16 +447,16 @@ export default function ProvidersPage() {
                   name="form_identifier"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Form Identifier (optional)</FormLabel>
+                      <FormLabel>{__('formIdentifierOptional')}</FormLabel>
                       <FormControl>
                         <Input 
                           {...field}
                           value={field.value || ''}
-                          placeholder="Leave empty for global provider"
+                          placeholder={__("leaveEmptyForGlobalProvider")}
                         />
                       </FormControl>
                       <FormDescription>
-                        Form-specific provider. Leave empty for global provider that can be used by all forms.
+                        {__('formIdentifierDescription')}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -468,9 +469,9 @@ export default function ProvidersPage() {
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
-                        <FormLabel className="text-base">Active</FormLabel>
+                        <FormLabel className="text-base">{__('active')}</FormLabel>
                         <FormDescription>
-                          Enable or disable this provider.
+                          {__('enableOrDisableProvider')}
                         </FormDescription>
                       </div>
                       <FormControl>
@@ -488,10 +489,10 @@ export default function ProvidersPage() {
                     variant="outline"
                     onClick={handleCloseDialog}
                   >
-                    Cancel
+                    {__('cancel')}
                   </Button>
                   <Button type="submit" disabled={creating || updating}>
-                    {editingProvider ? "Update" : "Create"}
+                    {editingProvider ? __("update") : __("create")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -505,7 +506,7 @@ export default function ProvidersPage() {
           <CardContent className="flex flex-col items-center justify-center py-10">
             <Settings className="h-12 w-12 text-muted-foreground mb-4" />
             <p className="text-sm text-muted-foreground">
-              No providers found. Create your first provider to get started.
+              {__('noProvidersFound')}
             </p>
           </CardContent>
         </Card>
@@ -520,20 +521,20 @@ export default function ProvidersPage() {
                       {provider.name}
                       {provider.is_active && (
                         <span className="text-xs bg-green-500 text-white px-2 py-1 rounded">
-                          Active
+                          {__('active')}
                         </span>
                       )}
                       {!provider.is_active && (
                         <span className="text-xs bg-gray-500 text-white px-2 py-1 rounded">
-                          Inactive
+                          {__('inactive')}
                         </span>
                       )}
                     </CardTitle>
                     <CardDescription>
-                      Type: {provider.provider_type}
-                      {provider.form_identifier && ` • Form: ${provider.form_identifier}`}
-                      {!provider.form_identifier && ' • Global Provider'}
-                      {' • Created '}
+                      {__('type')} {provider.provider_type}
+                      {provider.form_identifier && ` • ${__('form')} ${provider.form_identifier}`}
+                      {!provider.form_identifier && ` • ${__('globalProvider')}`}
+                      {' • ' + __('created') + ' '}
                       {new Date(provider.date_created).toLocaleDateString()}
                     </CardDescription>
                   </div>

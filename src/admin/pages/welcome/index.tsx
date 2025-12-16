@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { __ } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useProviders, useMailboxes, useEntryLabels } from "@/hooks";
@@ -34,10 +35,10 @@ export default function WelcomePage() {
 
     // Check if mailboxes are different from seed (more than just default)
     const hasCustomMailboxes = mailboxes.length > 1 || 
-      (mailboxes.length === 1 && mailboxes[0].title !== 'Default Mailbox');
+      (mailboxes.length === 1 && mailboxes[0].title !== __('defaultMailbox'));
 
     // Check if labels are different from seed (more than just default labels)
-    const defaultLabelNames = ['Important', 'Follow Up'];
+    const defaultLabelNames = [__('important'), __('followUp')];
     const hasCustomLabels = labels.some(
       (label) => !defaultLabelNames.includes(label.name)
     ) || labels.length !== defaultLabelNames.length;
@@ -45,32 +46,32 @@ export default function WelcomePage() {
     setChecklist([
       {
         id: 'provider',
-        title: 'Add your first Mail Provider',
-        description: 'Configure an email provider to receive form submissions',
+        title: __('addFirstMailProvider'),
+        description: __('configureEmailProvider'),
         icon: <Server className="h-5 w-5" />,
         link: '#/settings/providers',
         completed: hasEmailProvider,
       },
       {
         id: 'mailbox',
-        title: 'Setup your First Mailbox',
-        description: 'Create a custom mailbox to organize your form entries',
+        title: __('setupYourFirstMailbox'),
+        description: __('createCustomMailbox'),
         icon: <Mail className="h-5 w-5" />,
         link: '#/settings/mailboxes',
         completed: hasCustomMailboxes,
       },
       {
         id: 'labels',
-        title: 'Are The Labels (default) ok or change something?',
-        description: 'Review and customize your entry labels',
+        title: __('areTheLabelsDefaultOk'),
+        description: __('reviewAndCustomizeLabels'),
         icon: <Tag className="h-5 w-5" />,
         link: '#/settings/labels',
         completed: hasCustomLabels,
       },
       {
         id: 'form',
-        title: 'Build Your first Form',
-        description: 'Create your first form using the Gutenberg block editor',
+        title: __('buildYourFirstForm'),
+        description: __('createFirstFormDescription'),
         icon: <FileText className="h-5 w-5" />,
         link: '/wp-admin/post-new.php?post_type=page', // Will be updated to link to block pattern or new page
         external: true,
@@ -108,16 +109,16 @@ export default function WelcomePage() {
     <div className="flex items-center justify-center min-h-screen p-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold">Welcome to GutenForm!</CardTitle>
+          <CardTitle className="text-3xl font-bold">{__('welcomeToGutenForm')}</CardTitle>
           <CardDescription className="text-lg mt-2">
-            Let's get you started with a few quick steps
+            {__("letsGetYouStarted")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {checklist.length === 0 ? (
             <div className="text-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-gray-100 mx-auto"></div>
-              <p className="mt-4 text-muted-foreground">Loading checklist...</p>
+              <p className="mt-4 text-muted-foreground">{__('loadingChecklist')}</p>
             </div>
           ) : (
             <>
@@ -159,7 +160,7 @@ export default function WelcomePage() {
                           size="sm"
                           className="shrink-0"
                         >
-                          {item.completed ? 'View' : 'Setup'} <ArrowRight className="ml-2 h-4 w-4" />
+                          {item.completed ? __('view') : __('setup')} <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                       </a>
                       ) : (
@@ -172,7 +173,7 @@ export default function WelcomePage() {
                         handleItemClick(item);
                       }}
                     >
-                      {item.completed ? 'View' : 'Setup'} <ArrowRight className="ml-2 h-4 w-4" />
+                      {item.completed ? __('view') : __('setup')} <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                       )}
                   </div>
@@ -182,7 +183,7 @@ export default function WelcomePage() {
               {allCompleted && (
                 <div className="mt-6 p-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg text-center">
                   <p className="text-green-700 dark:text-green-300 font-semibold">
-                    🎉 All set! Redirecting to inbox...
+                    {__('allSetRedirecting')}
                   </p>
                 </div>
               )}

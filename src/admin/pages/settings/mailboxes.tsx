@@ -1,5 +1,6 @@
 "use client"
 
+import { __ } from "@/lib/i18n";
 import { useState } from "react"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
@@ -31,7 +32,7 @@ import { useMailboxes, useCreateMailbox, useUpdateMailbox, useDeleteMailbox, typ
 import { Plus, Trash2, Edit2, Mail } from "lucide-react"
 
 const mailboxFormSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z.string().min(1, __("titleRequired")),
   is_default: z.boolean().default(false),
 })
 
@@ -84,22 +85,22 @@ export default function MailboxesPage() {
           ...data,
         })
         toast({
-          title: "Mailbox updated",
-          description: "The mailbox has been updated successfully.",
+          title: __("mailboxUpdated"),
+          description: __("mailboxUpdatedDesc"),
         })
       } else {
         await createMailbox(data)
         toast({
-          title: "Mailbox created",
-          description: "The mailbox has been created successfully.",
+          title: __("mailboxCreated"),
+          description: __("mailboxCreatedDesc"),
         })
       }
       refetch()
       handleCloseDialog()
     } catch (err) {
       toast({
-        title: "Error",
-        description: err instanceof Error ? err.message : "An error occurred",
+        title: __("error"),
+        description: err instanceof Error ? err.message : __("errorOccurred"),
         variant: "destructive",
       })
     }
@@ -111,48 +112,48 @@ export default function MailboxesPage() {
     
     if (mailbox?.is_default) {
       toast({
-        title: "Cannot delete default mailbox",
-        description: "Please set another mailbox as default before deleting this one.",
+        title: __("cannotDeleteDefaultMailbox"),
+        description: __("cannotDeleteDefaultMailboxDesc"),
         variant: "destructive",
       })
       return
     }
 
-    if (!confirm("Are you sure you want to delete this mailbox?")) {
+    if (!confirm(__("confirmDeleteMailbox"))) {
       return
     }
 
     try {
       await deleteMailbox(id)
       toast({
-        title: "Mailbox deleted",
-        description: "The mailbox has been deleted successfully.",
+        title: __("mailboxDeleted"),
+        description: __("mailboxDeletedDesc"),
       })
       refetch()
     } catch (err) {
       toast({
-        title: "Error",
-        description: err instanceof Error ? err.message : "An error occurred",
+        title: __("error"),
+        description: err instanceof Error ? err.message : __("errorOccurred"),
         variant: "destructive",
       })
     }
   }
 
   if (loading) {
-    return <div>Loading mailboxes...</div>
+    return <div>{__('loadingMailboxes')}</div>
   }
 
   if (error) {
-    return <div className="text-destructive">Error: {error.message}</div>
+    return <div className="text-destructive">{__('errorMailboxes')} {error.message}</div>
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-medium">Mailboxes</h3>
+          <h3 className="text-lg font-medium">{__('mailboxes')}</h3>
           <p className="text-sm text-muted-foreground">
-            Manage your mailboxes for form submissions.
+            {__('manageMailboxes')}
           </p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
@@ -163,17 +164,17 @@ export default function MailboxesPage() {
         }}>
           <Button onClick={() => handleOpenDialog()}>
             <Plus className="mr-2 h-4 w-4" />
-            Add Mailbox
+            {__('addMailbox')}
           </Button>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {editingMailbox ? "Edit Mailbox" : "Create Mailbox"}
+                {editingMailbox ? __("editMailbox") : __("createMailbox")}
               </DialogTitle>
               <DialogDescription>
                 {editingMailbox
-                  ? "Update the mailbox details below."
-                  : "Create a new mailbox to receive form submissions."}
+                  ? __("updateMailboxDescription")
+                  : __("createMailboxDescription")}
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -183,12 +184,12 @@ export default function MailboxesPage() {
                   name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title</FormLabel>
+                      <FormLabel>{__('title')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="My Mailbox" {...field} />
+                        <Input placeholder={__("myMailbox")} {...field} />
                       </FormControl>
                       <FormDescription>
-                        A descriptive name for this mailbox.
+                        {__('mailboxTitleDescription')}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -200,9 +201,9 @@ export default function MailboxesPage() {
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
-                        <FormLabel className="text-base">Default Mailbox</FormLabel>
+                        <FormLabel className="text-base">{__('defaultMailbox')}</FormLabel>
                         <FormDescription>
-                          Set this mailbox as the default for new form submissions.
+                          {__('defaultMailboxDescription')}
                         </FormDescription>
                       </div>
                       <FormControl>
@@ -220,10 +221,10 @@ export default function MailboxesPage() {
                     variant="outline"
                     onClick={handleCloseDialog}
                   >
-                    Cancel
+                    {__('cancel')}
                   </Button>
                   <Button type="submit" disabled={creating || updating}>
-                    {editingMailbox ? "Update" : "Create"}
+                    {editingMailbox ? __("update") : __("create")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -237,7 +238,7 @@ export default function MailboxesPage() {
           <CardContent className="flex flex-col items-center justify-center py-10">
             <Mail className="h-12 w-12 text-muted-foreground mb-4" />
             <p className="text-sm text-muted-foreground">
-              No mailboxes found. Create your first mailbox to get started.
+              {__('noMailboxesFound')}
             </p>
           </CardContent>
         </Card>
@@ -252,12 +253,12 @@ export default function MailboxesPage() {
                       {mailbox.title}
                       {mailbox.is_default && (
                         <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded">
-                          Default
+                          {__('default')}
                         </span>
                       )}
                     </CardTitle>
                     <CardDescription>
-                      Created {new Date(mailbox.date_created).toLocaleDateString()}
+                      {__('created')} {new Date(mailbox.date_created).toLocaleDateString()}
                     </CardDescription>
                   </div>
                   <div className="flex gap-2">
@@ -273,7 +274,7 @@ export default function MailboxesPage() {
                       size="icon"
                       onClick={() => handleDelete(mailbox.id)}
                       disabled={deleting || mailbox.is_default}
-                      title={mailbox.is_default ? "Default mailbox cannot be deleted" : "Delete mailbox"}
+                      title={mailbox.is_default ? __("defaultMailboxCannotBeDeleted") : __("deleteMailbox")}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

@@ -1,5 +1,6 @@
 "use client"
 
+import { __ } from "@/lib/i18n";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -21,7 +22,7 @@ const generalFormSchema = z.object({
   licenseKey: z
     .string()
     .min(1, {
-      message: "License key is required.",
+      message: __("licenseKeyRequired"),
     })
     .optional(),
 })
@@ -41,8 +42,8 @@ export function GeneralForm() {
 
   function onSubmit(data: GeneralFormValues) {
     toast({
-      title: "Settings saved",
-      description: "Your general settings have been updated successfully.",
+      title: __("settingsSaved"),
+      description: __("settingsSavedDescription"),
     })
     // TODO: Implement API call to save settings
     console.log("Settings data:", data)
@@ -56,22 +57,22 @@ export function GeneralForm() {
           name="licenseKey"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>License Key</FormLabel>
+              <FormLabel>{__('licenseKey')}</FormLabel>
               <FormControl>
                 <Input 
                   type="password"
-                  placeholder="Enter your license key" 
+                  placeholder={__("enterLicenseKey")} 
                   {...field} 
                 />
               </FormControl>
               <FormDescription>
-                Enter your Gutenform license key to unlock premium features.
+                {__('licenseKeyDescription')}
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Save changes</Button>
+        <Button type="submit">{__('saveChanges')}</Button>
       </form>
     </Form>
   )

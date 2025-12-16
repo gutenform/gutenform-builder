@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { __ } from "@/lib/i18n";
 
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -55,23 +56,23 @@ export default function DashboardPage() {
         <div className="flex-1 space-y-4 p-8 pt-6">
           <DemoSeedBanner />
           <div className="flex items-center justify-between space-y-2">
-            <h2 className="text-3xl dark:text-white font-bold tracking-tight">Dashboard</h2>
+            <h2 className="text-3xl dark:text-white font-bold tracking-tight">{__('dashboard')}</h2>
             <div className="flex items-center space-x-2">
               <CalendarDateRangePicker />
-              <Button>Download</Button>
+              <Button>{__('download')}</Button>
             </div>
           </div>
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="overview">{__('overview')}</TabsTrigger>
               <TabsTrigger value="analytics" disabled>
-                Analytics
+                {__('analytics')}
               </TabsTrigger>
               <TabsTrigger value="reports" disabled>
-                Reports
+                {__('reports')}
               </TabsTrigger>
               <TabsTrigger value="notifications" disabled>
-                Notifications
+                {__('notifications')}
               </TabsTrigger>
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
@@ -79,7 +80,7 @@ export default function DashboardPage() {
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Total Revenue
+                      {__('totalRevenue')}
                     </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -103,7 +104,7 @@ export default function DashboardPage() {
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Subscriptions
+                      {__('subscriptions')}
                     </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -128,7 +129,7 @@ export default function DashboardPage() {
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Sales</CardTitle>
+                    <CardTitle className="text-sm font-medium">{__('sales')}</CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -152,7 +153,7 @@ export default function DashboardPage() {
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Active Now
+                      {__('activeNow')}
                     </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -177,7 +178,7 @@ export default function DashboardPage() {
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                 <Card className="col-span-4">
                   <CardHeader>
-                    <CardTitle>Overview</CardTitle>
+                    <CardTitle>{__('overview')}</CardTitle>
                   </CardHeader>
                   <CardContent className="pl-2">
                     <Overview />
@@ -185,9 +186,9 @@ export default function DashboardPage() {
                 </Card>
                 <Card className="col-span-3">
                   <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
+                    <CardTitle>{__('recentSales')}</CardTitle>
                     <CardDescription>
-                      You made 265 sales this month.
+                      {__('youMadeSalesThisMonth')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent><RecentSales /></CardContent>
