@@ -27,9 +27,17 @@ export async function apiRequest<T = any>(
 ): Promise<T> {
   const url = getApiUrl(endpoint);
   
+  // Get WordPress REST API nonce
+  const nonce = (window as any).wpApiSettings?.nonce || (window as any).gutenForm?.nonce || '';
+  
   const defaultHeaders: HeadersInit = {
     'Content-Type': 'application/json',
   };
+
+  // Add nonce header if available
+  if (nonce) {
+    (defaultHeaders as Record<string, string>)['X-WP-Nonce'] = nonce;
+  }
 
   const response = await fetch(url, {
     ...options,
@@ -43,7 +51,15 @@ export async function apiRequest<T = any>(
     const error = await response.json().catch(() => ({
       message: `HTTP error! status: ${response.status}`,
     }));
-    throw new Error(error.message || `HTTP error! status: ${response.status}`);
+    
+    // WordPress REST API error format: { code, message, data: { status } }
+    // WP_Error objects are returned as: { code: string, message: string, data: { status: number } }
+    const errorMessage = error.message || error.code || `HTTP error! status: ${response.status}`;
+    const apiError = new Error(errorMessage);
+    (apiError as any).response = response;
+    (apiError as any).errorData = error;
+    (apiError as any).status = response.status;
+    throw apiError;
   }
 
   return response.json();

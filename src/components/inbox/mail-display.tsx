@@ -1,4 +1,5 @@
 import format from "date-fns/format"
+import React from "react"
 import {
   Archive,
   ArchiveX,
@@ -64,6 +65,25 @@ function AllFieldsTable({ data }: { data: Record<string, any> }) {
     return null;
   }
 
+  // Helper function to check if value is a file array
+  const isFileArray = (value: any): boolean => {
+    return Array.isArray(value) && 
+           value.length > 0 && 
+           typeof value[0] === 'object' && 
+           value[0] !== null &&
+           'url' in value[0] && 
+           'name' in value[0];
+  };
+
+  // Helper function to format file size
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -75,8 +95,48 @@ function AllFieldsTable({ data }: { data: Record<string, any> }) {
       <TableBody>
         {Object.entries(data).map(([key, value]) => {
           // Format value
-          let formattedValue: string;
-          if (Array.isArray(value)) {
+          let formattedValue: React.ReactNode;
+          
+          if (isFileArray(value)) {
+            // Render file list with thumbnails and download links
+            formattedValue = (
+              <div className="flex flex-col gap-2">
+                {(value as any[]).map((file: any, index: number) => {
+                  const isImage = file.type?.startsWith('image/');
+                  const fileSize = file.size ? formatFileSize(file.size) : '';
+                  
+                  return (
+                    <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 border border-gray-200 rounded">
+                      {isImage ? (
+                        <img 
+                          src={file.url} 
+                          alt={file.original_name || file.name} 
+                          className="w-15 h-15 object-cover rounded flex-shrink-0"
+                        />
+                      ) : (
+                        <div className="w-15 h-15 bg-gray-200 rounded flex items-center justify-center flex-shrink-0">
+                          <span className="text-2xl">📄</span>
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <a 
+                          href={file.url} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline font-medium block truncate"
+                        >
+                          {file.original_name || file.name}
+                        </a>
+                        {fileSize && (
+                          <span className="text-xs text-gray-500">{fileSize}</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          } else if (Array.isArray(value)) {
             formattedValue = value.join(', ');
           } else if (typeof value === 'boolean') {
             formattedValue = value ? 'Yes' : 'No';

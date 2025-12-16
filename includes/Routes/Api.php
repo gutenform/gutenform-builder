@@ -34,6 +34,7 @@ Route::prefix(
 		$route->post('/entries/update', '\Gutenform\Controllers\Entries\Actions@update');
 		$route->post('/entries/delete', '\Gutenform\Controllers\Entries\Actions@delete');
 		$route->post('/entries/mark-read', '\Gutenform\Controllers\Entries\Actions@mark_read');
+		$route->post('/entries/empty-trash', '\Gutenform\Controllers\Entries\Actions@empty_trash');
 
 		// Mailboxes routes.
 		$route->post('/mailboxes/create', '\Gutenform\Controllers\Mailboxes\Actions@create');
@@ -62,6 +63,27 @@ Route::prefix(
 
 		// Submissions route (NEU)
 		$route->post('/submit', '\Gutenform\Controllers\Submissions\Actions@submit');
+
+		// File upload routes
+		$route->post('/upload', '\Gutenform\Controllers\FileUpload\Actions@upload');
+		$route->post('/upload-from-url', '\Gutenform\Controllers\FileUpload\Actions@upload_from_url');
+
+		// Settings routes
+		$route->get('/settings/smtp', '\Gutenform\Controllers\Settings\Actions@get_smtp_settings');
+		$route->post('/settings/smtp', '\Gutenform\Controllers\Settings\Actions@save_smtp_settings');
+		$route->post('/settings/smtp/test', '\Gutenform\Controllers\Settings\Actions@test_smtp_connection');
+		$route->get('/settings/debug', '\Gutenform\Controllers\Settings\Actions@get_debug_status');
+		$route->post('/settings/debug', '\Gutenform\Controllers\Settings\Actions@update_debug_status');
+		$route->get('/settings/skip-first-steps', '\Gutenform\Controllers\Settings\Actions@get_skip_first_steps');
+		$route->post('/settings/skip-first-steps', '\Gutenform\Controllers\Settings\Actions@update_skip_first_steps');
+		$route->get('/settings/charts-visible', '\Gutenform\Controllers\Settings\Actions@get_charts_visible');
+		$route->post('/settings/charts-visible', '\Gutenform\Controllers\Settings\Actions@update_charts_visible');
+
+		// Email Logs routes
+		$route->get('/email-logs/get', '\Gutenform\Controllers\EmailLogs\Actions@get_email_logs');
+		$route->get('/email-logs/get/{id}', '\Gutenform\Controllers\EmailLogs\Actions@get_email_log');
+		$route->post('/email-logs/delete', '\Gutenform\Controllers\EmailLogs\Actions@delete_email_log');
+		$route->post('/email-logs/delete-all', '\Gutenform\Controllers\EmailLogs\Actions@delete_all_email_logs');
 
 		// Allow hooks to add more custom API routes.
 		do_action('gf_api', $route);

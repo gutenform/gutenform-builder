@@ -280,16 +280,18 @@ class Actions
 		}
 
 		try {
-			$entry->delete();
+			// Move entry to trash instead of permanently deleting
+			$entry->status = 'trash';
+			$entry->save();
 
 			return array(
 				'success' => true,
-				'message' => __('Entry deleted successfully.', 'gutenform'),
+				'message' => __('Entry moved to trash successfully.', 'gutenform'),
 			);
 		} catch (\Exception $e) {
 			return new \WP_Error(
 				'entry_deletion_failed',
-				__('Failed to delete entry: ', 'gutenform') . $e->getMessage(),
+				__('Failed to move entry to trash: ', 'gutenform') . $e->getMessage(),
 				array('status' => 500)
 			);
 		}
@@ -412,6 +414,58 @@ class Actions
 			return new \WP_Error(
 				'statuses_retrieval_failed',
 				__('Failed to retrieve statuses: ', 'gutenform') . $e->getMessage(),
+				array('status' => 500)
+			);
+		}
+	}
+
+	/**
+	 * Permanently deletes all entries in trash.
+	 *
+	 * @param \WP_REST_Request $request The REST request object.
+	 * @return array|\WP_Error The response message or error.
+	 */
+	public function empty_trash(\WP_REST_Request $request)
+	{
+		// Verify nonce
+		$nonce = $request->get_header('X-WP-Nonce');
+		if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('Security check failed.', 'gutenform'),
+				array('status' => 403)
+			);
+		}
+
+		// Check user capabilities
+		if (!current_user_can('manage_options')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('You do not have permission to empty trash.', 'gutenform'),
+				array('status' => 403)
+			);
+		}
+
+		try {
+			$deleted_count = Entries::where('status', 'trash')->delete();
+
+			return array(
+				'success' => true,
+				'message' => sprintf(
+					_n(
+						'%d entry permanently deleted.',
+						'%d entries permanently deleted.',
+						$deleted_count,
+						'gutenform'
+					),
+					$deleted_count
+				),
+				'deleted_count' => $deleted_count,
+			);
+		} catch (\Exception $e) {
+			return new \WP_Error(
+				'trash_empty_failed',
+				__('Failed to empty trash: ', 'gutenform') . $e->getMessage(),
 				array('status' => 500)
 			);
 		}

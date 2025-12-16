@@ -29,3 +29,8 @@ export const setInboxFilters = (data: Partial<InboxFilters>) => {
     ...data,
   });
 }
+
+export const useInboxFilters = () => {
+  const { useStore } = require('@nanostores/react');
+  return useStore($inboxFilters);
+}

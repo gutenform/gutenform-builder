@@ -1,6 +1,7 @@
 "use client"
 
 // import Link from "next/link"
+import { useState } from "react"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
@@ -17,6 +18,9 @@ export type NavLink = {
   label?: string
   icon?: React.ReactElement | LucideIcon
   variant: "default" | "ghost"
+  onDrop?: (entryId: number) => void
+  dropType?: 'status' | 'label'
+  dropValue?: string | number
 }
 interface NavProps {
   isCollapsed: boolean
@@ -24,6 +28,27 @@ interface NavProps {
 }
 
 export function Nav({ links, isCollapsed }: NavProps) {
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    setDragOverIndex(index)
+  }
+
+  const handleDragLeave = () => {
+    setDragOverIndex(null)
+  }
+
+  const handleDrop = (e: React.DragEvent, link: NavLink) => {
+    e.preventDefault()
+    setDragOverIndex(null)
+    const entryId = parseInt(e.dataTransfer.getData('text/plain'), 10)
+    if (link.onDrop && !isNaN(entryId)) {
+      link.onDrop(entryId)
+    }
+  }
+
   return (
     <div
       data-collapsed={isCollapsed}
@@ -38,11 +63,15 @@ export function Nav({ links, isCollapsed }: NavProps) {
                   onClick={() => {
                     link.onClick();
                   }}
+                  onDragOver={(e) => link.onDrop && handleDragOver(e, index)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, link)}
                   className={cn(
                     buttonVariants({ variant: link.variant, size: "icon" }),
                     "h-9 w-9",
                     link.variant === "default" &&
-                      "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white"
+                      "dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white",
+                    dragOverIndex === index && "ring-2 ring-primary"
                   )}
                 >
                   {link.icon && <link.icon className="h-4 w-4" />}
@@ -65,11 +94,15 @@ export function Nav({ links, isCollapsed }: NavProps) {
               onClick={() => {
                 link.onClick();
               }}
+              onDragOver={(e) => link.onDrop && handleDragOver(e, index)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, link)}
               className={cn(
                 buttonVariants({ variant: link.variant, size: "sm" }),
                 link.variant === "default" &&
                   "dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white",
-                "justify-start"
+                "justify-start",
+                dragOverIndex === index && "ring-2 ring-primary bg-accent"
               )}
             >
               {link.icon && <link.icon className="mr-2 h-4 w-4" />}

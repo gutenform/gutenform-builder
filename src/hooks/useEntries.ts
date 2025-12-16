@@ -391,3 +391,62 @@ export function useStatuses() {
   };
 }
 
+/**
+ * Hook for bulk operations on entries
+ */
+export function useBulkEntryOperations() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const bulkDelete = useCallback(async (ids: number[]) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Delete entries one by one (or implement bulk delete endpoint)
+      const promises = ids.map(id => 
+        apiPost<ApiResponse>('entries/delete', { id })
+      );
+      
+      await Promise.all(promises);
+      
+      return true;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Unknown error');
+      setError(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const bulkMove = useCallback(async (ids: number[], status: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Update entries one by one (or implement bulk update endpoint)
+      const promises = ids.map(id => 
+        apiPost<ApiResponse<Entry>>('entries/update', { id, status })
+      );
+      
+      await Promise.all(promises);
+      
+      return true;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Unknown error');
+      setError(error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return {
+    bulkDelete,
+    bulkMove,
+    loading,
+    error,
+  };
+}
+

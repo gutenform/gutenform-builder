@@ -10,6 +10,7 @@ export {
   useUpdateEntry,
   useDeleteEntry,
   useMarkEntryRead,
+  useBulkEntryOperations,
   useFormIdentifiers,
   useStatuses,
   type Entry,
