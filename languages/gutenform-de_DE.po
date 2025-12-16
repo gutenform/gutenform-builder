@@ -1,0 +1,1491 @@
+# Copyright (C) 2025 Streamery
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Gutenform Builder 0.0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/gutenform-builder\n"
+"Last-Translator: Gutenform Team\n"
+"Language-Team: German <de@li.org>\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-12-16T13:47:25+00:00\n"
+"PO-Revision-Date: 2025-12-16 14:47+0000\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: gutenform\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. Plugin Name of the plugin
+#: gutenform-builder.php
+msgid "Gutenform Builder"
+msgstr "Gutenform Builder"
+
+#. Plugin URI of the plugin
+#: gutenform-builder.php
+msgid "https://gutenform.de"
+msgstr ""
+
+#. Description of the plugin
+#: gutenform-builder.php
+msgid "A modern WordPress form builder plugin built with Gutenberg blocks. Create beautiful, responsive forms directly in the WordPress block editor and manage all submissions through an intuitive inbox interface. Features an extensible provider system for handling form submissions via email, database, or custom providers."
+msgstr "Ein modernes WordPress-Formular-Plugin, das mit Gutenberg-Blöcken erstellt wurde. Erstellen Sie schöne, responsive Formulare direkt im WordPress-Block-Editor und verwalten Sie alle Übermittlungen über eine intuitive Posteingang-Oberfläche. Bietet ein erweiterbares Anbieter-System zur Verarbeitung von Formular-Übermittlungen per E-Mail, Datenbank oder benutzerdefinierten Anbietern."
+
+#. Author of the plugin
+#: gutenform-builder.php
+msgid "Streamery"
+msgstr ""
+
+#. Author URI of the plugin
+#: gutenform-builder.php
+msgid "https://streamery.de"
+msgstr ""
+
+#: database/Seeders/DatabaseProviderSeeder.php:47
+msgid "Database Provider (Standard)"
+msgstr "Datenbank-Anbieter (Standard)"
+
+#: database/Seeders/DatabaseProviderSeeder.php:52
+msgid "Neue Formular-Übermittlung: {form_title}"
+msgstr "Neue Formular-Übermittlung: {form_title}"
+
+#: database/Seeders/EntryLabelsSeeder.php:44
+msgid "Follow Up"
+msgstr "Nachfassung"
+
+#: database/Seeders/EntryLabelsSeeder.php:45
+msgid "Entries that need follow-up"
+msgstr "Einträge, die nachverfolgt werden müssen"
+
+#: database/Seeders/MailboxesSeeder.php:42
+msgid "Default Mailbox"
+msgstr "Standard-Postfach"
+
+#: includes/Admin/Menu.php:46
+#: includes/Admin/Menu.php:47
+msgid "Gutenform"
+msgstr "Gutenform"
+
+#: includes/Admin/Menu.php:66
+#: includes/Admin/Menu.php:67
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: includes/Admin/Menu.php:74
+#: includes/Admin/Menu.php:75
+msgid "Inbox"
+msgstr "Posteingang"
+
+#: includes/Admin/Menu.php:83
+#: includes/Admin/Menu.php:84
+msgid "Chart"
+msgstr "Diagramm"
+
+#: includes/Admin/Menu.php:92
+#: includes/Admin/Menu.php:93
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: includes/Controllers/Database/Actions.php:33
+msgid "Demo data already exists in the database."
+msgstr "Demo-Daten existieren bereits in der Datenbank."
+
+#: includes/Controllers/Database/Actions.php:41
+msgid "Demo data has been successfully seeded."
+msgstr "Demo-Daten wurden erfolgreich eingefügt."
+
+#: includes/Controllers/Database/Actions.php:46
+msgid "Error seeding demo data: "
+msgstr "Fehler beim Einfügen der Demo-Daten: "
+
+#: includes/Controllers/Database/Actions.php:81
+msgid "You do not have permission to perform this action."
+msgstr "Sie haben keine Berechtigung, diese Aktion auszuführen."
+
+#: includes/Controllers/Database/Actions.php:132
+msgid "All database tables have been successfully removed."
+msgstr "Alle Datenbanktabellen wurden erfolgreich entfernt."
+
+#: includes/Controllers/Database/Actions.php:144
+msgid "Error removing database tables: "
+msgstr "Fehler beim Entfernen der Datenbanktabellen: "
+
+#: includes/Controllers/Entries/Actions.php:51
+msgid "Entry created successfully."
+msgstr "Eintrag erfolgreich erstellt."
+
+#: includes/Controllers/Entries/Actions.php:57
+msgid "Failed to create entry: "
+msgstr "Fehler beim Erstellen des Eintrags: "
+
+#: includes/Controllers/Entries/Actions.php:155
+msgid "Failed to retrieve entries: "
+msgstr "Fehler beim Abrufen der Einträge: "
+
+#: includes/Controllers/Entries/Actions.php:177
+#: includes/Controllers/Entries/Actions.php:210
+#: includes/Controllers/Entries/Actions.php:277
+#: includes/Controllers/Entries/Actions.php:314
+#: includes/Controllers/EntryLabels/Actions.php:236
+msgid "Entry not found."
+msgstr "Eintrag nicht gefunden."
+
+#: includes/Controllers/Entries/Actions.php:189
+msgid "Failed to retrieve entry: "
+msgstr "Fehler beim Abrufen des Eintrags: "
+
+#: includes/Controllers/Entries/Actions.php:250
+msgid "Entry updated successfully."
+msgstr "Eintrag erfolgreich aktualisiert."
+
+#: includes/Controllers/Entries/Actions.php:256
+#: includes/Controllers/Entries/Actions.php:334
+msgid "Failed to update entry: "
+msgstr "Fehler beim Aktualisieren des Eintrags: "
+
+#: includes/Controllers/Entries/Actions.php:287
+msgid "Entry deleted successfully."
+msgstr "Eintrag erfolgreich gelöscht."
+
+#: includes/Controllers/Entries/Actions.php:292
+msgid "Failed to delete entry: "
+msgstr "Fehler beim Löschen des Eintrags: "
+
+#: includes/Controllers/Entries/Actions.php:328
+msgid "Entry marked as read."
+msgstr "Eintrag als gelesen markiert."
+
+#: includes/Controllers/Entries/Actions.php:328
+msgid "Entry marked as unread."
+msgstr "Eintrag als ungelesen markiert."
+
+#: includes/Controllers/Entries/Actions.php:370
+msgid "Failed to retrieve form identifiers: "
+msgstr "Fehler beim Abrufen der Formular-IDs: "
+
+#: includes/Controllers/Entries/Actions.php:414
+msgid "Failed to retrieve statuses: "
+msgstr "Fehler beim Abrufen der Status: "
+
+#: includes/Controllers/EntryLabels/Actions.php:37
+#: includes/Controllers/EntryLabels/Actions.php:145
+msgid "A label with this name already exists."
+msgstr "Ein Label mit diesem Namen existiert bereits."
+
+#: includes/Controllers/EntryLabels/Actions.php:52
+msgid "Label created successfully."
+msgstr "Label erfolgreich erstellt."
+
+#: includes/Controllers/EntryLabels/Actions.php:58
+msgid "Failed to create label: "
+msgstr "Fehler beim Erstellen des Labels: "
+
+#: includes/Controllers/EntryLabels/Actions.php:81
+msgid "Failed to retrieve labels: "
+msgstr "Fehler beim Abrufen der Labels: "
+
+#: includes/Controllers/EntryLabels/Actions.php:102
+#: includes/Controllers/EntryLabels/Actions.php:134
+#: includes/Controllers/EntryLabels/Actions.php:191
+#: includes/Controllers/EntryLabels/Actions.php:244
+msgid "Label not found."
+msgstr "Label nicht gefunden."
+
+#: includes/Controllers/EntryLabels/Actions.php:114
+msgid "Failed to retrieve label: "
+msgstr "Fehler beim Abrufen des Labels: "
+
+#: includes/Controllers/EntryLabels/Actions.php:165
+msgid "Label updated successfully."
+msgstr "Label erfolgreich aktualisiert."
+
+#: includes/Controllers/EntryLabels/Actions.php:171
+msgid "Failed to update label: "
+msgstr "Fehler beim Aktualisieren des Labels: "
+
+#: includes/Controllers/EntryLabels/Actions.php:209
+msgid "Label deleted successfully."
+msgstr "Label erfolgreich gelöscht."
+
+#: includes/Controllers/EntryLabels/Actions.php:214
+msgid "Failed to delete label: "
+msgstr "Fehler beim Löschen des Labels: "
+
+#: includes/Controllers/EntryLabels/Actions.php:265
+msgid "Label is already attached to this entry."
+msgstr "Label ist bereits an diesen Eintrag angehängt."
+
+#: includes/Controllers/EntryLabels/Actions.php:282
+msgid "Label attached to entry successfully."
+msgstr "Label erfolgreich an Eintrag angehängt."
+
+#: includes/Controllers/EntryLabels/Actions.php:287
+msgid "Failed to attach label: "
+msgstr "Fehler beim Anhängen des Labels: "
+
+#: includes/Controllers/EntryLabels/Actions.php:319
+msgid "Label is not attached to this entry."
+msgstr "Label ist nicht an diesen Eintrag angehängt."
+
+#: includes/Controllers/EntryLabels/Actions.php:326
+msgid "Label detached from entry successfully."
+msgstr "Label erfolgreich vom Eintrag getrennt."
+
+#: includes/Controllers/EntryLabels/Actions.php:331
+msgid "Failed to detach label: "
+msgstr "Fehler beim Trennen des Labels: "
+
+#: includes/Controllers/Mailboxes/Actions.php:50
+msgid "Mailbox created successfully."
+msgstr "Postfach erfolgreich erstellt."
+
+#: includes/Controllers/Mailboxes/Actions.php:56
+msgid "Failed to create mailbox: "
+msgstr "Fehler beim Erstellen des Postfachs: "
+
+#: includes/Controllers/Mailboxes/Actions.php:92
+msgid "Failed to retrieve mailboxes: "
+msgstr "Fehler beim Abrufen der Postfächer: "
+
+#: includes/Controllers/Mailboxes/Actions.php:114
+#: includes/Controllers/Mailboxes/Actions.php:147
+#: includes/Controllers/Mailboxes/Actions.php:201
+msgid "Mailbox not found."
+msgstr "Postfach nicht gefunden."
+
+#: includes/Controllers/Mailboxes/Actions.php:126
+msgid "Failed to retrieve mailbox: "
+msgstr "Fehler beim Abrufen des Postfachs: "
+
+#: includes/Controllers/Mailboxes/Actions.php:174
+msgid "Mailbox updated successfully."
+msgstr "Postfach erfolgreich aktualisiert."
+
+#: includes/Controllers/Mailboxes/Actions.php:180
+msgid "Failed to update mailbox: "
+msgstr "Fehler beim Aktualisieren des Postfachs: "
+
+#: includes/Controllers/Mailboxes/Actions.php:211
+msgid "Mailbox deleted successfully."
+msgstr "Postfach erfolgreich gelöscht."
+
+#: includes/Controllers/Mailboxes/Actions.php:216
+msgid "Failed to delete mailbox: "
+msgstr "Fehler beim Löschen des Postfachs: "
+
+#: includes/Controllers/Providers/Actions.php:50
+msgid "Provider created successfully."
+msgstr "Anbieter erfolgreich erstellt."
+
+#: includes/Controllers/Providers/Actions.php:56
+msgid "Failed to create provider: "
+msgstr "Fehler beim Erstellen des Anbieters: "
+
+#: includes/Controllers/Providers/Actions.php:103
+msgid "Failed to retrieve providers: "
+msgstr "Fehler beim Abrufen der Anbieter: "
+
+#: includes/Controllers/Providers/Actions.php:125
+#: includes/Controllers/Providers/Actions.php:166
+#: includes/Controllers/Providers/Actions.php:199
+#: includes/Controllers/Providers/Actions.php:255
+msgid "Provider not found."
+msgstr "Anbieter nicht gefunden."
+
+#: includes/Controllers/Providers/Actions.php:137
+#: includes/Controllers/Providers/Actions.php:178
+msgid "Failed to retrieve provider: "
+msgstr "Fehler beim Abrufen des Anbieters: "
+
+#: includes/Controllers/Providers/Actions.php:228
+msgid "Provider updated successfully."
+msgstr "Anbieter erfolgreich aktualisiert."
+
+#: includes/Controllers/Providers/Actions.php:234
+msgid "Failed to update provider: "
+msgstr "Fehler beim Aktualisieren des Anbieters: "
+
+#: includes/Controllers/Providers/Actions.php:265
+msgid "Provider deleted successfully."
+msgstr "Anbieter erfolgreich gelöscht."
+
+#: includes/Controllers/Providers/Actions.php:270
+msgid "Failed to delete provider: "
+msgstr "Fehler beim Löschen des Anbieters: "
+
+#: includes/Controllers/Providers/Actions.php:304
+msgid "Failed to retrieve provider types: "
+msgstr "Fehler beim Abrufen der Anbietertypen: "
+
+#: includes/Controllers/Submissions/Actions.php:34
+msgid "Invalid nonce."
+msgstr "Ungültiger Nonce."
+
+#: includes/Controllers/Submissions/Actions.php:48
+msgid "Form identifier is missing."
+msgstr "Formular-ID fehlt."
+
+#: includes/Controllers/Submissions/Actions.php:70
+msgid "Form submitted successfully."
+msgstr "Formular erfolgreich übermittelt."
+
+#: includes/Controllers/Submissions/Actions.php:76
+msgid "Form submission failed."
+msgstr "Formular-Übermittlung fehlgeschlagen."
+
+#: includes/Controllers/Submissions/Handler.php:70
+msgid "Database Provider could not process the submission."
+msgstr "Datenbank-Anbieter konnte die Übermittlung nicht verarbeiten."
+
+#: includes/Controllers/Submissions/Handler.php:74
+msgid "Database Provider Error: %s"
+msgstr "Datenbank-Anbieter Fehler: %s"
+
+#: includes/Controllers/Submissions/Handler.php:96
+msgid "Provider \"%s\" not found."
+msgstr "Anbieter \"%s\" nicht gefunden."
+
+#: includes/Controllers/Submissions/Handler.php:121
+msgid "Provider \"%s\" could not process the submission."
+msgstr "Anbieter \"%s\" konnte die Übermittlung nicht verarbeiten."
+
+#: includes/Controllers/Submissions/Handler.php:127
+msgid "Error in Provider \"%s\": %s"
+msgstr "Fehler im Anbieter \"%s\": %s"
+
+#: includes/Controllers/Submissions/Handler.php:201
+msgid "Database Provider (Default)"
+msgstr "Datenbank-Anbieter (Standard)"
+
+#: includes/Controllers/Submissions/Handler.php:206
+#: includes/Providers/Database.php:62
+#: includes/Providers/Database.php:126
+#: includes/Providers/Email.php:157
+msgid "New Form Submission: {form_title}"
+msgstr "Neue Formular-Übermittlung: {form_title}"
+
+#: includes/Core/Deactivate.php:74
+msgid "Deactivate Gutenform"
+msgstr "Gutenform deaktivieren"
+
+#: includes/Core/Deactivate.php:75
+msgid "What would you like to do?"
+msgstr "Was möchten Sie tun?"
+
+#: includes/Core/Deactivate.php:79
+msgid "Just disable the plugin"
+msgstr "Plugin nur deaktivieren"
+
+#: includes/Core/Deactivate.php:80
+msgid "Keep all data and settings. You can reactivate the plugin later."
+msgstr "Alle Daten und Einstellungen behalten. Sie können das Plugin später wieder aktivieren."
+
+#: includes/Core/Deactivate.php:84
+msgid "Disable and remove database tables"
+msgstr "Deaktivieren und Datenbanktabellen entfernen"
+
+#: includes/Core/Deactivate.php:85
+msgid "This will permanently delete all form entries, accounts, and settings. This action cannot be undone."
+msgstr "Dies wird alle Formulareinträge, Konten und Einstellungen dauerhaft löschen. Diese Aktion kann nicht rückgängig gemacht werden."
+
+#: includes/Core/Deactivate.php:89
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: includes/Core/Deactivate.php:90
+msgid "Continue"
+msgstr "Fortfahren"
+
+#: includes/Core/Deactivate.php:162
+msgid "Processing..."
+msgstr "Verarbeitung..."
+
+#: includes/Core/Deactivate.php:192
+msgid "Database tables removed successfully. Deactivating plugin..."
+msgstr "Datenbanktabellen erfolgreich entfernt. Plugin wird deaktiviert..."
+
+#: includes/Core/Deactivate.php:195
+#: includes/Core/Deactivate.php:208
+msgid "Error removing database tables. Please try again."
+msgstr "Fehler beim Entfernen der Datenbanktabellen. Bitte versuchen Sie es erneut."
+
+#: includes/Providers/AbstractProvider.php:121
+msgid "Yes"
+msgstr "Ja"
+
+#: includes/Providers/AbstractProvider.php:121
+msgid "No"
+msgstr "Nein"
+
+#: includes/Providers/AbstractProvider.php:130
+msgid "Field"
+msgstr "Feld"
+
+#: includes/Providers/AbstractProvider.php:130
+msgid "Value"
+msgstr "Wert"
+
+#: includes/Providers/Database.php:43
+msgid "Database Storage"
+msgstr "Datenbank-Speicherung"
+
+#: includes/Providers/Database.php:114
+msgid "Mailbox ID"
+msgstr "Postfach-ID"
+
+#: includes/Providers/Database.php:118
+msgid "ID of the mailbox where the entry will be stored."
+msgstr "ID des Postfachs, in dem der Eintrag gespeichert wird."
+
+#: includes/Providers/Database.php:123
+#: includes/Providers/Email.php:154
+msgid "Subject"
+msgstr "Betreff"
+
+#: includes/Providers/Database.php:127
+msgid "Subject for the entry. Placeholders like {form_title} will be replaced."
+msgstr "Betreff für den Eintrag. Platzhalter wie {form_title} werden ersetzt."
+
+#: includes/Providers/Database.php:131
+#: includes/Providers/Email.php:162
+msgid "Message"
+msgstr "Nachricht"
+
+#: includes/Providers/Database.php:135
+msgid "Message for the entry. Placeholders like {field_name} will be replaced."
+msgstr "Nachricht für den Eintrag. Platzhalter wie {field_name} werden ersetzt."
+
+#: includes/Providers/Database.php:140
+#: includes/Providers/Email.php:171
+msgid "From Email"
+msgstr "Absender E-Mail"
+
+#: includes/Providers/Database.php:144
+msgid "Email address of the sender that will be stored in the entry."
+msgstr "E-Mail-Adresse des Absenders, die im Eintrag gespeichert wird."
+
+#: includes/Providers/Email.php:41
+msgid "Email Notification"
+msgstr "E-Mail-Benachrichtigung"
+
+#: includes/Providers/Email.php:145
+msgid "Email Address"
+msgstr "E-Mail-Adresse"
+
+#: includes/Providers/Email.php:149
+msgid "Email address to which the notification will be sent."
+msgstr "E-Mail-Adresse, an die die Benachrichtigung gesendet wird."
+
+#: includes/Providers/Email.php:158
+msgid "Email subject. Placeholders like {form_title} will be replaced."
+msgstr "E-Mail-Betreff. Platzhalter wie {form_title} werden ersetzt."
+
+#: includes/Providers/Email.php:166
+msgid "Email message. HTML allowed. Placeholders like {field_name} will be replaced."
+msgstr "E-Mail-Nachricht. HTML erlaubt. Platzhalter wie {field_name} werden ersetzt."
+
+#: includes/Providers/Email.php:175
+msgid "Email address of the sender."
+msgstr "E-Mail-Adresse des Absenders."
+
+#: includes/Providers/Email.php:179
+msgid "From Name"
+msgstr "Absender Name"
+
+#: includes/Providers/Email.php:183
+msgid "Name of the sender."
+msgstr "Name des Absenders."
+
+#: src/admin/pages/login/index.jsx:17
+#: src/admin/pages/login/index.jsx:43
+msgid "Login"
+msgstr "Anmelden"
+
+#: src/admin/pages/login/index.jsx:19
+msgid "Enter your email below to login to your account"
+msgstr "Geben Sie Ihre E-Mail-Adresse unten ein, um sich anzumelden"
+
+#: src/admin/pages/login/index.jsx:25
+msgid "Email"
+msgstr "E-Mail"
+
+#: src/admin/pages/login/index.jsx:35
+msgid "Password"
+msgstr "Passwort"
+
+#: src/admin/pages/login/index.jsx:37
+msgid "Forgot your password?"
+msgstr "Passwort vergessen?"
+
+#: src/admin/pages/login/index.jsx:46
+msgid "Login with Google"
+msgstr "Mit Google anmelden"
+
+#: src/admin/pages/login/index.jsx:50
+msgid "Don't have an account?"
+msgstr "Haben Sie noch kein Konto?"
+
+#: src/admin/pages/login/index.jsx:52
+msgid "Sign up"
+msgstr "Registrieren"
+
+#: assets/blocks/form/block.json
+#: src/blocks/form/block.json
+msgctxt "block title"
+msgid "Form"
+msgstr "Formular"
+
+#: assets/blocks/form/block.json
+#: src/blocks/form/block.json
+msgctxt "block description"
+msgid "Form Wrapper block for Gutenform."
+msgstr "Formular-Wrapper-Block für Gutenform."
+
+#: assets/blocks/input/block.json
+#: src/blocks/input/block.json
+msgctxt "block title"
+msgid "Input"
+msgstr "Eingabe"
+
+#: assets/blocks/input/block.json
+#: src/blocks/input/block.json
+msgctxt "block description"
+msgid "Input block for Gutenform."
+msgstr "Eingabe-Block für Gutenform."
+
+#: assets/blocks/select/block.json
+#: src/blocks/select/block.json
+msgctxt "block title"
+msgid "Select"
+msgstr "Auswahl"
+
+#: assets/blocks/select/block.json
+#: src/blocks/select/block.json
+msgctxt "block description"
+msgid "Select block for Gutenform."
+msgstr "Auswahl-Block für Gutenform."
+
+#: assets/blocks/submit/block.json
+#: src/blocks/submit/block.json
+msgctxt "block title"
+msgid "Submit"
+msgstr "Absenden"
+
+#: assets/blocks/submit/block.json
+#: src/blocks/submit/block.json
+msgctxt "block description"
+msgid "Submit button block for Gutenform."
+msgstr "Absenden-Button-Block für Gutenform."
+
+#: assets/blocks/success/block.json
+#: src/blocks/success/block.json
+msgctxt "block title"
+msgid "Success"
+msgstr "Erfolg"
+
+#: assets/blocks/success/block.json
+#: src/blocks/success/block.json
+msgctxt "block description"
+msgid "Success Section for Gutenform."
+msgstr "Erfolgs-Bereich für Gutenform."
+
+#: assets/blocks/textarea/block.json
+#: src/blocks/textarea/block.json
+msgctxt "block title"
+msgid "Textarea"
+msgstr "Textbereich"
+
+#: assets/blocks/textarea/block.json
+#: src/blocks/textarea/block.json
+msgctxt "block description"
+msgid "Textarea block for Gutenform."
+msgstr "Textbereich-Block für Gutenform."
+
+#: includes/Assets/Strings.php
+msgid "Loading..."
+msgstr "Lädt..."
+
+#: includes/Assets/Strings.php
+msgid "Error"
+msgstr "Fehler"
+
+#: includes/Assets/Strings.php
+msgid "An error occurred"
+msgstr "Ein Fehler ist aufgetreten"
+
+#: includes/Assets/Strings.php
+msgid "Save"
+msgstr "Speichern"
+
+#: includes/Assets/Strings.php
+msgid "Delete"
+msgstr "Löschen"
+
+#: includes/Assets/Strings.php
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: includes/Assets/Strings.php
+msgid "Create"
+msgstr "Erstellen"
+
+#: includes/Assets/Strings.php
+msgid "Update"
+msgstr "Aktualisieren"
+
+#: includes/Assets/Strings.php
+msgid "Close"
+msgstr "Schließen"
+
+#: includes/Assets/Strings.php
+msgid "Copied"
+msgstr "Kopiert"
+
+#: includes/Assets/Strings.php
+msgid "Copy"
+msgstr "Kopieren"
+
+#: includes/Assets/Strings.php
+msgid "Copy to clipboard"
+msgstr "In Zwischenablage kopieren"
+
+#: includes/Assets/Strings.php
+msgid "Copied!"
+msgstr "Kopiert!"
+
+#: includes/Assets/Strings.php
+msgid "Oops!"
+msgstr "Ups!"
+
+#: includes/Assets/Strings.php
+msgid "Sorry, an unexpected error has occurred."
+msgstr "Entschuldigung, ein unerwarteter Fehler ist aufgetreten."
+
+#: includes/Assets/Strings.php
+msgid "Add your first Mail Provider"
+msgstr "Fügen Sie Ihren ersten E-Mail-Anbieter hinzu"
+
+#: includes/Assets/Strings.php
+msgid "Configure an email provider to receive form submissions via email."
+msgstr "Konfigurieren Sie einen E-Mail-Anbieter, um Formular-Übermittlungen per E-Mail zu erhalten."
+
+#: includes/Assets/Strings.php
+msgid "Create your first Mailbox"
+msgstr "Erstellen Sie Ihr erstes Postfach"
+
+#: includes/Assets/Strings.php
+msgid "Organize form submissions into mailboxes for better management."
+msgstr "Organisieren Sie Formular-Übermittlungen in Postfächern für besseres Management."
+
+#: includes/Assets/Strings.php
+msgid "Add your first Label"
+msgstr "Fügen Sie Ihr erstes Label hinzu"
+
+#: includes/Assets/Strings.php
+msgid "Create labels to categorize and organize your form entries."
+msgstr "Erstellen Sie Labels, um Ihre Formulareinträge zu kategorisieren und zu organisieren."
+
+#: includes/Assets/Strings.php
+msgid "Create your first Form"
+msgstr "Erstellen Sie Ihr erstes Formular"
+
+#: includes/Assets/Strings.php
+msgid "Build a form using Gutenberg blocks and start collecting submissions."
+msgstr "Erstellen Sie ein Formular mit Gutenberg-Blöcken und beginnen Sie mit dem Sammeln von Übermittlungen."
+
+#: includes/Assets/Strings.php
+msgid "Build Your first Form"
+msgstr "Erstellen Sie Ihr erstes Formular"
+
+#: includes/Assets/Strings.php
+msgid "Create your first form using the Gutenberg block editor"
+msgstr "Erstellen Sie Ihr erstes Formular mit dem Gutenberg-Block-Editor"
+
+#: includes/Assets/Strings.php
+msgid "Welcome to GutenForm!"
+msgstr "Willkommen bei GutenForm!"
+
+#: includes/Assets/Strings.php
+msgid "Loading checklist..."
+msgstr "Checkliste wird geladen..."
+
+#: includes/Assets/Strings.php
+msgid "View"
+msgstr "Ansehen"
+
+#: includes/Assets/Strings.php
+msgid "Setup"
+msgstr "Einrichtung"
+
+#: includes/Assets/Strings.php
+msgid "All"
+msgstr "Alle"
+
+#: includes/Assets/Strings.php
+msgid "Unread"
+msgstr "Ungelesen"
+
+#: includes/Assets/Strings.php
+msgid "Read"
+msgstr "Gelesen"
+
+#: includes/Assets/Strings.php
+msgid "Starred"
+msgstr "Markiert"
+
+#: includes/Assets/Strings.php
+msgid "Unstarred"
+msgstr "Nicht markiert"
+
+#: includes/Assets/Strings.php
+msgid "Important"
+msgstr "Wichtig"
+
+#: includes/Assets/Strings.php
+msgid "License Key"
+msgstr "Lizenzschlüssel"
+
+#: includes/Assets/Strings.php
+msgid "Enter your license key"
+msgstr "Geben Sie Ihren Lizenzschlüssel ein"
+
+#: includes/Assets/Strings.php
+msgid "Enter your Gutenform license key to unlock premium features."
+msgstr "Geben Sie Ihren Gutenform-Lizenzschlüssel ein, um Premium-Funktionen freizuschalten."
+
+#: includes/Assets/Strings.php
+msgid "Settings saved"
+msgstr "Einstellungen gespeichert"
+
+#: includes/Assets/Strings.php
+msgid "Your general settings have been updated successfully."
+msgstr "Ihre allgemeinen Einstellungen wurden erfolgreich aktualisiert."
+
+#: includes/Assets/Strings.php
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+#: includes/Assets/Strings.php
+msgid "License key is required."
+msgstr "Lizenzschlüssel ist erforderlich."
+
+#: includes/Assets/Strings.php
+msgid "Providers"
+msgstr "Anbieter"
+
+#: includes/Assets/Strings.php
+msgid "Manage your form submission providers."
+msgstr "Verwalten Sie Ihre Formular-Übermittlungsanbieter."
+
+#: includes/Assets/Strings.php
+msgid "Add Provider"
+msgstr "Anbieter hinzufügen"
+
+#: includes/Assets/Strings.php
+msgid "Create Provider"
+msgstr "Anbieter erstellen"
+
+#: includes/Assets/Strings.php
+msgid "Edit Provider"
+msgstr "Anbieter bearbeiten"
+
+#: includes/Assets/Strings.php
+msgid "Provider created"
+msgstr "Anbieter erstellt"
+
+#: includes/Assets/Strings.php
+msgid "The provider has been created successfully."
+msgstr "Der Anbieter wurde erfolgreich erstellt."
+
+#: includes/Assets/Strings.php
+msgid "Provider updated"
+msgstr "Anbieter aktualisiert"
+
+#: includes/Assets/Strings.php
+msgid "The provider has been updated successfully."
+msgstr "Der Anbieter wurde erfolgreich aktualisiert."
+
+#: includes/Assets/Strings.php
+msgid "Provider deleted"
+msgstr "Anbieter gelöscht"
+
+#: includes/Assets/Strings.php
+msgid "The provider has been deleted successfully."
+msgstr "Der Anbieter wurde erfolgreich gelöscht."
+
+#: includes/Assets/Strings.php
+msgid "Are you sure you want to delete this provider?"
+msgstr "Sind Sie sicher, dass Sie diesen Anbieter löschen möchten?"
+
+#: includes/Assets/Strings.php
+msgid "Loading providers..."
+msgstr "Anbieter werden geladen..."
+
+#: includes/Assets/Strings.php
+msgid "Error:"
+msgstr "Fehler:"
+
+#: includes/Assets/Strings.php
+msgid "No providers found. Create your first provider to get started."
+msgstr "Keine Anbieter gefunden. Erstellen Sie Ihren ersten Anbieter, um zu beginnen."
+
+#: includes/Assets/Strings.php
+msgid "Provider Type"
+msgstr "Anbietertyp"
+
+#: includes/Assets/Strings.php
+msgid "Active"
+msgstr "Aktiv"
+
+#: includes/Assets/Strings.php
+msgid "Inactive"
+msgstr "Inaktiv"
+
+#: includes/Assets/Strings.php
+msgid "Created"
+msgstr "Erstellt"
+
+#: includes/Assets/Strings.php
+msgid "Mailboxes"
+msgstr "Postfächer"
+
+#: includes/Assets/Strings.php
+msgid "Manage your mailboxes for form submissions."
+msgstr "Verwalten Sie Ihre Postfächer für Formular-Übermittlungen."
+
+#: includes/Assets/Strings.php
+msgid "Add Mailbox"
+msgstr "Postfach hinzufügen"
+
+#: includes/Assets/Strings.php
+msgid "Create Mailbox"
+msgstr "Postfach erstellen"
+
+#: includes/Assets/Strings.php
+msgid "Edit Mailbox"
+msgstr "Postfach bearbeiten"
+
+#: includes/Assets/Strings.php
+msgid "Mailbox created"
+msgstr "Postfach erstellt"
+
+#: includes/Assets/Strings.php
+msgid "The mailbox has been created successfully."
+msgstr "Das Postfach wurde erfolgreich erstellt."
+
+#: includes/Assets/Strings.php
+msgid "Mailbox updated"
+msgstr "Postfach aktualisiert"
+
+#: includes/Assets/Strings.php
+msgid "The mailbox has been updated successfully."
+msgstr "Das Postfach wurde erfolgreich aktualisiert."
+
+#: includes/Assets/Strings.php
+msgid "Mailbox deleted"
+msgstr "Postfach gelöscht"
+
+#: includes/Assets/Strings.php
+msgid "The mailbox has been deleted successfully."
+msgstr "Das Postfach wurde erfolgreich gelöscht."
+
+#: includes/Assets/Strings.php
+msgid "Are you sure you want to delete this mailbox?"
+msgstr "Sind Sie sicher, dass Sie dieses Postfach löschen möchten?"
+
+#: includes/Assets/Strings.php
+msgid "Cannot delete default mailbox"
+msgstr "Standard-Postfach kann nicht gelöscht werden"
+
+#: includes/Assets/Strings.php
+msgid "Please set another mailbox as default before deleting this one."
+msgstr "Bitte setzen Sie ein anderes Postfach als Standard, bevor Sie dieses löschen."
+
+#: includes/Assets/Strings.php
+msgid "Loading mailboxes..."
+msgstr "Postfächer werden geladen..."
+
+#: includes/Assets/Strings.php
+msgid "No mailboxes found. Create your first mailbox to get started."
+msgstr "Keine Postfächer gefunden. Erstellen Sie Ihr erstes Postfach, um zu beginnen."
+
+#: includes/Assets/Strings.php
+msgid "Title"
+msgstr "Titel"
+
+#: includes/Assets/Strings.php
+msgid "Title is required"
+msgstr "Titel ist erforderlich"
+
+#: includes/Assets/Strings.php
+msgid "My Mailbox"
+msgstr "Mein Postfach"
+
+#: includes/Assets/Strings.php
+msgid "A descriptive name for this mailbox."
+msgstr "Ein beschreibender Name für dieses Postfach."
+
+
+#: includes/Assets/Strings.php
+msgid "Set this mailbox as the default for new form submissions."
+msgstr "Setzen Sie dieses Postfach als Standard für neue Formular-Übermittlungen."
+
+#: includes/Assets/Strings.php
+msgid "Default"
+msgstr "Standard"
+
+#: includes/Assets/Strings.php
+msgid "Create a new mailbox to receive form submissions."
+msgstr "Erstellen Sie ein neues Postfach, um Formular-Übermittlungen zu erhalten."
+
+#: includes/Assets/Strings.php
+msgid "Update the mailbox details below."
+msgstr "Aktualisieren Sie die Postfach-Details unten."
+
+#: includes/Assets/Strings.php
+msgid "Default mailbox cannot be deleted"
+msgstr "Standard-Postfach kann nicht gelöscht werden"
+
+#: includes/Assets/Strings.php
+msgid "Delete mailbox"
+msgstr "Postfach löschen"
+
+#: includes/Assets/Strings.php
+msgid "Labels"
+msgstr "Labels"
+
+#: includes/Assets/Strings.php
+msgid "Manage labels for organizing form entries."
+msgstr "Verwalten Sie Labels zur Organisation von Formulareinträgen."
+
+#: includes/Assets/Strings.php
+msgid "Add Label"
+msgstr "Label hinzufügen"
+
+#: includes/Assets/Strings.php
+msgid "Create Label"
+msgstr "Label erstellen"
+
+#: includes/Assets/Strings.php
+msgid "Edit Label"
+msgstr "Label bearbeiten"
+
+#: includes/Assets/Strings.php
+msgid "Label created"
+msgstr "Label erstellt"
+
+#: includes/Assets/Strings.php
+msgid "The label has been created successfully."
+msgstr "Das Label wurde erfolgreich erstellt."
+
+#: includes/Assets/Strings.php
+msgid "Label updated"
+msgstr "Label aktualisiert"
+
+#: includes/Assets/Strings.php
+msgid "The label has been updated successfully."
+msgstr "Das Label wurde erfolgreich aktualisiert."
+
+#: includes/Assets/Strings.php
+msgid "Label deleted"
+msgstr "Label gelöscht"
+
+#: includes/Assets/Strings.php
+msgid "The label has been deleted successfully."
+msgstr "Das Label wurde erfolgreich gelöscht."
+
+#: includes/Assets/Strings.php
+msgid "Are you sure you want to delete this label?"
+msgstr "Sind Sie sicher, dass Sie dieses Label löschen möchten?"
+
+#: includes/Assets/Strings.php
+msgid "Loading labels..."
+msgstr "Labels werden geladen..."
+
+#: includes/Assets/Strings.php
+msgid "No labels found. Create your first label to get started."
+msgstr "Keine Labels gefunden. Erstellen Sie Ihr erstes Label, um zu beginnen."
+
+#: includes/Assets/Strings.php
+msgid "Name"
+msgstr "Name"
+
+#: includes/Assets/Strings.php
+msgid "Name is required"
+msgstr "Name ist erforderlich"
+
+#: includes/Assets/Strings.php
+msgid "Description"
+msgstr "Beschreibung"
+
+#: includes/Assets/Strings.php
+msgid "Color"
+msgstr "Farbe"
+
+#: includes/Assets/Strings.php
+msgid "Color must be a valid hex color (e.g., #FF0000)"
+msgstr "Farbe muss eine gültige Hex-Farbe sein (z.B. #FF0000)"
+
+#: includes/Assets/Strings.php
+msgid "Global Field Settings"
+msgstr "Globale Feldeinstellungen"
+
+#: includes/Assets/Strings.php
+msgid "Use custom name"
+msgstr "Benutzerdefinierten Namen verwenden"
+
+#: includes/Assets/Strings.php
+msgid "Use custom ID"
+msgstr "Benutzerdefinierte ID verwenden"
+
+#: includes/Assets/Strings.php
+msgid "Placeholder"
+msgstr "Platzhalter"
+
+#: includes/Assets/Strings.php
+msgid "Required"
+msgstr "Erforderlich"
+
+#: includes/Assets/Strings.php
+msgid "Enter label"
+msgstr "Label eingeben"
+
+#: includes/Assets/Strings.php
+msgid "Enter help text"
+msgstr "Hilfetext eingeben"
+
+#: includes/Assets/Strings.php
+msgid "ID"
+msgstr "ID"
+
+#: includes/Assets/Strings.php
+msgid "Select an option..."
+msgstr "Option auswählen..."
+
+#: includes/Assets/Strings.php
+msgid "Button Label"
+msgstr "Button-Beschriftung"
+
+#: includes/Assets/Strings.php
+msgid "Success modal (hidden in preview)"
+msgstr "Erfolgs-Modal (in Vorschau ausgeblendet)"
+
+#: includes/Assets/Strings.php
+msgid "Toggle Success View"
+msgstr "Erfolgsansicht umschalten"
+
+#: includes/Assets/Strings.php
+msgid "Skin"
+msgstr "Design"
+
+#: includes/Assets/Strings.php
+msgid "Text"
+msgstr "Text"
+
+#: includes/Assets/Strings.php
+msgid "Number"
+msgstr "Nummer"
+
+#: includes/Assets/Strings.php
+msgid "Phone"
+msgstr "Telefon"
+
+#: includes/Assets/Strings.php
+msgid "URL"
+msgstr "URL"
+
+#: includes/Assets/Strings.php
+msgid "Search"
+msgstr "Suchen"
+
+#: includes/Assets/Strings.php
+msgid "Age Groups"
+msgstr "Altersgruppen"
+
+#: includes/Assets/Strings.php
+msgid "Mr."
+msgstr "Herr"
+
+#: includes/Assets/Strings.php
+msgid "Mrs."
+msgstr "Frau"
+
+#: includes/Assets/Strings.php
+msgid "Diverse"
+msgstr "Divers"
+
+#: includes/Assets/Strings.php
+msgid "0-17 years"
+msgstr "0-17 Jahre"
+
+#: includes/Assets/Strings.php
+msgid "18-24 years"
+msgstr "18-24 Jahre"
+
+#: includes/Assets/Strings.php
+msgid "25-34 years"
+msgstr "25-34 Jahre"
+
+#: includes/Assets/Strings.php
+msgid "35-44 years"
+msgstr "35-44 Jahre"
+
+#: includes/Assets/Strings.php
+msgid "45-54 years"
+msgstr "45-54 Jahre"
+
+#: includes/Assets/Strings.php
+msgid "55-64 years"
+msgstr "55-64 Jahre"
+
+#: includes/Assets/Strings.php
+msgid "65+ years"
+msgstr "65+ Jahre"
+
+#: includes/Assets/Strings.php
+msgid "Setup your First Mailbox"
+msgstr "Richten Sie Ihr erstes Postfach ein"
+
+#: includes/Assets/Strings.php
+msgid "Create a custom mailbox to organize your form entries"
+msgstr "Erstellen Sie ein benutzerdefiniertes Postfach, um Ihre Formulareinträge zu organisieren"
+
+#: includes/Assets/Strings.php
+msgid "Are The Labels (default) ok or change something?"
+msgstr "Sind die Labels (Standard) in Ordnung oder möchten Sie etwas ändern?"
+
+#: includes/Assets/Strings.php
+msgid "Review and customize your entry labels"
+msgstr "Überprüfen und passen Sie Ihre Eintrags-Labels an"
+
+#: includes/Assets/Strings.php
+msgid "Configure an email provider to receive form submissions"
+msgstr "Konfigurieren Sie einen E-Mail-Anbieter, um Formular-Übermittlungen zu erhalten"
+
+#: includes/Assets/Strings.php
+msgid "Select Field Settings"
+msgstr "Auswahlfeld-Einstellungen"
+
+#: includes/Assets/Strings.php
+msgid "Basic Form"
+msgstr "Basisformular"
+
+#: includes/Assets/Strings.php
+msgid "Country"
+msgstr "Land"
+
+#: includes/Assets/Strings.php
+msgid "Federal States"
+msgstr "Bundesländer"
+
+#: includes/Assets/Strings.php
+msgid "Germany"
+msgstr "Deutschland"
+
+#: includes/Assets/Strings.php
+msgid "Austria"
+msgstr "Österreich"
+
+#: includes/Assets/Strings.php
+msgid "Switzerland"
+msgstr "Schweiz"
+
+#: includes/Assets/Strings.php
+msgid "France"
+msgstr "Frankreich"
+
+#: includes/Assets/Strings.php
+msgid "Italy"
+msgstr "Italien"
+
+#: includes/Assets/Strings.php
+msgid "Spain"
+msgstr "Spanien"
+
+#: includes/Assets/Strings.php
+msgid "Netherlands"
+msgstr "Niederlande"
+
+#: includes/Assets/Strings.php
+msgid "Belgium"
+msgstr "Belgien"
+
+#: includes/Assets/Strings.php
+msgid "Poland"
+msgstr "Polen"
+
+#: includes/Assets/Strings.php
+msgid "Czech Republic"
+msgstr "Tschechische Republik"
+
+#: includes/Assets/Strings.php
+msgid "Baden-Württemberg"
+msgstr "Baden-Württemberg"
+
+#: includes/Assets/Strings.php
+msgid "Bavaria"
+msgstr "Bayern"
+
+#: includes/Assets/Strings.php
+msgid "Berlin"
+msgstr "Berlin"
+
+#: includes/Assets/Strings.php
+msgid "Brandenburg"
+msgstr "Brandenburg"
+
+#: includes/Assets/Strings.php
+msgid "Bremen"
+msgstr "Bremen"
+
+#: includes/Assets/Strings.php
+msgid "Hamburg"
+msgstr "Hamburg"
+
+#: includes/Assets/Strings.php
+msgid "Hesse"
+msgstr "Hessen"
+
+#: includes/Assets/Strings.php
+msgid "Mecklenburg-Western Pomerania"
+msgstr "Mecklenburg-Vorpommern"
+
+#: includes/Assets/Strings.php
+msgid "Lower Saxony"
+msgstr "Niedersachsen"
+
+#: includes/Assets/Strings.php
+msgid "North Rhine-Westphalia"
+msgstr "Nordrhein-Westfalen"
+
+#: includes/Assets/Strings.php
+msgid "Rhineland-Palatinate"
+msgstr "Rheinland-Pfalz"
+
+#: includes/Assets/Strings.php
+msgid "Saarland"
+msgstr "Saarland"
+
+#: includes/Assets/Strings.php
+msgid "Saxony"
+msgstr "Sachsen"
+
+#: includes/Assets/Strings.php
+msgid "Saxony-Anhalt"
+msgstr "Sachsen-Anhalt"
+
+#: includes/Assets/Strings.php
+msgid "Schleswig-Holstein"
+msgstr "Schleswig-Holstein"
+
+#: includes/Assets/Strings.php
+msgid "Thuringia"
+msgstr "Thüringen"
+
+#: includes/Assets/Strings.php
+msgid "Overview"
+msgstr "Übersicht"
+
+#: includes/Assets/Strings.php
+msgid "Analytics"
+msgstr "Analysen"
+
+#: includes/Assets/Strings.php
+msgid "Reports"
+msgstr "Berichte"
+
+#: includes/Assets/Strings.php
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+#: includes/Assets/Strings.php
+msgid "Total Revenue"
+msgstr "Gesamtumsatz"
+
+#: includes/Assets/Strings.php
+msgid "Subscriptions"
+msgstr "Abonnements"
+
+#: includes/Assets/Strings.php
+msgid "Sales"
+msgstr "Verkäufe"
+
+#: includes/Assets/Strings.php
+msgid "Active Now"
+msgstr "Jetzt aktiv"
+
+#: includes/Assets/Strings.php
+msgid "Download"
+msgstr "Herunterladen"
+
+#: includes/Assets/Strings.php
+msgid "Recent Sales"
+msgstr "Letzte Verkäufe"
+
+#: includes/Assets/Strings.php
+msgid "You made 265 sales this month."
+msgstr "Sie haben diesen Monat 265 Verkäufe getätigt."
+
+#: includes/Assets/Strings.php
+msgid "from last month"
+msgstr "vom letzten Monat"
+
+#: includes/Assets/Strings.php
+msgid "since last hour"
+msgstr "seit der letzten Stunde"
+
+#: includes/Assets/Strings.php
+msgid "Junk"
+msgstr "Spam"
+
+#: includes/Assets/Strings.php
+msgid "Archive"
+msgstr "Archiv"
+
+#: includes/Assets/Strings.php
+msgid "Trash"
+msgstr "Papierkorb"
+
+#: includes/Assets/Strings.php
+msgid "No data"
+msgstr "Keine Daten"
+
+#: includes/Assets/Strings.php
+msgid "Entry Labels"
+msgstr "Eintrags-Labels"
+
+#: includes/Assets/Strings.php
+msgid "Provider type is required"
+msgstr "Anbietertyp ist erforderlich"
+
+#: includes/Assets/Strings.php
+msgid "Select"
+msgstr "Auswählen"
+
+#: includes/Assets/Strings.php
+msgid "My Email Provider"
+msgstr "Mein E-Mail-Anbieter"
+
+#: includes/Assets/Strings.php
+msgid "A descriptive name for this provider."
+msgstr "Ein beschreibender Name für diesen Anbieter."
+
+#: includes/Assets/Strings.php
+msgid "Select a provider type"
+msgstr "Wählen Sie einen Anbietertyp"
+
+#: includes/Assets/Strings.php
+msgid "Select the type of provider."
+msgstr "Wählen Sie den Typ des Anbieters."
+
+#: includes/Assets/Strings.php
+msgid "Form Identifier (optional)"
+msgstr "Formular-ID (optional)"
+
+#: includes/Assets/Strings.php
+msgid "Leave empty for global provider"
+msgstr "Leer lassen für globalen Anbieter"
+
+#: includes/Assets/Strings.php
+msgid "Form-specific provider. Leave empty for global provider that can be used by all forms."
+msgstr "Formularspezifischer Anbieter. Leer lassen für globalen Anbieter, der von allen Formularen verwendet werden kann."
+
+#: includes/Assets/Strings.php
+msgid "Enable or disable this provider."
+msgstr "Diesen Anbieter aktivieren oder deaktivieren."
+
+#: includes/Assets/Strings.php
+msgid "Manage form submission providers (Email, Webhook, etc.)."
+msgstr "Verwalten Sie Formular-Übermittlungsanbieter (E-Mail, Webhook, etc.)."
+
+#: includes/Assets/Strings.php
+msgid "Update the provider details below."
+msgstr "Aktualisieren Sie die Anbieter-Details unten."
+
+#: includes/Assets/Strings.php
+msgid "Configure a new provider for form submissions."
+msgstr "Konfigurieren Sie einen neuen Anbieter für Formular-Übermittlungen."
+
+#: includes/Assets/Strings.php
+msgid "Type:"
+msgstr "Typ:"
+
+#: includes/Assets/Strings.php
+msgid "Form:"
+msgstr "Formular:"
+
+#: includes/Assets/Strings.php
+msgid "Global Provider"
+msgstr "Globaler Anbieter"
+
+#: includes/Assets/Strings.php
+msgid "Manage labels for organizing and categorizing form entries."
+msgstr "Verwalten Sie Labels zur Organisation und Kategorisierung von Formulareinträgen."
+
+#: includes/Assets/Strings.php
+msgid "Update the label details below."
+msgstr "Aktualisieren Sie die Label-Details unten."
+
+#: includes/Assets/Strings.php
+msgid "Create a new label to organize your form entries."
+msgstr "Erstellen Sie ein neues Label, um Ihre Formulareinträge zu organisieren."
+
+#: includes/Assets/Strings.php
+msgid "A unique name for this label."
+msgstr "Ein eindeutiger Name für dieses Label."
+
+#: includes/Assets/Strings.php
+msgid "Optional description for this label"
+msgstr "Optionale Beschreibung für dieses Label"
+
+#: includes/Assets/Strings.php
+msgid "An optional description to help identify this label."
+msgstr "Eine optionale Beschreibung zur Identifizierung dieses Labels."
+
+#: includes/Assets/Strings.php
+msgid "Choose a color to visually identify this label."
+msgstr "Wählen Sie eine Farbe zur visuellen Identifizierung dieses Labels."
+
+#: includes/Assets/Strings.php
+msgid "Let's get you started with a few quick steps"
+msgstr "Lassen Sie uns mit ein paar schnellen Schritten beginnen"
+
+#: includes/Assets/Strings.php
+msgid "🎉 All set! Redirecting to inbox..."
+msgstr "🎉 Alles fertig! Weiterleitung zum Posteingang..."
+
+#: includes/Assets/Strings.php
+msgid "Plugin Name"
+msgstr "Plugin-Name"
+
+#: includes/Assets/Strings.php
+msgid "Toggle navigation menu"
+msgstr "Navigationsmenü umschalten"
+
+#: includes/Assets/Strings.php
+msgid "Toggle user menu"
+msgstr "Benutzermenü umschalten"
+
+#: includes/Assets/Strings.php
+msgid "My Account"
+msgstr "Mein Konto"
+
+#: includes/Assets/Strings.php
+msgid "Support"
+msgstr "Support"
+
+#: includes/Assets/Strings.php
+msgid "Logout"
+msgstr "Abmelden"
+
+#: includes/Assets/Strings.php
+msgid "Charts"
+msgstr "Diagramme"
+
+#: includes/Assets/Strings.php
+msgid "Manage Options"
+msgstr "Optionen verwalten"
+
+#: includes/Assets/Strings.php
+msgid "Sync label and value"
+msgstr "Label und Wert synchronisieren"

@@ -1,0 +1,307 @@
+# Translation System Rules
+
+## Overview
+
+This project uses a **PHP-based translation system** where all translatable strings are defined in PHP, translated using WordPress i18n functions, and passed to JavaScript via `window.gutenForm.strings` (admin) or `window.gutenform.strings` (block editor).
+
+**Key Principle**: No translatable strings should exist in JavaScript/TypeScript files. All strings are translated in PHP and accessed via keys.
+
+## Architecture
+
+### PHP Side
+
+1. **Strings Class**: `includes/Assets/Strings.php`
+   - Contains all translatable strings as an array
+   - Each string is translated using `__('English text', 'gutenform')`
+   - Keys are in **camelCase** format (e.g., `'globalFieldSettings'`)
+
+2. **Asset Loading**: `includes/Assets/Admin.php`
+   - Passes strings to JavaScript via `wp_localize_script()`
+   - Available as `window.gutenForm.strings` (admin) or `window.gutenform.strings` (block editor)
+
+### JavaScript/TypeScript Side
+
+1. **i18n Utility**: `src/lib/i18n.ts`
+   - Provides `__()` function that reads from `window.gutenForm.strings` or `window.gutenform.strings`
+   - Handles case-insensitive lookups and backward compatibility
+
+2. **Usage**: Import and use in any React/TypeScript file:
+   ```typescript
+   import { __ } from '@/lib/i18n';  // Admin pages
+   import { __ } from '../../lib/i18n';  // Block editor (relative import)
+   
+   // Use camelCase keys
+   const title = __('globalFieldSettings');
+   ```
+
+## Adding New Translatable Strings
+
+### Step 1: Add to PHP Strings Class
+
+Add the string to `includes/Assets/Strings.php` in the `get_strings()` method:
+
+```php
+public static function get_strings(): array
+{
+    return array(
+        // ... existing strings ...
+        
+        // Your new string
+        'myNewString' => __('My New String', 'gutenform'),
+        'myNewStringWithPlaceholder' => __('My string with %s placeholder', 'gutenform'),
+    );
+}
+```
+
+**Key Naming Rules**:
+- Use **camelCase** (e.g., `globalFieldSettings`, `addFirstMailProvider`)
+- Be descriptive but concise
+- Group related strings with similar prefixes
+- Use consistent naming patterns
+
+### Step 2: Use in JavaScript/TypeScript
+
+Import the `__` function and use the camelCase key:
+
+```typescript
+import { __ } from '@/lib/i18n';  // or relative path for blocks
+
+// Simple usage
+const label = __('myNewString');
+
+// With fallback (optional, for backward compatibility)
+const label = __('myNewString', 'Fallback text');
+```
+
+### Step 3: Update Translation Files
+
+After adding new strings:
+
+1. **Regenerate POT file**:
+   ```bash
+   npm run i18n
+   ```
+
+2. **Update translation files** (e.g., `languages/gutenform-de_DE.po`):
+   - Add translations for new strings
+   - Compile to MO file:
+   ```bash
+   npm run i18n:compile
+   ```
+
+## Key Naming Conventions
+
+### Format: camelCase
+
+- ✅ Good: `globalFieldSettings`, `addFirstMailProvider`, `selectAnOption`
+- ❌ Bad: `Global Field Settings`, `global_field_settings`, `globalFieldSettings`
+
+### Naming Patterns
+
+1. **Page/Component Names**: Use descriptive prefixes
+   - `addFirstMailProvider` (Welcome page)
+   - `mailboxCreated` (Mailboxes page)
+   - `labelDeleted` (Labels page)
+
+2. **Common Actions**: Use standard verbs
+   - `save`, `cancel`, `delete`, `edit`, `create`, `update`
+   - `loading`, `error`, `success`
+
+3. **Field Labels**: Use simple names
+   - `name`, `email`, `title`, `description`, `placeholder`
+
+4. **Status/State**: Use descriptive names
+   - `active`, `inactive`, `required`, `optional`
+
+## File Organization
+
+### PHP Files
+
+- **Main Strings Class**: `includes/Assets/Strings.php`
+  - All translatable strings for JavaScript
+  - Organized by sections (Common, Login, Settings, Block Editor, etc.)
+
+- **Asset Loading**: `includes/Assets/Admin.php`
+  - Loads strings and passes to JavaScript
+  - Handles both admin and block editor contexts
+
+### JavaScript/TypeScript Files
+
+- **i18n Utility**: `src/lib/i18n.ts`
+  - Provides `__()` function
+  - Handles string lookup from window objects
+
+- **Usage in Components**:
+  - Admin pages: Use `@/lib/i18n` (Vite alias)
+  - Block editor: Use relative import `../../lib/i18n` (webpack)
+
+## Common Patterns
+
+### Form Validation Messages
+
+```php
+// In Strings.php
+'nameRequired' => __('Name is required', 'gutenform'),
+'emailInvalid' => __('Please enter a valid email address', 'gutenform'),
+```
+
+```typescript
+// In component
+const schema = z.object({
+  name: z.string().min(1, __("nameRequired")),
+  email: z.string().email(__("emailInvalid")),
+});
+```
+
+### Toast/Notification Messages
+
+```php
+// In Strings.php
+'settingsSaved' => __('Settings saved', 'gutenform'),
+'settingsSavedDescription' => __('Your settings have been updated successfully.', 'gutenform'),
+```
+
+```typescript
+// In component
+toast({
+  title: __("settingsSaved"),
+  description: __("settingsSavedDescription"),
+});
+```
+
+### Dynamic Content
+
+For strings with placeholders, handle in JavaScript:
+
+```php
+// In Strings.php
+'welcomeMessage' => __('Welcome, %s!', 'gutenform'),
+```
+
+```typescript
+// In component
+const message = __('welcomeMessage').replace('%s', userName);
+```
+
+## Best Practices
+
+### DO ✅
+
+1. **Always use camelCase keys** in JavaScript/TypeScript
+2. **Add strings to PHP first**, then use in JavaScript
+3. **Group related strings** in the PHP class with comments
+4. **Use descriptive key names** that indicate context
+5. **Keep keys consistent** across similar features
+6. **Update translation files** after adding new strings
+
+### DON'T ❌
+
+1. **Don't use English strings as keys** in JavaScript (e.g., `__('Global Field Settings')`)
+2. **Don't hardcode strings** in JavaScript/TypeScript files
+3. **Don't use the old WordPress format** `__('String', 'gutenform')` in JS
+4. **Don't create duplicate keys** with different casing
+5. **Don't forget to regenerate POT file** after adding strings
+
+## Migration from Old Format
+
+If you find old WordPress i18n format in JavaScript:
+
+**Before**:
+```typescript
+import { __ } from '@wordpress/i18n';
+const label = __('Global Field Settings', 'gutenform');
+```
+
+**After**:
+```typescript
+import { __ } from '@/lib/i18n';  // or relative path
+const label = __('globalFieldSettings');
+```
+
+## Troubleshooting
+
+### String shows "gutenform" or the key name
+
+1. **Check the key exists** in `includes/Assets/Strings.php`
+2. **Verify key spelling** (camelCase, exact match)
+3. **Check browser console** for JavaScript errors
+4. **Verify strings are loaded**: `console.log(window.gutenForm?.strings)`
+5. **Clear cache** and rebuild assets
+
+### String not found
+
+1. **Add the string** to `includes/Assets/Strings.php`
+2. **Use camelCase key** in JavaScript
+3. **Rebuild assets** if needed
+4. **Check import path** is correct (`@/lib/i18n` or relative)
+
+### Translations not updating
+
+1. **Regenerate POT file**: `npm run i18n`
+2. **Update PO file** with translations
+3. **Compile MO file**: `npm run i18n:compile`
+4. **Clear WordPress cache**
+5. **Hard refresh browser**
+
+## Examples
+
+### Adding a New Settings Page
+
+1. **Add strings to PHP**:
+```php
+// In includes/Assets/Strings.php
+'advancedSettings' => __('Advanced Settings', 'gutenform'),
+'advancedSettingsDescription' => __('Configure advanced plugin options.', 'gutenform'),
+'saveAdvancedSettings' => __('Save Advanced Settings', 'gutenform'),
+```
+
+2. **Use in React component**:
+```typescript
+import { __ } from '@/lib/i18n';
+
+export function AdvancedSettings() {
+  return (
+    <div>
+      <h2>{__('advancedSettings')}</h2>
+      <p>{__('advancedSettingsDescription')}</p>
+      <button>{__('saveAdvancedSettings')}</button>
+    </div>
+  );
+}
+```
+
+### Adding Block Editor Strings
+
+1. **Add to PHP** (same as above)
+
+2. **Use in block component**:
+```typescript
+import { __ } from '../../lib/i18n';  // Relative import for blocks
+
+export function MyBlockEdit() {
+  return (
+    <InspectorControls>
+      <PanelBody title={__('advancedSettings')}>
+        {/* ... */}
+      </PanelBody>
+    </InspectorControls>
+  );
+}
+```
+
+## Testing Translations
+
+1. **Switch WordPress language** to German (or target language)
+2. **Check admin pages** - all strings should be translated
+3. **Check block editor** - all block strings should be translated
+4. **Verify PHP strings** - check REST API responses
+5. **Test fallbacks** - remove a key and verify fallback works
+
+## Summary
+
+- **All strings** are defined in `includes/Assets/Strings.php`
+- **Keys are camelCase** (e.g., `globalFieldSettings`)
+- **Use `__('key')`** in JavaScript/TypeScript (no second parameter)
+- **Import from** `@/lib/i18n` (admin) or relative path (blocks)
+- **Always add to PHP first**, then use in JavaScript
+- **Regenerate POT file** after adding new strings
