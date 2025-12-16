@@ -1,0 +1,35 @@
+/******/ (() => { // webpackBootstrap
+/*!*************************************!*\
+  !*** ./src/blocks/honeypot/view.ts ***!
+  \*************************************/
+/**
+ * HoneyPot Block Frontend Script
+ * Validates that the honeypot field is empty on form submission
+ */
+
+window.addEventListener('DOMContentLoaded', () => {
+  const forms = document.querySelectorAll('.wp-block-gutenform-form');
+  forms.forEach(form => {
+    form.addEventListener('submit', e => {
+      const honeypotFields = form.querySelectorAll('.gutenform-honeypot input[type="text"]');
+      honeypotFields.forEach(field => {
+        if (field.value && field.value.trim() !== '') {
+          // HoneyPot field was filled - this is likely spam
+          e.preventDefault();
+          console.warn('HoneyPot field was filled. Submission blocked.');
+
+          // Optionally show error message
+          const errorMsg = document.createElement('div');
+          errorMsg.className = 'gutenform-error';
+          errorMsg.textContent = 'Spam detected. Please try again.';
+          errorMsg.style.cssText = 'color: red; padding: 10px; margin: 10px 0; background: #fee; border: 1px solid #fcc; border-radius: 4px;';
+          form.insertBefore(errorMsg, form.firstChild);
+          return false;
+        }
+      });
+    });
+  });
+});
+/******/ })()
+;
+//# sourceMappingURL=view.js.map

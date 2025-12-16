@@ -1,0 +1,15 @@
+.gutenform-honeypot {
+	display: none !important;
+	visibility: hidden !important;
+	position: absolute !important;
+	left: -9999px !important;
+	opacity: 0 !important;
+	height: 0 !important;
+	width: 0 !important;
+	overflow: hidden !important;
+}
+
+.gutenform-honeypot input {
+	display: none !important;
+}
+
