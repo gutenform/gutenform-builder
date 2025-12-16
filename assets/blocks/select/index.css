@@ -44,27 +44,80 @@
     max-height: 16px;
 }
 
-/*!****************************************************************************************************************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/@wordpress/scripts/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/blocks/form/editor.css ***!
-  \****************************************************************************************************************************************************************************************************************/
-/**
- * The following styles get applied inside the editor only.
- */
-
-.wp-block-gutenform-form {
-    > .block-editor-inner-blocks > .block-editor-block-list__layout {
-        .block-list-appender {
-            position: relative;
-            width: 100%;
-            margin-top: 1rem;
-        }
-    }
-
-    .is-layout-grid .gutenform-field{
-        padding-block: 0.75rem;
-        padding-inline: 2px;
-    }
+/*!******************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/@wordpress/scripts/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/blocks/select/editor.css ***!
+  \******************************************************************************************************************************************************************************************************************/
+.gutenform-field select:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
 }
+
+
+/*!***********************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/@wordpress/scripts/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/components/block-atoms/CopyableTextControl/styles.css ***!
+  \***********************************************************************************************************************************************************************************************************************************************/
+.gutenform-copyable-text-control__container {
+	display: flex;
+	align-items: stretch;
+	width: 100%;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+	background-color: #fff;
+	overflow: hidden;
+	margin-bottom: 10px;
+}
+
+input.gutenform-copyable-text-control__input {
+	flex: 1;
+	border: none;
+	padding: 6px 8px;
+	font-size: 13px;
+	font-family: inherit;
+	background-color: #f6f7f7;
+	color: #50575e;
+	outline: none;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+}
+
+button.components-button.gutenform-copyable-text-control__button {
+	border-radius: 0;
+	border-left: 1px solid #ddd;
+	padding: 6px 12px;
+	font-size: 13px;
+	font-weight: 400;
+	height: auto;
+	min-height: auto;
+	background: #fff;
+	color: #2c3338;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	transition: all 0.2s ease;
+}
+
+button.components-button.gutenform-copyable-text-control__button--copied {
+	background: linear-gradient(to bottom, #E71D73, #A0174F);
+	color: #fff;
+}
+
+
+/*!************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/@wordpress/scripts/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/components/block-atoms/CopyableFieldControl/styles.css ***!
+  \************************************************************************************************************************************************************************************************************************************************/
+.gutenform-copyable-field-control__toggle-wrapper {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 6px;
+}
+
+.gutenform-copyable-field-control__toggle {
+	font-size: 11px;
+}
+
+
 /*!**************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/@wordpress/scripts/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/controls/OptionsModal/styles.css ***!
   \**************************************************************************************************************************************************************************************************************************/
@@ -72,8 +125,8 @@
 .gutenform-options-modal-overlay {
 	position: fixed;
 	top: 0;
-	right: 0;
 	left: 0;
+	right: 0;
 	bottom: 0;
 	background-color: rgba(0, 0, 0, 0.7);
 	z-index: 100000;
@@ -265,7 +318,7 @@
 }
 .gutenform-options-table th {
 	padding: 8px;
-	text-align: right;
+	text-align: left;
 	font-size: 12px;
 	font-weight: 600;
 	color: #646970;
@@ -331,76 +384,5 @@
 }
 
 
-/*!*****************************************************************************************************************************************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/@wordpress/scripts/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/skins/default/index.css ***!
-  \*****************************************************************************************************************************************************************************************************************/
-.wp-block-gutenform-form{
-    --field-size: 100%;
-    --field-padding: 1rem 1.25rem;
-    --field-rounded: 0.5rem;
-    --field-border: 1px solid #ccc;
-    
-    * {
-        box-sizing: border-box;
-    }
 
-    input, textarea, select {
-        display: block;
-        width: var(--field-size);
-        padding: var(--field-padding);
-        border-radius: var(--field-rounded);
-        border: var(--field-border);
-        font-size: var(--field-font-size, inherit);
-        font-family: inherit;
-    }
-
-    .gutenform-field{
-        label {
-            display: block;
-            font-size: var(--field-label-size, 87.5%);
-            font-weight: var(--field-label-weight, 600);
-            color: var(--field-label-color, currentColor);
-            opacity: var(--field-label-opacity, 1);
-            margin-bottom: var(--field-label-margin-bottom, 0.5rem);
-        }
-
-        .gutenform-field__help {
-            font-size: var(--field-help-size, 87.5%);
-            color: var(--field-help-color, inherit);
-            margin-top: var(--field-help-margin-top, 0.5rem);
-            opacity: var(--field-help-opacity, 0.8);
-            margin-bottom: 0;
-
-            &:empty {
-                display: none;
-            }
-        }
-    }
-
-    .gutenform-field--required {
-        label::after {
-            content: ' *';
-            color: var(--field-required-color, #f00);
-        }
-    }
-
-    .wp-block-gutenform-submit {
-        button {
-            width: var(--submit-width, var(--field-size));
-            padding: var(--submit-padding, var(--field-padding));
-            border-radius: var(--submit-rounded, var(--field-rounded, 0.5rem));
-            font-size: var(--submit-font-size, var(--field-font-size, inherit));
-            font-family: inherit;
-            background-color: var(--submit-background-color, var(--field-background-color, black));
-            border: var(--submit-border, var(--field-border, 1px solid white));
-            color: var(--submit-color, var(--field-color, white));
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-
-            &:hover {
-                background-color: var(--submit-background-color-hover, var(--field-background-color-hover, black));
-                color: var(--submit-color-hover, var(--field-color-hover, white));
-            }
-        }
-    }
-}
+/*# sourceMappingURL=index.css.map*/

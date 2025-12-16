@@ -2,6 +2,142 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./node_modules/clsx/dist/clsx.mjs":
+/*!*****************************************!*\
+  !*** ./node_modules/clsx/dist/clsx.mjs ***!
+  \*****************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clsx: () => (/* binding */ clsx),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function r(e){var t,f,n="";if("string"==typeof e||"number"==typeof e)n+=e;else if("object"==typeof e)if(Array.isArray(e)){var o=e.length;for(t=0;t<o;t++)e[t]&&(f=r(e[t]))&&(n&&(n+=" "),n+=f)}else for(f in e)e[f]&&(n&&(n+=" "),n+=f);return n}function clsx(){for(var e,t,f=0,n="",o=arguments.length;f<o;f++)(e=arguments[f])&&(t=r(e))&&(n&&(n+=" "),n+=t);return n}/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (clsx);
+
+/***/ }),
+
+/***/ "./node_modules/lucide-react/dist/esm/createLucideIcon.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/lucide-react/dist/esm/createLucideIcon.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ createLucideIcon),
+/* harmony export */   toKebabCase: () => (/* binding */ toKebabCase)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _defaultAttributes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./defaultAttributes.js */ "./node_modules/lucide-react/dist/esm/defaultAttributes.js");
+/**
+ * @license lucide-react v0.302.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+
+
+const toKebabCase = (string) => string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase().trim();
+const createLucideIcon = (iconName, iconNode) => {
+  const Component = (0,react__WEBPACK_IMPORTED_MODULE_0__.forwardRef)(
+    ({ color = "currentColor", size = 24, strokeWidth = 2, absoluteStrokeWidth, className = "", children, ...rest }, ref) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(
+      "svg",
+      {
+        ref,
+        ..._defaultAttributes_js__WEBPACK_IMPORTED_MODULE_1__["default"],
+        width: size,
+        height: size,
+        stroke: color,
+        strokeWidth: absoluteStrokeWidth ? Number(strokeWidth) * 24 / Number(size) : strokeWidth,
+        className: ["lucide", `lucide-${toKebabCase(iconName)}`, className].join(" "),
+        ...rest
+      },
+      [
+        ...iconNode.map(([tag, attrs]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(tag, attrs)),
+        ...Array.isArray(children) ? children : [children]
+      ]
+    )
+  );
+  Component.displayName = `${iconName}`;
+  return Component;
+};
+
+
+//# sourceMappingURL=createLucideIcon.js.map
+
+
+/***/ }),
+
+/***/ "./node_modules/lucide-react/dist/esm/defaultAttributes.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/lucide-react/dist/esm/defaultAttributes.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ defaultAttributes)
+/* harmony export */ });
+/**
+ * @license lucide-react v0.302.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+var defaultAttributes = {
+  xmlns: "http://www.w3.org/2000/svg",
+  width: 24,
+  height: 24,
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 2,
+  strokeLinecap: "round",
+  strokeLinejoin: "round"
+};
+
+
+//# sourceMappingURL=defaultAttributes.js.map
+
+
+/***/ }),
+
+/***/ "./node_modules/lucide-react/dist/esm/icons/send.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/lucide-react/dist/esm/icons/send.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Send)
+/* harmony export */ });
+/* harmony import */ var _createLucideIcon_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../createLucideIcon.js */ "./node_modules/lucide-react/dist/esm/createLucideIcon.js");
+/**
+ * @license lucide-react v0.302.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+
+const Send = (0,_createLucideIcon_js__WEBPACK_IMPORTED_MODULE_0__["default"])("Send", [
+  ["path", { d: "m22 2-7 20-4-9-9-4Z", key: "1q3vgg" }],
+  ["path", { d: "M22 2 11 13", key: "nzbqef" }]
+]);
+
+
+//# sourceMappingURL=send.js.map
+
+
+/***/ }),
+
 /***/ "./src/blocks/submit/block.json":
 /*!**************************************!*\
   !*** ./src/blocks/submit/block.json ***!
@@ -22,15 +158,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Edit)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _editor_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./editor.css */ "./src/blocks/submit/editor.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _lib_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/lib/i18n */ "./src/lib/i18n.ts");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _editor_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./editor.css */ "./src/blocks/submit/editor.css");
+/* harmony import */ var _lib_use_unique_id__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../lib/use-unique-id */ "./src/lib/use-unique-id.ts");
+/* harmony import */ var _inspector_controls__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./inspector-controls */ "./src/blocks/submit/inspector-controls.tsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__);
+
 
 
 
@@ -42,27 +178,27 @@ function Edit(props) {
     setAttributes,
     clientId
   } = props;
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    setAttributes({
-      id: `gutenform-submit-${clientId}`
-    });
-  }, [clientId]);
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.Fragment, {
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("div", {
-      ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.useBlockProps)(),
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)("button", {
+
+  // Automatically generate and set unique ID
+  (0,_lib_use_unique_id__WEBPACK_IMPORTED_MODULE_3__.useUniqueID)(attributes.id, clientId, setAttributes, 'gutenform-submit');
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_inspector_controls__WEBPACK_IMPORTED_MODULE_4__.SubmitInspectorControls, {
+      ...props
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+      ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)(),
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
         type: "submit",
         id: attributes.id,
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.RichText, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.RichText, {
           tagName: "span",
           value: attributes.label,
           onChange: label => setAttributes({
             label
           }),
-          placeholder: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Enter label', 'gutenform')
+          placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('enterLabel')
         })
       })
-    })
+    })]
   });
 }
 
@@ -80,29 +216,90 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/blocks/submit/index.ts":
-/*!************************************!*\
-  !*** ./src/blocks/submit/index.ts ***!
-  \************************************/
+/***/ "./src/blocks/submit/index.tsx":
+/*!*************************************!*\
+  !*** ./src/blocks/submit/index.tsx ***!
+  \*************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./style.css */ "./src/blocks/submit/style.css");
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit */ "./src/blocks/submit/edit.tsx");
-/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./save */ "./src/blocks/submit/save.tsx");
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./block.json */ "./src/blocks/submit/block.json");
+/* harmony import */ var _components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/block-atoms/BlockIcon */ "./src/components/block-atoms/BlockIcon/index.tsx");
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./style.css */ "./src/blocks/submit/style.css");
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./edit */ "./src/blocks/submit/edit.tsx");
+/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./save */ "./src/blocks/submit/save.tsx");
+/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./block.json */ "./src/blocks/submit/block.json");
+/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/send.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__);
 
 
 
 
 
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_4__.name, {
-  ..._block_json__WEBPACK_IMPORTED_MODULE_4__,
-  edit: _edit__WEBPACK_IMPORTED_MODULE_2__["default"],
-  save: _save__WEBPACK_IMPORTED_MODULE_3__["default"]
+
+
+
+(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_5__.name, {
+  ..._block_json__WEBPACK_IMPORTED_MODULE_5__,
+  icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    icon: lucide_react__WEBPACK_IMPORTED_MODULE_6__["default"]
+  }),
+  edit: _edit__WEBPACK_IMPORTED_MODULE_3__["default"],
+  save: _save__WEBPACK_IMPORTED_MODULE_4__["default"]
 });
+
+/***/ }),
+
+/***/ "./src/blocks/submit/inspector-controls.tsx":
+/*!**************************************************!*\
+  !*** ./src/blocks/submit/inspector-controls.tsx ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   SubmitInspectorControls: () => (/* binding */ SubmitInspectorControls)
+/* harmony export */ });
+/* harmony import */ var _lib_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/lib/i18n */ "./src/lib/i18n.ts");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__);
+
+
+
+
+const SubmitInspectorControls = ({
+  attributes,
+  setAttributes
+}) => {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+      title: "Submit Settings",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+        label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('buttonLabel'),
+        value: attributes.label,
+        onChange: label => setAttributes({
+          label
+        }),
+        __next40pxDefaultSize: true,
+        __nextHasNoMarginBottom: true
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+        label: "ID",
+        value: attributes.id,
+        onChange: id => setAttributes({
+          id
+        }),
+        __next40pxDefaultSize: true,
+        __nextHasNoMarginBottom: true
+      })]
+    })
+  });
+};
 
 /***/ }),
 
@@ -165,6 +362,252 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/components/block-atoms/BlockIcon/index.tsx":
+/*!********************************************************!*\
+  !*** ./src/components/block-atoms/BlockIcon/index.tsx ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./src/components/block-atoms/BlockIcon/styles.css");
+/* harmony import */ var clsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.mjs");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+const BlockIcon = ({
+  icon,
+  clean
+}) => {
+  const Icon = icon;
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+    className: (0,clsx__WEBPACK_IMPORTED_MODULE_1__["default"])('gutenform-block-icon', clean && 'clean'),
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(Icon, {})
+  });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (BlockIcon);
+
+/***/ }),
+
+/***/ "./src/components/block-atoms/BlockIcon/styles.css":
+/*!*********************************************************!*\
+  !*** ./src/components/block-atoms/BlockIcon/styles.css ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "./src/lib/i18n.ts":
+/*!*************************!*\
+  !*** ./src/lib/i18n.ts ***!
+  \*************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   __: () => (/* binding */ __),
+/* harmony export */   translate: () => (/* binding */ translate)
+/* harmony export */ });
+/**
+ * Internationalization utility for accessing translated strings.
+ * 
+ * Strings are translated in PHP and passed via window.gutenForm.strings
+ * or window.gutenform.strings (for block editor).
+ */
+
+/**
+ * Get a translated string by key.
+ * 
+ * @param key The string key
+ * @param fallback Optional fallback string if key is not found
+ * @returns The translated string or fallback
+ */
+function __(key, fallback) {
+  // Normalize key to lowercase for case-insensitive lookup
+  const normalizedKey = key.toLowerCase();
+
+  // Try admin context first (window.gutenForm)
+  const adminStrings = window.gutenForm?.strings;
+  if (adminStrings) {
+    // Try exact match first
+    if (adminStrings[key]) {
+      return adminStrings[key];
+    }
+    // Try normalized (lowercase) key
+    if (adminStrings[normalizedKey]) {
+      return adminStrings[normalizedKey];
+    }
+    // Try to find by matching values (for backward compatibility)
+    for (const [k, v] of Object.entries(adminStrings)) {
+      if (v === key) {
+        return v;
+      }
+    }
+  }
+
+  // Try block editor context (window.gutenform)
+  const editorStrings = window.gutenform?.strings;
+  if (editorStrings) {
+    // Try exact match first
+    if (editorStrings[key]) {
+      return editorStrings[key];
+    }
+    // Try normalized (lowercase) key
+    if (editorStrings[normalizedKey]) {
+      return editorStrings[normalizedKey];
+    }
+    // Try to find by matching values (for backward compatibility)
+    for (const [k, v] of Object.entries(editorStrings)) {
+      if (v === key) {
+        return v;
+      }
+    }
+  }
+
+  // Return fallback or key if not found
+  return fallback || key;
+}
+
+/**
+ * Get a translated string by key (alias for __).
+ * 
+ * @param key The string key
+ * @param fallback Optional fallback string if key is not found
+ * @returns The translated string or fallback
+ */
+function translate(key, fallback) {
+  return __(key, fallback);
+}
+
+/***/ }),
+
+/***/ "./src/lib/use-unique-id.ts":
+/*!**********************************!*\
+  !*** ./src/lib/use-unique-id.ts ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   generateUniqueBlockId: () => (/* binding */ generateUniqueBlockId),
+/* harmony export */   useUniqueID: () => (/* binding */ useUniqueID)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+/**
+ * Generates a unique block ID for input blocks.
+ * 
+ * @param currentId - The current ID value (may be empty or undefined)
+ * @param clientId - The WordPress block clientId
+ * @param getAllBlockIds - Function that returns all existing block IDs on the page
+ * @param prefix - The prefix for the ID (default: 'gutenform-input')
+ * @returns A unique ID string
+ */
+const generateUniqueBlockId = (currentId, clientId, getAllBlockIds, prefix = 'gutenform-input') => {
+  // If no current ID, use the default pattern with clientId
+  if (!currentId) {
+    const defaultId = `${prefix}-${clientId}`;
+    const existingIds = getAllBlockIds();
+
+    // If default ID is already taken, append numbers
+    if (existingIds.includes(defaultId)) {
+      let counter = 1;
+      let uniqueId = `${defaultId}-${counter}`;
+      while (existingIds.includes(uniqueId)) {
+        counter++;
+        uniqueId = `${defaultId}-${counter}`;
+      }
+      return uniqueId;
+    }
+    return defaultId;
+  }
+
+  // Check if current ID matches the pattern [prefix]-[ID]
+  const inputPattern = new RegExp(`^${prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}-(.+)$`);
+  const match = currentId.match(inputPattern);
+  if (match) {
+    // If it matches the pattern, use clientId with the prefix
+    const newId = `${prefix}-${clientId}`;
+    const existingIds = getAllBlockIds();
+
+    // If the new ID is already taken, append numbers
+    if (existingIds.includes(newId)) {
+      let counter = 1;
+      let uniqueId = `${newId}-${counter}`;
+      while (existingIds.includes(uniqueId)) {
+        counter++;
+        uniqueId = `${newId}-${counter}`;
+      }
+      return uniqueId;
+    }
+    return newId;
+  }
+
+  // If it doesn't match the pattern, check for duplicates and append numbers
+  const existingIds = getAllBlockIds();
+  if (!existingIds.includes(currentId)) {
+    return currentId;
+  }
+
+  // ID is duplicate, append numbers until unique
+  let counter = 1;
+  let uniqueId = `${currentId}-${counter}`;
+  while (existingIds.includes(uniqueId)) {
+    counter++;
+    uniqueId = `${currentId}-${counter}`;
+  }
+  return uniqueId;
+};
+
+/**
+ * React hook that automatically generates and sets a unique block ID.
+ * 
+ * @param currentId - The current ID value from block attributes
+ * @param clientId - The WordPress block clientId
+ * @param setAttributes - Function to update block attributes
+ * @param prefix - The prefix for the ID (default: 'gutenform-input')
+ */
+const useUniqueID = (currentId, clientId, setAttributes, prefix = 'gutenform-input') => {
+  // Get all blocks to check for duplicate IDs
+  const allBlocks = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_1__.useSelect)(select => select('core/block-editor').getBlocks(), []);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    // Extract all block IDs from blocks that have an 'id' attribute
+    // Exclude the current block by clientId to avoid false positives
+    const getAllBlockIds = () => {
+      return allBlocks.filter(block => block.clientId !== clientId) // Exclude current block
+      .map(block => {
+        // Check if block has attributes with an 'id' field
+        if (block.attributes?.id) {
+          return block.attributes.id;
+        }
+        return null;
+      }).filter(id => id !== null);
+    };
+    const existingIds = getAllBlockIds();
+    const uniqueId = generateUniqueBlockId(currentId, clientId, () => existingIds, prefix);
+    if (uniqueId !== currentId) {
+      setAttributes({
+        id: uniqueId
+      });
+    }
+  }, [currentId, clientId, allBlocks, setAttributes, prefix]);
+};
+
+/***/ }),
+
 /***/ "@wordpress/block-editor":
 /*!*************************************!*\
   !*** external ["wp","blockEditor"] ***!
@@ -185,13 +628,23 @@ module.exports = window["wp"]["blocks"];
 
 /***/ }),
 
-/***/ "@wordpress/i18n":
+/***/ "@wordpress/components":
+/*!************************************!*\
+  !*** external ["wp","components"] ***!
+  \************************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["components"];
+
+/***/ }),
+
+/***/ "@wordpress/data":
 /*!******************************!*\
-  !*** external ["wp","i18n"] ***!
+  !*** external ["wp","data"] ***!
   \******************************/
 /***/ ((module) => {
 
-module.exports = window["wp"]["i18n"];
+module.exports = window["wp"]["data"];
 
 /***/ }),
 
@@ -376,7 +829,7 @@ module.exports = window["ReactJSXRuntime"];
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["submit/style-index"], () => (__webpack_require__("./src/blocks/submit/index.ts")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["submit/style-index"], () => (__webpack_require__("./src/blocks/submit/index.tsx")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

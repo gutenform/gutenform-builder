@@ -2,6 +2,142 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./node_modules/clsx/dist/clsx.mjs":
+/*!*****************************************!*\
+  !*** ./node_modules/clsx/dist/clsx.mjs ***!
+  \*****************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   clsx: () => (/* binding */ clsx),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function r(e){var t,f,n="";if("string"==typeof e||"number"==typeof e)n+=e;else if("object"==typeof e)if(Array.isArray(e)){var o=e.length;for(t=0;t<o;t++)e[t]&&(f=r(e[t]))&&(n&&(n+=" "),n+=f)}else for(f in e)e[f]&&(n&&(n+=" "),n+=f);return n}function clsx(){for(var e,t,f=0,n="",o=arguments.length;f<o;f++)(e=arguments[f])&&(t=r(e))&&(n&&(n+=" "),n+=t);return n}/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (clsx);
+
+/***/ }),
+
+/***/ "./node_modules/lucide-react/dist/esm/createLucideIcon.js":
+/*!****************************************************************!*\
+  !*** ./node_modules/lucide-react/dist/esm/createLucideIcon.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ createLucideIcon),
+/* harmony export */   toKebabCase: () => (/* binding */ toKebabCase)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _defaultAttributes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./defaultAttributes.js */ "./node_modules/lucide-react/dist/esm/defaultAttributes.js");
+/**
+ * @license lucide-react v0.302.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+
+
+const toKebabCase = (string) => string.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase().trim();
+const createLucideIcon = (iconName, iconNode) => {
+  const Component = (0,react__WEBPACK_IMPORTED_MODULE_0__.forwardRef)(
+    ({ color = "currentColor", size = 24, strokeWidth = 2, absoluteStrokeWidth, className = "", children, ...rest }, ref) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(
+      "svg",
+      {
+        ref,
+        ..._defaultAttributes_js__WEBPACK_IMPORTED_MODULE_1__["default"],
+        width: size,
+        height: size,
+        stroke: color,
+        strokeWidth: absoluteStrokeWidth ? Number(strokeWidth) * 24 / Number(size) : strokeWidth,
+        className: ["lucide", `lucide-${toKebabCase(iconName)}`, className].join(" "),
+        ...rest
+      },
+      [
+        ...iconNode.map(([tag, attrs]) => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(tag, attrs)),
+        ...Array.isArray(children) ? children : [children]
+      ]
+    )
+  );
+  Component.displayName = `${iconName}`;
+  return Component;
+};
+
+
+//# sourceMappingURL=createLucideIcon.js.map
+
+
+/***/ }),
+
+/***/ "./node_modules/lucide-react/dist/esm/defaultAttributes.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/lucide-react/dist/esm/defaultAttributes.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ defaultAttributes)
+/* harmony export */ });
+/**
+ * @license lucide-react v0.302.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+var defaultAttributes = {
+  xmlns: "http://www.w3.org/2000/svg",
+  width: 24,
+  height: 24,
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 2,
+  strokeLinecap: "round",
+  strokeLinejoin: "round"
+};
+
+
+//# sourceMappingURL=defaultAttributes.js.map
+
+
+/***/ }),
+
+/***/ "./node_modules/lucide-react/dist/esm/icons/check-circle.js":
+/*!******************************************************************!*\
+  !*** ./node_modules/lucide-react/dist/esm/icons/check-circle.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ CheckCircle)
+/* harmony export */ });
+/* harmony import */ var _createLucideIcon_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../createLucideIcon.js */ "./node_modules/lucide-react/dist/esm/createLucideIcon.js");
+/**
+ * @license lucide-react v0.302.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */
+
+
+
+const CheckCircle = (0,_createLucideIcon_js__WEBPACK_IMPORTED_MODULE_0__["default"])("CheckCircle", [
+  ["path", { d: "M22 11.08V12a10 10 0 1 1-5.93-9.14", key: "g774vq" }],
+  ["path", { d: "m9 11 3 3L22 4", key: "1pflzl" }]
+]);
+
+
+//# sourceMappingURL=check-circle.js.map
+
+
+/***/ }),
+
 /***/ "./src/blocks/success/block.json":
 /*!***************************************!*\
   !*** ./src/blocks/success/block.json ***!
@@ -22,86 +158,63 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Edit)
 /* harmony export */ });
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _lib_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/lib/i18n */ "./src/lib/i18n.ts");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _editor_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./editor.css */ "./src/blocks/success/editor.css");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-dom */ "react-dom");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _editor_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./editor.css */ "./src/blocks/success/editor.css");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-dom */ "react-dom");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _use_form_block__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./use-form-block */ "./src/blocks/success/use-form-block.ts");
+/* harmony import */ var _modal_close_button__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modal-close-button */ "./src/blocks/success/modal-close-button.tsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__);
 
 
 
 
 
 
-function Edit(_props) {
+
+
+
+function Edit(props) {
   var _formBlock$attributes;
   const {
     clientId
-  } = _props;
-  const successRef = (0,react__WEBPACK_IMPORTED_MODULE_3__.useRef)(null);
-  const modalRef = (0,react__WEBPACK_IMPORTED_MODULE_3__.useRef)(null);
-  const contentRef = (0,react__WEBPACK_IMPORTED_MODULE_3__.useRef)(null);
-  const [form, setForm] = (0,react__WEBPACK_IMPORTED_MODULE_3__.useState)(null);
-
-  // Get parent form block's attributes
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const {
-    useSelect,
-    useDispatch
-  } = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
-  const formBlock = useSelect(select => {
-    const {
-      getBlockParents,
-      getBlock
-    } = select('core/block-editor');
-    const parentIds = getBlockParents(clientId);
-    // Find the form block parent
-    for (const parentId of parentIds) {
-      const parentBlock = getBlock(parentId);
-      if (parentBlock?.name === 'gutenform/form') {
-        return parentBlock;
-      }
-    }
-    return null;
-  }, [clientId]);
+  } = props;
+  const successRef = (0,react__WEBPACK_IMPORTED_MODULE_4__.useRef)(null);
+  const modalRef = (0,react__WEBPACK_IMPORTED_MODULE_4__.useRef)(null);
+  const contentRef = (0,react__WEBPACK_IMPORTED_MODULE_4__.useRef)(null);
+  const [form, setForm] = (0,react__WEBPACK_IMPORTED_MODULE_4__.useState)(null);
+  const formBlock = (0,_use_form_block__WEBPACK_IMPORTED_MODULE_6__.useFormBlock)(clientId);
   const {
     updateBlockAttributes
-  } = useDispatch('core/block-editor');
+  } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_2__.useDispatch)('core/block-editor');
   const successView = (_formBlock$attributes = formBlock?.attributes?.successView) !== null && _formBlock$attributes !== void 0 ? _formBlock$attributes : false;
-  const Block = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.Fragment, {
-    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
-      ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)(),
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks, {
-        allowedBlocks: ['core/heading', 'core/paragraph'],
-        template: [['core/heading', {
-          content: 'Thank you for your submission!'
-        }], ['core/paragraph', {
-          content: 'We will get back to you as soon as possible.'
-        }]]
-      })
-    })
-  });
-  (0,react__WEBPACK_IMPORTED_MODULE_3__.useEffect)(() => {
-    if (successRef.current) {
-      const form = successRef.current.closest('.wp-block-gutenform-form');
-      if (!form) return;
-      setForm(form);
-    }
-  }, []);
-  const closeModal = (0,react__WEBPACK_IMPORTED_MODULE_3__.useCallback)(() => {
+  const closeModal = (0,react__WEBPACK_IMPORTED_MODULE_4__.useCallback)(() => {
     if (formBlock) {
       updateBlockAttributes(formBlock.clientId, {
         successView: false
       });
     }
   }, [formBlock, updateBlockAttributes]);
-  (0,react__WEBPACK_IMPORTED_MODULE_3__.useEffect)(() => {
+
+  // Find the form element in the DOM
+  (0,react__WEBPACK_IMPORTED_MODULE_4__.useEffect)(() => {
+    if (successRef.current) {
+      const formElement = successRef.current.closest('.wp-block-gutenform-form');
+      if (formElement) {
+        setForm(formElement);
+      }
+    }
+  }, []);
+
+  // Handle modal click events
+  (0,react__WEBPACK_IMPORTED_MODULE_4__.useEffect)(() => {
     if (!modalRef.current || !successView) return;
     const modal = modalRef.current;
     const content = contentRef.current;
@@ -124,40 +237,47 @@ function Edit(_props) {
       }
     };
   }, [successView, closeModal]);
+
+  // Hidden state when success view is not active
   if (!successView) {
-    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
       ref: successRef,
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
         style: {
           padding: '1rem',
           border: '1px dashed #ccc',
           textAlign: 'center'
         },
-        children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Success modal (hidden in preview)', 'gutenform')
+        children: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('successModalHiddenInPreview')
       })
     });
   }
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+
+  // Success modal content
+  const SuccessContent = /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
+    ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)(),
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks, {
+      allowedBlocks: ['core/heading', 'core/paragraph'],
+      template: [['core/heading', {
+        content: 'Thank you for your submission!'
+      }], ['core/paragraph', {
+        content: 'We will get back to you as soon as possible.'
+      }]]
+    })
+  });
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
     ref: successRef,
-    children: [form && (0,react_dom__WEBPACK_IMPORTED_MODULE_4__.createPortal)(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+    children: [form && (0,react_dom__WEBPACK_IMPORTED_MODULE_5__.createPortal)(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
       ref: modalRef,
       className: "gutenform-success-modal",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("div", {
         ref: contentRef,
         className: "gutenform-success-modal-content",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
-          type: "button",
-          className: "gutenform-success-modal-close",
-          onClick: e => {
-            e.preventDefault();
-            e.stopPropagation();
-            closeModal();
-          },
-          "aria-label": (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('Close', 'gutenform'),
-          children: "\xD7"
-        }), Block]
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_modal_close_button__WEBPACK_IMPORTED_MODULE_7__.ModalCloseButton, {
+          onClose: closeModal
+        }), SuccessContent]
       })
-    }), form), !form && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("div", {
+    }), form), !form && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("div", {
       children: "No form found"
     })]
   });
@@ -177,29 +297,72 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/blocks/success/index.ts":
-/*!*************************************!*\
-  !*** ./src/blocks/success/index.ts ***!
-  \*************************************/
+/***/ "./src/blocks/success/index.tsx":
+/*!**************************************!*\
+  !*** ./src/blocks/success/index.tsx ***!
+  \**************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./style.css */ "./src/blocks/success/style.css");
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit */ "./src/blocks/success/edit.tsx");
-/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./save */ "./src/blocks/success/save.tsx");
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./block.json */ "./src/blocks/success/block.json");
+/* harmony import */ var _components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/block-atoms/BlockIcon */ "./src/components/block-atoms/BlockIcon/index.tsx");
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./style.css */ "./src/blocks/success/style.css");
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./edit */ "./src/blocks/success/edit.tsx");
+/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./save */ "./src/blocks/success/save.tsx");
+/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./block.json */ "./src/blocks/success/block.json");
+/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/check-circle.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__);
 
 
 
 
 
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_4__.name, {
-  ..._block_json__WEBPACK_IMPORTED_MODULE_4__,
-  edit: _edit__WEBPACK_IMPORTED_MODULE_2__["default"],
-  save: _save__WEBPACK_IMPORTED_MODULE_3__["default"]
+
+
+
+(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_5__.name, {
+  ..._block_json__WEBPACK_IMPORTED_MODULE_5__,
+  icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    icon: lucide_react__WEBPACK_IMPORTED_MODULE_6__["default"]
+  }),
+  edit: _edit__WEBPACK_IMPORTED_MODULE_3__["default"],
+  save: _save__WEBPACK_IMPORTED_MODULE_4__["default"]
 });
+
+/***/ }),
+
+/***/ "./src/blocks/success/modal-close-button.tsx":
+/*!***************************************************!*\
+  !*** ./src/blocks/success/modal-close-button.tsx ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ModalCloseButton: () => (/* binding */ ModalCloseButton)
+/* harmony export */ });
+/* harmony import */ var _lib_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/lib/i18n */ "./src/lib/i18n.ts");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__);
+
+
+const ModalCloseButton = ({
+  onClose
+}) => {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+    type: "button",
+    className: "gutenform-success-modal-close",
+    onClick: e => {
+      e.preventDefault();
+      e.stopPropagation();
+      onClose();
+    },
+    "aria-label": (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('close'),
+    children: "\xD7"
+  });
+};
 
 /***/ }),
 
@@ -236,7 +399,6 @@ __webpack_require__.r(__webpack_exports__);
  * @return {Element} Element to render.
  */
 function save(props) {
-  console.log(props); // eslint-disable-line no-console
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
     ..._wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0__.useBlockProps.save(),
     children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0__.InnerBlocks.Content, {})
@@ -254,6 +416,171 @@ function save(props) {
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ }),
+
+/***/ "./src/blocks/success/use-form-block.ts":
+/*!**********************************************!*\
+  !*** ./src/blocks/success/use-form-block.ts ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   useFormBlock: () => (/* binding */ useFormBlock)
+/* harmony export */ });
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_0__);
+
+
+/**
+ * Hook to get the parent form block for a given block clientId
+ */
+const useFormBlock = clientId => {
+  return (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_0__.useSelect)(select => {
+    const {
+      getBlockParents,
+      getBlock
+    } = select('core/block-editor');
+    const parentIds = getBlockParents(clientId);
+
+    // Find the form block parent
+    for (const parentId of parentIds) {
+      const parentBlock = getBlock(parentId);
+      if (parentBlock?.name === 'gutenform/form') {
+        return parentBlock;
+      }
+    }
+    return null;
+  }, [clientId]);
+};
+
+/***/ }),
+
+/***/ "./src/components/block-atoms/BlockIcon/index.tsx":
+/*!********************************************************!*\
+  !*** ./src/components/block-atoms/BlockIcon/index.tsx ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _styles_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./styles.css */ "./src/components/block-atoms/BlockIcon/styles.css");
+/* harmony import */ var clsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! clsx */ "./node_modules/clsx/dist/clsx.mjs");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+const BlockIcon = ({
+  icon,
+  clean
+}) => {
+  const Icon = icon;
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
+    className: (0,clsx__WEBPACK_IMPORTED_MODULE_1__["default"])('gutenform-block-icon', clean && 'clean'),
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)(Icon, {})
+  });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (BlockIcon);
+
+/***/ }),
+
+/***/ "./src/components/block-atoms/BlockIcon/styles.css":
+/*!*********************************************************!*\
+  !*** ./src/components/block-atoms/BlockIcon/styles.css ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "./src/lib/i18n.ts":
+/*!*************************!*\
+  !*** ./src/lib/i18n.ts ***!
+  \*************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   __: () => (/* binding */ __),
+/* harmony export */   translate: () => (/* binding */ translate)
+/* harmony export */ });
+/**
+ * Internationalization utility for accessing translated strings.
+ * 
+ * Strings are translated in PHP and passed via window.gutenForm.strings
+ * or window.gutenform.strings (for block editor).
+ */
+
+/**
+ * Get a translated string by key.
+ * 
+ * @param key The string key
+ * @param fallback Optional fallback string if key is not found
+ * @returns The translated string or fallback
+ */
+function __(key, fallback) {
+  // Normalize key to lowercase for case-insensitive lookup
+  const normalizedKey = key.toLowerCase();
+
+  // Try admin context first (window.gutenForm)
+  const adminStrings = window.gutenForm?.strings;
+  if (adminStrings) {
+    // Try exact match first
+    if (adminStrings[key]) {
+      return adminStrings[key];
+    }
+    // Try normalized (lowercase) key
+    if (adminStrings[normalizedKey]) {
+      return adminStrings[normalizedKey];
+    }
+    // Try to find by matching values (for backward compatibility)
+    for (const [k, v] of Object.entries(adminStrings)) {
+      if (v === key) {
+        return v;
+      }
+    }
+  }
+
+  // Try block editor context (window.gutenform)
+  const editorStrings = window.gutenform?.strings;
+  if (editorStrings) {
+    // Try exact match first
+    if (editorStrings[key]) {
+      return editorStrings[key];
+    }
+    // Try normalized (lowercase) key
+    if (editorStrings[normalizedKey]) {
+      return editorStrings[normalizedKey];
+    }
+    // Try to find by matching values (for backward compatibility)
+    for (const [k, v] of Object.entries(editorStrings)) {
+      if (v === key) {
+        return v;
+      }
+    }
+  }
+
+  // Return fallback or key if not found
+  return fallback || key;
+}
+
+/**
+ * Get a translated string by key (alias for __).
+ * 
+ * @param key The string key
+ * @param fallback Optional fallback string if key is not found
+ * @returns The translated string or fallback
+ */
+function translate(key, fallback) {
+  return __(key, fallback);
+}
 
 /***/ }),
 
@@ -284,16 +611,6 @@ module.exports = window["wp"]["blocks"];
 /***/ ((module) => {
 
 module.exports = window["wp"]["data"];
-
-/***/ }),
-
-/***/ "@wordpress/i18n":
-/*!******************************!*\
-  !*** external ["wp","i18n"] ***!
-  \******************************/
-/***/ ((module) => {
-
-module.exports = window["wp"]["i18n"];
 
 /***/ }),
 
@@ -488,7 +805,7 @@ module.exports = window["ReactJSXRuntime"];
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["success/style-index"], () => (__webpack_require__("./src/blocks/success/index.ts")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["success/style-index"], () => (__webpack_require__("./src/blocks/success/index.tsx")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

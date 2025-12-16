@@ -1,21 +1,40 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "gutenform/input",
+  "name": "gutenform/select",
   "version": "0.1.0",
-  "title": "Input",
+  "title": "Select",
   "category": "widgets",
   "icon": "marker",
-  "description": "Input block for Gutenform.",
+  "description": "Select block for Gutenform.",
   "example": {},
   "attributes": {
     "style": {
       "type": "object",
       "default": {}
     },
-    "type": {
-      "type": "string",
-      "default": "text"
+    "options": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "optionsPopulated": {
+      "type": "boolean",
+      "default": false
+    },
+    "syncLabelValue": {
+      "type": "boolean",
+      "default": false
     },
     "label": {
       "type": "string",

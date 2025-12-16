@@ -44,6 +44,14 @@
     "rows": {
       "type": "number",
       "default": 3
+    },
+    "useCustomName": {
+      "type": "boolean",
+      "default": false
+    },
+    "useCustomId": {
+      "type": "boolean",
+      "default": false
     }
   },
   "supports": {
