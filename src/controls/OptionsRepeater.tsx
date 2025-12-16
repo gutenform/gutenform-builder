@@ -1,0 +1,63 @@
+import { __ } from '../lib/i18n';
+import { PanelRow, Button } from '@wordpress/components';
+import { useState } from '@wordpress/element';
+import { Settings } from 'lucide-react';
+import BlockIcon from '../components/block-atoms/BlockIcon';
+import { OptionsModal } from './OptionsModal';
+
+export type Option = {
+	label: string;
+	value: string;
+};
+
+interface OptionsRepeaterProps {
+	options: Option[];
+	syncLabelValue: boolean;
+	onChange: (options: Option[]) => void;
+	onSyncLabelValueChange: (syncLabelValue: boolean) => void;
+	presets?: Array<{
+		name: string;
+		title: string;
+		options: Option[];
+	}>;
+}
+
+export const OptionsRepeater = ({
+	options,
+	syncLabelValue,
+	onChange,
+	onSyncLabelValueChange,
+	presets = [],
+}: OptionsRepeaterProps) => {
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	return (
+		<>
+			<PanelRow>
+				<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+					<span style={{ fontSize: '13px', color: '#646970' }}>
+						{options.length} {__('Optionen')}
+					</span>
+					<Button
+						onClick={() => setIsModalOpen(true)}
+						variant="primary"
+						isSmall
+						icon={<BlockIcon icon={Settings} clean={true} />}
+					>
+						{__('manageOptions')}
+					</Button>
+				</div>
+			</PanelRow>
+
+			<OptionsModal
+				isOpen={isModalOpen}
+				onClose={() => setIsModalOpen(false)}
+				options={options}
+				syncLabelValue={syncLabelValue}
+				onChange={onChange}
+				onSyncLabelValueChange={onSyncLabelValueChange}
+				presets={presets}
+			/>
+		</>
+	);
+};

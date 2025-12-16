@@ -1,19 +1,16 @@
-import { __ } from "@wordpress/i18n";
+import { __ } from "@/lib/i18n";
 import { type TemplateArray } from '@wordpress/blocks';
 
 const templates: Array<{ label: string; value: TemplateArray }> = [
 	{
-		label: __('Blank', 'gutenform'),
-		value: [['core/columns', {}]],
+		label: __('basicForm'),
+		value: [
+			['gutenform/input', {}], 
+			['gutenform/textarea', {}], 
+			['gutenform/submit', {}], 
+			['gutenform/success', {}],
+		],
 	},
-    {
-        label: __('Contact Form', 'gutenform'),
-        value: [['core/columns', {}, [
-            ['core/column', {}, [
-                ['core/heading', {}],
-            ]],
-        ]]],
-    },
 ];
 
 type TemplateSelectProps = {

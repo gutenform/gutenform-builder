@@ -1,0 +1,46 @@
+.gutenform-name-display__container {
+	display: flex;
+	align-items: stretch;
+	width: 100%;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+	background-color: #fff;
+	overflow: hidden;
+}
+
+.gutenform-name-display__input {
+	flex: 1;
+	border: none;
+	padding: 6px 8px;
+	font-size: 13px;
+	font-family: inherit;
+	background-color: #f6f7f7;
+	color: #50575e;
+	outline: none;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
+}
+
+.gutenform-name-display__button {
+	border-radius: 0;
+	border-left: 1px solid #ddd;
+	padding: 6px 12px;
+	font-size: 13px;
+	font-weight: 400;
+	height: auto;
+	min-height: auto;
+	background: #fff;
+	color: #2c3338;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	transition: all 0.2s ease;
+}
+
+.gutenform-name-display__button--copied {
+	background: linear-gradient(to bottom, #E71D73, #A0174F);
+	color: #fff;
+}
+
