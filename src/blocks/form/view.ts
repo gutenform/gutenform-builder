@@ -66,6 +66,12 @@ window.addEventListener('DOMContentLoaded', () => {
 				}
 			});
 			
+			// Extract primary mail field name
+			const primaryMailField = form.querySelector<HTMLInputElement>('input[type="email"][data-primary-mail="true"]');
+			if (primaryMailField && primaryMailField.name) {
+				data['_primary_mail_field'] = primaryMailField.name;
+			}
+			
 			console.log(data);
 			
 			// Feature Flag prüfen

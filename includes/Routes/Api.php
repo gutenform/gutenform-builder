@@ -85,6 +85,11 @@ Route::prefix(
 		$route->post('/email-logs/delete', '\Gutenform\Controllers\EmailLogs\Actions@delete_email_log');
 		$route->post('/email-logs/delete-all', '\Gutenform\Controllers\EmailLogs\Actions@delete_all_email_logs');
 
+		// Email Templates routes
+		$route->get('/email-templates', '\Gutenform\Controllers\EmailTemplates\Actions@get_templates');
+		$route->get('/email-templates/{name}', '\Gutenform\Controllers\EmailTemplates\Actions@get_template');
+		$route->post('/email-templates/preview', '\Gutenform\Controllers\EmailTemplates\Actions@preview_template');
+
 		// Allow hooks to add more custom API routes.
 		do_action('gf_api', $route);
 	}

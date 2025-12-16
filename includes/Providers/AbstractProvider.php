@@ -95,9 +95,49 @@ abstract class AbstractProvider
         $replacements['{time}']           = current_time('H:i:s');
         $replacements['{ip_address}']    = $this->get_client_ip();
         $replacements['{all_fields}']    = $this->format_all_fields($submission_data);
+        
+        // Primary mail placeholder
+        $replacements['{form_primary_mail}'] = $this->get_primary_mail($submission_data);
 
         // Replace all placeholders
         return str_replace(array_keys($replacements), array_values($replacements), $content);
+    }
+
+    /**
+     * Gets the primary mail address from submission data.
+     *
+     * Looks for a field marked as primary mail, or falls back to the first email address found.
+     *
+     * @param array $submission_data The form submission data.
+     * @return string The primary email address or empty string.
+     */
+    protected function get_primary_mail(array $submission_data): string
+    {
+        // Check if primary mail field is explicitly marked
+        if (isset($submission_data['_primary_mail_field']) && !empty($submission_data['_primary_mail_field'])) {
+            $primary_field_name = $submission_data['_primary_mail_field'];
+            if (isset($submission_data[$primary_field_name])) {
+                $primary_mail = $submission_data[$primary_field_name];
+                if (is_email($primary_mail)) {
+                    return sanitize_email($primary_mail);
+                }
+            }
+        }
+
+        // Fallback: Find first email-like value in submission data
+        foreach ($submission_data as $key => $value) {
+            // Skip metadata fields
+            if (strpos($key, '_') === 0) {
+                continue;
+            }
+
+            $email_value = is_array($value) ? (isset($value[0]) ? $value[0] : '') : $value;
+            if (is_email($email_value)) {
+                return sanitize_email($email_value);
+            }
+        }
+
+        return '';
     }
 
     /**

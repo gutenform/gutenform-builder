@@ -20,12 +20,21 @@ import { getFieldClasses } from '../../lib/utils';
  */
 export default function save(props: BlockSaveProps<InputAttributes>) {
 	const className = getFieldClasses(props.attributes);
+	const isPrimaryMail = props.attributes.type === 'email' && props.attributes.isPrimaryMail === true;
 	return (
 		<div { ...useBlockProps.save({
 			className,
 		}) }>
 			<label htmlFor={props.attributes.id}>{props.attributes.label}</label>
-			<input type={props.attributes.type} placeholder={props.attributes.placeholder} name={props.attributes.name} id={props.attributes.id} required={props.attributes.required} defaultValue={props.attributes.defaultValue} />
+			<input 
+				type={props.attributes.type} 
+				placeholder={props.attributes.placeholder} 
+				name={props.attributes.name} 
+				id={props.attributes.id} 
+				required={props.attributes.required} 
+				defaultValue={props.attributes.defaultValue}
+				data-primary-mail={isPrimaryMail ? 'true' : undefined}
+			/>
 			{props.attributes.help && <p className="gutenform-field__help">{props.attributes.help}</p>}
 		</div>
 	);

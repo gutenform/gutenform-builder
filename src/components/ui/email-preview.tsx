@@ -17,9 +17,18 @@ interface EmailPreviewProps {
   subject?: string
   fromEmail?: string
   fromName?: string
+  sideBySide?: boolean
+  onToggleSideBySide?: (enabled: boolean) => void
 }
 
-export function EmailPreview({ body, subject, fromEmail, fromName }: EmailPreviewProps) {
+export function EmailPreview({ 
+  body, 
+  subject, 
+  fromEmail, 
+  fromName,
+  sideBySide = false,
+  onToggleSideBySide
+}: EmailPreviewProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   // Escape HTML
@@ -112,6 +121,20 @@ export function EmailPreview({ body, subject, fromEmail, fromName }: EmailPrevie
 </html>`
   }
 
+  // If side-by-side mode, render inline
+  if (sideBySide) {
+    return (
+      <div className="flex-1 border rounded-lg overflow-hidden">
+        <iframe
+          srcDoc={getHtmlContent()}
+          className="w-full h-full border-0 min-h-[400px]"
+          title={__("emailPreview")}
+        />
+      </div>
+    )
+  }
+
+  // Default: Dialog mode
   return (
     <>
       <Button

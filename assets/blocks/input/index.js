@@ -2786,7 +2786,7 @@ const twMerge = /*#__PURE__*/createTailwindMerge(getDefaultConfig);
   \*************************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/input","version":"0.1.0","title":"Input","category":"widgets","icon":"marker","description":"Input block for Gutenform.","example":{},"attributes":{"style":{"type":"object","default":{}},"type":{"type":"string","default":"text"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"help":{"type":"string","default":""},"defaultValue":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"id":{"type":"string","default":""},"useCustomName":{"type":"boolean","default":false},"useCustomId":{"type":"boolean","default":false}},"supports":{"html":false},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/input","version":"0.1.0","title":"Input","category":"widgets","icon":"marker","description":"Input block for Gutenform.","example":{},"attributes":{"style":{"type":"object","default":{}},"type":{"type":"string","default":"text"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"help":{"type":"string","default":""},"defaultValue":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"id":{"type":"string","default":""},"useCustomName":{"type":"boolean","default":false},"useCustomId":{"type":"boolean","default":false},"isPrimaryMail":{"type":"boolean","default":false}},"supports":{"html":false},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
 
 /***/ }),
 
@@ -2934,9 +2934,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _components_block_atoms_FieldControls__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../components/block-atoms/FieldControls */ "./src/components/block-atoms/FieldControls/index.tsx");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _components_block_atoms_FieldControls__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../components/block-atoms/FieldControls */ "./src/components/block-atoms/FieldControls/index.tsx");
+/* harmony import */ var _use_form_blocks__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./use-form-blocks */ "./src/blocks/input/use-form-blocks.ts");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__);
+
+
 
 
 
@@ -2944,13 +2949,37 @@ __webpack_require__.r(__webpack_exports__);
 
 const InputInspectorControls = ({
   attributes,
-  setAttributes
+  setAttributes,
+  clientId
 }) => {
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.Fragment, {
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+  const formBlocks = (0,_use_form_blocks__WEBPACK_IMPORTED_MODULE_5__.useFormBlocks)(clientId || '');
+  const {
+    updateBlockAttributes
+  } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_3__.useDispatch)('core/block-editor');
+  const isEmailType = attributes.type === 'email';
+
+  // Check if another input block is already set as primary mail
+  const hasOtherPrimaryMail = formBlocks.some(block => block.clientId !== clientId && block.attributes?.type === 'email' && block.attributes?.isPrimaryMail === true);
+  const handlePrimaryMailToggle = value => {
+    if (value && hasOtherPrimaryMail) {
+      // If setting to true and another field is already primary, unset the other one first
+      formBlocks.forEach(block => {
+        if (block.clientId !== clientId && block.attributes?.isPrimaryMail === true) {
+          updateBlockAttributes(block.clientId, {
+            isPrimaryMail: false
+          });
+        }
+      });
+    }
+    setAttributes({
+      isPrimaryMail: value
+    });
+  };
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
         title: "Input Field Settings",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SelectControl, {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.SelectControl, {
           label: "Type",
           value: attributes.type,
           onChange: type => setAttributes({
@@ -2977,9 +3006,21 @@ const InputInspectorControls = ({
           }],
           __next40pxDefaultSize: true,
           __nextHasNoMarginBottom: true
-        })
+        }), isEmailType && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToggleControl, {
+            label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("primaryMail"),
+            checked: attributes.isPrimaryMail || false,
+            onChange: handlePrimaryMailToggle,
+            help: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("primaryMailDescription"),
+            __nextHasNoMarginBottom: true
+          }), hasOtherPrimaryMail && !attributes.isPrimaryMail && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.Notice, {
+            status: "warning",
+            isDismissible: false,
+            children: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)("primaryMailWarning")
+          })]
+        })]
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_4__.jsx)(_components_block_atoms_FieldControls__WEBPACK_IMPORTED_MODULE_3__.FieldControls, {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_block_atoms_FieldControls__WEBPACK_IMPORTED_MODULE_4__.FieldControls, {
       attributes: attributes,
       setAttributes: setAttributes
     })]
@@ -3077,6 +3118,7 @@ __webpack_require__.r(__webpack_exports__);
 
 function save(props) {
   const className = (0,_lib_utils__WEBPACK_IMPORTED_MODULE_1__.getFieldClasses)(props.attributes);
+  const isPrimaryMail = props.attributes.type === 'email' && props.attributes.isPrimaryMail === true;
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
     ..._wordpress_block_editor__WEBPACK_IMPORTED_MODULE_0__.useBlockProps.save({
       className
@@ -3090,7 +3132,8 @@ function save(props) {
       name: props.attributes.name,
       id: props.attributes.id,
       required: props.attributes.required,
-      defaultValue: props.attributes.defaultValue
+      defaultValue: props.attributes.defaultValue,
+      "data-primary-mail": isPrimaryMail ? 'true' : undefined
     }), props.attributes.help && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
       className: "gutenform-field__help",
       children: props.attributes.help
@@ -3109,6 +3152,68 @@ function save(props) {
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ }),
+
+/***/ "./src/blocks/input/use-form-blocks.ts":
+/*!*********************************************!*\
+  !*** ./src/blocks/input/use-form-blocks.ts ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   useFormBlocks: () => (/* binding */ useFormBlocks)
+/* harmony export */ });
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_0__);
+
+
+/**
+ * Hook to get all input blocks within the parent form block
+ */
+const useFormBlocks = clientId => {
+  return (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_0__.useSelect)(select => {
+    const {
+      getBlockParents,
+      getBlocks
+    } = select('core/block-editor');
+    const parentIds = getBlockParents(clientId);
+
+    // Find the form block parent
+    let formBlockId = null;
+    for (const parentId of parentIds) {
+      const parentBlock = select('core/block-editor').getBlock(parentId);
+      if (parentBlock?.name === 'gutenform/form') {
+        formBlockId = parentId;
+        break;
+      }
+    }
+    if (!formBlockId) {
+      return [];
+    }
+
+    // Get all blocks within the form
+    const allBlocks = getBlocks(formBlockId);
+
+    // Recursively find all input blocks
+    const findInputBlocks = blocks => {
+      const inputBlocks = [];
+      for (const block of blocks) {
+        if (block.name === 'gutenform/input') {
+          inputBlocks.push(block);
+        }
+
+        // Recursively check inner blocks
+        if (block.innerBlocks && block.innerBlocks.length > 0) {
+          inputBlocks.push(...findInputBlocks(block.innerBlocks));
+        }
+      }
+      return inputBlocks;
+    };
+    return findInputBlocks(allBlocks);
+  }, [clientId]);
+};
 
 /***/ }),
 

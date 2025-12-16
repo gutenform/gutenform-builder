@@ -1,7 +1,7 @@
 "use client"
 
 import { __ } from "@/lib/i18n";
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -47,6 +47,10 @@ import {
 } from "@/hooks/useProviders"
 import { Plus, Trash2, Edit2, Settings } from "lucide-react"
 import { EmailPreview } from "@/components/ui/email-preview"
+import { PlaceholderInput } from "@/components/ui/placeholder-input"
+import { EmailField } from "@/components/ui/email-field"
+import { FullscreenTemplateEditor } from "@/components/email-template-editor/FullscreenTemplateEditor"
+import { apiGet, type ApiResponse } from "@/lib/api"
 
 // Dynamic schema - will be extended based on provider type
 const baseProviderFormSchema = z.object({
@@ -65,18 +69,46 @@ function DynamicField({
   field, 
   value, 
   onChange,
-  formFieldName
+  formFieldName,
+  settings,
+  onSettingsChange,
+  onOpenTemplateEditor
 }: { 
   field: ProviderTypeField
   value: any
   onChange: (value: any) => void
   formFieldName: string
+  settings?: Record<string, any>
+  onSettingsChange?: (key: string, value: any) => void
+  onOpenTemplateEditor?: (fieldName: string) => void
 }) {
   switch (field.type) {
     case 'text':
-    case 'email':
     case 'url':
     case 'password':
+      // Special handling for from_email field (even though it's type 'text')
+      if (field.name === 'from_email') {
+        return (
+          <FormItem>
+            <FormLabel>
+              {field.label}
+              {field.required && <span className="text-destructive ml-1">*</span>}
+            </FormLabel>
+            <FormControl>
+              <EmailField
+                value={value ?? field.default ?? ''}
+                onChange={onChange}
+                placeholder={field.placeholder}
+                required={field.required}
+              />
+            </FormControl>
+            {field.description && (
+              <FormDescription>{field.description}</FormDescription>
+            )}
+          </FormItem>
+        )
+      }
+      
       return (
         <FormItem>
           <FormLabel>
@@ -84,13 +116,53 @@ function DynamicField({
             {field.required && <span className="text-destructive ml-1">*</span>}
           </FormLabel>
           <FormControl>
-            <Input
-              type={field.type}
+            <PlaceholderInput
               value={value ?? field.default ?? ''}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder={field.placeholder}
-              required={field.required}
-            />
+              onValueChange={onChange}
+              showPlaceholderSelect={field.name === 'subject' || field.name === 'from_name'}
+            >
+              <Input
+                type={field.type}
+                placeholder={field.placeholder}
+                required={field.required}
+              />
+            </PlaceholderInput>
+          </FormControl>
+          {field.description && (
+            <FormDescription>{field.description}</FormDescription>
+          )}
+        </FormItem>
+      )
+    
+    case 'email':
+      // Special handling for email fields - use EmailField component
+      return (
+        <FormItem>
+          <FormLabel>
+            {field.label}
+            {field.required && <span className="text-destructive ml-1">*</span>}
+          </FormLabel>
+          <FormControl>
+            {field.name === 'to_email' || field.name === 'from_email' ? (
+              <EmailField
+                value={value ?? field.default ?? ''}
+                onChange={onChange}
+                placeholder={field.placeholder}
+                required={field.required}
+              />
+            ) : (
+              <PlaceholderInput
+                value={value ?? field.default ?? ''}
+                onValueChange={onChange}
+                showPlaceholderSelect={true}
+              >
+                <Input
+                  type={field.type}
+                  placeholder={field.placeholder}
+                  required={field.required}
+                />
+              </PlaceholderInput>
+            )}
           </FormControl>
           {field.description && (
             <FormDescription>{field.description}</FormDescription>
@@ -99,30 +171,62 @@ function DynamicField({
       )
     
     case 'textarea':
-      return (
-        <FormItem>
-          <div className="flex items-center justify-between">
+      // Special handling for body field - show preview + edit button
+      if (field.name === 'body') {
+        return (
+          <FormItem>
             <FormLabel>
               {field.label}
               {field.required && <span className="text-destructive ml-1">*</span>}
             </FormLabel>
-            {field.name === 'body' && (
-              <EmailPreview
-                body={value ?? field.default ?? ''}
-                subject={undefined}
-                fromEmail={undefined}
-                fromName={undefined}
-              />
-            )}
-          </div>
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <div className="flex-1 border rounded-lg overflow-hidden">
+                  <EmailPreview
+                    body={value ?? field.default ?? ''}
+                    subject={undefined}
+                    fromEmail={undefined}
+                    fromName={undefined}
+                    sideBySide={true}
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenTemplateEditor?.(field.name)}
+                  className="shrink-0"
+                >
+                  <Edit2 className="h-4 w-4 mr-2" />
+                  {__("edit") || "Edit"}
+                </Button>
+              </div>
+              {field.description && (
+                <FormDescription>{field.description}</FormDescription>
+              )}
+            </div>
+          </FormItem>
+        )
+      }
+      
+      // Regular textarea for other fields
+      return (
+        <FormItem>
+          <FormLabel>
+            {field.label}
+            {field.required && <span className="text-destructive ml-1">*</span>}
+          </FormLabel>
           <FormControl>
-            <Textarea
+            <PlaceholderInput
               value={value ?? field.default ?? ''}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder={field.placeholder}
-              rows={field.rows || 4}
-              required={field.required}
-            />
+              onValueChange={onChange}
+              showPlaceholderSelect={true}
+            >
+              <Textarea
+                placeholder={field.placeholder}
+                rows={field.rows || 4}
+                required={field.required}
+              />
+            </PlaceholderInput>
           </FormControl>
           {field.description && (
             <FormDescription>{field.description}</FormDescription>
@@ -206,6 +310,7 @@ function DynamicField({
   }
 }
 
+
 export default function ProvidersPage() {
   const { providers, loading, error, refetch } = useProviders()
   const { types: providerTypes, loading: typesLoading } = useProviderTypes()
@@ -216,6 +321,8 @@ export default function ProvidersPage() {
   const [editingProvider, setEditingProvider] = useState<Provider | null>(null)
   const [selectedProviderType, setSelectedProviderType] = useState<string>('')
   const [settings, setSettings] = useState<Record<string, any>>({})
+  const [isTemplateEditorOpen, setIsTemplateEditorOpen] = useState(false)
+  const [editingBodyField, setEditingBodyField] = useState<string | null>(null)
 
   const form = useForm<ProviderFormValues>({
     resolver: zodResolver(baseProviderFormSchema),
@@ -227,6 +334,19 @@ export default function ProvidersPage() {
       settings: {},
     },
   })
+
+  const handleOpenTemplateEditor = (fieldName: string) => {
+    setEditingBodyField(fieldName)
+    setIsTemplateEditorOpen(true)
+  }
+
+  const handleTemplateEditorSave = (html: string) => {
+    if (editingBodyField) {
+      handleSettingChange(editingBodyField, html)
+    }
+    setIsTemplateEditorOpen(false)
+    setEditingBodyField(null)
+  }
 
   // When provider type is selected, initialize settings with default values (only for new providers)
   useEffect(() => {
@@ -294,11 +414,15 @@ export default function ProvidersPage() {
     form.reset()
   }
 
+
   const handleSettingChange = (fieldName: string, value: any) => {
-    setSettings(prev => ({
-      ...prev,
-      [fieldName]: value
-    }))
+    setSettings(prev => {
+      const newSettings = {
+        ...prev,
+        [fieldName]: value
+      }
+      return newSettings
+    })
   }
 
   const onSubmit = async (data: ProviderFormValues) => {
@@ -455,13 +579,17 @@ export default function ProvidersPage() {
                 
                 {/* Dynamic fields based on selected provider type */}
                 {selectedType && selectedType.fields.map((field) => (
-                  <DynamicField
-                    key={field.name}
-                    field={field}
-                    value={settings[field.name]}
-                    onChange={(value) => handleSettingChange(field.name, value)}
-                    formFieldName={`settings.${field.name}`}
-                  />
+                  <React.Fragment key={field.name}>
+                    <DynamicField
+                      field={field}
+                      value={settings[field.name]}
+                      onChange={(value) => handleSettingChange(field.name, value)}
+                      formFieldName={`settings.${field.name}`}
+                      settings={settings}
+                      onSettingsChange={handleSettingChange}
+                      onOpenTemplateEditor={handleOpenTemplateEditor}
+                    />
+                  </React.Fragment>
                 ))}
                 
                 <FormField
@@ -521,6 +649,12 @@ export default function ProvidersPage() {
             </Form>
           </DialogContent>
         </Dialog>
+        <FullscreenTemplateEditor
+          open={isTemplateEditorOpen}
+          onOpenChange={setIsTemplateEditorOpen}
+          initialHtml={editingBodyField ? (settings[editingBodyField] || '') : ''}
+          onSave={handleTemplateEditorSave}
+        />
       </div>
       <Separator />
       {providers.length === 0 ? (

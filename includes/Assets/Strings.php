@@ -467,6 +467,57 @@ class Strings
 			'previous' => __('Previous', 'gutenform'),
 			'next' => __('Next', 'gutenform'),
 			'deleteAll' => __('Delete All', 'gutenform'),
+
+			// Email Templates
+			'emailTemplate' => __('Email Template', 'gutenform'),
+			'emailTemplateDescription' => __('Choose and customize an email template for your notifications.', 'gutenform'),
+			'selectTemplate' => __('Select Template', 'gutenform'),
+			'primaryColor' => __('Primary Color', 'gutenform'),
+			'secondaryColor' => __('Secondary Color', 'gutenform'),
+			'fontFamily' => __('Font Family', 'gutenform'),
+			'logoUrl' => __('Logo URL', 'gutenform'),
+			'logoUrlDescription' => __('URL to your logo image. Will be displayed in the email header.', 'gutenform'),
+			'selectTemplateToPreview' => __('Select a template to preview', 'gutenform'),
+			'applyTemplate' => __('Apply Template', 'gutenform'),
+			'showPreview' => __('Show Preview', 'gutenform'),
+			'hidePreview' => __('Hide Preview', 'gutenform'),
+
+			// Primary Mail
+			'primaryMail' => __('Primary Mail', 'gutenform'),
+			'primaryMailDescription' => __('Mark this email field as the primary email address for form submissions. Only one field per form can be primary.', 'gutenform'),
+			'primaryMailWarning' => __('Another email field is already set as primary mail. Unset it first or it will be automatically unset when you enable this one.', 'gutenform'),
+
+			// Placeholder Input
+			'insertPlaceholder' => __('Insert Placeholder', 'gutenform'),
+			'usePlaceholder' => __('Use Placeholder', 'gutenform'),
+			'selectPlaceholder' => __('Select Placeholder', 'gutenform'),
+
+			// Email Template
+			'custom' => __('Custom', 'gutenform'),
+			'selectEmailTemplateDescription' => __('Select a template or use custom HTML.', 'gutenform'),
+			'failedToLoadTemplate' => __('Failed to load template.', 'gutenform'),
+			'templateCustomization' => __('Template Customization', 'gutenform'),
+			
+			// Email Template Editor
+			'emailTemplateEditor' => __('Email Template Editor', 'gutenform'),
+			'emailTemplateEditorDescription' => __('Edit your email template HTML with live preview', 'gutenform'),
+			'blank' => __('Blank', 'gutenform'),
+			'templateSettings' => __('Template Settings', 'gutenform'),
+			'htmlEditor' => __('HTML Editor', 'gutenform'),
+			'noPreviewAvailable' => __('No preview available', 'gutenform'),
+			'save' => __('Save', 'gutenform'),
+			'edit' => __('Edit', 'gutenform'),
+			'selectFromMediaLibrary' => __('Select from Media Library', 'gutenform'),
+			'selectImage' => __('Select Image', 'gutenform'),
+			'useThisImage' => __('Use this image', 'gutenform'),
+			'siteName' => __('Site Name', 'gutenform'),
+			'availablePlaceholders' => __('Available Placeholders', 'gutenform'),
+			'dragPlaceholderToInsert' => __('Drag and drop or click to insert placeholders', 'gutenform'),
+			'searchPlaceholders' => __('Search placeholders...', 'gutenform'),
+			'systemPlaceholders' => __('System', 'gutenform'),
+			'templatePlaceholders' => __('Template', 'gutenform'),
+			'formFields' => __('Form Fields', 'gutenform'),
+			'otherPlaceholders' => __('Other', 'gutenform'),
 		);
 	}
 }

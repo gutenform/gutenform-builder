@@ -11,6 +11,8 @@
 
 namespace Gutenform\Providers;
 
+use Gutenform\Core\EmailTemplates;
+
 defined('ABSPATH') || exit;
 
 /**
@@ -54,22 +56,52 @@ class Email extends AbstractProvider
         array $provider_settings,
         string $form_identifier
     ): bool {
-        // 1. Replace placeholders
+        // 1. Replace placeholders in to_email BEFORE validation
         $to_email_raw = $provider_settings['to_email'] ?? '';
-        $to_email     = sanitize_email($to_email_raw);
-        
+        $to_email_replaced = $this->replace_placeholders(
+            $to_email_raw,
+            $submission_data,
+            $form_identifier
+        );
+        $to_email = sanitize_email($to_email_replaced);
+
         $subject = $this->replace_placeholders(
             $provider_settings['subject'] ?? '',
             $submission_data,
             $form_identifier
         );
-        
-        $body = $this->replace_placeholders(
-            $provider_settings['body'] ?? '',
-            $submission_data,
-            $form_identifier
-        );
-        
+
+        // Check if template is selected
+        $template_name = $provider_settings['email_template'] ?? '';
+
+        if (!empty($template_name) && $template_name !== 'custom') {
+            // Load template content
+            $template_content = EmailTemplates::get_template_content($template_name);
+            if ($template_content !== false) {
+                // Templates now use {all_fields} directly, so we just replace all placeholders
+                // If user has custom body content, it will be in the template HTML already
+                $body = $this->replace_placeholders($template_content, $submission_data, $form_identifier);
+            } else {
+                // Template not found, fall back to regular body
+                error_log(sprintf(
+                    'GutenForm Email Provider: Template "%s" not found, using regular body.',
+                    $template_name
+                ));
+                $body = $this->replace_placeholders(
+                    $provider_settings['body'] ?? '',
+                    $submission_data,
+                    $form_identifier
+                );
+            }
+        } else {
+            // Regular body processing (no template or custom)
+            $body = $this->replace_placeholders(
+                $provider_settings['body'] ?? '',
+                $submission_data,
+                $form_identifier
+            );
+        }
+
         // Replace placeholders in from_email BEFORE validation
         $from_email_raw = $this->replace_placeholders(
             $provider_settings['from_email'] ?? get_option('admin_email'),
@@ -77,7 +109,7 @@ class Email extends AbstractProvider
             $form_identifier
         );
         $from_email = sanitize_email($from_email_raw);
-        
+
         $from_name = sanitize_text_field(
             $this->replace_placeholders(
                 $provider_settings['from_name'] ?? get_bloginfo('name'),
@@ -103,7 +135,21 @@ class Email extends AbstractProvider
 
         // Validation
         if (empty($to_email) || ! is_email($to_email)) {
-            error_log('GutenForm Email Provider Error: Invalid to_email address: ' . $to_email_raw);
+            // If to_email was a placeholder that couldn't be resolved, provide helpful error
+            $is_placeholder = (strpos($to_email_raw, '{') !== false && strpos($to_email_raw, '}') !== false);
+            if ($is_placeholder && empty($to_email_replaced)) {
+                error_log(sprintf(
+                    'GutenForm Email Provider Error: Placeholder "%s" could not be resolved. No primary mail found in form submission. Make sure an email field is marked as primary mail or contains a valid email address.',
+                    $to_email_raw
+                ));
+            } else {
+                error_log(sprintf(
+                    'GutenForm Email Provider Error: Invalid to_email address. Original: "%s", Replaced: "%s", Sanitized: "%s"',
+                    $to_email_raw,
+                    $to_email_replaced,
+                    $to_email
+                ));
+            }
             return false;
         }
 
@@ -201,6 +247,15 @@ class Email extends AbstractProvider
                 'default'     => get_bloginfo('name'),
                 'description' => __('Name of the sender.', 'gutenform'),
             ),
+            // Email Template Settings (internal use only)
+            array(
+                'name'        => 'email_template',
+                'label'       => __('Template', 'gutenform'),
+                'type'        => 'text',
+                'required'    => false,
+                'default'     => '',
+                'description' => __('Template name (internal use).', 'gutenform'),
+            ),
         );
     }
 
@@ -258,7 +313,7 @@ class Email extends AbstractProvider
         // Check if URL is local (same domain)
         $upload_dir = wp_upload_dir();
         $site_url = site_url();
-        
+
         if (strpos($file_url, $site_url) === 0) {
             // Local file - convert URL to path
             $file_path = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $file_url);
@@ -280,7 +335,7 @@ class Email extends AbstractProvider
 
         $file_content = wp_remote_retrieve_body($response);
         $file_name = basename(parse_url($file_url, PHP_URL_PATH));
-        
+
         if (empty($file_name)) {
             $file_name = 'attachment-' . time();
         }
