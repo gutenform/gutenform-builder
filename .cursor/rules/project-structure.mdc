@@ -288,25 +288,42 @@ npm run release  # Creates release package in /release folder
 
 ## Internationalization
 
+### Translation System Architecture
+
+This project uses a **PHP-based translation system** where all strings are translated in PHP and passed to JavaScript. See `.cursor/rules/translations.mdc` for complete documentation.
+
 ### PHP i18n
 ```php
 // Load text domain
 load_plugin_textdomain('gutenform', false, dirname(plugin_basename(__FILE__)) . '/languages/');
 
-// Use translation functions
+// Use translation functions in PHP
 __('Hello World', 'gutenform');
 _e('Hello World', 'gutenform');
+
+// Add strings to JavaScript via Strings class
+// includes/Assets/Strings.php
+'helloWorld' => __('Hello World', 'gutenform'),
 ```
 
-### React i18n
-```jsx
-// Use WordPress i18n
-import { __ } from '@wordpress/i18n';
+### JavaScript/TypeScript i18n
+```typescript
+// Import the i18n utility
+import { __ } from '@/lib/i18n';  // Admin pages
+import { __ } from '../../lib/i18n';  // Block editor (relative)
 
+// Use camelCase keys (NOT English strings)
 const MyComponent = () => {
-  return <h1>{__('Hello World', 'gutenform')}</h1>;
+  return <h1>{__('helloWorld')}</h1>;  // ✅ Correct
+  // return <h1>{__('Hello World', 'gutenform')}</h1>;  // ❌ Wrong - old format
 };
 ```
+
+### Key Rules
+1. **All strings** are defined in `includes/Assets/Strings.php` with camelCase keys
+2. **Use camelCase keys** in JavaScript: `__('globalFieldSettings')` not `__('Global Field Settings')`
+3. **No strings in JavaScript** - all translated in PHP first
+4. **Import path**: `@/lib/i18n` for admin, relative path for blocks
 
 ## Common Patterns
 

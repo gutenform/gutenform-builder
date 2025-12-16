@@ -1,10 +1,5 @@
-export type TextareaAttributes = {
-	name: string;
-	id: string;
-	required: boolean;
-	label: string;
-	placeholder: string;
-	help: string;
-	defaultValue: string;
+import { type GlobalFieldAttributes } from './globalField';
+
+export type TextareaAttributes = GlobalFieldAttributes & {
 	rows?: number;
 };

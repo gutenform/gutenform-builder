@@ -59,8 +59,8 @@ final class Gutenform
 		API::get_instance()->init();
 		// Template::get_instance()->init(); // Not needed - using standard WordPress frontend
 
-		add_action('init', array($this, 'i18n'));
-		add_action('init', array($this, 'register_blocks'));
+		add_action('init', array($this, 'i18n'), 1);
+		add_action('init', array($this, 'register_blocks'), 10);
 	}
 
 	public function register_blocks()

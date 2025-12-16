@@ -21,14 +21,15 @@
     .gutenform-field{
         label {
             display: block;
-            font-size: var(--field-label-size, 0.875rem);
+            font-size: var(--field-label-size, 87.5%);
             font-weight: var(--field-label-weight, 600);
-            color: var(--field-label-color, #333);
+            color: var(--field-label-color, currentColor);
+            opacity: var(--field-label-opacity, 1);
             margin-bottom: var(--field-label-margin-bottom, 0.5rem);
         }
 
         .gutenform-field__help {
-            font-size: var(--field-help-size, 0.875rem);
+            font-size: var(--field-help-size, 87.5%);
             color: var(--field-help-color, inherit);
             margin-top: var(--field-help-margin-top, 0.5rem);
             opacity: var(--field-help-opacity, 0.8);
@@ -52,17 +53,17 @@
             width: var(--submit-width, var(--field-size));
             padding: var(--submit-padding, var(--field-padding));
             border-radius: var(--submit-rounded, var(--field-rounded, 0.5rem));
-            border: var(--submit-border, var(--field-border, 1px solid #ccc));
             font-size: var(--submit-font-size, var(--field-font-size, inherit));
             font-family: inherit;
-            background-color: var(--submit-background-color, var(--field-background-color, #000));
-            color: var(--submit-color, var(--field-color, #fff));
+            background-color: var(--submit-background-color, var(--field-background-color, black));
+            border: var(--submit-border, var(--field-border, 1px solid white));
+            color: var(--submit-color, var(--field-color, white));
             cursor: pointer;
             transition: background-color 0.3s ease;
 
             &:hover {
-                background-color: var(--submit-background-color-hover, var(--field-background-color-hover, #333));
-                color: var(--submit-color-hover, var(--field-color-hover, #fff));
+                background-color: var(--submit-background-color-hover, var(--field-background-color-hover, black));
+                color: var(--submit-color-hover, var(--field-color-hover, white));
             }
         }
     }

@@ -1,4 +1,5 @@
 export type FormAttributes = {
+	layout?: any;
 	mailboxId: string;
 	formTitle: string;
 	formId: string;

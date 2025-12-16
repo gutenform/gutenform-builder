@@ -64,9 +64,28 @@ export default (env, argv) => {
 		...libraryEntries,
 	};
 	
-	return {
+	// Add path alias for @ to src
+	// Merge resolve config properly
+	const existingResolve = config.resolve || {};
+	const existingAlias = existingResolve.alias || {};
+	
+	// Ensure the alias is set correctly
+	const srcPath = path.resolve(__dirname, 'src');
+	
+	const finalConfig = {
 		...config,
 		entry: Object.keys(mergedEntry).length > 0 ? mergedEntry : config.entry,
+		resolve: {
+			...existingResolve,
+			modules: existingResolve.modules || ['node_modules'],
+			extensions: existingResolve.extensions || ['.js', '.jsx', '.ts', '.tsx', '.json'],
+			alias: {
+				...existingAlias,
+				'@': srcPath,
+			},
+		},
 	};
+	
+	return finalConfig;
 };
 

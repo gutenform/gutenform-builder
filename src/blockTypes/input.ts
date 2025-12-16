@@ -1,10 +1,5 @@
-export type InputAttributes = {
-	name: string;
-	id: string;
-	required: boolean;
+import { type GlobalFieldAttributes } from './globalField';
+
+export type InputAttributes = GlobalFieldAttributes & {
 	type: string;
-	label: string;
-	placeholder: string;
-	help: string;
-	defaultValue: string;
 };
