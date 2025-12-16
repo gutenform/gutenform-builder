@@ -7,6 +7,7 @@ use Gutenform\Database\Migrations\Entries;
 use Gutenform\Database\Migrations\EntryLabels;
 use Gutenform\Database\Migrations\Providers;
 use Gutenform\Database\Migrations\AddFormIdentifierToProviders;
+use Gutenform\Database\Migrations\EmailLogs;
 use Gutenform\Database\Seeders\EntryLabelsSeeder as SeedersEntryLabels;
 use Gutenform\Database\Seeders\MailboxesSeeder as SeedersMailboxes;
 use Gutenform\Database\Seeders\DatabaseProviderSeeder;
@@ -59,6 +60,7 @@ class Install
 		Providers::up();
 		// Run migration to add form_identifier column
 		AddFormIdentifierToProviders::up();
+		EmailLogs::up();
 	}
 
 	/**
