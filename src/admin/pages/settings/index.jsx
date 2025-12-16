@@ -6,8 +6,8 @@ import { Outlet, useLocation } from "react-router-dom"
 export default function Settings() {
   const location = useLocation()
   
-  // Check if we have nested routes (mailboxes, providers, or labels)
-  const hasNestedRoute = location.pathname.includes("/mailboxes") || location.pathname.includes("/providers") || location.pathname.includes("/labels")
+  // Check if we have nested routes (mailboxes, providers, labels, or smtp)
+  const hasNestedRoute = location.pathname.includes("/mailboxes") || location.pathname.includes("/providers") || location.pathname.includes("/labels") || location.pathname.includes("/smtp")
   
   return (
     <SettingsLayout>

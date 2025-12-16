@@ -1,6 +1,10 @@
 import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { __ } from "@/lib/i18n";
+import { apiGet, apiPost } from "@/lib/api";
 
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -24,6 +28,39 @@ import { DemoSeedBanner } from "@/components/dashboard/demo-seed-banner"
 // import { UserNav } from "@/app/examples/dashboard/components/user-nav"
 
 export default function DashboardPage() {
+  const [chartsVisible, setChartsVisible] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadChartPreference();
+  }, []);
+
+  const loadChartPreference = async () => {
+    try {
+      const response = await apiGet<{ visible: boolean }>("/settings/charts-visible");
+      if (response.visible !== undefined) {
+        setChartsVisible(response.visible);
+      }
+    } catch (err) {
+      console.error("Failed to load chart preference:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChartToggle = async (visible) => {
+    try {
+      await apiPost("/settings/charts-visible", { visible });
+      setChartsVisible(visible);
+    } catch (err) {
+      toast({
+        title: __("error"),
+        description: err.message || __("errorOccurred"),
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <>
       <div className="md:hidden">
@@ -58,6 +95,17 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between space-y-2">
             <h2 className="text-3xl dark:text-white font-bold tracking-tight">{__('dashboard')}</h2>
             <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 px-3 py-1.5 border rounded-md">
+                <Switch
+                  id="charts-toggle"
+                  checked={chartsVisible}
+                  onCheckedChange={handleChartToggle}
+                  disabled={loading}
+                />
+                <Label htmlFor="charts-toggle" className="text-sm cursor-pointer">
+                  {__('showCharts')}
+                </Label>
+              </div>
               <CalendarDateRangePicker />
               <Button>{__('download')}</Button>
             </div>
@@ -175,25 +223,27 @@ export default function DashboardPage() {
                   </CardContent>
                 </Card>
               </div>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-4">
-                  <CardHeader>
-                    <CardTitle>{__('overview')}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="pl-2">
-                    <Overview />
-                  </CardContent>
-                </Card>
-                <Card className="col-span-3">
-                  <CardHeader>
-                    <CardTitle>{__('recentSales')}</CardTitle>
-                    <CardDescription>
-                      {__('youMadeSalesThisMonth')}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent><RecentSales /></CardContent>
-                </Card>
-              </div>
+              {chartsVisible && (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                  <Card className="col-span-4">
+                    <CardHeader>
+                      <CardTitle>{__('overview')}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pl-2">
+                      <Overview />
+                    </CardContent>
+                  </Card>
+                  <Card className="col-span-3">
+                    <CardHeader>
+                      <CardTitle>{__('recentSales')}</CardTitle>
+                      <CardDescription>
+                        {__('youMadeSalesThisMonth')}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent><RecentSales /></CardContent>
+                  </Card>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>

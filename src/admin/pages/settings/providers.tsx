@@ -46,6 +46,7 @@ import {
   type ProviderTypeField 
 } from "@/hooks/useProviders"
 import { Plus, Trash2, Edit2, Settings } from "lucide-react"
+import { EmailPreview } from "@/components/ui/email-preview"
 
 // Dynamic schema - will be extended based on provider type
 const baseProviderFormSchema = z.object({
@@ -100,10 +101,20 @@ function DynamicField({
     case 'textarea':
       return (
         <FormItem>
-          <FormLabel>
-            {field.label}
-            {field.required && <span className="text-destructive ml-1">*</span>}
-          </FormLabel>
+          <div className="flex items-center justify-between">
+            <FormLabel>
+              {field.label}
+              {field.required && <span className="text-destructive ml-1">*</span>}
+            </FormLabel>
+            {field.name === 'body' && (
+              <EmailPreview
+                body={value ?? field.default ?? ''}
+                subject={undefined}
+                fromEmail={undefined}
+                fromName={undefined}
+              />
+            )}
+          </div>
           <FormControl>
             <Textarea
               value={value ?? field.default ?? ''}
@@ -217,9 +228,10 @@ export default function ProvidersPage() {
     },
   })
 
-  // When provider type is selected, initialize settings with default values
+  // When provider type is selected, initialize settings with default values (only for new providers)
   useEffect(() => {
-    if (selectedProviderType) {
+    // Only set defaults when creating a new provider, not when editing
+    if (selectedProviderType && !editingProvider) {
       const selectedType = providerTypes.find(t => t.slug === selectedProviderType)
       if (selectedType) {
         const defaultSettings: Record<string, any> = {}
@@ -232,22 +244,32 @@ export default function ProvidersPage() {
       } else {
         setSettings({})
       }
-    } else {
+    } else if (!selectedProviderType) {
       setSettings({})
     }
-  }, [selectedProviderType, providerTypes])
+  }, [selectedProviderType, providerTypes, editingProvider])
 
   const handleOpenDialog = (provider?: Provider) => {
     if (provider) {
       setEditingProvider(provider)
       setSelectedProviderType(provider.provider_type)
-      setSettings(provider.settings || {})
+      // Merge provider settings with defaults for any missing fields
+      const selectedType = providerTypes.find(t => t.slug === provider.provider_type)
+      const mergedSettings: Record<string, any> = { ...(provider.settings || {}) }
+      if (selectedType) {
+        selectedType.fields.forEach(field => {
+          if (mergedSettings[field.name] === undefined && field.default !== undefined) {
+            mergedSettings[field.name] = field.default
+          }
+        })
+      }
+      setSettings(mergedSettings)
       form.reset({
         name: provider.name,
         provider_type: provider.provider_type,
         form_identifier: provider.form_identifier || null,
         is_active: provider.is_active,
-        settings: provider.settings || {},
+        settings: mergedSettings,
       })
     } else {
       setEditingProvider(null)

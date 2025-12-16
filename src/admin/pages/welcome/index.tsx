@@ -80,6 +80,29 @@ export default function WelcomePage() {
     ]);
   }, [providers, mailboxes, labels, providersLoading, mailboxesLoading, labelsLoading]);
 
+  // Check if first steps were skipped
+  useEffect(() => {
+    const checkSkipped = async () => {
+      try {
+        const response = await fetch(`${window.gutenForm?.apiUrl || ''}gutenform/v1/settings/skip-first-steps`, {
+          method: 'GET',
+          headers: {
+            'X-WP-Nonce': window.gutenForm?.nonce || '',
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.skipped) {
+            navigate('/inbox');
+          }
+        }
+      } catch (err) {
+        console.error('Failed to check skip status:', err);
+      }
+    };
+    checkSkipped();
+  }, [navigate]);
+
   // Redirect to inbox if setup is complete
   useEffect(() => {
     const allCompleted = checklist.length > 0 && checklist.every((item) => item.completed);
@@ -91,6 +114,24 @@ export default function WelcomePage() {
       return () => clearTimeout(timer);
     }
   }, [checklist, navigate]);
+
+  const handleSkipSetup = async () => {
+    try {
+      const response = await fetch(`${window.gutenForm?.apiUrl || ''}gutenform/v1/settings/skip-first-steps`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-WP-Nonce': window.gutenForm?.nonce || '',
+        },
+        body: JSON.stringify({ skipped: true }),
+      });
+      if (response.ok) {
+        navigate('/inbox');
+      }
+    } catch (err) {
+      console.error('Failed to skip setup:', err);
+    }
+  };
 
   const handleItemClick = (item: ChecklistItem) => {
     if (item.link) {
@@ -113,6 +154,16 @@ export default function WelcomePage() {
           <CardDescription className="text-lg mt-2">
             {__("letsGetYouStarted")}
           </CardDescription>
+          <div className="mt-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSkipSetup}
+              className="text-muted-foreground"
+            >
+              {__('skipSetup')}
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {checklist.length === 0 ? (

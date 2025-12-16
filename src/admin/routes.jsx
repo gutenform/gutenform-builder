@@ -9,6 +9,7 @@ import Charts from "./pages/charts";
 import MailboxesPage from "./pages/settings/mailboxes";
 import ProvidersPage from "./pages/settings/providers";
 import LabelsPage from "./pages/settings/labels";
+import SmtpPage from "./pages/settings/smtp";
 import WelcomePage from "./pages/welcome";
 
 export const router = createHashRouter([
@@ -46,6 +47,10 @@ export const router = createHashRouter([
           {
             path: "labels",
             element: <LabelsPage />,
+          },
+          {
+            path: "smtp",
+            element: <SmtpPage />,
           },
         ],
       },
