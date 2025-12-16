@@ -104,6 +104,7 @@ class Admin
 			'developer' => 'prappo',
 			'isAdmin'   => is_admin(),
 			'apiUrl'    => rest_url(),
+			'nonce'     => wp_create_nonce('wp_rest'),
 			'userInfo'  => $this->get_user_data(),
 			'strings'   => Strings::get_strings(),
 		);
@@ -124,13 +125,19 @@ class Admin
 			'gutenform-select-editor-script',
 			'gutenform-submit-editor-script',
 			'gutenform-success-editor-script',
+			'gutenform-file-editor-script',
 		);
+
+		// Get WordPress upload limit in MB
+		$upload_size_limit = wp_max_upload_size();
+		$upload_limit_mb = round($upload_size_limit / 1024 / 1024, 0);
 
 		foreach ($editor_script_handles as $handle) {
 			if (wp_script_is($handle, 'registered')) {
 				// Pass strings to block editor via gutenform object (lowercase)
 				$editor_data = array(
 					'strings' => Strings::get_strings(),
+					'uploadLimit' => $upload_limit_mb,
 				);
 				wp_localize_script($handle, 'gutenform', $editor_data);
 				// Also pass via gutenForm for consistency
