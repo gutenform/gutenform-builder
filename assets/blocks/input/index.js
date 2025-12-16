@@ -2882,8 +2882,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./save */ "./src/blocks/input/save.tsx");
 /* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./block.json */ "./src/blocks/input/block.json");
 /* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/text-cursor-input.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _presets__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./presets */ "./src/blocks/input/presets.ts");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__);
+
 
 
 
@@ -2894,11 +2896,25 @@ __webpack_require__.r(__webpack_exports__);
 
 (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_5__.name, {
   ..._block_json__WEBPACK_IMPORTED_MODULE_5__,
-  icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_1__["default"], {
+  icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_1__["default"], {
     icon: lucide_react__WEBPACK_IMPORTED_MODULE_6__["default"]
   }),
   edit: _edit__WEBPACK_IMPORTED_MODULE_3__["default"],
   save: _save__WEBPACK_IMPORTED_MODULE_4__["default"]
+});
+
+// Block Variations (Presets)
+const presets = (0,_presets__WEBPACK_IMPORTED_MODULE_7__.getInputPresets)();
+presets.forEach(preset => {
+  (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockVariation)('gutenform/input', {
+    name: preset.name,
+    title: preset.title,
+    attributes: {
+      type: preset.type,
+      label: preset.label || preset.title,
+      placeholder: preset.placeholder || ''
+    }
+  });
 });
 
 /***/ }),
@@ -2969,6 +2985,58 @@ const InputInspectorControls = ({
     })]
   });
 };
+
+/***/ }),
+
+/***/ "./src/blocks/input/presets.ts":
+/*!*************************************!*\
+  !*** ./src/blocks/input/presets.ts ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getInputPresets: () => (/* binding */ getInputPresets)
+/* harmony export */ });
+/* harmony import */ var _lib_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/lib/i18n */ "./src/lib/i18n.ts");
+
+const getInputPresets = () => [{
+  name: 'text',
+  title: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('text'),
+  type: 'text',
+  label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('text'),
+  placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('enterText')
+}, {
+  name: 'email',
+  title: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('email'),
+  type: 'email',
+  label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('email'),
+  placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('enterEmail')
+}, {
+  name: 'phone',
+  title: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('phone'),
+  type: 'tel',
+  label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('phone'),
+  placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('enterPhone')
+}, {
+  name: 'url',
+  title: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('url'),
+  type: 'url',
+  label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('url'),
+  placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('enterUrl')
+}, {
+  name: 'number',
+  title: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('number'),
+  type: 'number',
+  label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('number'),
+  placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('enterNumber')
+}, {
+  name: 'search',
+  title: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('search'),
+  type: 'search',
+  label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('search'),
+  placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('enterSearch')
+}];
 
 /***/ }),
 

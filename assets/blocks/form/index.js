@@ -8255,7 +8255,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   allowedBlocks: () => (/* binding */ allowedBlocks),
 /* harmony export */   prioritizedInserterBlocks: () => (/* binding */ prioritizedInserterBlocks)
 /* harmony export */ });
-const allowedBlocks = ['gutenform/input', 'gutenform/textarea', 'gutenform/select', 'gutenform/submit', 'gutenform/success', 'core/columns', 'core/column', 'core/heading', 'core/paragraph', 'core/image', 'core/list', 'core/list-item', 'core/quote', 'core/table', 'core/video', 'core/embed', 'core/group'];
+const allowedBlocks = ['gutenform/input', 'gutenform/textarea', 'gutenform/select', 'gutenform/file', 'gutenform/captcha', 'gutenform/honeypot', 'gutenform/submit', 'gutenform/success', 'core/columns', 'core/column', 'core/heading', 'core/paragraph', 'core/image', 'core/list', 'core/list-item', 'core/quote', 'core/table', 'core/video', 'core/embed', 'core/group'];
 const prioritizedInserterBlocks = allowedBlocks.filter(block => block.startsWith('gutenform/'));
 
 /***/ }),
@@ -8294,9 +8294,11 @@ const FormBlockControls = ({
     children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToolbarGroup, {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToolbarButton, {
         icon: attributes.successView ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_5__["default"], {
-          icon: lucide_react__WEBPACK_IMPORTED_MODULE_4__["default"]
+          icon: lucide_react__WEBPACK_IMPORTED_MODULE_4__["default"],
+          clean: true
         }) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsx)(_components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_5__["default"], {
-          icon: lucide_react__WEBPACK_IMPORTED_MODULE_3__["default"]
+          icon: lucide_react__WEBPACK_IMPORTED_MODULE_3__["default"],
+          clean: true
         }),
         label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('toggleSuccessView'),
         onClick: () => setAttributes({
@@ -10518,9 +10520,17 @@ function getApiUrl(endpoint) {
  */
 async function apiRequest(endpoint, options = {}) {
   const url = getApiUrl(endpoint);
+
+  // Get WordPress REST API nonce
+  const nonce = window.wpApiSettings?.nonce || window.gutenForm?.nonce || '';
   const defaultHeaders = {
     'Content-Type': 'application/json'
   };
+
+  // Add nonce header if available
+  if (nonce) {
+    defaultHeaders['X-WP-Nonce'] = nonce;
+  }
   const response = await fetch(url, {
     ...options,
     headers: {
@@ -10532,7 +10542,15 @@ async function apiRequest(endpoint, options = {}) {
     const error = await response.json().catch(() => ({
       message: `HTTP error! status: ${response.status}`
     }));
-    throw new Error(error.message || `HTTP error! status: ${response.status}`);
+
+    // WordPress REST API error format: { code, message, data: { status } }
+    // WP_Error objects are returned as: { code: string, message: string, data: { status: number } }
+    const errorMessage = error.message || error.code || `HTTP error! status: ${response.status}`;
+    const apiError = new Error(errorMessage);
+    apiError.response = response;
+    apiError.errorData = error;
+    apiError.status = response.status;
+    throw apiError;
   }
   return response.json();
 }

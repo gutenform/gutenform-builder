@@ -354,6 +354,16 @@
         font-family: inherit;
     }
 
+    input::-moz-placeholder, textarea::-moz-placeholder, select::-moz-placeholder {
+        color: currentColor;
+        opacity: 0.5;
+    }
+
+    input::placeholder, textarea::placeholder, select::placeholder {
+        color: currentColor;
+        opacity: 0.5;
+    }
+
     .gutenform-field{
         label {
             display: block;
@@ -401,6 +411,80 @@
                 background-color: var(--submit-background-color-hover, var(--field-background-color-hover, black));
                 color: var(--submit-color-hover, var(--field-color-hover, white));
             }
+        }
+    }
+
+    .wp-block-gutenform-file {
+        .gutenform-file-upload-zone {
+            border: 2px dashed var(--field-border-color, #3b82f6);
+            border-radius: var(--field-rounded);
+            padding: 2rem;
+            background-color: var(--field-background-color, #fff);
+            transition: all 0.2s ease;
+        }
+
+        .gutenform-file-upload-zone:hover {
+            background-color: var(--field-background-color-hover, #f8fafc);
+        }
+
+        .gutenform-file-upload-zone--dragover {
+            border-color: var(--field-border-color-active, #2563eb);
+            background-color: var(--field-background-color-active, #eff6ff);
+        }
+
+        .gutenform-file-upload-icon {
+            color: var(--field-border-color, #3b82f6);
+        }
+
+        .gutenform-file-upload-text-primary {
+            color: var(--field-border-color, #3b82f6);
+        }
+
+        .gutenform-file-upload-text-secondary {
+            color: var(--field-help-color, #6b7280);
+        }
+
+        .gutenform-file-url-input {
+            input {
+                width: 100%;
+                padding: var(--field-padding);
+                border-radius: var(--field-rounded);
+                border: var(--field-border);
+                font-size: var(--field-font-size, inherit);
+                font-family: inherit;
+            }
+
+            button {
+                padding: var(--field-padding);
+                border-radius: var(--field-rounded);
+                background-color: var(--field-border-color, #3b82f6);
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                font-size: var(--field-font-size, inherit);
+                font-family: inherit;
+                transition: background-color 0.2s ease;
+
+                &:hover:not(:disabled) {
+                    background-color: var(--field-border-color-active, #2563eb);
+                }
+
+                &:disabled {
+                    background-color: #9ca3af;
+                    cursor: not-allowed;
+                }
+            }
+        }
+
+        .gutenform-file-item {
+            padding: var(--field-padding);
+            border-radius: var(--field-rounded);
+            border: var(--field-border);
+            background-color: var(--field-background-color, #f9fafb);
+        }
+
+        .gutenform-file-item-progress-bar {
+            background-color: var(--field-border-color, #3b82f6);
         }
     }
 }
