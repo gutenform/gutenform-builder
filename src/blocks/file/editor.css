@@ -1,0 +1,27 @@
+/**
+ * File Upload Block Editor Styles
+ * Styles for the block editor preview
+ */
+
+.gutenform-file-upload-preview {
+	pointer-events: none;
+}
+
+.gutenform-file-upload-preview .gutenform-file-upload-zone {
+	cursor: default;
+}
+
+.gutenform-file-upload-preview .gutenform-file-upload-icon {
+	opacity: 0.6;
+}
+
+.gutenform-file-upload-preview .gutenform-file-upload-text-primary {
+	color: #6b7280;
+}
+
+.gutenform-file-upload-preview .gutenform-file-upload-url-input input,
+.gutenform-file-upload-preview .gutenform-file-upload-url-input button {
+	opacity: 0.6;
+	cursor: default;
+}
+
