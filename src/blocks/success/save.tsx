@@ -18,7 +18,6 @@ import { type BlockSaveProps } from '@wordpress/blocks';
  * @return {Element} Element to render.
  */
 export default function save(props: BlockSaveProps<SuccessAttributes>) {
-	console.log(props); // eslint-disable-line no-console
 	return (
 		<div { ...useBlockProps.save() }>
 			<InnerBlocks.Content />

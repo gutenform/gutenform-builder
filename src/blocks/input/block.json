@@ -44,6 +44,14 @@
 		"id": {
 			"type": "string",
 			"default": ""
+		},
+		"useCustomName": {
+			"type": "boolean",
+			"default": false
+		},
+		"useCustomId": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {

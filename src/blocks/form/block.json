@@ -9,6 +9,14 @@
 	"description": "Form Wrapper block for Gutenform.",
 	"example": {},
 	"attributes": {
+		"spacing": {
+			"type": "object",
+			"default": {
+				"padding": 0,
+				"margin": 0,
+				"blockGap": "var:preset|spacing|40"
+			}
+		},
 		"formTitle": {
 			"type": "string",
 			"default": ""
@@ -38,8 +46,52 @@
 		}
 	},
 	"supports": {
-		"html": false,
-		"align": ["wide", "full"]
+		"anchor": true,
+		"html": true,
+		"align": ["wide", "full"],
+		"spacing": {
+			"padding": true,
+			"margin": true,
+			"blockGap": true
+		},
+		"color": {
+			"background": true,
+			"text": true
+		},
+		"border": {
+			"color": true,
+			"radius": true,
+			"width": true
+		},
+		"shadow": true,
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"__experimentalFontWeight": true
+		},
+		"__experimentalBorder": {
+			"color": true,
+			"radius": true,
+			"style": true,
+			"width": true,
+			"__experimentalSkipSerialization": true,
+			"__experimentalDefaultControls": {
+				"color": true,
+				"radius": true,
+				"style": true,
+				"width": true
+			}
+		},
+		"customClassName": true,
+		"__experimentalExposeControlsToChildren": true,
+		"__experimentalLayout": {
+			"allowSwitching": false,
+			"allowInheriting": false,
+			"default": {
+				"type": "flex",
+				"flexWrap": "wrap"
+			}
+		}
 	},
 	"textdomain": "gutenform",
 	"editorScript": "file:./index.js",

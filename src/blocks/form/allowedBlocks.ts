@@ -1,6 +1,7 @@
 export const allowedBlocks = [
 	'gutenform/input',
     'gutenform/textarea',
+    'gutenform/select',
     'gutenform/submit',
     'gutenform/success',
     'core/columns',
@@ -16,3 +17,5 @@ export const allowedBlocks = [
     'core/embed',
     'core/group',
 ];
+
+export const prioritizedInserterBlocks = allowedBlocks.filter(block => block.startsWith('gutenform/'));

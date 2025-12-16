@@ -1,58 +1,24 @@
-import { __ } from '@wordpress/i18n';
+import { __ } from "@/lib/i18n";
 import { useBlockProps, InnerBlocks } from '@wordpress/block-editor';
+import { useDispatch } from '@wordpress/data';
 import { type BlockEditProps } from '@wordpress/blocks';
 import { type SuccessAttributes } from '@/blockTypes/success';
 import './editor.css';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { useFormBlock } from './use-form-block';
+import { ModalCloseButton } from './modal-close-button';
 
-export default function Edit(_props: BlockEditProps<SuccessAttributes>) {
-	const { clientId } = _props;
+export default function Edit(props: BlockEditProps<SuccessAttributes>) {
+	const { clientId } = props;
 	const successRef = useRef<HTMLDivElement>(null);
 	const modalRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const [form, setForm] = useState<HTMLDivElement | null>(null);
 	
-	// Get parent form block's attributes
-	// eslint-disable-next-line @typescript-eslint/no-var-requires
-	const { useSelect, useDispatch } = require('@wordpress/data');
-	const formBlock = useSelect(
-		(select: any) => {
-			const { getBlockParents, getBlock } = select('core/block-editor');
-			const parentIds = getBlockParents(clientId);
-			// Find the form block parent
-			for (const parentId of parentIds) {
-				const parentBlock = getBlock(parentId);
-				if (parentBlock?.name === 'gutenform/form') {
-					return parentBlock;
-				}
-			}
-			return null;
-		},
-		[clientId]
-	);
-	
+	const formBlock = useFormBlock(clientId);
 	const { updateBlockAttributes } = useDispatch('core/block-editor');
 	const successView = formBlock?.attributes?.successView ?? false;
-
-	const Block = (
-		<>
-			<div { ...useBlockProps() }>
-				<InnerBlocks allowedBlocks={['core/heading', 'core/paragraph']} template={[
-					['core/heading', { content: 'Thank you for your submission!' }],
-					['core/paragraph', { content: 'We will get back to you as soon as possible.' }],
-				]} />
-			</div>
-		</>
-	);
-
-	useEffect(() => {
-		if (successRef.current) {
-			const form = successRef.current.closest('.wp-block-gutenform-form');
-			if(!form) return;
-			setForm(form as unknown as HTMLDivElement);
-		}
-	}, []);
 
 	const closeModal = useCallback(() => {
 		if (formBlock) {
@@ -60,6 +26,17 @@ export default function Edit(_props: BlockEditProps<SuccessAttributes>) {
 		}
 	}, [formBlock, updateBlockAttributes]);
 
+	// Find the form element in the DOM
+	useEffect(() => {
+		if (successRef.current) {
+			const formElement = successRef.current.closest('.wp-block-gutenform-form');
+			if (formElement) {
+				setForm(formElement as HTMLDivElement);
+			}
+		}
+	}, []);
+
+	// Handle modal click events
 	useEffect(() => {
 		if (!modalRef.current || !successView) return;
 
@@ -89,40 +66,37 @@ export default function Edit(_props: BlockEditProps<SuccessAttributes>) {
 		};
 	}, [successView, closeModal]);
 
+	// Hidden state when success view is not active
 	if (!successView) {
 		return (
 			<div ref={successRef}>
 				<div style={{ padding: '1rem', border: '1px dashed #ccc', textAlign: 'center' }}>
-					{__('Success modal (hidden in preview)', 'gutenform')}
+					{__('successModalHiddenInPreview')}
 				</div>
 			</div>
 		);
 	}
 
+	// Success modal content
+	const SuccessContent = (
+		<div { ...useBlockProps() }>
+			<InnerBlocks
+				allowedBlocks={['core/heading', 'core/paragraph']}
+				template={[
+					['core/heading', { content: 'Thank you for your submission!' }],
+					['core/paragraph', { content: 'We will get back to you as soon as possible.' }],
+				]}
+			/>
+		</div>
+	);
+
 	return (
 		<div ref={successRef}>
 			{form && createPortal((
-				<div 
-					ref={modalRef}
-					className="gutenform-success-modal"
-				>
-					<div 
-						ref={contentRef}
-						className="gutenform-success-modal-content"
-					>
-						<button
-							type="button"
-							className="gutenform-success-modal-close"
-							onClick={(e) => {
-								e.preventDefault();
-								e.stopPropagation();
-								closeModal();
-							}}
-							aria-label={__('Close', 'gutenform')}
-						>
-							×
-						</button>
-						{Block}
+				<div ref={modalRef} className="gutenform-success-modal">
+					<div ref={contentRef} className="gutenform-success-modal-content">
+						<ModalCloseButton onClose={closeModal} />
+						{SuccessContent}
 					</div>
 				</div>
 			), form)}
