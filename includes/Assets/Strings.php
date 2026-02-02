@@ -497,7 +497,7 @@ class Strings
 			'selectEmailTemplateDescription' => __('Select a template or use custom HTML.', 'gutenform'),
 			'failedToLoadTemplate' => __('Failed to load template.', 'gutenform'),
 			'templateCustomization' => __('Template Customization', 'gutenform'),
-			
+
 			// Email Template Editor
 			'emailTemplateEditor' => __('Email Template Editor', 'gutenform'),
 			'emailTemplateEditorDescription' => __('Edit your email template HTML with live preview', 'gutenform'),
@@ -518,6 +518,18 @@ class Strings
 			'templatePlaceholders' => __('Template', 'gutenform'),
 			'formFields' => __('Form Fields', 'gutenform'),
 			'otherPlaceholders' => __('Other', 'gutenform'),
+
+			// Provider Field Validation
+			'missingFields' => __('Missing Fields', 'gutenform'),
+			'missingFieldsDescription' => __('The following fields are referenced in the provider but not present in the form:', 'gutenform'),
+			'addMissingFields' => __('Add Missing Fields', 'gutenform'),
+
+			// Custom Fields
+			'customFields' => __('Custom Fields', 'gutenform'),
+			'addCustomField' => __('Add Custom Field', 'gutenform'),
+			'fieldLabel' => __('Field Label', 'gutenform'),
+			'fieldNamePreview' => __('Field Name', 'gutenform'),
+			'dragToInsert' => __('Drag to insert', 'gutenform'),
 		);
 	}
 }

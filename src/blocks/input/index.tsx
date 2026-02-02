@@ -8,12 +8,39 @@ import metadata from './block.json';
 
 import { TextCursorInput } from 'lucide-react';
 import { getInputPresets } from './presets';
+import { transformToTextarea, transformToSelect, transformToInput } from '../../lib/field-block-transforms';
 
 registerBlockType( metadata.name as string, {
 	...metadata,
 	icon: (<BlockIcon icon={TextCursorInput} />),
 	edit: Edit,
 	save,
+	transforms: {
+		to: [
+			{
+				type: 'block',
+				blocks: ['gutenform/textarea'],
+				transform: (attributes: any) => transformToTextarea(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/select'],
+				transform: (attributes: any) => transformToSelect(attributes),
+			},
+		],
+		from: [
+			{
+				type: 'block',
+				blocks: ['gutenform/textarea'],
+				transform: (attributes: any) => transformToInput(attributes, 'text'),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/select'],
+				transform: (attributes: any) => transformToInput(attributes, 'text'),
+			},
+		],
+	},
 } as any );
 
 // Block Variations (Presets)

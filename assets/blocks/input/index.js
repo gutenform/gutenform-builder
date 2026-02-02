@@ -2883,8 +2883,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./block.json */ "./src/blocks/input/block.json");
 /* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/text-cursor-input.js");
 /* harmony import */ var _presets__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./presets */ "./src/blocks/input/presets.ts");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../lib/field-block-transforms */ "./src/lib/field-block-transforms.ts");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__);
+
 
 
 
@@ -2896,11 +2898,31 @@ __webpack_require__.r(__webpack_exports__);
 
 (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_5__.name, {
   ..._block_json__WEBPACK_IMPORTED_MODULE_5__,
-  icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_1__["default"], {
+  icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_1__["default"], {
     icon: lucide_react__WEBPACK_IMPORTED_MODULE_6__["default"]
   }),
   edit: _edit__WEBPACK_IMPORTED_MODULE_3__["default"],
-  save: _save__WEBPACK_IMPORTED_MODULE_4__["default"]
+  save: _save__WEBPACK_IMPORTED_MODULE_4__["default"],
+  transforms: {
+    to: [{
+      type: 'block',
+      blocks: ['gutenform/textarea'],
+      transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToTextarea)(attributes)
+    }, {
+      type: 'block',
+      blocks: ['gutenform/select'],
+      transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToSelect)(attributes)
+    }],
+    from: [{
+      type: 'block',
+      blocks: ['gutenform/textarea'],
+      transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToInput)(attributes, 'text')
+    }, {
+      type: 'block',
+      blocks: ['gutenform/select'],
+      transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToInput)(attributes, 'text')
+    }]
+  }
 });
 
 // Block Variations (Presets)
@@ -3567,6 +3589,108 @@ const FieldWrapper = ({
     })]
   });
 };
+
+/***/ }),
+
+/***/ "./src/lib/field-block-transforms.ts":
+/*!*******************************************!*\
+  !*** ./src/lib/field-block-transforms.ts ***!
+  \*******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   getCommonAttributes: () => (/* binding */ getCommonAttributes),
+/* harmony export */   transformToInput: () => (/* binding */ transformToInput),
+/* harmony export */   transformToSelect: () => (/* binding */ transformToSelect),
+/* harmony export */   transformToTextarea: () => (/* binding */ transformToTextarea)
+/* harmony export */ });
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
+/**
+ * Shared utility functions for field block transforms.
+ * Used to convert between Input, Textarea, and Select blocks.
+ */
+
+
+
+/**
+ * Common attributes shared by all field blocks.
+ */
+
+/**
+ * Input block attributes.
+ */
+
+/**
+ * Textarea block attributes.
+ */
+
+/**
+ * Select block attributes.
+ */
+
+/**
+ * Extracts common attributes from any field block.
+ */
+function getCommonAttributes(attributes) {
+  return {
+    label: attributes.label || '',
+    name: attributes.name || '',
+    id: attributes.id || '',
+    placeholder: attributes.placeholder || '',
+    help: attributes.help || '',
+    required: attributes.required || false,
+    useCustomName: attributes.useCustomName,
+    useCustomId: attributes.useCustomId,
+    defaultValue: attributes.defaultValue || ''
+  };
+}
+
+/**
+ * Transforms any field block to an Input block.
+ */
+function transformToInput(attributes, targetType = 'text') {
+  const common = getCommonAttributes(attributes);
+  return (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.createBlock)('gutenform/input', {
+    ...common,
+    type: targetType,
+    isPrimaryMail: attributes.isPrimaryMail || false
+  });
+}
+
+/**
+ * Transforms any field block to a Textarea block.
+ */
+function transformToTextarea(attributes) {
+  const common = getCommonAttributes(attributes);
+  return (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.createBlock)('gutenform/textarea', {
+    ...common,
+    rows: attributes.rows || 4
+  });
+}
+
+/**
+ * Transforms any field block to a Select block.
+ */
+function transformToSelect(attributes) {
+  const common = getCommonAttributes(attributes);
+
+  // If source is a Select block, preserve options
+  const options = attributes.options || [{
+    label: 'Option 1',
+    value: 'option1'
+  }, {
+    label: 'Option 2',
+    value: 'option2'
+  }];
+  return (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.createBlock)('gutenform/select', {
+    ...common,
+    options: options,
+    optionsPopulated: attributes.optionsPopulated || false,
+    syncLabelValue: attributes.syncLabelValue || false
+  });
+}
 
 /***/ }),
 

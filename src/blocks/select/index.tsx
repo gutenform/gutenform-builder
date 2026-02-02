@@ -9,12 +9,39 @@ import metadata from './block.json';
 
 import { ListChecks } from 'lucide-react';
 import { getSelectPresets } from './presets';
+import { transformToInput, transformToTextarea, transformToSelect } from '../../lib/field-block-transforms';
 
 registerBlockType( metadata.name as string, {
 	...metadata,
 	icon: (<BlockIcon icon={ListChecks} />),
 	edit: Edit,
 	save,
+	transforms: {
+		to: [
+			{
+				type: 'block',
+				blocks: ['gutenform/input'],
+				transform: (attributes: any) => transformToInput(attributes, 'text'),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/textarea'],
+				transform: (attributes: any) => transformToTextarea(attributes),
+			},
+		],
+		from: [
+			{
+				type: 'block',
+				blocks: ['gutenform/input'],
+				transform: (attributes: any) => transformToSelect(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/textarea'],
+				transform: (attributes: any) => transformToSelect(attributes),
+			},
+		],
+	},
 } as any );
 
 // Block Variations (Presets)

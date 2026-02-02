@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area.jsx"
 import { PlaceholderDraggable } from "@/components/ui/placeholder-draggable"
+import { CustomFieldInput } from "@/components/ui/custom-field-input"
 import { __ } from "@/lib/i18n"
 import { apiGet, type ApiResponse } from "@/lib/api"
 import Editor from "@monaco-editor/react"
@@ -123,6 +124,7 @@ export function FullscreenTemplateEditor({
         editor.executeEdits('insert-placeholder', [{
           range: range,
           text: placeholder,
+          forceMoveMarkers: true,
         }])
         // Set cursor after inserted text
         editor.setPosition({
@@ -144,6 +146,7 @@ export function FullscreenTemplateEditor({
         editor.executeEdits('insert-placeholder', [{
           range: range,
           text: placeholder,
+          forceMoveMarkers: true,
         }])
         editor.setPosition({
           lineNumber: lineCount,
@@ -154,6 +157,135 @@ export function FullscreenTemplateEditor({
     } else {
       // Fallback: append to end
       setHtml((prev) => String(prev || '') + placeholder)
+    }
+  }
+
+  /**
+   * Handles drop events on the preview area.
+   * Tries to find the best insertion point in the HTML based on the drop position.
+   */
+  const handlePreviewDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const data = e.dataTransfer?.getData('text/plain')
+    if (!data || !data.startsWith('{') || !data.endsWith('}')) {
+      return
+    }
+
+    if (!editorRef.current) {
+      // Fallback: append to end
+      setHtml((prev) => String(prev || '') + data)
+      return
+    }
+
+    const editor = editorRef.current
+    const htmlString = String(html || '')
+    
+    // Get the drop position relative to the preview container
+    const previewContainer = e.currentTarget
+    const rect = previewContainer.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    // Try to find the best insertion point in the HTML
+    // This is a heuristic approach: we'll try to find the nearest text node or element
+    const insertionPoint = findInsertionPointInHtml(htmlString, x, y, rect.width, rect.height)
+    
+    if (insertionPoint) {
+      // Insert at the found position
+      const range = {
+        startLineNumber: insertionPoint.line,
+        startColumn: insertionPoint.column,
+        endLineNumber: insertionPoint.line,
+        endColumn: insertionPoint.column,
+      }
+      editor.executeEdits('drop-placeholder-preview', [{
+        range: range,
+        text: data,
+        forceMoveMarkers: true,
+      }])
+      editor.setPosition({
+        lineNumber: insertionPoint.line,
+        column: insertionPoint.column + data.length,
+      })
+      editor.focus()
+    } else {
+      // Fallback: insert at cursor position or end
+      const selection = editor.getSelection()
+      if (selection) {
+        const range = {
+          startLineNumber: selection.startLineNumber,
+          startColumn: selection.startColumn,
+          endLineNumber: selection.endLineNumber,
+          endColumn: selection.endColumn,
+        }
+        editor.executeEdits('drop-placeholder-preview', [{
+          range: range,
+          text: data,
+          forceMoveMarkers: true,
+        }])
+        editor.setPosition({
+          lineNumber: selection.startLineNumber,
+          column: selection.startColumn + data.length,
+        })
+        editor.focus()
+      } else {
+        // Append at end
+        const model = editor.getModel()
+        const lineCount = model.getLineCount()
+        const lastLine = model.getLineContent(lineCount)
+        const range = {
+          startLineNumber: lineCount,
+          startColumn: lastLine.length + 1,
+          endLineNumber: lineCount,
+          endColumn: lastLine.length + 1,
+        }
+        editor.executeEdits('drop-placeholder-preview', [{
+          range: range,
+          text: data,
+          forceMoveMarkers: true,
+        }])
+        editor.setPosition({
+          lineNumber: lineCount,
+          column: lastLine.length + data.length + 1,
+        })
+        editor.focus()
+      }
+    }
+  }
+
+  /**
+   * Finds the best insertion point in HTML based on drop coordinates.
+   * This is a heuristic that tries to map preview coordinates to HTML positions.
+   */
+  const findInsertionPointInHtml = (
+    html: string,
+    dropX: number,
+    dropY: number,
+    containerWidth: number,
+    containerHeight: number
+  ): { line: number; column: number } | null => {
+    if (!html || !editorRef.current) {
+      return null
+    }
+
+    // Calculate approximate line based on Y position
+    // This is a rough estimate - we assume each line is about 20px high
+    const estimatedLine = Math.max(1, Math.floor((dropY / containerHeight) * html.split('\n').length) + 1)
+    
+    const lines = html.split('\n')
+    const targetLine = Math.min(estimatedLine, lines.length)
+    const lineContent = lines[targetLine - 1] || ''
+    
+    // Calculate approximate column based on X position
+    // This is also rough - we assume average character width of 8px
+    const estimatedColumn = Math.max(1, Math.floor((dropX / containerWidth) * lineContent.length) + 1)
+    const targetColumn = Math.min(estimatedColumn, lineContent.length + 1)
+
+    return {
+      line: targetLine,
+      column: targetColumn,
     }
   }
 
@@ -275,17 +407,57 @@ export function FullscreenTemplateEditor({
 
                 <Separator />
 
+                {/* Custom Fields */}
+                <div className="space-y-2">
+                  <div className="text-sm font-semibold">
+                    {__("customFields") || "Custom Fields"}
+                  </div>
+                  <CustomFieldInput onFieldAdd={handlePlaceholderInsert} />
+                </div>
+
+                <Separator />
+
                 {/* Placeholders Section */}
                 <PlaceholderDraggable onPlaceholderSelect={handlePlaceholderInsert} />
               </div>
             </ScrollArea>
           </div>
 
-          {/* Main Content Area - Editor and Preview */}
+          {/* Main Content Area - Preview and Editor */}
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="flex-1 flex border-b">
-              {/* HTML Editor */}
+              {/* Preview */}
               <div className="flex-1 flex flex-col">
+                <div className="px-4 py-2 border-b bg-muted/50">
+                  <Label className="text-sm font-semibold">
+                    {__("preview") || "Preview"}
+                  </Label>
+                </div>
+                <div 
+                  className="flex-1 overflow-auto bg-muted/20 p-4 relative"
+                  onDragOver={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    e.dataTransfer.dropEffect = 'copy'
+                  }}
+                  onDrop={handlePreviewDrop}
+                >
+                  {previewHtml ? (
+                    <div
+                      dangerouslySetInnerHTML={{ __html: previewHtml }}
+                      className="w-full min-h-full border rounded-lg bg-white p-4"
+                      style={{ pointerEvents: 'auto' }}
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-muted-foreground">
+                      {__("noPreviewAvailable") || "No preview available"}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* HTML Editor */}
+              <div className="flex-1 flex flex-col border-l">
                 <div className="px-4 py-2 border-b bg-muted/50">
                   <Label className="text-sm font-semibold">
                     {__("htmlEditor") || "HTML Editor"}
@@ -306,28 +478,6 @@ export function FullscreenTemplateEditor({
                       automaticLayout: true,
                     }}
                   />
-                </div>
-              </div>
-
-              {/* Preview */}
-              <div className="flex-1 flex flex-col border-l">
-                <div className="px-4 py-2 border-b bg-muted/50">
-                  <Label className="text-sm font-semibold">
-                    {__("preview") || "Preview"}
-                  </Label>
-                </div>
-                <div className="flex-1 overflow-auto bg-muted/20 p-4">
-                  {previewHtml ? (
-                    <iframe
-                      srcDoc={previewHtml}
-                      className="w-full h-full border rounded-lg bg-white"
-                      title={__("emailPreview") || "Email Preview"}
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full text-muted-foreground">
-                      {__("noPreviewAvailable") || "No preview available"}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
