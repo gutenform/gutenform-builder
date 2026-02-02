@@ -47,6 +47,16 @@ import {
 } from "@/hooks/useProviders"
 import { Plus, Trash2, Edit2, Settings } from "lucide-react"
 import { EmailPreview } from "@/components/ui/email-preview"
+import { ProviderTypeGrid } from "@/components/providers/ProviderTypeGrid"
+
+const COMING_SOON_PROVIDERS = [
+  { slug: "google-sheets", title: "Google Sheets" },
+  { slug: "salesforce", title: "Salesforce" },
+  { slug: "onoffice", title: "onOffice" },
+  { slug: "supabase", title: "Supabase" },
+  { slug: "brevo", title: "Brevo" },
+  { slug: "webhook", title: "Webhook" },
+]
 import { PlaceholderInput } from "@/components/ui/placeholder-input"
 import { EmailField } from "@/components/ui/email-field"
 import { FullscreenTemplateEditor } from "@/components/email-template-editor/FullscreenTemplateEditor"
@@ -369,7 +379,7 @@ export default function ProvidersPage() {
     }
   }, [selectedProviderType, providerTypes, editingProvider])
 
-  const handleOpenDialog = (provider?: Provider) => {
+  const handleOpenDialog = (provider?: Provider | null, preselectedType?: string) => {
     if (provider) {
       setEditingProvider(provider)
       setSelectedProviderType(provider.provider_type)
@@ -393,15 +403,36 @@ export default function ProvidersPage() {
       })
     } else {
       setEditingProvider(null)
-      setSelectedProviderType('')
-      setSettings({})
-      form.reset({
-        name: "",
-        provider_type: "",
-        form_identifier: null,
-        is_active: true,
-        settings: {},
-      })
+      const typeToSelect = preselectedType ?? ""
+      setSelectedProviderType(typeToSelect)
+      if (typeToSelect) {
+        const selectedType = providerTypes.find(t => t.slug === typeToSelect)
+        const defaultSettings: Record<string, any> = {}
+        if (selectedType) {
+          selectedType.fields.forEach(field => {
+            if (field.default !== undefined) {
+              defaultSettings[field.name] = field.default
+            }
+          })
+        }
+        setSettings(defaultSettings)
+        form.reset({
+          name: "",
+          provider_type: typeToSelect,
+          form_identifier: null,
+          is_active: true,
+          settings: defaultSettings,
+        })
+      } else {
+        setSettings({})
+        form.reset({
+          name: "",
+          provider_type: "",
+          form_identifier: null,
+          is_active: true,
+          settings: {},
+        })
+      }
     }
     setIsDialogOpen(true)
   }
@@ -550,11 +581,11 @@ export default function ProvidersPage() {
                     <FormItem>
                       <FormLabel>{__('providerType')}</FormLabel>
                       <Select 
+                        value={field.value || undefined}
                         onValueChange={(value) => {
                           field.onChange(value)
                           setSelectedProviderType(value)
                         }}
-                        defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -654,6 +685,21 @@ export default function ProvidersPage() {
           onOpenChange={setIsTemplateEditorOpen}
           initialHtml={editingBodyField ? (settings[editingBodyField] || '') : ''}
           onSave={handleTemplateEditorSave}
+        />
+      </div>
+      <div className="space-y-4">
+        <h4 className="text-sm font-medium">{__("addProviderFromType")}</h4>
+        <ProviderTypeGrid
+          providerTypes={providerTypes.map((t) => ({
+            slug: t.slug,
+            title: t.title,
+            icon: t.icon ?? null,
+          }))}
+          comingSoon={COMING_SOON_PROVIDERS.map((p) => ({
+            ...p,
+            icon: (window as any).gutenForm?.comingSoonProviderIcons?.[p.slug] ?? null,
+          }))}
+          onSelectType={(slug) => handleOpenDialog(null, slug)}
         />
       </div>
       <Separator />

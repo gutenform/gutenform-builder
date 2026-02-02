@@ -1,12 +1,9 @@
 import {
     CircleUser,
-    Home,
     Mail,
     Menu,
     SlidersHorizontal,
     Package2,
-    BarChart
-
 } from "lucide-react"
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button"
@@ -19,9 +16,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Logo from "../Icons/Logo";
 import { clsx } from "clsx";
 import { __ } from "@/lib/i18n";
@@ -29,34 +25,24 @@ import { __ } from "@/lib/i18n";
 
 const navigation = [
     {
-        name: "dashboard",
-        href: "dashboard",
-        icon: Home,
-        current: false,
-    },
-    {
         name: "inbox",
         href: "inbox",
+        path: "inbox",
         icon: Mail,
         current: true,
     },
-
     {
         name: "settings",
         href: "settings",
+        path: "settings",
         icon: SlidersHorizontal,
         current: false,
     },
-    {
-        name: "charts",
-        href: "charts",
-        icon: BarChart,
-        current: false,
-    }
 ];
 
 export default function LayoutOne() {
-    let showApplicationLayout = !gutenForm.isAdmin;
+    const gutenForm = typeof window !== 'undefined' ? window.gutenForm : null;
+    let showApplicationLayout = !gutenForm?.isAdmin;
     let location = useLocation();
     const navigate = useNavigate();
     const pageTitle = location.pathname.split("/")[1];
@@ -64,29 +50,43 @@ export default function LayoutOne() {
         showApplicationLayout = false;
     }
     useEffect(() => {
-        if (pageTitle) {
-          navigate(pageTitle);
-        } else {
-          navigate('');
+        // Only redirect when at root - never overwrite nested routes like /settings/providers
+        if (location.pathname === '/' || location.pathname === '') {
+          navigate('/inbox');
         }
       }, []);
+
+    // Use full URLs for nav links so WordPress admin menu stays in sync (active state)
+    const getNavHref = (item) => {
+        const gutenForm = typeof window !== 'undefined' ? window.gutenForm : null;
+        if (gutenForm?.adminUrl) {
+            const base = gutenForm.adminUrl;
+            const page = item.path === 'settings' ? 'gutenform-settings' : 'gutenform';
+            // Preserve settings sub-route (e.g. /providers) when already on settings
+            const settingsHash = location.pathname.startsWith('/settings')
+                ? '#' + location.pathname
+                : '#/settings';
+            return `${base}?page=${page}${item.path === 'settings' ? settingsHash : '#/inbox'}`;
+        }
+        return `#/${item.href}`;
+    };
 
     return (
         <div className={`grid w-full ${showApplicationLayout ? 'md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]' : 'grid-cols-1 h-full'}`}>
             {showApplicationLayout && <div className="hidden border-r bg-muted/40 md:block">
                 <div className="flex h-full max-h-screen flex-col gap-2">
                     <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-                        <NavLink to="inbox" className="flex items-center gap-2 font-semibold">
+                        <a href={typeof window !== 'undefined' && window.gutenForm?.adminUrl ? `${window.gutenForm.adminUrl}?page=gutenform#/inbox` : '#/inbox'} className="flex items-center gap-2 font-semibold">
                             <Logo />
                             <span className="">{__('pluginName')}</span>
-                        </NavLink>
+                        </a>
                        
                     </div>
                     <div className="flex-1">
                         <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
                             {navigation.map((item,index) => {
-                                return <NavLink
-                                    to={item.href}
+                                return <a
+                                    href={getNavHref(item)}
                                     key={index}
                                     className={
                                         clsx(
@@ -99,7 +99,7 @@ export default function LayoutOne() {
                                 >
                                     <item.icon className="h-5 w-5" />
                                     {__(item.name)}
-                                </NavLink>
+                                </a>
                             })}
 
 
@@ -133,8 +133,8 @@ export default function LayoutOne() {
                                     <span className="sr-only">{__('pluginName')}</span>
                                 </a>
                                 {navigation.map((item,index) => {
-                                    return <NavLink
-                                        to={item.href}
+                                    return <a
+                                        href={getNavHref(item)}
                                         key={index}
                                         className={
                                             clsx(
@@ -146,8 +146,8 @@ export default function LayoutOne() {
                                         }
                                     >
                                         <item.icon className="h-5 w-5" />
-                                        {item.name}
-                                    </NavLink>
+                                        {__(item.name)}
+                                    </a>
                                 })}
 
 

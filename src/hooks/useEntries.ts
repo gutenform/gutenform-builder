@@ -203,8 +203,6 @@ export function useUpdateEntry() {
 
       const response = await apiPost<ApiResponse<Entry>>('entries/update', data);
 
-      console.log('response', response);
-      
       if (response.success && response.data) {
         return response.data;
       } else {

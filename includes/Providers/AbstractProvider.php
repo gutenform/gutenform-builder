@@ -58,6 +58,53 @@ abstract class AbstractProvider
     abstract public function get_settings_fields(): array;
 
     /**
+     * Returns the icon URL for the provider type.
+     * Searches only in plugin assets folder. Priority: svg, png, jpg, jpeg.
+     *
+     * @return string|null The icon URL or null
+     */
+    public function get_icon(): ?string
+    {
+        return $this->resolve_provider_icon($this->get_slug());
+    }
+
+    /**
+     * Resolves the icon URL for a provider slug.
+     * Searches only in plugin folder assets/providers/. Extension priority: svg, png, jpg, jpeg.
+     *
+     * @param string $slug The provider slug (e.g. 'database', 'email').
+     * @return string|null The icon URL or null if not found.
+     */
+    protected function resolve_provider_icon(string $slug): ?string
+    {
+        return self::get_icon_url_for_slug($slug);
+    }
+
+    /**
+     * Returns the icon URL for a provider slug. Can be called statically.
+     * Searches only in plugin folder assets/providers/. Extension priority: svg, png, jpg, jpeg.
+     *
+     * @param string $slug The provider slug (e.g. 'database', 'email', 'google-sheets').
+     * @return string|null The icon URL or null if not found.
+     */
+    public static function get_icon_url_for_slug(string $slug): ?string
+    {
+        $extensions = array('svg', 'png', 'jpg', 'jpeg');
+
+        if (defined('GF_DIR') && defined('GF_ASSETS_URL')) {
+            $plugin_path = GF_DIR . 'assets/providers/';
+            foreach ($extensions as $ext) {
+                $filename = $slug . '.' . $ext;
+                if (file_exists($plugin_path . $filename)) {
+                    return GF_ASSETS_URL . '/providers/' . $filename;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Replaces placeholders in a string.
      *
      * Supports:

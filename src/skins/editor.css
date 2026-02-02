@@ -1,0 +1,5 @@
+.editor-styles-wrapper .gutenform-field {
+    input, textarea, select {
+        pointer-events: none;
+    }
+}

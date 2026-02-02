@@ -1,0 +1,27 @@
+# Inbox
+
+The Inbox is the central hub for managing form submissions (entries). It provides an email-client-like interface.
+
+## Features
+
+- **Entry List**: View all form submissions with name, email, subject, and preview
+- **Status Filtering**: Filter by status (Inbox, Junk, Archive, Trash)
+- **Label Filtering**: Filter by custom labels
+- **Form Identifier Filtering**: Filter by form (when using multiple forms)
+- **Read/Unread**: Mark entries as read or unread
+- **Bulk Actions**: Select multiple entries for bulk delete or move
+- **Drag & Drop**: Drag entries to status folders or labels in the sidebar
+- **Context Menu**: Right-click for mark read, move to archive/trash, delete
+- **Empty Trash**: Permanently delete all trashed entries
+
+## Entry Display
+
+When selecting an entry, the right panel shows:
+- Full entry data as a table
+- File attachments with download links
+- Labels with color indicators
+- Status and metadata
+
+## Auto-Refresh
+
+The Inbox automatically refreshes every 5 seconds to fetch new entries.

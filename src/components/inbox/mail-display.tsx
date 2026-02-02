@@ -4,6 +4,7 @@ import {
   Archive,
   ArchiveX,
   MoreVertical,
+  RefreshCw,
   Trash2,
 } from "lucide-react"
 
@@ -31,6 +32,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { EntryLabel, useEntryLabels, useUpdateEntry, Entry } from "@/hooks"
+import { __ } from "@/lib/i18n"
 import { useProviderByType } from "@/hooks/useProviders"
 import { useEffect, useMemo, ReactNode } from "react"
 import {
@@ -57,6 +59,7 @@ export interface Mail {
 
 interface MailDisplayProps {
   mail: Mail | null
+  onRefresh?: () => void
 }
 
 // Helper component to format all fields as a Table
@@ -158,7 +161,7 @@ function AllFieldsTable({ data }: { data: Record<string, any> }) {
   );
 }
 
-export function MailDisplay({ mail }: MailDisplayProps) {
+export function MailDisplay({ mail, onRefresh }: MailDisplayProps) {
   const {updateEntry} = useUpdateEntry();
   const {labels, refetch: refetchLabels} = useEntryLabels();
   const { provider: databaseProvider } = useProviderByType('database');
@@ -275,49 +278,64 @@ export function MailDisplay({ mail }: MailDisplayProps) {
         <div className="flex items-center gap-2">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant={mail?.status === 'archive' ? 'default' : 'ghost'} size="icon" disabled={!mail} onClick={() => {
+              <Button variant={mail?.status === 'archive' ? 'default' : 'ghost'} size="icon" disabled={!mail} onClick={async () => {
                 if(!mail) return;
-                updateEntry({
+                await updateEntry({
                   id: mail.id,
                   status: mail?.status === 'archive' ? 'inbox' : 'archive',
                 });
+                onRefresh?.();
               }}>
                 <Archive className="h-4 w-4" />
                 <span className="sr-only">Archive</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="bottom">Archive</TooltipContent>
+            <TooltipContent side="bottom">{mail?.status === 'archive' ? __('moveToArchive') + ' → Inbox' : __('moveToArchive')}</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant={mail?.status === 'junk' ? 'default' : 'ghost'} size="icon" disabled={!mail} onClick={() => {
+              <Button variant={mail?.status === 'junk' ? 'default' : 'ghost'} size="icon" disabled={!mail} onClick={async () => {
                 if(!mail) return;
-                updateEntry({
+                await updateEntry({
                   id: mail.id,
                   status: mail?.status === 'junk' ? 'inbox' : 'junk',
                 });
+                onRefresh?.();
               }}>
                 <ArchiveX className="h-4 w-4" />
                 <span className="sr-only">Move to junk</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="bottom">Move to junk</TooltipContent>
+            <TooltipContent side="bottom">{mail?.status === 'junk' ? __('junk') + ' → Inbox' : __('junk')}</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant={mail?.status === 'trash' ? 'default' : 'ghost'} size="icon" disabled={!mail} onClick={() => {
+              <Button variant={mail?.status === 'trash' ? 'default' : 'ghost'} size="icon" disabled={!mail} onClick={async () => {
                 if(!mail) return;
-                updateEntry({
+                await updateEntry({
                   id: mail.id,
                   status: mail?.status === 'trash' ? 'inbox' : 'trash',
                 });
+                onRefresh?.();
               }}>
                 <Trash2 className="h-4 w-4" />
                 <span className="sr-only">Move to trash</span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent side="bottom">Move to trash</TooltipContent>
+            <TooltipContent side="bottom">{mail?.status === 'trash' ? __('moveToTrash') + ' → Inbox' : __('moveToTrash')}</TooltipContent>
           </Tooltip>
+          <Separator orientation="vertical" className="mx-1 h-6" />
+          {onRefresh && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={() => onRefresh()}>
+                  <RefreshCw className="h-4 w-4" />
+                  <span className="sr-only">{__('refresh')}</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">{__('refresh')}</TooltipContent>
+            </Tooltip>
+          )}
           <Separator orientation="vertical" className="mx-1 h-6" />
         </div>
         <div className="ml-auto flex items-center gap-2">
@@ -334,8 +352,8 @@ export function MailDisplay({ mail }: MailDisplayProps) {
             {labels.map((label) => (
               <DropdownMenuItem 
               key={label.id}
-              className={mail?.labels?.includes(label.id) ? 'bg-accent' : ''}
-              onClick={() => {
+              className={mail?.labels?.some((l) => l.id === label.id) ? 'bg-accent' : ''}
+              onClick={async () => {
                 if(!mail) return;
                 const labelIds = mail.labels.map((l) => l.id);
                 if(labelIds.includes(label.id)) {
@@ -343,10 +361,11 @@ export function MailDisplay({ mail }: MailDisplayProps) {
                 } else {
                   labelIds.push(label.id);
                 }
-                updateEntry({
+                await updateEntry({
                   id: mail.id,
                   labels: labelIds as number[],
                 });
+                onRefresh?.();
               }}
               >{label.name}</DropdownMenuItem>
             ))}
@@ -360,13 +379,14 @@ export function MailDisplay({ mail }: MailDisplayProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => {
+            <DropdownMenuItem onClick={async () => {
               if(!mail) return;
-              updateEntry({
+              await updateEntry({
                 id: mail.id,
                 is_read: !mail.read,
               });
-            }}>{mail?.read ? 'Mark as unread' : 'Mark as read'}</DropdownMenuItem>
+              onRefresh?.();
+            }}>{mail?.read ? __('markAsUnread') : __('markAsRead')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

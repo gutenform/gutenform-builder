@@ -1,10 +1,11 @@
 import { MailComp } from "@/components/inbox/mail"
-import { StatusCount, useEntries, useEntryLabels, useFormIdentifiers, useStatuses, useBulkEntryOperations, useMarkEntryRead, useDeleteEntry, useUpdateEntry } from "@/hooks";
-import { File, Inbox, ArchiveX, Trash2, Archive } from "lucide-react";
+import { StatusCount, useEntries, useEntryLabels, useFormIdentifiers, useStatuses, useBulkEntryOperations, useMarkEntryRead, useDeleteEntry, useUpdateEntry, useMailboxes } from "@/hooks";
+import { Inbox, ArchiveX, Trash2, Archive } from "lucide-react";
+import { apiPost } from "@/lib/api";
 import { useStore } from "@nanostores/react";
 import { $inboxFilters, setInboxFilters } from "./stores";
 import { NavLink } from "@/components/inbox/nav";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { __ } from "@/lib/i18n";
 import { toast } from "sonner"
 
@@ -14,7 +15,8 @@ const getStatusCount = (statuses: StatusCount[], status: string = 'new') => {
 
 export default function MailPage() {
   const filter = useStore($inboxFilters);
-  const { entries, refetch: refetchEntries } = useEntries();
+  const { entries, loading: entriesLoading, refetch: refetchEntries } = useEntries();
+  const { mailboxes } = useMailboxes();
   const { formIdentifiers, refetch: refetchFormIdentifiers } = useFormIdentifiers();
   const {statuses, refetch: refetchStatuses} = useStatuses(); 
   const { labels, refetch: refetchLabels } = useEntryLabels();
@@ -23,16 +25,31 @@ export default function MailPage() {
   const { deleteEntry } = useDeleteEntry();
   const { updateEntry: updateEntryFn } = useUpdateEntry();
 
-  //refresh every 5 seconds
+  const AUTO_REFRESH_STORAGE_KEY = 'gutenform-inbox-auto-refresh';
+  const [autoRefresh, setAutoRefresh] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    const stored = localStorage.getItem(AUTO_REFRESH_STORAGE_KEY);
+    return stored === null ? true : stored === 'true';
+  });
+
+  const handleAutoRefreshChange = (enabled: boolean) => {
+    setAutoRefresh(enabled);
+    localStorage.setItem(AUTO_REFRESH_STORAGE_KEY, String(enabled));
+  };
+
+  const refetchAll = () => {
+    refetchEntries();
+    refetchFormIdentifiers();
+    refetchStatuses();
+    refetchLabels();
+  };
+
+  // Refresh every 5 seconds when auto-refresh is enabled
   useEffect(() => {
-    const interval = setInterval(() => {
-      refetchEntries();
-      refetchFormIdentifiers();
-      refetchStatuses();
-      refetchLabels();
-    }, 5000);
+    if (!autoRefresh) return;
+    const interval = setInterval(refetchAll, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [autoRefresh]);
 
   /* @ts-ignore */
   const makeDataToReadableString = (data) => {
@@ -89,7 +106,7 @@ export default function MailPage() {
         title: __('entryMoved'),
         description: __('entryMovedDescription'),
       })
-      refetchEntries()
+      refetchAll()
     } catch (err: any) {
       toast({
         title: __('error'),
@@ -106,7 +123,7 @@ export default function MailPage() {
         title: __('labelAdded'),
         description: __('labelAddedDescription'),
       })
-      refetchEntries()
+      refetchAll()
     } catch (err: any) {
       toast({
         title: __('error'),
@@ -195,6 +212,9 @@ export default function MailPage() {
           additionalNavLinks={additionalNavLinks}
           labelNavLinks={labelNavLinks}
           mails={entriesListing}
+          loading={entriesLoading}
+          autoRefresh={autoRefresh}
+          onAutoRefreshChange={handleAutoRefreshChange}
           defaultLayout={[265, 440, 655]}
           defaultCollapsed={false}
           navCollapsedSize={4}
@@ -205,7 +225,7 @@ export default function MailPage() {
                 title: __('entriesDeleted'),
                 description: __('entriesDeletedDescription'),
               })
-              refetchEntries()
+              refetchAll()
             } catch (err: any) {
               toast({
                 title: __('error'),
@@ -221,7 +241,7 @@ export default function MailPage() {
                 title: __('entriesMoved'),
                 description: __('entriesMovedDescription'),
               })
-              refetchEntries()
+              refetchAll()
             } catch (err: any) {
               toast({
                 title: __('error'),
@@ -237,7 +257,7 @@ export default function MailPage() {
                 title: __('entryUpdated'),
                 description: read ? __('entryMarkedAsRead') : __('entryMarkedAsUnread'),
               })
-              refetchEntries()
+              refetchAll()
             } catch (err: any) {
               toast({
                 title: __('error'),
@@ -253,7 +273,7 @@ export default function MailPage() {
                 title: __('entryDeleted'),
                 description: __('entryDeletedDescription'),
               })
-              refetchEntries()
+              refetchAll()
             } catch (err: any) {
               toast({
                 title: __('error'),
@@ -269,7 +289,7 @@ export default function MailPage() {
                 title: __('entryMoved'),
                 description: __('entryMovedDescription'),
               })
-              refetchEntries()
+              refetchAll()
             } catch (err: any) {
               toast({
                 title: __('error'),
@@ -278,7 +298,25 @@ export default function MailPage() {
               })
             }
           }}
-          onEmptyTrash={refetchEntries}
+          onMoveToMailbox={async (id, mailboxId) => {
+            try {
+              await updateEntryFn({ id, mailbox_id: mailboxId })
+              toast({
+                title: __('entryMovedToMailbox'),
+                description: __('entryMovedDescription'),
+              })
+              refetchAll()
+            } catch (err: any) {
+              toast({
+                title: __('error'),
+                description: err.message || __('errorOccurred'),
+                variant: 'destructive',
+              })
+            }
+          }}
+          mailboxes={mailboxes}
+          onRefresh={refetchAll}
+          onEmptyTrash={refetchAll}
         />
       </div>
     </>

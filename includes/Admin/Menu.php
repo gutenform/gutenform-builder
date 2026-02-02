@@ -52,48 +52,24 @@ class Menu
 			3
 		);
 
-		$plugin_url = admin_url('/admin.php?page=' . $this->parent_slug);
-
-		$current_page = get_admin_page_parent();
-
-		if ($current_page === $this->parent_slug) {
-			$plugin_url = '';
-		}
+		$settings_slug = $this->parent_slug . '-settings';
 
 		$submenu_pages = array(
-			array(
-				'parent_slug' => $this->parent_slug,
-				'page_title'  => __('Dashboard', 'gutenform'),
-				'menu_title'  => __('Dashboard', 'gutenform'),
-				'capability'  => 'manage_options',
-				'menu_slug'   => $this->parent_slug,
-				'function'    => array($this, 'admin_page'), // Uses the same callback function as parent menu.
-			),
 			array(
 				'parent_slug' => $this->parent_slug,
 				'page_title'  => __('Inbox', 'gutenform'),
 				'menu_title'  => __('Inbox', 'gutenform'),
 				'capability'  => 'manage_options',
-				'menu_slug'   => $plugin_url . '/#/inbox',
-				'function'    => null, // Uses the same callback function as parent menu.
+				'menu_slug'   => $this->parent_slug,
+				'function'    => array($this, 'admin_page'),
 			),
-
-			array(
-				'parent_slug' => $this->parent_slug,
-				'page_title'  => __('Chart', 'gutenform'),
-				'menu_title'  => __('Chart', 'gutenform'),
-				'capability'  => 'manage_options',
-				'menu_slug'   => $plugin_url . '/#/charts',
-				'function'    => null, // Uses the same callback function as parent menu.
-			),
-
 			array(
 				'parent_slug' => $this->parent_slug,
 				'page_title'  => __('Settings', 'gutenform'),
 				'menu_title'  => __('Settings', 'gutenform'),
 				'capability'  => 'manage_options',
-				'menu_slug'   => $plugin_url . '/#/settings',
-				'function'    => null, // Uses the same callback function as parent menu.
+				'menu_slug'   => $settings_slug,
+				'function'    => array($this, 'admin_page'),
 			),
 		);
 
@@ -119,6 +95,14 @@ class Menu
 	 */
 	public function admin_page()
 	{
+		$page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+		$settings_slug = $this->parent_slug . '-settings';
+
+		if ($page === $settings_slug) {
+			// Only set default hash when empty or not already on a settings sub-route
+			// This preserves #/settings/providers etc. on page reload
+			echo '<script>(function(){var h=window.location.hash;if(!h||h==="#"||h==="#/"||!h.startsWith("#/settings")){window.location.hash="#/settings";}})();</script>';
+		}
 ?>
 		<div id="myplugin" class="myplugin-app"></div>
 <?php

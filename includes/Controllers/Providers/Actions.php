@@ -290,6 +290,7 @@ class Actions
 				$types[] = array(
 					'slug'  => $slug,
 					'title' => $provider->get_title(),
+					'icon'  => $provider->get_icon(),
 					'fields' => $provider->get_settings_fields(),
 				);
 			}

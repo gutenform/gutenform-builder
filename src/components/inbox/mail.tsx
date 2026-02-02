@@ -28,12 +28,14 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
 import { setInboxFilters } from "@/admin/pages/inbox/stores"
 import { useStore } from "@nanostores/react"
 import { $inboxFilters } from "@/admin/pages/inbox/stores"
-import { Trash2 } from "lucide-react"
+import { Loader2, Trash2 } from "lucide-react"
 import { useState } from "react"
 import { apiPost } from "@/lib/api"
 import { __ } from "@/lib/i18n"
@@ -47,6 +49,9 @@ type NavLink = {
 }
 interface MailProps {
   mails: MailType[]
+  loading?: boolean
+  autoRefresh?: boolean
+  onAutoRefreshChange?: (enabled: boolean) => void
   defaultNavLinks: NavLink[]
   additionalNavLinks: NavLink[]
   labelNavLinks: NavLink[]
@@ -58,11 +63,17 @@ interface MailProps {
   onMarkRead?: (id: number, read: boolean) => void
   onDelete?: (id: number) => void
   onMoveTo?: (id: number, status: string) => void
+  onMoveToMailbox?: (id: number, mailboxId: number) => void
+  mailboxes?: { id: number; title: string }[]
+  onRefresh?: () => void
   onEmptyTrash?: () => void
 }
 
 export function MailComp({
   mails,
+  loading = false,
+  autoRefresh = true,
+  onAutoRefreshChange,
   defaultNavLinks = [],  
   additionalNavLinks = [],
   labelNavLinks = [],
@@ -74,6 +85,9 @@ export function MailComp({
   onMarkRead,
   onDelete,
   onMoveTo,
+  onMoveToMailbox,
+  mailboxes = [],
+  onRefresh,
   onEmptyTrash,
 }: MailProps) {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
@@ -130,10 +144,35 @@ export function MailComp({
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30} className="h-full overflow-y-auto"
         >
           <Tabs defaultValue="all">
-            <div className="flex items-center px-4 py-1.5">
-              <h1 className="text-xl dark:text-white font-bold">Inbox</h1>
-              <div className="ml-auto flex items-center gap-2">
-                {filter.status === 'trash' && (
+            <div className="flex flex-col gap-2 px-4 py-1.5">
+              <div className="flex items-center">
+                <h1 className="text-xl dark:text-white font-bold flex items-center gap-2">
+                  Inbox
+                  {loading && (
+                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                  )}
+                </h1>
+                <div className="ml-auto flex items-center gap-2">
+                  {onAutoRefreshChange && (
+                    <div className="flex items-center gap-2 px-3 py-1.5 border rounded-md">
+                      <Switch
+                        id="auto-refresh"
+                        checked={autoRefresh}
+                        onCheckedChange={onAutoRefreshChange}
+                      />
+                      <Label htmlFor="auto-refresh" className="text-sm cursor-pointer whitespace-nowrap">
+                        {__('autoRefresh')}
+                      </Label>
+                    </div>
+                  )}
+                  <TabsList>
+                    <TabsTrigger onClick={() => setInboxFilters({ is_read: undefined })} value="all" className="text-zinc-600 dark:text-zinc-200">All mail</TabsTrigger>
+                    <TabsTrigger onClick={() => setInboxFilters({ is_read: 0 })} value="unread" className="text-zinc-600 dark:text-zinc-200">Unread</TabsTrigger>
+                  </TabsList>
+                </div>
+              </div>
+              {filter.status === 'trash' && (
+                <div className="flex items-center">
                   <Button
                     variant="destructive"
                     size="sm"
@@ -142,12 +181,8 @@ export function MailComp({
                     <Trash2 className="h-4 w-4 mr-2" />
                     {__('emptyTrash')}
                   </Button>
-                )}
-                <TabsList>
-                  <TabsTrigger onClick={() => setInboxFilters({ is_read: undefined })} value="all" className="text-zinc-600 dark:text-zinc-200">All mail</TabsTrigger>
-                  <TabsTrigger onClick={() => setInboxFilters({ is_read: 0 })} value="unread" className="text-zinc-600 dark:text-zinc-200">Unread</TabsTrigger>
-                </TabsList>
-              </div>
+                </div>
+              )}
             </div>
             <Separator />
             <div className="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -159,12 +194,15 @@ export function MailComp({
               </form>
             </div>
             <MailList 
-              items={mails} 
+              items={mails}
+              loading={loading}
               onBulkDelete={onBulkDelete}
               onBulkMove={onBulkMove}
               onMarkRead={onMarkRead}
               onDelete={onDelete}
               onMoveTo={onMoveTo}
+              onMoveToMailbox={onMoveToMailbox}
+              mailboxes={mailboxes}
             />
           </Tabs>
           
@@ -220,6 +258,7 @@ export function MailComp({
         <ResizablePanel defaultSize={defaultLayout[2]}>
           <MailDisplay
             mail={mails.find((item) => item.id === mail.selected) || null}
+            onRefresh={onRefresh}
           />
         </ResizablePanel>
       </ResizablePanelGroup>

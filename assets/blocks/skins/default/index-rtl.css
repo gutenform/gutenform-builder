@@ -5,7 +5,19 @@
     --field-size: 100%;
     --field-padding: 1rem 1.25rem;
     --field-rounded: 0.5rem;
-    --field-border: 1px solid #ccc;
+    --field-border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+
+    /* Akzentfarbe – einheitlich für Focus, Buttons, File-Upload etc. */
+    --field-accent: #E71D73;
+    --field-accent-hover: color-mix(in srgb, var(--field-accent) 85%, black);
+    --field-accent-muted: color-mix(in srgb, var(--field-accent) 12%, white);
+    --field-accent-ring: color-mix(in srgb, var(--field-accent) 25%, transparent);
+
+    /* Focus, Hover, Active – barrierefrei & haptisch */
+    --field-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --field-border-hover: color-mix(in srgb, currentColor 30%, transparent);
+    --field-border-focus: var(--field-accent);
+    --field-ring-focus: 0 0 0 3px var(--field-accent-ring);
     
     * {
         box-sizing: border-box;
@@ -19,6 +31,114 @@
         border: var(--field-border);
         font-size: var(--field-font-size, inherit);
         font-family: inherit;
+        transition: border-color var(--field-transition), box-shadow var(--field-transition), background-color var(--field-transition);
+    }
+
+    input:hover, textarea:hover, select:hover {
+        border-color: var(--field-border-hover);
+    }
+
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        border-color: var(--field-border-focus);
+        box-shadow: var(--field-ring-focus);
+    }
+
+    input:active, textarea:active, select:active {
+        transition-duration: 0.1s;
+    }
+
+    /* Select: Modern custom styling */
+    select {
+        --select-bg: var(--field-select-bg, #fff);
+        --select-border-color: var(--field-select-border-color, #e5e7eb);
+
+        -webkit-appearance: none;
+
+           -moz-appearance: none;
+
+                appearance: none;
+        border-color: var(--select-border-color);
+        background-color: var(--select-bg);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%236b7280%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: left 1rem center;
+        background-size: 1rem;
+        padding-left: 2.75rem;
+        cursor: pointer;
+    }
+
+    select:hover {
+        border-color: var(--field-border-hover);
+    }
+
+    select:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* Customizable Select (Chromium): Style the picker/dropdown when supported */
+    @supports (selector(select::picker(select))) {
+        select,
+        select::picker(select) {
+            -webkit-appearance: base-select;
+               -moz-appearance: base-select;
+                    appearance: base-select;
+        }
+
+        /* Native Dropdown-Icon ausblenden – wir nutzen unser eigenes Chevron */
+        select::picker-icon {
+            display: none;
+        }
+
+        select::picker(select) {
+            --select-picker-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+            margin-top: 0.25rem;
+            border-radius: var(--field-rounded);
+            border: 1px solid var(--select-border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            padding: 0.25rem;
+            max-height: 16rem;
+            overflow-y: auto;
+            transition: opacity var(--select-picker-transition), transform var(--select-picker-transition);
+            transition-behavior: allow-discrete;
+        }
+
+        @starting-style {
+            select::picker(select) {
+                opacity: 0;
+                transform: translateY(-8px) scale(0.96);
+            }
+        }
+
+        select option {
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            margin-bottom: 0.125rem;
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+
+        select option:hover,
+        select option:focus {
+            background-color: var(--field-select-option-hover, #f3f4f6);
+        }
+
+        select option:checked {
+            background-color: var(--field-select-option-selected, var(--field-accent-muted));
+            color: var(--field-select-option-selected-color, var(--field-accent-hover));
+            font-weight: 500;
+        }
+
+        select option::checkmark {
+            color: var(--field-border-focus);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            select::picker(select) {
+                transition-duration: 0.01ms !important;
+            }
+        }
     }
 
     input::-moz-placeholder, textarea::-moz-placeholder, select::-moz-placeholder {
@@ -72,39 +192,55 @@
             border: var(--submit-border, var(--field-border, 1px solid white));
             color: var(--submit-color, var(--field-color, white));
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color var(--field-transition), color var(--field-transition), transform var(--field-transition), box-shadow var(--field-transition);
 
             &:hover {
                 background-color: var(--submit-background-color-hover, var(--field-background-color-hover, black));
                 color: var(--submit-color-hover, var(--field-color-hover, white));
+            }
+
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 35%, transparent);
+            }
+
+            &:active {
+                transform: scale(0.99);
+                transition-duration: 0.1s;
             }
         }
     }
 
     .wp-block-gutenform-file {
         .gutenform-file-upload-zone {
-            border: 2px dashed var(--field-border-color, #3b82f6);
+            border: 2px dashed var(--field-border-color, var(--field-accent));
             border-radius: var(--field-rounded);
             padding: 2rem;
             background-color: var(--field-background-color, #fff);
-            transition: all 0.2s ease;
+            transition: border-color var(--field-transition), background-color var(--field-transition), box-shadow var(--field-transition);
         }
 
         .gutenform-file-upload-zone:hover {
             background-color: var(--field-background-color-hover, #f8fafc);
         }
 
+        .gutenform-file-upload-zone:focus-within {
+            outline: none;
+            border-color: var(--field-border-focus);
+            box-shadow: var(--field-ring-focus);
+        }
+
         .gutenform-file-upload-zone--dragover {
-            border-color: var(--field-border-color-active, #2563eb);
-            background-color: var(--field-background-color-active, #eff6ff);
+            border-color: var(--field-border-color-active, var(--field-accent-hover));
+            background-color: var(--field-background-color-active, var(--field-accent-muted));
         }
 
         .gutenform-file-upload-icon {
-            color: var(--field-border-color, #3b82f6);
+            color: var(--field-border-color, var(--field-accent));
         }
 
         .gutenform-file-upload-text-primary {
-            color: var(--field-border-color, #3b82f6);
+            color: var(--field-border-color, var(--field-accent));
         }
 
         .gutenform-file-upload-text-secondary {
@@ -119,21 +255,38 @@
                 border: var(--field-border);
                 font-size: var(--field-font-size, inherit);
                 font-family: inherit;
+                transition: border-color var(--field-transition), box-shadow var(--field-transition);
+            }
+
+            input:focus {
+                outline: none;
+                border-color: var(--field-border-focus);
+                box-shadow: var(--field-ring-focus);
             }
 
             button {
                 padding: var(--field-padding);
                 border-radius: var(--field-rounded);
-                background-color: var(--field-border-color, #3b82f6);
+                background-color: var(--field-border-color, var(--field-accent));
                 color: #fff;
                 border: none;
                 cursor: pointer;
                 font-size: var(--field-font-size, inherit);
                 font-family: inherit;
-                transition: background-color 0.2s ease;
+                transition: background-color var(--field-transition), transform var(--field-transition), box-shadow var(--field-transition);
 
                 &:hover:not(:disabled) {
-                    background-color: var(--field-border-color-active, #2563eb);
+                    background-color: var(--field-border-color-active, var(--field-accent-hover));
+                }
+
+                &:focus {
+                    outline: none;
+                    box-shadow: 0 0 0 3px var(--field-accent-ring);
+                }
+
+                &:active:not(:disabled) {
+                    transform: scale(0.98);
+                    transition-duration: 0.1s;
                 }
 
                 &:disabled {
@@ -151,7 +304,23 @@
         }
 
         .gutenform-file-item-progress-bar {
-            background-color: var(--field-border-color, #3b82f6);
+            background-color: var(--field-border-color, var(--field-accent));
+        }
+    }
+
+    /* Barrierefreiheit: Reduzierte Bewegung respektieren */
+    @media (prefers-reduced-motion: reduce) {
+        input, textarea, select,
+        .wp-block-gutenform-submit button,
+        .gutenform-file-upload-zone,
+        .gutenform-file-url-input input,
+        .gutenform-file-url-input button {
+            transition-duration: 0.01ms !important;
+        }
+
+        .wp-block-gutenform-submit button:active,
+        .gutenform-file-url-input button:active {
+            transform: none;
         }
     }
 }

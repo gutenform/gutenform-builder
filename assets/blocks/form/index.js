@@ -15266,6 +15266,18 @@ console.log('default skin');
 
 /***/ }),
 
+/***/ "./src/skins/editor.css":
+/*!******************************!*\
+  !*** ./src/skins/editor.css ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./src/skins/index.ts":
 /*!****************************!*\
   !*** ./src/skins/index.ts ***!
@@ -15276,10 +15288,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _default_skin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./default/skin */ "./src/skins/default/skin.ts");
+/* harmony import */ var _editor_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./editor.css */ "./src/skins/editor.css");
+/* harmony import */ var _default_skin__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./default/skin */ "./src/skins/default/skin.ts");
+
 
 console.log('skins index');
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ([_default_skin__WEBPACK_IMPORTED_MODULE_0__["default"]]);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ([_default_skin__WEBPACK_IMPORTED_MODULE_1__["default"]]);
 
 /***/ }),
 

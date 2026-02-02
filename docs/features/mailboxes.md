@@ -1,0 +1,17 @@
+# Mailboxes
+
+Mailboxes organize form submissions. Think of them as folders or accounts for your entries.
+
+## Features
+
+- **Multiple Mailboxes**: Create mailboxes for different purposes (e.g., Contact, Newsletter, Support)
+- **Account Switcher**: Switch between mailboxes in the Inbox sidebar
+- **Provider Assignment**: Link providers to mailboxes so entries are routed correctly
+- **Default Mailbox**: A default mailbox is created on first setup
+
+## Management
+
+Mailboxes can be created, updated, and deleted in **Settings > Mailboxes**. Each mailbox has:
+- Title
+- Optional description
+- Association with providers

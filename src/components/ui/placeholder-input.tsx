@@ -130,7 +130,7 @@ export function PlaceholderInput({
             <Code className="h-4 w-4" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[300px] p-0" align="end">
+        <PopoverContent className="w-[300px] p-0 z-[999999]" align="end" sideOffset={4}>
           <div className="p-2">
             <div className="px-2 py-1.5 text-sm font-semibold">
               {__("insertPlaceholder")}

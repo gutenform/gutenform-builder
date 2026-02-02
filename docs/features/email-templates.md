@@ -1,0 +1,26 @@
+# Email Templates
+
+Gutenform includes HTML email templates for form submission notifications.
+
+## Available Templates
+
+### Classic
+
+Traditional email layout with clean, simple styling.
+
+### Colorful
+
+Vibrant template with colored accents and modern design.
+
+### Modern
+
+Contemporary design with subtle gradients and refined typography.
+
+## Template Customization
+
+Templates support placeholders for dynamic content:
+- Form data (submitted field values)
+- Site information
+- Custom header/footer content
+
+Templates can be customized in the provider settings when configuring email delivery.

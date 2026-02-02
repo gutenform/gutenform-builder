@@ -1,0 +1,23 @@
+# Providers
+
+Providers determine where form submissions are stored and how they are delivered.
+
+## Provider Types
+
+### Database
+
+Stores submissions in the WordPress database. Entries are visible in the Inbox. This is the default provider for all forms.
+
+### Email
+
+Sends form submissions via email. Can be configured per-provider with SMTP settings. Integrates with mailboxes for organization.
+
+## Provider Configuration
+
+- **Form Identifier**: Optional identifier to associate the provider with specific forms
+- **Provider Type**: database or email
+- **Mailbox**: For email providers, assign to a mailbox for inbox organization
+
+## Mailbox Assignment
+
+Each provider can be linked to a mailbox. Entries from forms using that provider appear under the assigned mailbox in the Inbox account switcher.

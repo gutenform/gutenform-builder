@@ -29,6 +29,7 @@ export interface ProviderTypeField {
 export interface ProviderType {
   slug: string;
   title: string;
+  icon?: string | null;
   fields: ProviderTypeField[];
 }
 
