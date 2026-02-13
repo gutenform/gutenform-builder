@@ -1,7 +1,7 @@
 /*!*****************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/@wordpress/scripts/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/skins/default/index.css ***!
   \*****************************************************************************************************************************************************************************************************************/
-.wp-block-gutenform-form{
+form.wp-block-gutenform-form{
     --field-size: 100%;
     --field-padding: 1rem 1.25rem;
     --field-rounded: 0.5rem;
@@ -18,6 +18,8 @@
     --field-border-hover: color-mix(in srgb, currentColor 30%, transparent);
     --field-border-focus: var(--field-accent);
     --field-ring-focus: 0 0 0 3px var(--field-accent-ring);
+
+    display: block;
     
     * {
         box-sizing: border-box;
