@@ -72,7 +72,7 @@ export default function Edit(props: BlockEditProps<FormAttributes>) {
 		<>
 			<FormBlockControls {...props} />
 			<FormInspectorControls {...props} />
-			<div { ...blockProps }>
+			<form { ...blockProps }>
 				{innerBlockItems?.length > 0 ? (
 					<div { ...innerBlockProps } />
 				) : (
@@ -81,7 +81,7 @@ export default function Edit(props: BlockEditProps<FormAttributes>) {
 						dispatch('core/block-editor').replaceInnerBlocks(clientId, blocks);
 					}} />
 				)}
-			</div>
+			</form>
 		</>
 	);
 }

@@ -84,11 +84,12 @@
 		},
 		"customClassName": true,
 		"__experimentalExposeControlsToChildren": true,
-		"__experimentalLayout": {
+		"layout": {
 			"allowSwitching": true,
 			"allowInheriting": false,
 			"default": {
-				"type": "flow"
+				"type": "default",
+				"orientation": "vertical"
 			}
 		}
 	},
