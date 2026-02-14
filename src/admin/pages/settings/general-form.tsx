@@ -42,6 +42,10 @@ export function GeneralForm() {
   const [debugLoading, setDebugLoading] = useState(true)
   const [debugSaving, setDebugSaving] = useState(false)
 
+  const [adminBarEnabled, setAdminBarEnabled] = useState(true)
+  const [adminBarLoading, setAdminBarLoading] = useState(true)
+  const [adminBarSaving, setAdminBarSaving] = useState(false)
+
   const form = useForm<GeneralFormValues>({
     resolver: zodResolver(generalFormSchema),
     defaultValues,
@@ -50,6 +54,7 @@ export function GeneralForm() {
 
   useEffect(() => {
     loadDebugStatus()
+    loadAdminBarStatus()
   }, [])
 
   const loadDebugStatus = async () => {
@@ -85,6 +90,42 @@ export function GeneralForm() {
       })
     } finally {
       setDebugSaving(false)
+    }
+  }
+
+  const loadAdminBarStatus = async () => {
+    try {
+      setAdminBarLoading(true)
+      const response = await apiGet<{ enabled: boolean }>("/settings/admin-bar")
+      if (response.enabled !== undefined) {
+        setAdminBarEnabled(response.enabled)
+      }
+    } catch (err: any) {
+      console.error("Failed to load admin bar status:", err)
+    } finally {
+      setAdminBarLoading(false)
+    }
+  }
+
+  const handleAdminBarToggle = async (enabled: boolean) => {
+    try {
+      setAdminBarSaving(true)
+      const response = await apiPost<{ enabled: boolean; message: string }>("/settings/admin-bar", {
+        enabled,
+      })
+      setAdminBarEnabled(response.enabled)
+      toast({
+        title: __("settingsSaved"),
+        description: enabled ? __("adminBarMenuEnabled") : __("adminBarMenuDisabled"),
+      })
+    } catch (err: any) {
+      toast({
+        title: __("error"),
+        description: err.message || __("errorOccurred"),
+        variant: "destructive",
+      })
+    } finally {
+      setAdminBarSaving(false)
     }
   }
 
@@ -136,6 +177,22 @@ export function GeneralForm() {
               checked={debugEnabled}
               onCheckedChange={handleDebugToggle}
               disabled={debugLoading || debugSaving}
+            />
+          </FormControl>
+        </FormItem>
+
+        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+          <div className="space-y-0.5">
+            <FormLabel className="text-base">{__('adminBarMenu')}</FormLabel>
+            <FormDescription>
+              {__('adminBarMenuDescription')}
+            </FormDescription>
+          </div>
+          <FormControl>
+            <Switch
+              checked={adminBarEnabled}
+              onCheckedChange={handleAdminBarToggle}
+              disabled={adminBarLoading || adminBarSaving}
             />
           </FormControl>
         </FormItem>

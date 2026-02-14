@@ -1,0 +1,246 @@
+<?php
+
+namespace Gutenform\Admin;
+
+use Gutenform\Models\Entries;
+use Gutenform\Models\Mailboxes;
+use Gutenform\Traits\Base;
+
+defined('ABSPATH') || exit;
+
+/**
+ * Class AdminBar
+ *
+ * Adds a Gutenform node to the WordPress admin bar with an unread
+ * entries count bubble and a dropdown listing all mailboxes + settings.
+ *
+ * @package Gutenform\Admin
+ * @since   1.1.0
+ */
+class AdminBar
+{
+
+	use Base;
+
+	/**
+	 * Option key used to persist the admin-bar visibility setting.
+	 *
+	 * @var string
+	 */
+	const OPTION_KEY = 'gutenform_admin_bar_enabled';
+
+	/**
+	 * Initialize hooks.
+	 *
+	 * @return void
+	 */
+	public function init()
+	{
+		// Only proceed when the user can manage options and the feature is enabled.
+		if (!current_user_can('manage_options')) {
+			return;
+		}
+
+		if (!self::is_enabled()) {
+			return;
+		}
+
+		add_action('admin_bar_menu', array($this, 'add_admin_bar_menu'), 100);
+		add_action('wp_head', array($this, 'render_styles'));
+		add_action('admin_head', array($this, 'render_styles'));
+	}
+
+	/**
+	 * Check whether the admin bar feature is enabled (default: true).
+	 *
+	 * @return bool
+	 */
+	public static function is_enabled(): bool
+	{
+		return (bool) get_option(self::OPTION_KEY, true);
+	}
+
+	/**
+	 * Build the admin bar node tree.
+	 *
+	 * @param \WP_Admin_Bar $wp_admin_bar WordPress admin bar instance.
+	 *
+	 * @return void
+	 */
+	public function add_admin_bar_menu($wp_admin_bar)
+	{
+		$unread_count = $this->get_unread_count();
+
+		// Build the title with optional bubble.
+		$title = '<span class="ab-icon dashicons dashicons-email"></span>';
+		$title .= '<span class="ab-label">' . esc_html__('Gutenform', 'gutenform') . '</span>';
+
+		if ($unread_count > 0) {
+			$display_count = $unread_count > 99 ? '99+' : $unread_count;
+			$title .= '<span class="gf-admin-bar-bubble">' . esc_html($display_count) . '</span>';
+		}
+
+		// Top-level node.
+		$wp_admin_bar->add_node(array(
+			'id'    => 'gutenform',
+			'title' => $title,
+			'href'  => admin_url('admin.php?page=gutenform#/inbox'),
+			'meta'  => array(
+				'class' => 'gutenform-admin-bar-node',
+			),
+		));
+
+		// Dropdown: Mailboxes.
+		$mailboxes = $this->get_mailboxes();
+
+		foreach ($mailboxes as $mailbox) {
+			$mailbox_unread = $this->get_unread_count_for_mailbox($mailbox->id);
+			$mailbox_title  = esc_html($mailbox->title);
+
+			if ($mailbox_unread > 0) {
+				$mailbox_title .= ' <span class="gf-admin-bar-count">(' . esc_html($mailbox_unread) . ')</span>';
+			}
+
+			$wp_admin_bar->add_node(array(
+				'id'     => 'gutenform-mailbox-' . $mailbox->id,
+				'parent' => 'gutenform',
+				'title'  => $mailbox_title,
+				'href'   => admin_url('admin.php?page=gutenform#/inbox?mailbox=' . $mailbox->id),
+			));
+		}
+
+		// Separator (visual divider via empty group).
+		$wp_admin_bar->add_node(array(
+			'id'     => 'gutenform-separator',
+			'parent' => 'gutenform',
+			'title'  => '<hr style="margin:4px 0;border:0;border-top:1px solid rgba(255,255,255,.15);">',
+			'meta'   => array(
+				'class' => 'gf-admin-bar-separator',
+			),
+		));
+
+		// Dropdown: Settings.
+		$wp_admin_bar->add_node(array(
+			'id'     => 'gutenform-settings',
+			'parent' => 'gutenform',
+			'title'  => esc_html__('Settings', 'gutenform'),
+			'href'   => admin_url('admin.php?page=gutenform-settings#/settings'),
+		));
+	}
+
+	/**
+	 * Get total unread entry count.
+	 *
+	 * @return int
+	 */
+	private function get_unread_count(): int
+	{
+		try {
+			return (int) Entries::where('is_read', 0)
+				->where('status', 'inbox')
+				->count();
+		} catch (\Exception $e) {
+			return 0;
+		}
+	}
+
+	/**
+	 * Get unread entry count for a specific mailbox.
+	 *
+	 * @param int $mailbox_id Mailbox ID.
+	 *
+	 * @return int
+	 */
+	private function get_unread_count_for_mailbox(int $mailbox_id): int
+	{
+		try {
+			return (int) Entries::where('is_read', 0)
+				->where('status', 'inbox')
+				->where('mailbox_id', $mailbox_id)
+				->count();
+		} catch (\Exception $e) {
+			return 0;
+		}
+	}
+
+	/**
+	 * Retrieve all mailboxes.
+	 *
+	 * @return \Illuminate\Database\Eloquent\Collection
+	 */
+	private function get_mailboxes()
+	{
+		try {
+			return Mailboxes::orderBy('title', 'asc')->get();
+		} catch (\Exception $e) {
+			return collect();
+		}
+	}
+
+	/**
+	 * Render inline CSS for the admin bar bubble and icon.
+	 *
+	 * @return void
+	 */
+	public function render_styles()
+	{
+		?>
+		<style>
+			/* Gutenform Admin Bar */
+			#wpadminbar .gutenform-admin-bar-node .ab-icon.dashicons {
+				font-size: 18px !important;
+				line-height: 1.3 !important;
+				width: 20px !important;
+				height: 20px !important;
+				margin-right: 4px !important;
+			}
+
+			#wpadminbar .gutenform-admin-bar-node .ab-icon.dashicons::before {
+				font-size: 18px !important;
+				line-height: 1.3 !important;
+			}
+
+			#wpadminbar .gutenform-admin-bar-node > .ab-item {
+				display: flex !important;
+				align-items: center !important;
+			}
+
+			/* Unread bubble */
+			#wpadminbar .gf-admin-bar-bubble {
+				display: inline-block;
+				background: #d63638;
+				color: #fff;
+				font-size: 10px;
+				font-weight: 600;
+				line-height: 1;
+				min-width: 16px;
+				height: 16px;
+				padding: 3px 5px;
+				border-radius: 10px;
+				text-align: center;
+				margin-left: 6px;
+				vertical-align: middle;
+				box-sizing: border-box;
+			}
+
+			/* Mailbox unread count in dropdown */
+			#wpadminbar .gf-admin-bar-count {
+				opacity: .7;
+				font-size: 12px;
+			}
+
+			/* Separator */
+			#wpadminbar .gf-admin-bar-separator > .ab-item {
+				height: auto !important;
+				padding: 0 10px !important;
+				cursor: default !important;
+			}
+
+			#wpadminbar .gf-admin-bar-separator > .ab-item:hover {
+				background: none !important;
+				color: inherit !important;
+			}
+		</style>
+		<?php
+	}
+}

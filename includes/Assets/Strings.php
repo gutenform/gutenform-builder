@@ -539,6 +539,12 @@ class Strings
 			'missingFieldsDescription' => __('The following fields are referenced in the provider but not present in the form:', 'gutenform'),
 			'addMissingFields' => __('Add Missing Fields', 'gutenform'),
 
+			// Admin Bar
+			'adminBarMenu' => __('Admin Bar Menu', 'gutenform'),
+			'adminBarMenuDescription' => __('Show Gutenform in the WordPress admin bar with an unread entries count.', 'gutenform'),
+			'adminBarMenuEnabled' => __('Admin bar menu has been enabled.', 'gutenform'),
+			'adminBarMenuDisabled' => __('Admin bar menu has been disabled.', 'gutenform'),
+
 			// Custom Fields
 			'customFields' => __('Custom Fields', 'gutenform'),
 			'addCustomField' => __('Add Custom Field', 'gutenform'),

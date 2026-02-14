@@ -6,6 +6,7 @@ import { useStore } from "@nanostores/react";
 import { $inboxFilters, setInboxFilters } from "./stores";
 import { NavLink } from "@/components/inbox/nav";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { __ } from "@/lib/i18n";
 import { toast } from "sonner"
 
@@ -14,9 +15,36 @@ const getStatusCount = (statuses: StatusCount[], status: string = 'new') => {
 }
 
 export default function MailPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const filter = useStore($inboxFilters);
   const { entries, loading: entriesLoading, refetch: refetchEntries } = useEntries();
   const { mailboxes } = useMailboxes();
+
+  // Sync URL ?mailbox= id with store on load and when URL changes
+  useEffect(() => {
+    const mailboxParam = searchParams.get("mailbox");
+    if (mailboxParam != null && mailboxParam !== "") {
+      const id = parseInt(mailboxParam, 10);
+      if (!Number.isNaN(id) && id > 0 && id !== filter.mailbox_id) {
+        setInboxFilters({ mailbox_id: id });
+      }
+    }
+  }, [searchParams]);
+
+  // Keep URL in sync when mailbox is changed in the UI (e.g. account switcher)
+  useEffect(() => {
+    const current = new URLSearchParams(searchParams);
+    const existing = current.get("mailbox");
+    const wanted = filter.mailbox_id.toString();
+    if (existing !== wanted) {
+      if (Number(wanted) > 0) {
+        current.set("mailbox", wanted);
+      } else {
+        current.delete("mailbox");
+      }
+      setSearchParams(current, { replace: true });
+    }
+  }, [filter.mailbox_id]);
   const { formIdentifiers, refetch: refetchFormIdentifiers } = useFormIdentifiers();
   const {statuses, refetch: refetchStatuses} = useStatuses(); 
   const { labels, refetch: refetchLabels } = useEntryLabels();

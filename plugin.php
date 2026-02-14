@@ -5,6 +5,7 @@ use Gutenform\Core\Deactivate;
 use Gutenform\Core\Smtp;
 use Gutenform\Core\EmailLogger;
 use Gutenform\Admin\Menu;
+use Gutenform\Admin\AdminBar;
 // use Gutenform\Core\Template; // Not needed - using standard WordPress frontend
 use Gutenform\Assets\Frontend;
 use Gutenform\Assets\Admin;
@@ -55,6 +56,9 @@ final class Gutenform
 			Admin::get_instance()->bootstrap();
 			Deactivate::get_instance()->init();
 		}
+
+		// Admin bar (runs on frontend and admin).
+		AdminBar::get_instance()->init();
 
 		// Initialze core functionalities.
 		Frontend::get_instance()->bootstrap();

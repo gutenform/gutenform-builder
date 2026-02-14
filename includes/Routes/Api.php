@@ -78,6 +78,8 @@ Route::prefix(
 		$route->post('/settings/skip-first-steps', '\Gutenform\Controllers\Settings\Actions@update_skip_first_steps');
 		$route->get('/settings/charts-visible', '\Gutenform\Controllers\Settings\Actions@get_charts_visible');
 		$route->post('/settings/charts-visible', '\Gutenform\Controllers\Settings\Actions@update_charts_visible');
+		$route->get('/settings/admin-bar', '\Gutenform\Controllers\Settings\Actions@get_admin_bar_enabled');
+		$route->post('/settings/admin-bar', '\Gutenform\Controllers\Settings\Actions@update_admin_bar_enabled');
 
 		// Email Logs routes
 		$route->get('/email-logs/get', '\Gutenform\Controllers\EmailLogs\Actions@get_email_logs');

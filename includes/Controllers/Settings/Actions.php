@@ -10,6 +10,7 @@
 namespace Gutenform\Controllers\Settings;
 
 use Gutenform\Core\Debug;
+use Gutenform\Admin\AdminBar;
 
 defined('ABSPATH') || exit;
 
@@ -611,6 +612,69 @@ class Actions
 				? __('Charts are now visible.', 'gutenform')
 				: __('Charts are now hidden.', 'gutenform'),
 			'visible' => $visible,
+		);
+	}
+
+	/**
+	 * Get admin bar visibility status
+	 *
+	 * @return array|\WP_Error
+	 */
+	public function get_admin_bar_enabled()
+	{
+		// Check user capabilities
+		if (!current_user_can('manage_options')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('You do not have permission to view settings.', 'gutenform'),
+				array('status' => 403)
+			);
+		}
+
+		return array(
+			'success' => true,
+			'enabled' => AdminBar::is_enabled(),
+		);
+	}
+
+	/**
+	 * Update admin bar visibility status
+	 *
+	 * @param \WP_REST_Request $request
+	 * @return array|\WP_Error
+	 */
+	public function update_admin_bar_enabled(\WP_REST_Request $request)
+	{
+		// Verify nonce
+		$nonce = $request->get_header('X-WP-Nonce');
+		if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('Security check failed.', 'gutenform'),
+				array('status' => 403)
+			);
+		}
+
+		// Check user capabilities
+		if (!current_user_can('manage_options')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('You do not have permission to manage settings.', 'gutenform'),
+				array('status' => 403)
+			);
+		}
+
+		$params = $request->get_json_params();
+		$enabled = isset($params['enabled']) ? (bool) $params['enabled'] : true;
+
+		update_option(AdminBar::OPTION_KEY, $enabled ? '1' : '', false);
+
+		return array(
+			'success' => true,
+			'message' => $enabled
+				? __('Admin bar menu enabled.', 'gutenform')
+				: __('Admin bar menu disabled.', 'gutenform'),
+			'enabled' => $enabled,
 		);
 	}
 }
