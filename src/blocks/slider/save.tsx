@@ -20,11 +20,22 @@ export default function save(props: BlockSaveProps<SliderAttributes>) {
 		defaultValue,
 		defaultValueStart,
 		defaultValueEnd,
+		orientation = 'horizontal',
+		direction = 'ltr',
+		tooltips = false,
+		connect = true,
+		margin = 0,
+		limit = 0,
+		paddingStart = 0,
+		paddingEnd = 0,
+		animate = true,
+		animationDuration = 300,
 	} = props.attributes;
 
 	const singleValue = defaultValue !== '' ? Number(defaultValue) : min;
 	const startVal = defaultValueStart ?? min;
 	const endVal = defaultValueEnd ?? max;
+	const startJson = range ? JSON.stringify([startVal, endVal]) : JSON.stringify([singleValue]);
 
 	return (
 		<div
@@ -34,6 +45,24 @@ export default function save(props: BlockSaveProps<SliderAttributes>) {
 					'data-conditional-show': JSON.stringify(conditionalShow),
 				}),
 				'data-slider-range': range ? 'true' : 'false',
+				'data-slider-min': String(min),
+				'data-slider-max': String(max),
+				'data-slider-step': String(step),
+				'data-slider-start': startJson,
+				'data-slider-orientation': orientation,
+				'data-slider-direction': direction,
+				'data-slider-tooltips': tooltips ? 'true' : 'false',
+				'data-slider-connect': range ? (connect ? 'true' : 'false') : undefined,
+				...(margin > 0 && { 'data-slider-margin': String(margin) }),
+				...(limit > 0 && { 'data-slider-limit': String(limit) }),
+				...((paddingStart > 0 || paddingEnd > 0) && {
+					'data-slider-padding': JSON.stringify(
+						paddingStart > 0 && paddingEnd > 0 ? [paddingStart, paddingEnd] : paddingStart || paddingEnd
+					),
+				}),
+				'data-slider-animate': animate ? 'true' : 'false',
+				'data-slider-animation-duration': String(animationDuration),
+				'data-slider-name': name,
 			})}
 		>
 			{label && (
@@ -56,27 +85,7 @@ export default function save(props: BlockSaveProps<SliderAttributes>) {
 							defaultValue={String(endVal)}
 							className="gutenform-slider-hidden-max"
 						/>
-						<input
-							type="range"
-							min={min}
-							max={max}
-							step={step}
-							defaultValue={String(startVal)}
-							className="gutenform-slider-input gutenform-slider-input--min"
-							aria-label={`${label} ${label ? '–' : ''} min`}
-						/>
-						<span className="gutenform-slider-separator" aria-hidden="true">
-							–
-						</span>
-						<input
-							type="range"
-							min={min}
-							max={max}
-							step={step}
-							defaultValue={String(endVal)}
-							className="gutenform-slider-input gutenform-slider-input--max"
-							aria-label={`${label} ${label ? '–' : ''} max`}
-						/>
+						<div className="gutenform-slider" aria-hidden="true" />
 					</>
 				) : (
 					<>
@@ -87,15 +96,7 @@ export default function save(props: BlockSaveProps<SliderAttributes>) {
 							className="gutenform-slider-hidden"
 							required={required}
 						/>
-						<input
-							type="range"
-							min={min}
-							max={max}
-							step={step}
-							defaultValue={String(singleValue)}
-							className="gutenform-slider-input"
-							aria-label={label || undefined}
-						/>
+						<div className="gutenform-slider" aria-hidden="true" />
 					</>
 				)}
 			</div>

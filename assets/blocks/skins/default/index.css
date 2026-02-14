@@ -873,7 +873,7 @@ form.wp-block-gutenform-form {
   }
 
   /* ==========================================================================
-     Slider
+     Slider (noUiSlider)
      ========================================================================== */
   .gutenform-field .gutenform-slider-wrapper {
     display: flex;
@@ -882,24 +882,86 @@ form.wp-block-gutenform-form {
     flex-wrap: wrap;
   }
 
-  .gutenform-field .gutenform-slider-input {
-    flex: 1;
-    min-width: 8rem;
-    height: 1.5rem;
-    accent-color: var(--field-accent);
-    cursor: pointer;
-
-    &::-webkit-slider-thumb {
-      cursor: pointer;
-    }
-
-    &::-moz-range-thumb {
-      cursor: pointer;
-    }
+  /* Reserve space below when tooltips are shown so nothing gets covered */
+  .gutenform-field[data-slider-tooltips='true'] .gutenform-slider-wrapper {
+    margin-bottom: 2.5rem;
   }
 
-  .gutenform-field .gutenform-slider-separator {
-    opacity: 0.7;
+  .gutenform-field .gutenform-slider.noUi-target {
+    flex: 1;
+    min-width: 8rem;
+    min-height: 1.5rem;
+    border: none;
+    background: color-mix(in srgb, currentColor 12%, transparent);
+    border-radius: var(--field-rounded);
+  }
+
+  .gutenform-field .noUi-connect {
+    background: var(--field-accent);
+    border-radius: var(--field-rounded);
+  }
+
+  .gutenform-field .noUi-handle {
+    width: 1.25rem;
+    height: 1.25rem;
+    /* Center handle on track (track 1.5rem, handle 1.25rem) */
+    top: 0.125rem;
+    right: -0.625rem;
+    border: 2px solid var(--field-accent);
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+  }
+
+  .gutenform-field .noUi-handle::before,
+  .gutenform-field .noUi-handle::after {
+    display: none;
+  }
+
+  .gutenform-field .noUi-handle:hover {
+    border-color: var(--field-accent-hover);
+  }
+
+  .gutenform-field .noUi-tooltip {
+    font-size: 0.875rem;
+    padding: 0.25rem 0.5rem;
+    background: var(--field-accent);
+    color: #fff;
+    border-radius: var(--field-control-rounded);
+  }
+
+  /* Position tooltips below the slider (default noUiSlider is above) */
+  .gutenform-field .noUi-horizontal .noUi-origin > .noUi-tooltip {
+    bottom: auto;
+    top: 100%;
+    margin-top: 0.5rem;
+    transform: translate(-50%, 0);
+    left: 50%;
+  }
+
+  .gutenform-field .noUi-vertical .noUi-origin > .noUi-tooltip {
+    top: auto;
+    right: auto;
+    bottom: 50%;
+    left: 100%;
+    margin-left: 0.5rem;
+    transform: translate(0, 50%);
+  }
+
+  /* Vertical slider */
+  .gutenform-field .gutenform-slider.noUi-target.noUi-vertical {
+    min-width: 1.5rem;
+    width: 1.5rem;
+    min-height: 10rem;
+  }
+
+  .gutenform-field .noUi-vertical .noUi-handle {
+    width: 1.25rem;
+    height: 1.25rem;
+    /* Center handle on vertical track */
+    top: -0.625rem;
+    right: -0.375rem;
   }
 
   /* ==========================================================================
@@ -910,7 +972,8 @@ form.wp-block-gutenform-form {
     textarea,
     select,
     .gutenform-datetime-input,
-    .gutenform-slider-input,
+    .gutenform-slider .noUi-origin,
+    .gutenform-slider .noUi-connect,
     .wp-block-gutenform-submit button,
     .gutenform-file-upload-zone,
     .gutenform-file-url-input input,

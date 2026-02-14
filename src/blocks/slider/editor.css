@@ -1,3 +1,15 @@
-.gutenform-slider-input:disabled {
-	cursor: default;
+@import 'nouislider/dist/nouislider.css';
+
+.gutenform-slider-wrapper {
+	width: 100%;
+}
+
+.gutenform-slider--editor.noUi-target {
+	min-height: 18px;
+}
+
+.gutenform-slider--editor.noUi-vertical {
+	min-width: 18px;
+	height: 200px;
+	margin: 0 auto;
 }

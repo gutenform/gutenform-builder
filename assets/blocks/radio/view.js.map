@@ -1,0 +1,1 @@
+{"version":3,"file":"radio/view.js","mappings":";;;;AAAA;AACA;AACA;AACA,G","sources":["webpack://gutenform-builder/./src/blocks/radio/view.ts"],"sourcesContent":["/**\n * Frontend script for radio block.\n * Radio value is submitted via FormData.\n */\n"],"names":[],"ignoreList":[],"sourceRoot":""}

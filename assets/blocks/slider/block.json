@@ -79,6 +79,46 @@
     "conditionalShow": {
       "type": "object",
       "default": null
+    },
+    "orientation": {
+      "type": "string",
+      "default": "horizontal"
+    },
+    "direction": {
+      "type": "string",
+      "default": "ltr"
+    },
+    "tooltips": {
+      "type": "boolean",
+      "default": false
+    },
+    "connect": {
+      "type": "boolean",
+      "default": true
+    },
+    "margin": {
+      "type": "number",
+      "default": 0
+    },
+    "limit": {
+      "type": "number",
+      "default": 0
+    },
+    "paddingStart": {
+      "type": "number",
+      "default": 0
+    },
+    "paddingEnd": {
+      "type": "number",
+      "default": 0
+    },
+    "animate": {
+      "type": "boolean",
+      "default": true
+    },
+    "animationDuration": {
+      "type": "number",
+      "default": 300
     }
   },
   "supports": {
