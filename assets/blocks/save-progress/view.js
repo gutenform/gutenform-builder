@@ -1,1 +1,74 @@
-window.addEventListener("DOMContentLoaded",()=>{document.querySelectorAll('[data-action="save-progress"]').forEach(t=>{const e=t.closest(".wp-block-gutenform-form");e&&t.addEventListener("click",o=>{o.preventDefault();const s=e.getAttribute("data-form-options");if(!s)return;const r=JSON.parse(s).formId;if(!r)return;const n=new FormData(e),a={};n.forEach((t,e)=>{"string"==typeof t&&(a[e]=t)});const c=e.querySelectorAll(".wp-block-gutenform-step");let i=0;c.forEach((t,e)=>{t.classList.contains("gutenform-step--active")&&(i=e)});const f={formId:r,fields:a,currentStep:i,savedAt:(new Date).toISOString()};try{sessionStorage.setItem(`gutenform_progress_${r}`,JSON.stringify(f)),function(t){const e=t.textContent;t.textContent="✓ Saved!",t.classList.add("gutenform-save-progress-btn--saved"),setTimeout(()=>{t.textContent=e,t.classList.remove("gutenform-save-progress-btn--saved")},2e3)}(t)}catch(t){console.error("Failed to save form progress:",t)}})})});
+/******/ (() => { // webpackBootstrap
+/*!******************************************!*\
+  !*** ./src/blocks/save-progress/view.ts ***!
+  \******************************************/
+/**
+ * Save Progress frontend logic.
+ * Saves all form field values + current step to sessionStorage.
+ */
+
+window.addEventListener('DOMContentLoaded', () => {
+  const saveButtons = document.querySelectorAll('[data-action="save-progress"]');
+  saveButtons.forEach(btn => {
+    const form = btn.closest('.wp-block-gutenform-form');
+    if (!form) return;
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      const formDataOptions = form.getAttribute('data-form-options');
+      if (!formDataOptions) return;
+      const formOptions = JSON.parse(formDataOptions);
+      const formId = formOptions.formId;
+      if (!formId) return;
+
+      // Collect all form field values
+      const formData = new FormData(form);
+      const data = {};
+      formData.forEach((value, key) => {
+        if (typeof value === 'string') {
+          data[key] = value;
+        }
+      });
+
+      // Determine current step index
+      const steps = form.querySelectorAll('.wp-block-gutenform-step');
+      let currentStepIndex = 0;
+      steps.forEach((step, index) => {
+        if (step.classList.contains('gutenform-step--active')) {
+          currentStepIndex = index;
+        }
+      });
+
+      // Save to sessionStorage
+      const progressData = {
+        formId,
+        fields: data,
+        currentStep: currentStepIndex,
+        savedAt: new Date().toISOString()
+      };
+      try {
+        sessionStorage.setItem(`gutenform_progress_${formId}`, JSON.stringify(progressData));
+
+        // Show brief confirmation
+        showSaveConfirmation(btn);
+      } catch (error) {
+        console.error('Failed to save form progress:', error);
+      }
+    });
+  });
+});
+
+/**
+ * Show a brief visual confirmation that progress was saved
+ */
+function showSaveConfirmation(btn) {
+  const originalText = btn.textContent;
+  btn.textContent = '✓ Saved!';
+  btn.classList.add('gutenform-save-progress-btn--saved');
+  setTimeout(() => {
+    btn.textContent = originalText;
+    btn.classList.remove('gutenform-save-progress-btn--saved');
+  }, 2000);
+}
+/******/ })()
+;
+//# sourceMappingURL=view.js.map
