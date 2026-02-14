@@ -2,6 +2,18 @@
  * The following styles get applied inside the editor only.
  */
 
+/* Change template modal – warning notice */
+.gutenform-change-template-modal .gutenform-change-template-modal__warning {
+	margin: 0 0 1rem 0;
+	padding: 10px 12px;
+	background: #fcf0f1;
+	border-left: 4px solid #d63638;
+	border-radius: 2px;
+	font-size: 13px;
+	line-height: 1.5;
+	color: #1e1e1e;
+}
+
 .wp-block-gutenform-form {
     > .block-editor-inner-blocks > .block-editor-block-list__layout {
         .block-list-appender {

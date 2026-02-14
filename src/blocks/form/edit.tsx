@@ -68,18 +68,24 @@ export default function Edit(props: BlockEditProps<FormAttributes>) {
 		]
 	});
 
+	const replaceWithTemplate = (template: import('@wordpress/blocks').TemplateArray) => {
+		const blocks = createBlocksFromInnerBlocksTemplate(template as any);
+		dispatch('core/block-editor').replaceInnerBlocks(clientId, blocks);
+	};
+
 	return (
 		<>
-			<FormBlockControls {...props} />
+			<FormBlockControls
+				{...props}
+				hasBlocks={(innerBlockItems?.length ?? 0) > 0}
+				onReplaceWithTemplate={replaceWithTemplate}
+			/>
 			<FormInspectorControls {...props} />
 			<form { ...blockProps }>
 				{innerBlockItems?.length > 0 ? (
 					<div { ...innerBlockProps } />
 				) : (
-					<TemplateSelect onSelect={(template) => {
-						const blocks = createBlocksFromInnerBlocksTemplate(template as any);
-						dispatch('core/block-editor').replaceInnerBlocks(clientId, blocks);
-					}} />
+					<TemplateSelect onSelect={replaceWithTemplate} />
 				)}
 			</form>
 		</>
