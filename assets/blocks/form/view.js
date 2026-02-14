@@ -86,7 +86,20 @@ window.addEventListener('DOMContentLoaded', () => {
           steps.forEach(step => step.style.display = '');
         }
         const formData = new FormData(form);
-        const data = Object.fromEntries(formData);
+        // Build data object: for keys with multiple values (e.g. checkboxes with name[]),
+        // use all values joined comma-separated; otherwise single value
+        const data = {};
+        const seen = new Set();
+        for (const [key] of formData) {
+          if (seen.has(key)) continue;
+          seen.add(key);
+          const values = formData.getAll(key);
+          if (values.length > 1) {
+            data[key] = values.join(', ');
+          } else if (values.length === 1) {
+            data[key] = values[0];
+          }
+        }
 
         // Restore step visibility (currentStep is visible index)
         if (isMultiStep) {
