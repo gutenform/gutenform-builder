@@ -93,6 +93,10 @@ class Actions
 	{
 		$post_types = get_post_types(array('public' => true), 'names');
 		$post_types['page'] = 'page';
+		// Include wp_block (WordPress Patterns / Synced patterns / Reusable blocks).
+		if (post_type_exists('wp_block')) {
+			$post_types['wp_block'] = 'wp_block';
+		}
 		$post_types = array_unique(array_values($post_types));
 
 		$posts = get_posts(array(
