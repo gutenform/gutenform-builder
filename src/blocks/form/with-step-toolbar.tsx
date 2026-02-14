@@ -100,6 +100,7 @@ const withStepToolbar = createHigherOrderComponent((BlockEdit: any) => {
 								label={`${__('step')} ${step.index + 1}: ${step.title}`}
 								onClick={() => handleSwitchStep(step)}
 								isActive={activeStep === step.index}
+								style={{ paddingInline: '0.5rem' }}
 							/>
 						))}
 						<ToolbarButton

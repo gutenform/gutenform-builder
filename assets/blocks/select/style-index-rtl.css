@@ -1,1 +1,19 @@
-.gutenform-field select{border:1px solid #ddd;border-radius:2px;font-family:inherit;font-size:14px;padding:8px 12px;width:100%}.gutenform-field select:focus{border-color:#2271b1;box-shadow:0 0 0 1px #2271b1;outline:none}
+/*!*****************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/@wordpress/scripts/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/blocks/select/style.css ***!
+  \*****************************************************************************************************************************************************************************************************************/
+.gutenform-field select {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+	font-size: 14px;
+	font-family: inherit;
+}
+
+.gutenform-field select:focus {
+	outline: none;
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+}
+
+

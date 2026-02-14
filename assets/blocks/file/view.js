@@ -1,1 +1,413 @@
-window.addEventListener("DOMContentLoaded",()=>{document.querySelectorAll(".gutenform-file-upload-field").forEach(e=>{!function(e){const t=e.querySelector(".gutenform-file-upload-zone"),n=e.querySelector(".gutenform-file-input"),r=e.querySelector(".gutenform-file-upload-list"),a=e.querySelector(".gutenform-file-url-input"),s=e.querySelector(".gutenform-file-url-upload-btn");if(!t||!n||!r)return;const i=e.getAttribute("data-field-name")||"",o=e.getAttribute("data-field-id")||"",l="true"===e.getAttribute("data-multiple"),u=e.getAttribute("data-accept-types")||"",d=parseInt(e.getAttribute("data-max-file-size")||"0",10),f=parseInt(e.getAttribute("data-max-files")||"5",10),m="true"===e.getAttribute("data-allow-url-upload"),c=[],p=new Map;function g(e){l&&c.length+e.length>f?L(`Maximum ${f} files allowed.`):(!l&&e.length>1&&(e=[e[0]]),!l&&c.length>0&&(c.length=0,r.innerHTML="",p.clear()),e.forEach(e=>{const t=e.size/1024/1024,n=d>0?Math.min(d,64):64;if(t>n)return void L(`File "${e.name}" is too large. Maximum size is ${n} MB.`);if(u&&!function(e,t){const n=t.split(",").map(e=>e.trim()),r=e.type,a="."+e.name.split(".").pop()?.toLowerCase();return n.some(e=>{if(e.includes("*")){const t=e.replace("*",".*");return new RegExp("^"+t.replace(/\./g,"\\.")+"$","i").test(r)}return e===r||!!e.startsWith(".")&&e.toLowerCase()===a})}(e,u))return void L(`File "${e.name}" has an invalid file type.`);const a={file:e,progress:0,status:"pending"};p.set(e,a);const s=function(e,t){const n=document.createElement("div");return n.className="gutenform-file-item",n.dataset.fileName=e.name,h(n,t),n}(e,a);r.appendChild(s),function(e,t,n){t.status="uploading",h(n,t);const r=new FormData;r.append("file",e),r.append("field_name",i),d>0&&r.append("max_file_size",d.toString()),u&&r.append("accept_types",u);const a=window.gutenform?.apiUrl||"",s=window.gutenform?.nonce||"",o=window.gutenform?.namespace||"gutenform/v1",l=new XMLHttpRequest;l.upload.addEventListener("progress",e=>{e.lengthComputable&&(t.progress=Math.round(e.loaded/e.total*100),h(n,t))}),l.addEventListener("load",()=>{if(200===l.status)try{const e=JSON.parse(l.responseText);e.success&&e.files&&e.files.length>0?(t.status="success",t.uploadedFile=e.files[0],c.push(e.files[0]),$(),h(n,t)):(t.status="error",t.error=e.message||"Upload failed",h(n,t))}catch(e){t.status="error",t.error="Failed to parse response",h(n,t)}else{t.status="error";try{const e=JSON.parse(l.responseText);t.error=e.message||`Upload failed with status ${l.status}`}catch(e){t.error=`Upload failed with status ${l.status}`}h(n,t)}}),l.addEventListener("error",()=>{t.status="error",t.error="Network error",h(n,t)}),l.addEventListener("abort",()=>{t.status="error",t.error="Upload cancelled",h(n,t)}),l.open("POST",`${a}${o}/upload`),l.setRequestHeader("X-WP-Nonce",s),l.send(r)}(e,a,s)}))}function v(e){if(!a||!s)return;a.disabled=!0,s.disabled=!0,s.textContent="Uploading...";const t=window.gutenform?.apiUrl||"",n=window.gutenform?.nonce||"",o=window.gutenform?.namespace||"gutenform/v1";fetch(`${t}${o}/upload-from-url`,{method:"POST",headers:{"Content-Type":"application/json","X-WP-Nonce":n},body:JSON.stringify({url:e,field_name:i,max_file_size:d>0?d:void 0,accept_types:u||void 0})}).then(e=>e.json()).then(e=>{e.success&&e.files&&e.files.length>0?(e.files.forEach(e=>{c.push(e);const t=function(e){const t=document.createElement("div");t.className="gutenform-file-item gutenform-file-item--success";const n=e.type.startsWith("image/"),r=y(e.size);t.innerHTML=`\n\t\t\t<div class="gutenform-file-item-info">\n\t\t\t\t${n?`<img src="${b(e.url)}" alt="${b(e.name)}" class="gutenform-file-item-thumbnail" />`:""}\n\t\t\t\t<span class="gutenform-file-item-name">${b(e.original_name||e.name)}</span>\n\t\t\t\t<span class="gutenform-file-item-size">${r}</span>\n\t\t\t</div>\n\t\t\t<button type="button" class="gutenform-file-item-remove" aria-label="Remove file">×</button>\n\t\t`;const a=t.querySelector(".gutenform-file-item-remove");return a&&a.addEventListener("click",()=>{const n=c.findIndex(t=>t.url===e.url);n>-1&&(c.splice(n,1),$()),t.remove()}),t}(e);r.appendChild(t)}),$(),a.value=""):L(e.message||"Upload failed")}).catch(e=>{L(e.message||"Network error")}).finally(()=>{a.disabled=!1,s.disabled=!1,s.textContent="Upload"})}function h(e,t){const n=t.file,r=n.name,a=y(n.size);if("uploading"===t.status){e.innerHTML=`\n\t\t\t\t<div class="gutenform-file-item-info">\n\t\t\t\t\t<span class="gutenform-file-item-name">${b(r)}</span>\n\t\t\t\t\t<span class="gutenform-file-item-size">${a}</span>\n\t\t\t\t</div>\n\t\t\t\t<div class="gutenform-file-item-progress">\n\t\t\t\t\t<div class="gutenform-file-item-progress-bar" style="width: ${t.progress}%"></div>\n\t\t\t\t\t<span class="gutenform-file-item-progress-text">${t.progress}%</span>\n\t\t\t\t</div>\n\t\t\t\t<button type="button" class="gutenform-file-item-cancel" aria-label="Cancel upload">×</button>\n\t\t\t`;const s=e.querySelector(".gutenform-file-item-cancel");s&&s.addEventListener("click",()=>{e.remove(),p.delete(n)})}else if("success"===t.status&&t.uploadedFile){const n=t.uploadedFile,r=n.type.startsWith("image/");e.innerHTML=`\n\t\t\t\t<div class="gutenform-file-item-info">\n\t\t\t\t\t${r?`<img src="${b(n.url)}" alt="${b(n.name)}" class="gutenform-file-item-thumbnail" />`:""}\n\t\t\t\t\t<span class="gutenform-file-item-name">${b(n.original_name||n.name)}</span>\n\t\t\t\t\t<span class="gutenform-file-item-size">${a}</span>\n\t\t\t\t</div>\n\t\t\t\t<button type="button" class="gutenform-file-item-remove" aria-label="Remove file">×</button>\n\t\t\t`;const s=e.querySelector(".gutenform-file-item-remove");s&&s.addEventListener("click",()=>{const t=c.findIndex(e=>e.url===n.url);t>-1&&(c.splice(t,1),$()),e.remove()})}else if("error"===t.status){e.innerHTML=`\n\t\t\t\t<div class="gutenform-file-item-info">\n\t\t\t\t\t<span class="gutenform-file-item-name">${b(r)}</span>\n\t\t\t\t\t<span class="gutenform-file-item-error">${b(t.error||"Upload failed")}</span>\n\t\t\t\t</div>\n\t\t\t\t<button type="button" class="gutenform-file-item-remove" aria-label="Remove file">×</button>\n\t\t\t`;const a=e.querySelector(".gutenform-file-item-remove");a&&a.addEventListener("click",()=>{e.remove(),p.delete(n)})}}function y(e){if(0===e)return"0 Bytes";const t=Math.floor(Math.log(e)/Math.log(1024));return Math.round(e/Math.pow(1024,t)*100)/100+" "+["Bytes","KB","MB","GB"][t]}function b(e){const t=document.createElement("div");return t.textContent=e,t.innerHTML}function L(t){const n=document.createElement("div");n.className="gutenform-file-upload-error",n.textContent=t,e.appendChild(n),setTimeout(()=>{n.remove()},5e3)}t.addEventListener("dragover",e=>{e.preventDefault(),e.stopPropagation(),t.classList.add("gutenform-file-upload-zone--dragover")}),t.addEventListener("dragleave",e=>{e.preventDefault(),e.stopPropagation(),t.classList.remove("gutenform-file-upload-zone--dragover")}),t.addEventListener("drop",e=>{e.preventDefault(),e.stopPropagation(),t.classList.remove("gutenform-file-upload-zone--dragover"),g(Array.from(e.dataTransfer?.files||[]))}),t.addEventListener("click",()=>{n.click()}),n.addEventListener("change",e=>{const t=e.target;g(Array.from(t.files||[])),t.value=""}),m&&a&&s&&(s.addEventListener("click",()=>{const e=a.value.trim();e&&v(e)}),a.addEventListener("keypress",e=>{if("Enter"===e.key){const e=a.value.trim();e&&v(e)}}));const w=document.createElement("input");function $(){w.value=JSON.stringify(c)}w.type="hidden",w.name=i,w.id=o+"_files",e.appendChild(w)}(e)})});
+/******/ (() => { // webpackBootstrap
+/*!*********************************!*\
+  !*** ./src/blocks/file/view.ts ***!
+  \*********************************/
+/**
+ * File Upload Field View Script
+ * 
+ * Handles drag-and-drop, file selection, URL upload, and progress tracking
+ * for the file upload field block.
+ */
+
+window.addEventListener('DOMContentLoaded', () => {
+  const fileUploadFields = document.querySelectorAll('.gutenform-file-upload-field');
+  fileUploadFields.forEach(field => {
+    initFileUploadField(field);
+  });
+});
+function initFileUploadField(field) {
+  const uploadZone = field.querySelector('.gutenform-file-upload-zone');
+  const fileInput = field.querySelector('.gutenform-file-input');
+  const fileList = field.querySelector('.gutenform-file-upload-list');
+  const urlInput = field.querySelector('.gutenform-file-url-input');
+  const urlUploadBtn = field.querySelector('.gutenform-file-url-upload-btn');
+  if (!uploadZone || !fileInput || !fileList) {
+    return;
+  }
+  const fieldName = field.getAttribute('data-field-name') || '';
+  const fieldId = field.getAttribute('data-field-id') || '';
+  const multiple = field.getAttribute('data-multiple') === 'true';
+  const acceptTypes = field.getAttribute('data-accept-types') || '';
+  const maxFileSize = parseInt(field.getAttribute('data-max-file-size') || '0', 10);
+  const maxFiles = parseInt(field.getAttribute('data-max-files') || '5', 10);
+  const allowUrlUpload = field.getAttribute('data-allow-url-upload') === 'true';
+  const uploadedFiles = [];
+  const uploadStates = new Map();
+
+  // Drag and drop handlers
+  uploadZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    uploadZone.classList.add('gutenform-file-upload-zone--dragover');
+  });
+  uploadZone.addEventListener('dragleave', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    uploadZone.classList.remove('gutenform-file-upload-zone--dragover');
+  });
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    uploadZone.classList.remove('gutenform-file-upload-zone--dragover');
+    const files = Array.from(e.dataTransfer?.files || []);
+    handleFiles(files);
+  });
+
+  // Click to select files
+  uploadZone.addEventListener('click', () => {
+    fileInput.click();
+  });
+
+  // File input change
+  fileInput.addEventListener('change', e => {
+    const target = e.target;
+    const files = Array.from(target.files || []);
+    handleFiles(files);
+    // Reset input to allow selecting the same file again
+    target.value = '';
+  });
+
+  // URL upload
+  if (allowUrlUpload && urlInput && urlUploadBtn) {
+    urlUploadBtn.addEventListener('click', () => {
+      const url = urlInput.value.trim();
+      if (url) {
+        handleUrlUpload(url);
+      }
+    });
+    urlInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        const url = urlInput.value.trim();
+        if (url) {
+          handleUrlUpload(url);
+        }
+      }
+    });
+  }
+  function handleFiles(files) {
+    // Check max files limit
+    if (multiple && uploadedFiles.length + files.length > maxFiles) {
+      showError(`Maximum ${maxFiles} files allowed.`);
+      return;
+    }
+    if (!multiple && files.length > 1) {
+      files = [files[0]];
+    }
+    if (!multiple && uploadedFiles.length > 0) {
+      // Replace existing file
+      uploadedFiles.length = 0;
+      fileList.innerHTML = '';
+      uploadStates.clear();
+    }
+    files.forEach(file => {
+      // Validate file size
+      const fileSizeMB = file.size / 1024 / 1024;
+      const wpMaxSize = getWordPressUploadLimit();
+      const effectiveMax = maxFileSize > 0 ? Math.min(maxFileSize, wpMaxSize) : wpMaxSize;
+      if (fileSizeMB > effectiveMax) {
+        showError(`File "${file.name}" is too large. Maximum size is ${effectiveMax} MB.`);
+        return;
+      }
+
+      // Validate file type
+      if (acceptTypes && !validateFileType(file, acceptTypes)) {
+        showError(`File "${file.name}" has an invalid file type.`);
+        return;
+      }
+
+      // Create upload state
+      const state = {
+        file,
+        progress: 0,
+        status: 'pending'
+      };
+      uploadStates.set(file, state);
+
+      // Add to UI
+      const fileItem = createFileItem(file, state);
+      fileList.appendChild(fileItem);
+
+      // Start upload
+      uploadFile(file, state, fileItem);
+    });
+  }
+  function uploadFile(file, state, fileItem) {
+    state.status = 'uploading';
+    updateFileItem(fileItem, state);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('field_name', fieldName);
+    if (maxFileSize > 0) {
+      formData.append('max_file_size', maxFileSize.toString());
+    }
+    if (acceptTypes) {
+      formData.append('accept_types', acceptTypes);
+    }
+    const apiUrl = window.gutenform?.apiUrl || '';
+    const nonce = window.gutenform?.nonce || '';
+    const namespace = window.gutenform?.namespace || 'gutenform/v1';
+    const xhr = new XMLHttpRequest();
+
+    // Progress tracking
+    xhr.upload.addEventListener('progress', e => {
+      if (e.lengthComputable) {
+        state.progress = Math.round(e.loaded / e.total * 100);
+        updateFileItem(fileItem, state);
+      }
+    });
+
+    // Success
+    xhr.addEventListener('load', () => {
+      if (xhr.status === 200) {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          if (response.success && response.files && response.files.length > 0) {
+            state.status = 'success';
+            state.uploadedFile = response.files[0];
+            uploadedFiles.push(response.files[0]);
+            updateHiddenInput();
+            updateFileItem(fileItem, state);
+          } else {
+            state.status = 'error';
+            state.error = response.message || 'Upload failed';
+            updateFileItem(fileItem, state);
+          }
+        } catch (e) {
+          state.status = 'error';
+          state.error = 'Failed to parse response';
+          updateFileItem(fileItem, state);
+        }
+      } else {
+        state.status = 'error';
+        try {
+          const response = JSON.parse(xhr.responseText);
+          state.error = response.message || `Upload failed with status ${xhr.status}`;
+        } catch (e) {
+          state.error = `Upload failed with status ${xhr.status}`;
+        }
+        updateFileItem(fileItem, state);
+      }
+    });
+
+    // Error
+    xhr.addEventListener('error', () => {
+      state.status = 'error';
+      state.error = 'Network error';
+      updateFileItem(fileItem, state);
+    });
+
+    // Abort
+    xhr.addEventListener('abort', () => {
+      state.status = 'error';
+      state.error = 'Upload cancelled';
+      updateFileItem(fileItem, state);
+    });
+    xhr.open('POST', `${apiUrl}${namespace}/upload`);
+    xhr.setRequestHeader('X-WP-Nonce', nonce);
+    xhr.send(formData);
+  }
+  function handleUrlUpload(url) {
+    if (!urlInput || !urlUploadBtn) {
+      return;
+    }
+
+    // Disable input and button
+    urlInput.disabled = true;
+    urlUploadBtn.disabled = true;
+    urlUploadBtn.textContent = 'Uploading...';
+    const apiUrl = window.gutenform?.apiUrl || '';
+    const nonce = window.gutenform?.nonce || '';
+    const namespace = window.gutenform?.namespace || 'gutenform/v1';
+    fetch(`${apiUrl}${namespace}/upload-from-url`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-WP-Nonce': nonce
+      },
+      body: JSON.stringify({
+        url: url,
+        field_name: fieldName,
+        max_file_size: maxFileSize > 0 ? maxFileSize : undefined,
+        accept_types: acceptTypes || undefined
+      })
+    }).then(response => response.json()).then(data => {
+      if (data.success && data.files && data.files.length > 0) {
+        data.files.forEach(file => {
+          uploadedFiles.push(file);
+          const fileItem = createUrlUploadedFileItem(file);
+          fileList.appendChild(fileItem);
+        });
+        updateHiddenInput();
+        urlInput.value = '';
+      } else {
+        showError(data.message || 'Upload failed');
+      }
+    }).catch(error => {
+      showError(error.message || 'Network error');
+    }).finally(() => {
+      urlInput.disabled = false;
+      urlUploadBtn.disabled = false;
+      urlUploadBtn.textContent = 'Upload';
+    });
+  }
+  function createFileItem(file, state) {
+    const item = document.createElement('div');
+    item.className = 'gutenform-file-item';
+    item.dataset.fileName = file.name;
+    updateFileItem(item, state);
+    return item;
+  }
+  function updateFileItem(item, state) {
+    const file = state.file;
+    const fileName = file.name;
+    const fileSize = formatFileSize(file.size);
+    if (state.status === 'uploading') {
+      item.innerHTML = `
+				<div class="gutenform-file-item-info">
+					<span class="gutenform-file-item-name">${escapeHtml(fileName)}</span>
+					<span class="gutenform-file-item-size">${fileSize}</span>
+				</div>
+				<div class="gutenform-file-item-progress">
+					<div class="gutenform-file-item-progress-bar" style="width: ${state.progress}%"></div>
+					<span class="gutenform-file-item-progress-text">${state.progress}%</span>
+				</div>
+				<button type="button" class="gutenform-file-item-cancel" aria-label="Cancel upload">×</button>
+			`;
+      const cancelBtn = item.querySelector('.gutenform-file-item-cancel');
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+          // Cancel upload (would need to track xhr to abort)
+          item.remove();
+          uploadStates.delete(file);
+        });
+      }
+    } else if (state.status === 'success' && state.uploadedFile) {
+      const uploadedFile = state.uploadedFile;
+      const isImage = uploadedFile.type.startsWith('image/');
+      item.innerHTML = `
+				<div class="gutenform-file-item-info">
+					${isImage ? `<img src="${escapeHtml(uploadedFile.url)}" alt="${escapeHtml(uploadedFile.name)}" class="gutenform-file-item-thumbnail" />` : ''}
+					<span class="gutenform-file-item-name">${escapeHtml(uploadedFile.original_name || uploadedFile.name)}</span>
+					<span class="gutenform-file-item-size">${fileSize}</span>
+				</div>
+				<button type="button" class="gutenform-file-item-remove" aria-label="Remove file">×</button>
+			`;
+      const removeBtn = item.querySelector('.gutenform-file-item-remove');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', () => {
+          const index = uploadedFiles.findIndex(f => f.url === uploadedFile.url);
+          if (index > -1) {
+            uploadedFiles.splice(index, 1);
+            updateHiddenInput();
+          }
+          item.remove();
+        });
+      }
+    } else if (state.status === 'error') {
+      item.innerHTML = `
+				<div class="gutenform-file-item-info">
+					<span class="gutenform-file-item-name">${escapeHtml(fileName)}</span>
+					<span class="gutenform-file-item-error">${escapeHtml(state.error || 'Upload failed')}</span>
+				</div>
+				<button type="button" class="gutenform-file-item-remove" aria-label="Remove file">×</button>
+			`;
+      const removeBtn = item.querySelector('.gutenform-file-item-remove');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', () => {
+          item.remove();
+          uploadStates.delete(file);
+        });
+      }
+    }
+  }
+  function createUrlUploadedFileItem(file) {
+    const item = document.createElement('div');
+    item.className = 'gutenform-file-item gutenform-file-item--success';
+    const isImage = file.type.startsWith('image/');
+    const fileSize = formatFileSize(file.size);
+    item.innerHTML = `
+			<div class="gutenform-file-item-info">
+				${isImage ? `<img src="${escapeHtml(file.url)}" alt="${escapeHtml(file.name)}" class="gutenform-file-item-thumbnail" />` : ''}
+				<span class="gutenform-file-item-name">${escapeHtml(file.original_name || file.name)}</span>
+				<span class="gutenform-file-item-size">${fileSize}</span>
+			</div>
+			<button type="button" class="gutenform-file-item-remove" aria-label="Remove file">×</button>
+		`;
+    const removeBtn = item.querySelector('.gutenform-file-item-remove');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', () => {
+        const index = uploadedFiles.findIndex(f => f.url === file.url);
+        if (index > -1) {
+          uploadedFiles.splice(index, 1);
+          updateHiddenInput();
+        }
+        item.remove();
+      });
+    }
+    return item;
+  }
+  function validateFileType(file, acceptTypes) {
+    const accepted = acceptTypes.split(',').map(t => t.trim());
+    const fileType = file.type;
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    return accepted.some(accept => {
+      // Check MIME type (e.g., image/*, application/pdf)
+      if (accept.includes('*')) {
+        const pattern = accept.replace('*', '.*');
+        const regex = new RegExp('^' + pattern.replace(/\./g, '\\.') + '$', 'i');
+        return regex.test(fileType);
+      } else if (accept === fileType) {
+        return true;
+      }
+
+      // Check file extension (e.g., .pdf, .jpg)
+      if (accept.startsWith('.')) {
+        return accept.toLowerCase() === fileExtension;
+      }
+      return false;
+    });
+  }
+  function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  }
+  function getWordPressUploadLimit() {
+    // This would ideally come from PHP, but we'll use a reasonable default
+    return 64; // 64 MB default
+  }
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  function showError(message) {
+    // Create temporary error message
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'gutenform-file-upload-error';
+    errorDiv.textContent = message;
+    field.appendChild(errorDiv);
+    setTimeout(() => {
+      errorDiv.remove();
+    }, 5000);
+  }
+
+  // Store uploaded files in a hidden input for form submission
+  const hiddenInput = document.createElement('input');
+  hiddenInput.type = 'hidden';
+  hiddenInput.name = fieldName;
+  hiddenInput.id = fieldId + '_files';
+  field.appendChild(hiddenInput);
+
+  // Update hidden input when files change
+  function updateHiddenInput() {
+    hiddenInput.value = JSON.stringify(uploadedFiles);
+  }
+
+  // updateHiddenInput is called explicitly after each file operation
+}
+/******/ })()
+;
+//# sourceMappingURL=view.js.map
