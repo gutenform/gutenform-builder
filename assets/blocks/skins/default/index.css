@@ -2,13 +2,15 @@
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/@wordpress/scripts/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/skins/default/index.css ***!
   \*****************************************************************************************************************************************************************************************************************/
 form.wp-block-gutenform-form{
+    --gutenform-accent: #E71D73;
+
     --field-size: 100%;
     --field-padding: 1rem 1.25rem;
     --field-rounded: 0.5rem;
     --field-border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
 
     /* Akzentfarbe – einheitlich für Focus, Buttons, File-Upload etc. */
-    --field-accent: #E71D73;
+    --field-accent: var(--gutenform-accent);
     --field-accent-hover: color-mix(in srgb, var(--field-accent) 85%, black);
     --field-accent-muted: color-mix(in srgb, var(--field-accent) 12%, white);
     --field-accent-ring: color-mix(in srgb, var(--field-accent) 25%, transparent);

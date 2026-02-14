@@ -43,7 +43,15 @@
 		"successView": {
 			"type": "boolean",
 			"default": false
+		},
+		"activeStep": {
+			"type": "number",
+			"default": 0
 		}
+	},
+	"providesContext": {
+		"gutenform/activeStep": "activeStep",
+		"gutenform/formId": "formId"
 	},
 	"supports": {
 		"anchor": true,

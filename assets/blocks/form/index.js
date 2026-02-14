@@ -12094,7 +12094,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   allowedBlocks: () => (/* binding */ allowedBlocks),
 /* harmony export */   prioritizedInserterBlocks: () => (/* binding */ prioritizedInserterBlocks)
 /* harmony export */ });
-const allowedBlocks = ['gutenform/input', 'gutenform/textarea', 'gutenform/select', 'gutenform/file', 'gutenform/captcha', 'gutenform/honeypot', 'gutenform/submit', 'gutenform/success', 'core/columns', 'core/column', 'core/heading', 'core/paragraph', 'core/image', 'core/list', 'core/list-item', 'core/quote', 'core/table', 'core/video', 'core/embed', 'core/group'];
+const allowedBlocks = ['gutenform/input', 'gutenform/textarea', 'gutenform/select', 'gutenform/file', 'gutenform/captcha', 'gutenform/honeypot', 'gutenform/submit', 'gutenform/success', 'gutenform/step', 'gutenform/progress', 'gutenform/save-progress', 'core/columns', 'core/column', 'core/heading', 'core/paragraph', 'core/image', 'core/list', 'core/list-item', 'core/quote', 'core/table', 'core/video', 'core/embed', 'core/group'];
 const prioritizedInserterBlocks = allowedBlocks.filter(block => block.startsWith('gutenform/'));
 
 /***/ }),
@@ -12157,7 +12157,7 @@ const FormBlockControls = ({
   \************************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/form","version":"0.1.0","title":"Form","category":"widgets","icon":"smiley","description":"Form Wrapper block for Gutenform.","example":{},"attributes":{"spacing":{"type":"object","default":{"padding":0,"margin":0,"blockGap":"var:preset|spacing|40"}},"formTitle":{"type":"string","default":""},"mailboxId":{"type":"string","default":"1"},"formId":{"type":"string","default":""},"skin":{"type":"string","default":"default"},"providerIds":{"type":"array","default":[],"items":{"type":"number"}},"successView":{"type":"boolean","default":false}},"supports":{"anchor":true,"html":true,"align":["wide","full"],"spacing":{"padding":true,"margin":true,"blockGap":true},"color":{"background":true,"text":true},"border":{"color":true,"radius":true,"width":true},"shadow":true,"typography":{"fontSize":true,"lineHeight":true,"__experimentalFontWeight":true},"__experimentalBorder":{"color":true,"radius":true,"style":true,"width":true,"__experimentalSkipSerialization":true,"__experimentalDefaultControls":{"color":true,"radius":true,"style":true,"width":true}},"customClassName":true,"__experimentalExposeControlsToChildren":true,"layout":{"allowSwitching":true,"allowInheriting":false,"default":{"type":"default","orientation":"vertical"}}},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/form","version":"0.1.0","title":"Form","category":"widgets","icon":"smiley","description":"Form Wrapper block for Gutenform.","example":{},"attributes":{"spacing":{"type":"object","default":{"padding":0,"margin":0,"blockGap":"var:preset|spacing|40"}},"formTitle":{"type":"string","default":""},"mailboxId":{"type":"string","default":"1"},"formId":{"type":"string","default":""},"skin":{"type":"string","default":"default"},"providerIds":{"type":"array","default":[],"items":{"type":"number"}},"successView":{"type":"boolean","default":false},"activeStep":{"type":"number","default":0}},"providesContext":{"gutenform/activeStep":"activeStep","gutenform/formId":"formId"},"supports":{"anchor":true,"html":true,"align":["wide","full"],"spacing":{"padding":true,"margin":true,"blockGap":true},"color":{"background":true,"text":true},"border":{"color":true,"radius":true,"width":true},"shadow":true,"typography":{"fontSize":true,"lineHeight":true,"__experimentalFontWeight":true},"__experimentalBorder":{"color":true,"radius":true,"style":true,"width":true,"__experimentalSkipSerialization":true,"__experimentalDefaultControls":{"color":true,"radius":true,"style":true,"width":true}},"customClassName":true,"__experimentalExposeControlsToChildren":true,"layout":{"allowSwitching":true,"allowInheriting":false,"default":{"type":"default","orientation":"vertical"}}},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
 
 /***/ }),
 
@@ -12274,14 +12274,17 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../components/block-atoms/BlockIcon */ "./src/components/block-atoms/BlockIcon/index.tsx");
-/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./style.css */ "./src/blocks/form/style.css");
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./edit */ "./src/blocks/form/edit.tsx");
-/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./save */ "./src/blocks/form/save.tsx");
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./block.json */ "./src/blocks/form/block.json");
-/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/layout-dashboard.js");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/hooks */ "@wordpress/hooks");
+/* harmony import */ var _wordpress_hooks__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../components/block-atoms/BlockIcon */ "./src/components/block-atoms/BlockIcon/index.tsx");
+/* harmony import */ var _style_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./style.css */ "./src/blocks/form/style.css");
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./edit */ "./src/blocks/form/edit.tsx");
+/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./save */ "./src/blocks/form/save.tsx");
+/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./block.json */ "./src/blocks/form/block.json");
+/* harmony import */ var _with_step_toolbar__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./with-step-toolbar */ "./src/blocks/form/with-step-toolbar.tsx");
+/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/layout-dashboard.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__);
 
 
 
@@ -12290,14 +12293,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_5__.name, {
-  ..._block_json__WEBPACK_IMPORTED_MODULE_5__,
-  icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)(_components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_1__["default"], {
-    icon: lucide_react__WEBPACK_IMPORTED_MODULE_6__["default"]
+
+
+(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_6__.name, {
+  ..._block_json__WEBPACK_IMPORTED_MODULE_6__,
+  icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    icon: lucide_react__WEBPACK_IMPORTED_MODULE_8__["default"]
   }),
-  edit: _edit__WEBPACK_IMPORTED_MODULE_3__["default"],
-  save: _save__WEBPACK_IMPORTED_MODULE_4__["default"]
+  edit: _edit__WEBPACK_IMPORTED_MODULE_4__["default"],
+  save: _save__WEBPACK_IMPORTED_MODULE_5__["default"]
 });
+
+// Register the step toolbar filter so it shows on ALL blocks inside a stepped form
+(0,_wordpress_hooks__WEBPACK_IMPORTED_MODULE_1__.addFilter)('editor.BlockEdit', 'gutenform/with-step-toolbar', _with_step_toolbar__WEBPACK_IMPORTED_MODULE_7__["default"]);
 
 /***/ }),
 
@@ -12474,6 +12482,160 @@ function save(props) {
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
+
+/***/ }),
+
+/***/ "./src/blocks/form/with-step-toolbar.tsx":
+/*!***********************************************!*\
+  !*** ./src/blocks/form/with-step-toolbar.tsx ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _lib_i18n__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/lib/i18n */ "./src/lib/i18n.ts");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
+/* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_compose__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/compose */ "@wordpress/compose");
+/* harmony import */ var _wordpress_compose__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_compose__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var lucide_react__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! lucide-react */ "./node_modules/lucide-react/dist/esm/icons/plus.js");
+/* harmony import */ var _components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../components/block-atoms/BlockIcon */ "./src/components/block-atoms/BlockIcon/index.tsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react/jsx-runtime */ "react/jsx-runtime");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__);
+/**
+ * Higher-order component that injects the step toolbar into any block
+ * that is inside a form with steps. Registered via addFilter('editor.BlockEdit').
+ * This ensures the step tab bar is visible at ALL nesting depths.
+ */
+
+
+
+
+
+
+
+
+
+const withStepToolbar = (0,_wordpress_compose__WEBPACK_IMPORTED_MODULE_5__.createHigherOrderComponent)(BlockEdit => {
+  return props => {
+    const {
+      clientId
+    } = props;
+
+    // Check if this block is inside a form with steps
+    const stepToolbarData = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useSelect)(select => {
+      var _formAttrs$activeStep;
+      const {
+        getBlockParents,
+        getBlocks,
+        getBlockName,
+        getBlockAttributes
+      } = select('core/block-editor');
+      const parents = getBlockParents(clientId);
+
+      // Don't add toolbar to the form block itself (it has its own)
+      const blockName = getBlockName(clientId);
+      if (blockName === 'gutenform/form') {
+        return null;
+      }
+
+      // Find the parent form block
+      let formClientId = null;
+      for (const pid of parents) {
+        if (getBlockName(pid) === 'gutenform/form') {
+          formClientId = pid;
+          break;
+        }
+      }
+      if (!formClientId) return null;
+
+      // Get step blocks from the form
+      const formBlocks = getBlocks(formClientId);
+      const stepBlocks = formBlocks.filter(b => b.name === 'gutenform/step');
+      if (stepBlocks.length === 0) return null;
+      const formAttrs = getBlockAttributes(formClientId);
+      const activeStep = (_formAttrs$activeStep = formAttrs?.activeStep) !== null && _formAttrs$activeStep !== void 0 ? _formAttrs$activeStep : 0;
+      return {
+        formClientId,
+        activeStep,
+        steps: stepBlocks.map((b, i) => ({
+          clientId: b.clientId,
+          title: b.attributes.title || `Step ${i + 1}`,
+          index: i
+        }))
+      };
+    }, [clientId]);
+    if (!stepToolbarData) {
+      return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(BlockEdit, {
+        ...props
+      });
+    }
+    const {
+      formClientId,
+      activeStep,
+      steps
+    } = stepToolbarData;
+    const {
+      updateBlockAttributes,
+      insertBlock,
+      selectBlock
+    } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_4__.useDispatch)('core/block-editor');
+    const handleSwitchStep = step => {
+      // Update the active step attribute
+      updateBlockAttributes(formClientId, {
+        activeStep: step.index
+      });
+      // Select the step block so focus moves there
+      // (prevents the current step's useEffect from overriding activeStep)
+      selectBlock(step.clientId);
+    };
+    const handleAddStep = () => {
+      const newBlock = (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_3__.createBlock)('gutenform/step', {
+        title: `Step ${steps.length + 1}`
+      });
+      insertBlock(newBlock, undefined, formClientId);
+      updateBlockAttributes(formClientId, {
+        activeStep: steps.length
+      });
+    };
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.Fragment, {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.BlockControls, {
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToolbarGroup, {
+          children: [steps.map(step => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToolbarButton, {
+            icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)("span", {
+              style: {
+                fontSize: '13px',
+                whiteSpace: 'nowrap'
+              },
+              children: [step.index + 1, ". ", step.title]
+            }),
+            label: `${(0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('step')} ${step.index + 1}: ${step.title}`,
+            onClick: () => handleSwitchStep(step),
+            isActive: activeStep === step.index
+          }, step.clientId)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.ToolbarButton, {
+            icon: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_components_block_atoms_BlockIcon__WEBPACK_IMPORTED_MODULE_7__["default"], {
+              icon: lucide_react__WEBPACK_IMPORTED_MODULE_6__["default"],
+              clean: true
+            }),
+            label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('addStep'),
+            onClick: handleAddStep
+          })]
+        })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(BlockEdit, {
+        ...props
+      })]
+    });
+  };
+}, 'withStepToolbar');
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (withStepToolbar);
 
 /***/ }),
 
@@ -15327,6 +15489,16 @@ module.exports = window["wp"]["components"];
 
 /***/ }),
 
+/***/ "@wordpress/compose":
+/*!*********************************!*\
+  !*** external ["wp","compose"] ***!
+  \*********************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["compose"];
+
+/***/ }),
+
 /***/ "@wordpress/data":
 /*!******************************!*\
   !*** external ["wp","data"] ***!
@@ -15344,6 +15516,16 @@ module.exports = window["wp"]["data"];
 /***/ ((module) => {
 
 module.exports = window["wp"]["element"];
+
+/***/ }),
+
+/***/ "@wordpress/hooks":
+/*!*******************************!*\
+  !*** external ["wp","hooks"] ***!
+  \*******************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["hooks"];
 
 /***/ }),
 

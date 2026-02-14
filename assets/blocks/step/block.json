@@ -1,0 +1,55 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "gutenform/step",
+  "version": "0.1.0",
+  "title": "Step",
+  "category": "widgets",
+  "icon": "editor-ol",
+  "description": "Step container block for multi-step forms in Gutenform.",
+  "parent": [
+    "gutenform/form"
+  ],
+  "example": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": "Step"
+    },
+    "stepId": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "usesContext": [
+    "gutenform/activeStep"
+  ],
+  "supports": {
+    "html": false,
+    "spacing": {
+      "padding": true,
+      "blockGap": true
+    },
+    "color": {
+      "background": true,
+      "text": true
+    },
+    "border": {
+      "color": true,
+      "radius": true,
+      "width": true
+    },
+    "layout": {
+      "allowSwitching": false,
+      "allowInheriting": false,
+      "default": {
+        "type": "default",
+        "orientation": "vertical"
+      }
+    }
+  },
+  "textdomain": "gutenform",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css"
+}

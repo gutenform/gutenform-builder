@@ -144,7 +144,7 @@ const CheckCircle = (0,_createLucideIcon_js__WEBPACK_IMPORTED_MODULE_0__["defaul
   \***************************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/success","version":"0.1.0","title":"Success","category":"widgets","icon":"marker","description":"Success Section for Gutenform.","parent":["gutenform/form"],"example":{},"attributes":{},"supports":{"html":false,"align":true},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/success","version":"0.1.0","title":"Success","category":"widgets","icon":"marker","description":"Success Section for Gutenform.","ancestor":["gutenform/form"],"example":{},"attributes":{},"supports":{"html":false,"align":true},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
 
 /***/ }),
 

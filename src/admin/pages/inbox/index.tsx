@@ -20,31 +20,35 @@ export default function MailPage() {
   const { entries, loading: entriesLoading, refetch: refetchEntries } = useEntries();
   const { mailboxes } = useMailboxes();
 
-  // Sync URL ?mailbox= id with store on load and when URL changes
+  // Sync URL ?mailbox= id with store on load and when URL changes (runs first)
   useEffect(() => {
     const mailboxParam = searchParams.get("mailbox");
     if (mailboxParam != null && mailboxParam !== "") {
       const id = parseInt(mailboxParam, 10);
-      if (!Number.isNaN(id) && id > 0 && id !== filter.mailbox_id) {
-        setInboxFilters({ mailbox_id: id });
+      if (!Number.isNaN(id) && id > 0) {
+        const current = $inboxFilters.get().mailbox_id;
+        if (current !== id) {
+          setInboxFilters({ mailbox_id: id });
+        }
       }
     }
   }, [searchParams]);
 
-  // Keep URL in sync when mailbox is changed in the UI (e.g. account switcher)
+  // Keep URL in sync when mailbox is changed in the UI (e.g. account switcher).
+  // Read mailbox_id from store so we don't overwrite URL on reload (first effect
+  // updates store from URL; we must use store value here, not stale filter from closure).
   useEffect(() => {
-    const current = new URLSearchParams(searchParams);
-    const existing = current.get("mailbox");
-    const wanted = filter.mailbox_id.toString();
-    if (existing !== wanted) {
-      if (Number(wanted) > 0) {
-        current.set("mailbox", wanted);
-      } else {
-        current.delete("mailbox");
-      }
-      setSearchParams(current, { replace: true });
+    const wanted = $inboxFilters.get().mailbox_id.toString();
+    const existing = searchParams.get("mailbox");
+    if (existing === wanted) return;
+    const next = new URLSearchParams(searchParams);
+    if (Number(wanted) > 0) {
+      next.set("mailbox", wanted);
+    } else {
+      next.delete("mailbox");
     }
-  }, [filter.mailbox_id]);
+    setSearchParams(next, { replace: true });
+  }, [filter.mailbox_id, searchParams]);
   const { formIdentifiers, refetch: refetchFormIdentifiers } = useFormIdentifiers();
   const {statuses, refetch: refetchStatuses} = useStatuses(); 
   const { labels, refetch: refetchLabels } = useEntryLabels();

@@ -22,4 +22,3 @@ export const FormBlockControls = ({ attributes, setAttributes }: FormBlockContro
 		</BlockControls>
 	);
 };
-

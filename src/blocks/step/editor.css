@@ -1,0 +1,9 @@
+/* Step block editor styles */
+.wp-block-gutenform-step {
+	position: relative;
+	min-height: 60px;
+}
+
+.wp-block-gutenform-step.gutenform-step--hidden {
+	display: none;
+}

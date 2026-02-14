@@ -37,8 +37,25 @@ window.addEventListener('DOMContentLoaded', () => {
 			loadSkinCSS(skinName);
 		}
 
+		// Multi-step form setup
+		const steps = form.querySelectorAll<HTMLElement>('.wp-block-gutenform-step');
+		const isMultiStep = steps.length > 0;
+		let currentStep = 0;
+
+		if (isMultiStep) {
+			initMultiStepForm(form as HTMLElement, steps, formOptions, (step: number) => {
+				currentStep = step;
+			});
+		}
+
 		form.addEventListener('submit', async (e) => {
 			e.preventDefault();
+
+			// For multi-step: only allow submit on the last step
+			if (isMultiStep && currentStep < steps.length - 1) {
+				return;
+			}
+
 			const formIdentifier = formOptions.formId;
 			const mailboxId = formOptions.mailboxId;
 			const providerIds = formOptions.providerIds || [];
@@ -48,8 +65,18 @@ window.addEventListener('DOMContentLoaded', () => {
 				return;
 			}
 			
+			// For multi-step: temporarily show all steps so FormData collects everything
+			if (isMultiStep) {
+				steps.forEach(step => step.style.display = '');
+			}
+
 			const formData = new FormData(form as HTMLFormElement);
 			const data = Object.fromEntries(formData);
+
+			// Restore step visibility
+			if (isMultiStep) {
+				goToStep(form as HTMLElement, steps, currentStep);
+			}
 			
 			// Extract file upload data from hidden inputs
 			const fileUploadFields = form.querySelectorAll<HTMLInputElement>('input[type="hidden"][id$="_files"]');
@@ -100,6 +127,15 @@ window.addEventListener('DOMContentLoaded', () => {
 							list.innerHTML = '';
 						});
 					}
+					// Clear saved progress and reset to first step on successful submit
+					if (isMultiStep) {
+						currentStep = 0;
+						goToStep(form as HTMLElement, steps, 0);
+						updateStepNavigationButtons(form as HTMLElement, steps, 0, steps.length);
+						if (formOptions.formId) {
+							sessionStorage.removeItem(`gutenform_progress_${formOptions.formId}`);
+						}
+					}
 					// TODO: Show success message to user
 				} else {
 					// Error-Handling
@@ -117,10 +153,191 @@ window.addEventListener('DOMContentLoaded', () => {
 					form_identifier: formIdentifier,
 					data,
 				});
+				// Reset to first step after legacy submit
+				if (isMultiStep) {
+					currentStep = 0;
+					goToStep(form as HTMLElement, steps, 0);
+					updateStepNavigationButtons(form as HTMLElement, steps, 0, steps.length);
+					if (formOptions.formId) {
+						sessionStorage.removeItem(`gutenform_progress_${formOptions.formId}`);
+					}
+				}
 			}
 		});
 	});
 });
+
+/**
+ * Initialize multi-step form logic
+ */
+function initMultiStepForm(
+	formEl: HTMLElement,
+	steps: NodeListOf<HTMLElement>,
+	formOptions: any,
+	onStepChange: (step: number) => void
+) {
+	let currentStep = 0;
+	const totalSteps = steps.length;
+	const formId = formOptions.formId;
+
+	// Restore saved progress from sessionStorage
+	if (formId) {
+		try {
+			const saved = sessionStorage.getItem(`gutenform_progress_${formId}`);
+			if (saved) {
+				const progressData = JSON.parse(saved);
+				if (progressData.fields) {
+					restoreFormFields(formEl, progressData.fields);
+				}
+				if (typeof progressData.currentStep === 'number' && progressData.currentStep < totalSteps) {
+					currentStep = progressData.currentStep;
+				}
+			}
+		} catch (e) {
+			console.error('Failed to restore form progress:', e);
+		}
+	}
+
+	// Show initial step
+	goToStep(formEl, steps, currentStep);
+	onStepChange(currentStep);
+	updateStepNavigationButtons(formEl, steps, currentStep, totalSteps);
+
+	// Listen for step navigation events (dispatched by step-navigation block)
+	formEl.addEventListener('gutenform:step-next', ((e: Event) => {
+		e.preventDefault();
+		if (currentStep >= totalSteps - 1) return;
+
+		// Validate current step fields before advancing
+		if (!validateStep(steps[currentStep])) return;
+
+		currentStep++;
+		goToStep(formEl, steps, currentStep);
+		onStepChange(currentStep);
+		updateStepNavigationButtons(formEl, steps, currentStep, totalSteps);
+	}) as EventListener);
+
+	formEl.addEventListener('gutenform:step-prev', ((e: Event) => {
+		e.preventDefault();
+		if (currentStep <= 0) return;
+
+		currentStep--;
+		goToStep(formEl, steps, currentStep);
+		onStepChange(currentStep);
+		updateStepNavigationButtons(formEl, steps, currentStep, totalSteps);
+	}) as EventListener);
+
+	formEl.addEventListener('gutenform:step-submit', ((e: Event) => {
+		e.preventDefault();
+		// Validate last step before submitting
+		if (!validateStep(steps[currentStep])) return;
+
+		// Trigger form submit
+		const submitEvent = new Event('submit', { cancelable: true, bubbles: true });
+		formEl.dispatchEvent(submitEvent);
+	}) as EventListener);
+}
+
+/**
+ * Show a specific step and hide all others
+ */
+function goToStep(formEl: HTMLElement, steps: NodeListOf<HTMLElement>, stepIndex: number) {
+	steps.forEach((step, index) => {
+		if (index === stepIndex) {
+			step.style.display = '';
+			step.classList.add('gutenform-step--active');
+			step.classList.remove('gutenform-step--hidden');
+		} else {
+			step.style.display = 'none';
+			step.classList.remove('gutenform-step--active');
+			step.classList.add('gutenform-step--hidden');
+		}
+	});
+
+	// Dispatch step change event for progress block
+	const event = new CustomEvent('gutenform:stepchange', {
+		detail: {
+			currentStep: stepIndex,
+			totalSteps: steps.length,
+		},
+		bubbles: true,
+	});
+	formEl.dispatchEvent(event);
+}
+
+/**
+ * Update step navigation buttons visibility (show/hide prev, swap next/submit)
+ */
+function updateStepNavigationButtons(
+	formEl: HTMLElement,
+	steps: NodeListOf<HTMLElement>,
+	currentStep: number,
+	totalSteps: number
+) {
+	const activeStep = steps[currentStep];
+	if (!activeStep) return;
+
+	const navBlock = activeStep.querySelector('.wp-block-gutenform-step-navigation');
+	if (!navBlock) return;
+
+	const prevBtn = navBlock.querySelector<HTMLElement>('[data-action="prev"]');
+	const nextBtn = navBlock.querySelector<HTMLElement>('[data-action="next"]');
+	const submitBtn = navBlock.querySelector<HTMLElement>('[data-action="submit"]');
+
+	// Show/hide prev button based on step position
+	if (prevBtn) {
+		prevBtn.style.display = currentStep === 0 ? 'none' : '';
+	}
+
+	// Show next on non-last steps, show submit on last step
+	const isLastStep = currentStep === totalSteps - 1;
+	if (nextBtn) {
+		nextBtn.style.display = isLastStep ? 'none' : '';
+	}
+	if (submitBtn) {
+		submitBtn.style.display = isLastStep ? '' : 'none';
+	}
+}
+
+/**
+ * Validate required fields in a step
+ */
+function validateStep(stepEl: HTMLElement): boolean {
+	const requiredFields = stepEl.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+		'input[required], select[required], textarea[required]'
+	);
+
+	let isValid = true;
+
+	requiredFields.forEach((field) => {
+		if (!field.value.trim()) {
+			isValid = false;
+			field.classList.add('gutenform-field--invalid');
+			// Use browser native validation UI
+			field.reportValidity();
+		} else {
+			field.classList.remove('gutenform-field--invalid');
+		}
+	});
+
+	return isValid;
+}
+
+/**
+ * Restore form field values from saved progress data
+ */
+function restoreFormFields(formEl: HTMLElement, fields: Record<string, string>) {
+	Object.entries(fields).forEach(([name, value]) => {
+		const field = formEl.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+			`[name="${name}"]`
+		);
+		if (field) {
+			field.value = value;
+			// Trigger change event so any listeners can react
+			field.dispatchEvent(new Event('change', { bubbles: true }));
+		}
+	});
+}
 
 /**
  * Submits form using the new provider system

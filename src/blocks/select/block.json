@@ -7,7 +7,7 @@
 	"category": "widgets",
 	"icon": "marker",
 	"description": "Select block for Gutenform.",
-	"parent": ["gutenform/form"],
+	"ancestor": ["gutenform/form"],
 	"example": {},
 	"attributes": {
 		"style": {

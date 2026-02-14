@@ -551,6 +551,24 @@ class Strings
 			'fieldLabel' => __('Field Label', 'gutenform'),
 			'fieldNamePreview' => __('Field Name', 'gutenform'),
 			'dragToInsert' => __('Drag to insert', 'gutenform'),
+
+			// Multi-Step Form
+			'step' => __('Step', 'gutenform'),
+			'addStep' => __('Add Step', 'gutenform'),
+			'deleteStep' => __('Delete Step', 'gutenform'),
+			'moveLeft' => __('Move Left', 'gutenform'),
+			'moveRight' => __('Move Right', 'gutenform'),
+			'stepNavigation' => __('Step Navigation', 'gutenform'),
+			'back' => __('Back', 'gutenform'),
+			'submit' => __('Submit', 'gutenform'),
+			'saveAndContinueLater' => __('Save & Continue Later', 'gutenform'),
+			'progressSaved' => __('Progress saved', 'gutenform'),
+			'progressRestored' => __('Progress restored', 'gutenform'),
+			'progressSettings' => __('Progress Settings', 'gutenform'),
+			'progressVariant' => __('Display Variant', 'gutenform'),
+			'progressBar' => __('Progress Bar', 'gutenform'),
+			'progressBubbles' => __('Step Bubbles', 'gutenform'),
+			'stepTitle' => __('Step Title', 'gutenform'),
 		);
 	}
 }

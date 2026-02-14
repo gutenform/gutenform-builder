@@ -1,0 +1,38 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "gutenform/save-progress",
+	"version": "0.1.0",
+	"title": "Save Progress",
+	"category": "widgets",
+	"icon": "download",
+	"description": "Save form progress to continue later in Gutenform.",
+	"ancestor": ["gutenform/form"],
+	"example": {},
+	"attributes": {
+		"label": {
+			"type": "string",
+			"default": "Save & Continue Later"
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": true,
+		"color": {
+			"background": true,
+			"text": true
+		},
+		"spacing": {
+			"padding": true,
+			"margin": true
+		},
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "gutenform",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js"
+}

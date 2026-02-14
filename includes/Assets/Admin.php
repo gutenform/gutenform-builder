@@ -130,6 +130,10 @@ class Admin
 			'gutenform-submit-editor-script',
 			'gutenform-success-editor-script',
 			'gutenform-file-editor-script',
+			'gutenform-step-editor-script',
+			'gutenform-step-navigation-editor-script',
+			'gutenform-save-progress-editor-script',
+			'gutenform-progress-editor-script',
 		);
 
 		// Get WordPress upload limit in MB

@@ -79,4 +79,11 @@
 	}
 }
 
+/* Multi-step form: field validation */
+
+.gutenform-field--invalid {
+	border-color: #dc2626 !important;
+	box-shadow: 0 0 0 1px #dc2626;
+}
+
 /*# sourceMappingURL=style-index.css.map*/

@@ -6,4 +6,5 @@ export type FormAttributes = {
 	skin?: string;
 	providerIds?: number[];
 	successView?: boolean;
+	activeStep?: number;
 };

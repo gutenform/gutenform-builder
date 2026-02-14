@@ -1,0 +1,9 @@
+/* Step block styles */
+.wp-block-gutenform-step {
+	width: 100%;
+}
+
+/* Frontend: hide non-active steps */
+.wp-block-gutenform-step:not(.gutenform-step--active) {
+	display: none;
+}
