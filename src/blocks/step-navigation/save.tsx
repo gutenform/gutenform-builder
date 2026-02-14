@@ -43,7 +43,8 @@ export default function save(props: BlockSaveProps<StepNavigationAttributes>) {
 				data-action="submit"
 				style={{ display: 'none', pointerEvents: 'none' }}
 			>
-				<span>{attributes.submitLabel}</span>
+				<span className="gutenform-submit-spinner" aria-hidden="true" />
+				<span className="gutenform-submit-text">{attributes.submitLabel}</span>
 			</button>
 		</div>
 	);

@@ -77,6 +77,9 @@ window.addEventListener('DOMContentLoaded', () => {
 				console.error('Form identifier not found');
 				return;
 			}
+
+			setSubmitLoading(form as HTMLElement, true);
+			try {
 			
 			// For multi-step: temporarily show all steps so FormData collects everything
 			if (isMultiStep) {
@@ -179,9 +182,20 @@ window.addEventListener('DOMContentLoaded', () => {
 					}
 				}
 			}
+			} finally {
+				setSubmitLoading(form as HTMLElement, false);
+			}
 		});
 	});
 });
+
+function setSubmitLoading(formEl: HTMLElement, loading: boolean) {
+	formEl.classList.toggle('gutenform-form--submitting', loading);
+	const buttons = formEl.querySelectorAll<HTMLButtonElement>('button[type="submit"], [data-action="submit"]');
+	buttons.forEach((btn) => {
+		btn.disabled = loading;
+	});
+}
 
 type ConditionalShowRule = {
 	sourceFieldName: string;

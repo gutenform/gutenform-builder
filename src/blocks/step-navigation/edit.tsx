@@ -3,10 +3,11 @@ import {
 	useBlockProps,
 	RichText,
 	BlockControls,
+	InspectorControls,
 	/** @ts-expect-error */
 	JustifyContentControl,
 } from '@wordpress/block-editor';
-import { ToolbarGroup } from '@wordpress/components';
+import { ToolbarGroup, PanelBody, TextControl } from '@wordpress/components';
 import { type BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
 import { type StepNavigationAttributes } from '@/blockTypes/step-navigation';
@@ -78,6 +79,34 @@ export default function Edit(props: BlockEditProps<StepNavigationAttributes>) {
 					/>
 				</ToolbarGroup>
 			</BlockControls>
+			<InspectorControls>
+				<PanelBody title={__('stepNavigationButtonLabels', 'Button labels')} initialOpen={true}>
+					<TextControl
+						label={__('stepNavPrevLabel', 'Previous button')}
+						value={attributes.prevLabel}
+						onChange={(prevLabel) => setAttributes({ prevLabel })}
+						help={__('stepNavPrevLabelHelp', 'Shown on all steps except the first.')}
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+					/>
+					<TextControl
+						label={__('stepNavNextLabel', 'Next button')}
+						value={attributes.nextLabel}
+						onChange={(nextLabel) => setAttributes({ nextLabel })}
+						help={__('stepNavNextLabelHelp', 'Shown when there is a following step.')}
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+					/>
+					<TextControl
+						label={__('stepNavSubmitLabel', 'Submit button')}
+						value={attributes.submitLabel}
+						onChange={(submitLabel) => setAttributes({ submitLabel })}
+						help={__('stepNavSubmitLabelHelp', 'Shown on the last visible step (e.g. when using conditional steps).')}
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+					/>
+				</PanelBody>
+			</InspectorControls>
 			<div { ...blockProps }>
 				{attributes.showPrev && !isFirstStep && (
 					<button type="button" className="gutenform-step-prev" onClick={(e) => e.preventDefault()}>

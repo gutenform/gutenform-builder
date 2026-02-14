@@ -64,7 +64,6 @@ window.addEventListener('DOMContentLoaded', () => {
       applyDefaultValueFromField(form);
     });
     form.addEventListener('submit', async e => {
-      var _window$gutenform$use;
       e.preventDefault();
 
       // For multi-step: only allow submit on the last visible step
@@ -79,67 +78,96 @@ window.addEventListener('DOMContentLoaded', () => {
         console.error('Form identifier not found');
         return;
       }
-
-      // For multi-step: temporarily show all steps so FormData collects everything
-      if (isMultiStep) {
-        steps.forEach(step => step.style.display = '');
-      }
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData);
-
-      // Restore step visibility (currentStep is visible index)
-      if (isMultiStep) {
-        const visibleStepIndices = getVisibleStepIndices(form);
-        goToStepByVisibleIndex(form, steps, visibleStepIndices, currentStep);
-      }
-
-      // Extract file upload data from hidden inputs
-      const fileUploadFields = form.querySelectorAll('input[type="hidden"][id$="_files"]');
-      fileUploadFields.forEach(hiddenInput => {
-        const fieldName = hiddenInput.name;
-        try {
-          const fileData = JSON.parse(hiddenInput.value || '[]');
-          if (Array.isArray(fileData) && fileData.length > 0) {
-            // Store file data as array in submission data
-            data[fieldName] = fileData;
-          }
-        } catch (e) {
-          console.error('Failed to parse file data for field:', fieldName, e);
+      setSubmitLoading(form, true);
+      try {
+        var _window$gutenform$use;
+        // For multi-step: temporarily show all steps so FormData collects everything
+        if (isMultiStep) {
+          steps.forEach(step => step.style.display = '');
         }
-      });
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
 
-      // Extract primary mail field name
-      const primaryMailField = form.querySelector('input[type="email"][data-primary-mail="true"]');
-      if (primaryMailField && primaryMailField.name) {
-        data['_primary_mail_field'] = primaryMailField.name;
-      }
-      console.log(data);
-
-      // Feature Flag prüfen
-      // @ts-expect-error - useProviderSystem is added dynamically by PHP
-      const useProviderSystem = (_window$gutenform$use = window.gutenform?.useProviderSystem) !== null && _window$gutenform$use !== void 0 ? _window$gutenform$use : false;
-      if (useProviderSystem) {
-        // Neuer Provider-basierter Flow
-        const result = await submitFormWithProviders(data, formIdentifier, providerIds);
-
-        // Show debug view if debug data is present
-        if (result.debug) {
-          showDebugView(result.debug);
+        // Restore step visibility (currentStep is visible index)
+        if (isMultiStep) {
+          const visibleStepIndices = getVisibleStepIndices(form);
+          goToStepByVisibleIndex(form, steps, visibleStepIndices, currentStep);
         }
-        if (result.success) {
-          // Success-Handling (z.B. Success-Message anzeigen)
-          console.log('Form submitted successfully', result);
-          form.classList.add('gutenform-form--success-view');
-          //clear form
-          if (form instanceof HTMLFormElement) {
-            form.reset();
-            // Also clear file upload lists
-            const fileLists = form.querySelectorAll('.gutenform-file-upload-list');
-            fileLists.forEach(list => {
-              list.innerHTML = '';
-            });
+
+        // Extract file upload data from hidden inputs
+        const fileUploadFields = form.querySelectorAll('input[type="hidden"][id$="_files"]');
+        fileUploadFields.forEach(hiddenInput => {
+          const fieldName = hiddenInput.name;
+          try {
+            const fileData = JSON.parse(hiddenInput.value || '[]');
+            if (Array.isArray(fileData) && fileData.length > 0) {
+              // Store file data as array in submission data
+              data[fieldName] = fileData;
+            }
+          } catch (e) {
+            console.error('Failed to parse file data for field:', fieldName, e);
           }
-          // Clear saved progress and reset to first step on successful submit
+        });
+
+        // Extract primary mail field name
+        const primaryMailField = form.querySelector('input[type="email"][data-primary-mail="true"]');
+        if (primaryMailField && primaryMailField.name) {
+          data['_primary_mail_field'] = primaryMailField.name;
+        }
+        console.log(data);
+
+        // Feature Flag prüfen
+        // @ts-expect-error - useProviderSystem is added dynamically by PHP
+        const useProviderSystem = (_window$gutenform$use = window.gutenform?.useProviderSystem) !== null && _window$gutenform$use !== void 0 ? _window$gutenform$use : false;
+        if (useProviderSystem) {
+          // Neuer Provider-basierter Flow
+          const result = await submitFormWithProviders(data, formIdentifier, providerIds);
+
+          // Show debug view if debug data is present
+          if (result.debug) {
+            showDebugView(result.debug);
+          }
+          if (result.success) {
+            // Success-Handling (z.B. Success-Message anzeigen)
+            console.log('Form submitted successfully', result);
+            form.classList.add('gutenform-form--success-view');
+            //clear form
+            if (form instanceof HTMLFormElement) {
+              form.reset();
+              // Also clear file upload lists
+              const fileLists = form.querySelectorAll('.gutenform-file-upload-list');
+              fileLists.forEach(list => {
+                list.innerHTML = '';
+              });
+            }
+            // Clear saved progress and reset to first step on successful submit
+            if (isMultiStep) {
+              currentStep = 0;
+              const visibleStepIndices = getVisibleStepIndices(form);
+              goToStepByVisibleIndex(form, steps, visibleStepIndices, 0);
+              updateStepNavigationButtons(form, steps, visibleStepIndices, 0);
+              if (formOptions.formId) {
+                sessionStorage.removeItem(`gutenform_progress_${formOptions.formId}`);
+              }
+            }
+            // TODO: Show success message to user
+          } else {
+            // Error-Handling
+            console.error('Form submission failed', result.errors);
+            // TODO: Show error message to user
+          }
+        } else {
+          // Legacy-Flow (aktueller Code)
+          if (!window.gutenform?.Entries) {
+            console.error('Entries API not found');
+            return;
+          }
+          window.gutenform?.Entries.create({
+            mailbox_id: mailboxId,
+            form_identifier: formIdentifier,
+            data
+          });
+          // Reset to first step after legacy submit
           if (isMultiStep) {
             currentStep = 0;
             const visibleStepIndices = getVisibleStepIndices(form);
@@ -149,37 +177,20 @@ window.addEventListener('DOMContentLoaded', () => {
               sessionStorage.removeItem(`gutenform_progress_${formOptions.formId}`);
             }
           }
-          // TODO: Show success message to user
-        } else {
-          // Error-Handling
-          console.error('Form submission failed', result.errors);
-          // TODO: Show error message to user
         }
-      } else {
-        // Legacy-Flow (aktueller Code)
-        if (!window.gutenform?.Entries) {
-          console.error('Entries API not found');
-          return;
-        }
-        window.gutenform?.Entries.create({
-          mailbox_id: mailboxId,
-          form_identifier: formIdentifier,
-          data
-        });
-        // Reset to first step after legacy submit
-        if (isMultiStep) {
-          currentStep = 0;
-          const visibleStepIndices = getVisibleStepIndices(form);
-          goToStepByVisibleIndex(form, steps, visibleStepIndices, 0);
-          updateStepNavigationButtons(form, steps, visibleStepIndices, 0);
-          if (formOptions.formId) {
-            sessionStorage.removeItem(`gutenform_progress_${formOptions.formId}`);
-          }
-        }
+      } finally {
+        setSubmitLoading(form, false);
       }
     });
   });
 });
+function setSubmitLoading(formEl, loading) {
+  formEl.classList.toggle('gutenform-form--submitting', loading);
+  const buttons = formEl.querySelectorAll('button[type="submit"], [data-action="submit"]');
+  buttons.forEach(btn => {
+    btn.disabled = loading;
+  });
+}
 function getSourceFieldValue(formEl, fieldName) {
   const field = formEl.querySelector(`[name="${fieldName}"]`);
   if (!field) return '';

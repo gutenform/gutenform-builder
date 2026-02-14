@@ -244,6 +244,39 @@ function Edit(props) {
           })
         })
       })
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InspectorControls, {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
+        title: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('stepNavigationButtonLabels', 'Button labels'),
+        initialOpen: true,
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+          label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('stepNavPrevLabel', 'Previous button'),
+          value: attributes.prevLabel,
+          onChange: prevLabel => setAttributes({
+            prevLabel
+          }),
+          help: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('stepNavPrevLabelHelp', 'Shown on all steps except the first.'),
+          __next40pxDefaultSize: true,
+          __nextHasNoMarginBottom: true
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+          label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('stepNavNextLabel', 'Next button'),
+          value: attributes.nextLabel,
+          onChange: nextLabel => setAttributes({
+            nextLabel
+          }),
+          help: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('stepNavNextLabelHelp', 'Shown when there is a following step.'),
+          __next40pxDefaultSize: true,
+          __nextHasNoMarginBottom: true
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_2__.TextControl, {
+          label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('stepNavSubmitLabel', 'Submit button'),
+          value: attributes.submitLabel,
+          onChange: submitLabel => setAttributes({
+            submitLabel
+          }),
+          help: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('stepNavSubmitLabelHelp', 'Shown on the last visible step (e.g. when using conditional steps).'),
+          __next40pxDefaultSize: true,
+          __nextHasNoMarginBottom: true
+        })]
+      })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)("div", {
       ...blockProps,
       children: [attributes.showPrev && !isFirstStep && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)("button", {
@@ -381,7 +414,7 @@ function save(props) {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
         children: attributes.nextLabel
       })
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("button", {
       type: "submit",
       className: "gutenform-step-submit",
       "data-action": "submit",
@@ -389,9 +422,13 @@ function save(props) {
         display: 'none',
         pointerEvents: 'none'
       },
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+        className: "gutenform-submit-spinner",
+        "aria-hidden": "true"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+        className: "gutenform-submit-text",
         children: attributes.submitLabel
-      })
+      })]
     })]
   });
 }

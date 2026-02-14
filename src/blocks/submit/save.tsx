@@ -4,7 +4,7 @@
  *
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
-import { InputAttributes } from '@/blockTypes/input';
+import { type SubmitAttributes } from '@/blockTypes/submit';
 import { useBlockProps } from '@wordpress/block-editor';
 import { type BlockSaveProps } from '@wordpress/blocks';
 
@@ -17,11 +17,12 @@ import { type BlockSaveProps } from '@wordpress/blocks';
  *
  * @return {Element} Element to render.
  */
-export default function save(props: BlockSaveProps<InputAttributes>) {
+export default function save(props: BlockSaveProps<SubmitAttributes>) {
 	return (
 		<div { ...useBlockProps.save() }>
 			<button type="submit" id={props.attributes.id}>
-				<span>{props.attributes.label}</span>
+				<span className="gutenform-submit-spinner" aria-hidden="true" />
+				<span className="gutenform-submit-text">{props.attributes.label}</span>
 			</button>
 		</div>
 	);

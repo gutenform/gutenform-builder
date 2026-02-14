@@ -641,6 +641,10 @@ form.wp-block-gutenform-form{
 
     .wp-block-gutenform-submit {
         button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5em;
             width: var(--submit-width, var(--field-size));
             padding: var(--submit-padding, var(--field-padding));
             border-radius: var(--submit-rounded, var(--field-rounded, 0.5rem));
@@ -666,7 +670,47 @@ form.wp-block-gutenform-form{
                 transform: scale(0.99);
                 transition-duration: 0.1s;
             }
+
+            &:disabled {
+                cursor: not-allowed;
+                opacity: 0.85;
+            }
         }
+    }
+
+    /* Submit spinner: hidden by default, shown while form is submitting */
+    .gutenform-submit-spinner {
+        display: none;
+        width: 1.125em;
+        height: 1.125em;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: gutenform-spin 0.7s linear infinite;
+    }
+
+    .gutenform-form--submitting .gutenform-submit-spinner {
+        display: inline-block;
+    }
+
+    .gutenform-form--submitting .gutenform-submit-text {
+        opacity: 0.9;
+    }
+
+    @keyframes gutenform-spin {
+        to {
+            transform: rotate(-360deg);
+        }
+    }
+
+    /* Step navigation: submit/next/prev buttons with spinner support */
+    .gutenform-step-navigation .gutenform-step-submit,
+    .gutenform-step-navigation .gutenform-step-next,
+    .gutenform-step-navigation .gutenform-step-prev {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5em;
     }
 
     .wp-block-gutenform-file {
@@ -779,6 +823,10 @@ form.wp-block-gutenform-form{
         .wp-block-gutenform-submit button:active,
         .gutenform-file-url-input button:active {
             transform: none;
+        }
+
+        .gutenform-submit-spinner {
+            animation-duration: 1.5s;
         }
     }
 }
