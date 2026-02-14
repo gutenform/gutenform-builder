@@ -1,0 +1,15 @@
+.gutenform-field .gutenform-datetime-inputs {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.gutenform-field .gutenform-datetime-input {
+	flex: 1;
+	min-width: 0;
+}
+
+.gutenform-field .gutenform-datetime-separator {
+	opacity: 0.7;
+}

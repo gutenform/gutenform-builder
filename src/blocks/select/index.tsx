@@ -9,11 +9,19 @@ import metadata from './block.json';
 
 import { ListChecks } from 'lucide-react';
 import { getSelectPresets } from './presets';
-import { transformToInput, transformToTextarea, transformToSelect } from '../../lib/field-block-transforms';
+import {
+	transformToInput,
+	transformToTextarea,
+	transformToSelect,
+	transformToCheckbox,
+	transformToRadio,
+	transformToDateTime,
+	transformToSlider,
+} from '../../lib/field-block-transforms';
 
-registerBlockType( metadata.name as string, {
+registerBlockType(metadata.name as string, {
 	...metadata,
-	icon: (<BlockIcon icon={ListChecks} />),
+	icon: <BlockIcon icon={ListChecks} />,
 	edit: Edit,
 	save,
 	transforms: {
@@ -28,6 +36,26 @@ registerBlockType( metadata.name as string, {
 				blocks: ['gutenform/textarea'],
 				transform: (attributes: any) => transformToTextarea(attributes),
 			},
+			{
+				type: 'block',
+				blocks: ['gutenform/checkbox'],
+				transform: (attributes: any) => transformToCheckbox(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/radio'],
+				transform: (attributes: any) => transformToRadio(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/date-time'],
+				transform: (attributes: any) => transformToDateTime(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/slider'],
+				transform: (attributes: any) => transformToSlider(attributes),
+			},
 		],
 		from: [
 			{
@@ -40,9 +68,29 @@ registerBlockType( metadata.name as string, {
 				blocks: ['gutenform/textarea'],
 				transform: (attributes: any) => transformToSelect(attributes),
 			},
+			{
+				type: 'block',
+				blocks: ['gutenform/checkbox'],
+				transform: (attributes: any) => transformToSelect(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/radio'],
+				transform: (attributes: any) => transformToSelect(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/date-time'],
+				transform: (attributes: any) => transformToSelect(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/slider'],
+				transform: (attributes: any) => transformToSelect(attributes),
+			},
 		],
 	},
-} as any );
+} as any);
 
 // Block Variations (Presets)
 const presets = getSelectPresets();

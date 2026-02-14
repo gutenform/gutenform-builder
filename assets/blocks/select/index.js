@@ -8410,6 +8410,22 @@ __webpack_require__.r(__webpack_exports__);
       type: 'block',
       blocks: ['gutenform/textarea'],
       transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToTextarea)(attributes)
+    }, {
+      type: 'block',
+      blocks: ['gutenform/checkbox'],
+      transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToCheckbox)(attributes)
+    }, {
+      type: 'block',
+      blocks: ['gutenform/radio'],
+      transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToRadio)(attributes)
+    }, {
+      type: 'block',
+      blocks: ['gutenform/date-time'],
+      transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToDateTime)(attributes)
+    }, {
+      type: 'block',
+      blocks: ['gutenform/slider'],
+      transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToSlider)(attributes)
     }],
     from: [{
       type: 'block',
@@ -8418,6 +8434,22 @@ __webpack_require__.r(__webpack_exports__);
     }, {
       type: 'block',
       blocks: ['gutenform/textarea'],
+      transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToSelect)(attributes)
+    }, {
+      type: 'block',
+      blocks: ['gutenform/checkbox'],
+      transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToSelect)(attributes)
+    }, {
+      type: 'block',
+      blocks: ['gutenform/radio'],
+      transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToSelect)(attributes)
+    }, {
+      type: 'block',
+      blocks: ['gutenform/date-time'],
+      transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToSelect)(attributes)
+    }, {
+      type: 'block',
+      blocks: ['gutenform/slider'],
       transform: attributes => (0,_lib_field_block_transforms__WEBPACK_IMPORTED_MODULE_8__.transformToSelect)(attributes)
     }]
   }
@@ -9702,8 +9734,10 @@ const NewOptionRow = ({
   newOption,
   syncLabelValue,
   onChange,
-  onAdd
+  onAdd,
+  showDescription = false
 }) => {
+  var _newOption$descriptio;
   const handleLabelChange = label => {
     // If sync is enabled, automatically set value to label
     const updatedOption = syncLabelValue ? {
@@ -9720,6 +9754,12 @@ const NewOptionRow = ({
     onChange({
       ...newOption,
       value
+    });
+  };
+  const handleDescriptionChange = description => {
+    onChange({
+      ...newOption,
+      description
     });
   };
   const canAdd = syncLabelValue ? newOption.label : newOption.label && newOption.value;
@@ -9744,6 +9784,19 @@ const NewOptionRow = ({
         onChange: handleValueChange,
         placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('newValue'),
         disabled: syncLabelValue,
+        __next40pxDefaultSize: true,
+        __nextHasNoMarginBottom: true,
+        onKeyDown: e => {
+          if (e.key === 'Enter' && canAdd) {
+            onAdd();
+          }
+        }
+      })
+    }), showDescription && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("td", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.TextControl, {
+        value: (_newOption$descriptio = newOption.description) !== null && _newOption$descriptio !== void 0 ? _newOption$descriptio : '',
+        onChange: handleDescriptionChange,
+        placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('description', 'Beschreibung'),
         __next40pxDefaultSize: true,
         __nextHasNoMarginBottom: true,
         onKeyDown: e => {
@@ -9813,7 +9866,8 @@ const OptionsTable = ({
   onSelectAll,
   onNewOptionChange,
   onAddNewOption,
-  onBulkAddClick
+  onBulkAddClick,
+  showDescription = false
 }) => {
   const sensors = (0,_dnd_kit_core__WEBPACK_IMPORTED_MODULE_7__.useSensors)((0,_dnd_kit_core__WEBPACK_IMPORTED_MODULE_7__.useSensor)(_dnd_kit_core__WEBPACK_IMPORTED_MODULE_7__.PointerSensor), (0,_dnd_kit_core__WEBPACK_IMPORTED_MODULE_7__.useSensor)(_dnd_kit_core__WEBPACK_IMPORTED_MODULE_7__.KeyboardSensor, {
     coordinateGetter: _dnd_kit_sortable__WEBPACK_IMPORTED_MODULE_8__.sortableKeyboardCoordinates
@@ -9859,6 +9913,8 @@ const OptionsTable = ({
                   children: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('label')
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("th", {
                   children: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('value')
+                }), showDescription && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("th", {
+                  children: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('description')
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("th", {
                   className: "gutenform-options-table-th-actions",
                   children: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('actions')
@@ -9872,12 +9928,14 @@ const OptionsTable = ({
                 onChange: onOptionChange,
                 onDelete: onDelete,
                 isSelected: selectedIndices.has(index),
-                onSelect: onSelect
+                onSelect: onSelect,
+                showDescription: showDescription
               }, `option-${index}`)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_NewOptionRow__WEBPACK_IMPORTED_MODULE_3__.NewOptionRow, {
                 newOption: newOption,
                 syncLabelValue: syncLabelValue,
                 onChange: onNewOptionChange,
-                onAdd: onAddNewOption
+                onAdd: onAddNewOption,
+                showDescription: showDescription
               })]
             })]
           })
@@ -9994,7 +10052,8 @@ const SortableOptionRow = ({
   onChange,
   onDelete,
   isSelected,
-  onSelect
+  onSelect,
+  showDescription = false
 }) => {
   const {
     attributes,
@@ -10034,7 +10093,8 @@ const SortableOptionRow = ({
       option: option,
       syncLabelValue: syncLabelValue,
       onChange: onChange,
-      index: index
+      index: index,
+      showDescription: showDescription
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("td", {
       className: "gutenform-options-table-td-actions",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
@@ -10054,8 +10114,10 @@ const OptionFields = ({
   option,
   syncLabelValue,
   onChange,
-  index
+  index,
+  showDescription = false
 }) => {
+  var _option$description;
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("td", {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.TextControl, {
@@ -10083,6 +10145,19 @@ const OptionFields = ({
         },
         placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('value'),
         disabled: syncLabelValue,
+        __next40pxDefaultSize: true,
+        __nextHasNoMarginBottom: true
+      })
+    }), showDescription && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("td", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.TextControl, {
+        value: (_option$description = option.description) !== null && _option$description !== void 0 ? _option$description : '',
+        onChange: description => {
+          onChange(index, {
+            ...option,
+            description
+          });
+        },
+        placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('description', 'Beschreibung'),
         __next40pxDefaultSize: true,
         __nextHasNoMarginBottom: true
       })
@@ -10134,10 +10209,15 @@ const OptionsModal = ({
   syncLabelValue: initialSyncLabelValue,
   onChange,
   onSyncLabelValueChange,
-  presets
+  presets,
+  showDescription = false
 }) => {
   const [localOptions, setLocalOptions] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(options);
-  const [newOption, setNewOption] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)({
+  const [newOption, setNewOption] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(showDescription ? {
+    label: '',
+    value: '',
+    description: ''
+  } : {
     label: '',
     value: ''
   });
@@ -10254,13 +10334,17 @@ const OptionsModal = ({
   const handleAddNewOption = () => {
     // If sync is enabled, use label as value
     const optionToAdd = syncLabelValue ? {
-      label: newOption.label,
+      ...newOption,
       value: newOption.label
     } : newOption;
     if (optionToAdd.label && optionToAdd.value) {
       const newOptions = [...localOptions, optionToAdd];
       setLocalOptions(newOptions);
-      setNewOption({
+      setNewOption(showDescription ? {
+        label: '',
+        value: '',
+        description: ''
+      } : {
         label: '',
         value: ''
       });
@@ -10287,15 +10371,20 @@ const OptionsModal = ({
     onChange(presetOptions);
   };
   const handleStartEmpty = () => {
+    const emptyOption = showDescription ? {
+      label: '',
+      value: '',
+      description: ''
+    } : {
+      label: '',
+      value: ''
+    };
     const emptyOptions = [{
-      label: '',
-      value: ''
+      ...emptyOption
     }, {
-      label: '',
-      value: ''
+      ...emptyOption
     }, {
-      label: '',
-      value: ''
+      ...emptyOption
     }];
     setLocalOptions(emptyOptions);
     onChange(emptyOptions);
@@ -10356,7 +10445,8 @@ const OptionsModal = ({
             onSelectAll: handleSelectAll,
             onNewOptionChange: handleNewOptionChange,
             onAddNewOption: handleAddNewOption,
-            onBulkAddClick: () => setIsBulkAddOpen(true)
+            onBulkAddClick: () => setIsBulkAddOpen(true),
+            showDescription: showDescription
           })]
         })
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_ModalFooter__WEBPACK_IMPORTED_MODULE_6__.ModalFooter, {
@@ -10420,7 +10510,8 @@ const OptionsRepeater = ({
   syncLabelValue,
   onChange,
   onSyncLabelValueChange,
-  presets = []
+  presets = [],
+  showDescription = false
 }) => {
   const [isModalOpen, setIsModalOpen] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(false);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
@@ -10456,7 +10547,8 @@ const OptionsRepeater = ({
       syncLabelValue: syncLabelValue,
       onChange: onChange,
       onSyncLabelValueChange: onSyncLabelValueChange,
-      presets: presets
+      presets: presets,
+      showDescription: showDescription
     })]
   });
 };
@@ -10568,7 +10660,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/data */ "@wordpress/data");
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_0__);
 
-const FIELD_BLOCK_NAMES = ['gutenform/input', 'gutenform/select', 'gutenform/textarea', 'gutenform/file'];
+const FIELD_BLOCK_NAMES = ['gutenform/input', 'gutenform/select', 'gutenform/textarea', 'gutenform/checkbox', 'gutenform/radio', 'gutenform/date-time', 'gutenform/slider', 'gutenform/file'];
 /**
  * Returns list of form fields (name + label, and options for select fields) from the parent form block.
  * Excludes the block with excludeClientId.
@@ -10598,7 +10690,7 @@ function useFormFieldList(clientId, excludeClientId) {
               name: block.attributes.name,
               label: block.attributes.label || block.attributes.name || block.name
             };
-            if (block.name === 'gutenform/select' && Array.isArray(block.attributes?.options)) {
+            if ((block.name === 'gutenform/select' || block.name === 'gutenform/checkbox' || block.name === 'gutenform/radio') && Array.isArray(block.attributes?.options)) {
               item.options = block.attributes.options.map(o => {
                 var _ref, _o$label, _o$value;
                 return {
@@ -10632,8 +10724,12 @@ function useFormFieldList(clientId, excludeClientId) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   getCommonAttributes: () => (/* binding */ getCommonAttributes),
+/* harmony export */   transformToCheckbox: () => (/* binding */ transformToCheckbox),
+/* harmony export */   transformToDateTime: () => (/* binding */ transformToDateTime),
 /* harmony export */   transformToInput: () => (/* binding */ transformToInput),
+/* harmony export */   transformToRadio: () => (/* binding */ transformToRadio),
 /* harmony export */   transformToSelect: () => (/* binding */ transformToSelect),
+/* harmony export */   transformToSlider: () => (/* binding */ transformToSlider),
 /* harmony export */   transformToTextarea: () => (/* binding */ transformToTextarea)
 /* harmony export */ });
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
@@ -10662,9 +10758,26 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 /**
+ * Checkbox block attributes.
+ */
+
+/**
+ * Radio block attributes.
+ */
+
+/**
+ * Date/Time block attributes.
+ */
+
+/**
+ * Slider block attributes.
+ */
+
+/**
  * Extracts common attributes from any field block.
  */
 function getCommonAttributes(attributes) {
+  var _attributes$condition;
   return {
     label: attributes.label || '',
     name: attributes.name || '',
@@ -10674,7 +10787,8 @@ function getCommonAttributes(attributes) {
     required: attributes.required || false,
     useCustomName: attributes.useCustomName,
     useCustomId: attributes.useCustomId,
-    defaultValue: attributes.defaultValue || ''
+    defaultValue: attributes.defaultValue || '',
+    conditionalShow: (_attributes$condition = attributes.conditionalShow) !== null && _attributes$condition !== void 0 ? _attributes$condition : null
   };
 }
 
@@ -10720,6 +10834,74 @@ function transformToSelect(attributes) {
     options: options,
     optionsPopulated: attributes.optionsPopulated || false,
     syncLabelValue: attributes.syncLabelValue || false
+  });
+}
+const defaultOptions = [{
+  label: 'Option 1',
+  value: 'option1'
+}, {
+  label: 'Option 2',
+  value: 'option2'
+}];
+
+/**
+ * Transforms any field block to a Checkbox block.
+ */
+function transformToCheckbox(attributes) {
+  const common = getCommonAttributes(attributes);
+  const options = attributes.options || defaultOptions;
+  return (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.createBlock)('gutenform/checkbox', {
+    ...common,
+    options,
+    styleVariant: attributes.styleVariant || 'default',
+    layout: attributes.layout || 'vertical',
+    isConsent: attributes.isConsent || false
+  });
+}
+
+/**
+ * Transforms any field block to a Radio block.
+ */
+function transformToRadio(attributes) {
+  const common = getCommonAttributes(attributes);
+  const options = attributes.options || defaultOptions;
+  return (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.createBlock)('gutenform/radio', {
+    ...common,
+    options,
+    styleVariant: attributes.styleVariant || 'default',
+    layout: attributes.layout || 'vertical'
+  });
+}
+
+/**
+ * Transforms any field block to a Date/Time block.
+ */
+function transformToDateTime(attributes) {
+  const common = getCommonAttributes(attributes);
+  return (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.createBlock)('gutenform/date-time', {
+    ...common,
+    mode: attributes.mode || 'date',
+    range: attributes.range || false,
+    defaultValueEnd: attributes.defaultValueEnd || '',
+    min: attributes.min || '',
+    max: attributes.max || ''
+  });
+}
+
+/**
+ * Transforms any field block to a Slider block.
+ */
+function transformToSlider(attributes) {
+  var _attributes$min, _attributes$max, _attributes$step, _ref, _attributes$defaultVa, _ref2, _attributes$defaultVa2;
+  const common = getCommonAttributes(attributes);
+  return (0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_0__.createBlock)('gutenform/slider', {
+    ...common,
+    min: (_attributes$min = attributes.min) !== null && _attributes$min !== void 0 ? _attributes$min : 0,
+    max: (_attributes$max = attributes.max) !== null && _attributes$max !== void 0 ? _attributes$max : 100,
+    step: (_attributes$step = attributes.step) !== null && _attributes$step !== void 0 ? _attributes$step : 1,
+    range: attributes.range || false,
+    defaultValueStart: (_ref = (_attributes$defaultVa = attributes.defaultValueStart) !== null && _attributes$defaultVa !== void 0 ? _attributes$defaultVa : attributes.min) !== null && _ref !== void 0 ? _ref : 0,
+    defaultValueEnd: (_ref2 = (_attributes$defaultVa2 = attributes.defaultValueEnd) !== null && _attributes$defaultVa2 !== void 0 ? _attributes$defaultVa2 : attributes.max) !== null && _ref2 !== void 0 ? _ref2 : 100
   });
 }
 
@@ -10995,7 +11177,7 @@ const getFormClasses = attributes => {
   return cn('gutenform-form', attributes.successView && 'gutenform-form--success-view');
 };
 const getFieldClasses = attributes => {
-  return cn('gutenform-field', attributes.type && `gutenform-field-type--${attributes.type.toLowerCase()}`, attributes.required && 'gutenform-field--required');
+  return cn('gutenform-field', attributes.type && `gutenform-field-type--${attributes.type.toLowerCase()}`, attributes.required && 'gutenform-field--required', attributes.mode && `gutenform-field--datetime-mode-${attributes.mode}`, attributes.range === true && 'gutenform-field--range');
 };
 
 /***/ }),

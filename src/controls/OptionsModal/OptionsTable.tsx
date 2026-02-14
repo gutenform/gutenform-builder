@@ -36,6 +36,7 @@ interface OptionsTableProps {
 	onNewOptionChange: (option: Option) => void;
 	onAddNewOption: () => void;
 	onBulkAddClick: () => void;
+	showDescription?: boolean;
 }
 
 export const OptionsTable = ({
@@ -53,6 +54,7 @@ export const OptionsTable = ({
 	onNewOptionChange,
 	onAddNewOption,
 	onBulkAddClick,
+	showDescription = false,
 }: OptionsTableProps) => {
 	const sensors = useSensors(
 		useSensor(PointerSensor),
@@ -98,6 +100,11 @@ export const OptionsTable = ({
 									<th>
 										{__('value')}
 									</th>
+									{showDescription && (
+										<th>
+											{__('description')}
+										</th>
+									)}
 									<th className="gutenform-options-table-th-actions">
 										{__('actions')}
 									</th>
@@ -114,6 +121,7 @@ export const OptionsTable = ({
 										onDelete={onDelete}
 										isSelected={selectedIndices.has(index)}
 										onSelect={onSelect}
+										showDescription={showDescription}
 									/>
 								))}
 								<NewOptionRow
@@ -121,6 +129,7 @@ export const OptionsTable = ({
 									syncLabelValue={syncLabelValue}
 									onChange={onNewOptionChange}
 									onAdd={onAddNewOption}
+									showDescription={showDescription}
 								/>
 							</tbody>
 						</table>

@@ -23,6 +23,7 @@ interface OptionsModalProps {
 		title: string;
 		options: Option[];
 	}>;
+	showDescription?: boolean;
 }
 
 export const OptionsModal = ({
@@ -33,9 +34,12 @@ export const OptionsModal = ({
 	onChange,
 	onSyncLabelValueChange,
 	presets,
+	showDescription = false,
 }: OptionsModalProps) => {
 	const [localOptions, setLocalOptions] = useState<Option[]>(options);
-	const [newOption, setNewOption] = useState<Option>({ label: '', value: '' });
+	const [newOption, setNewOption] = useState<Option>(
+		showDescription ? { label: '', value: '', description: '' } : { label: '', value: '' }
+	);
 	const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
 	const [editorElement, setEditorElement] = useState<HTMLElement | null>(null);
 	const [syncLabelValue, setSyncLabelValue] = useState<boolean>(initialSyncLabelValue);
@@ -157,13 +161,13 @@ export const OptionsModal = ({
 	const handleAddNewOption = () => {
 		// If sync is enabled, use label as value
 		const optionToAdd = syncLabelValue
-			? { label: newOption.label, value: newOption.label }
+			? { ...newOption, value: newOption.label }
 			: newOption;
 		
 		if (optionToAdd.label && optionToAdd.value) {
 			const newOptions = [...localOptions, optionToAdd];
 			setLocalOptions(newOptions);
-			setNewOption({ label: '', value: '' });
+			setNewOption(showDescription ? { label: '', value: '', description: '' } : { label: '', value: '' });
 		}
 	};
 
@@ -191,10 +195,11 @@ export const OptionsModal = ({
 	};
 
 	const handleStartEmpty = () => {
+		const emptyOption = showDescription ? { label: '', value: '', description: '' } : { label: '', value: '' };
 		const emptyOptions = [
-			{ label: '', value: '' },
-			{ label: '', value: '' },
-			{ label: '', value: '' },
+			{ ...emptyOption },
+			{ ...emptyOption },
+			{ ...emptyOption },
 		];
 		setLocalOptions(emptyOptions);
 		onChange(emptyOptions);
@@ -270,6 +275,7 @@ export const OptionsModal = ({
 								onNewOptionChange={handleNewOptionChange}
 								onAddNewOption={handleAddNewOption}
 								onBulkAddClick={() => setIsBulkAddOpen(true)}
+								showDescription={showDescription}
 							/>
 						</div>
 					)}

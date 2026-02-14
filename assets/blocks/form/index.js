@@ -12126,7 +12126,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   allowedBlocks: () => (/* binding */ allowedBlocks),
 /* harmony export */   prioritizedInserterBlocks: () => (/* binding */ prioritizedInserterBlocks)
 /* harmony export */ });
-const allowedBlocks = ['gutenform/input', 'gutenform/textarea', 'gutenform/select', 'gutenform/file', 'gutenform/captcha', 'gutenform/honeypot', 'gutenform/submit', 'gutenform/success', 'gutenform/step', 'gutenform/progress', 'gutenform/save-progress', 'core/columns', 'core/column', 'core/heading', 'core/paragraph', 'core/image', 'core/list', 'core/list-item', 'core/quote', 'core/table', 'core/video', 'core/embed', 'core/group'];
+const allowedBlocks = ['gutenform/input', 'gutenform/textarea', 'gutenform/select', 'gutenform/checkbox', 'gutenform/radio', 'gutenform/date-time', 'gutenform/slider', 'gutenform/file', 'gutenform/captcha', 'gutenform/honeypot', 'gutenform/submit', 'gutenform/success', 'gutenform/step', 'gutenform/progress', 'gutenform/save-progress', 'core/columns', 'core/column', 'core/heading', 'core/paragraph', 'core/image', 'core/list', 'core/list-item', 'core/quote', 'core/table', 'core/video', 'core/embed', 'core/group'];
 const prioritizedInserterBlocks = allowedBlocks.filter(block => block.startsWith('gutenform/'));
 
 /***/ }),
@@ -13654,8 +13654,10 @@ const NewOptionRow = ({
   newOption,
   syncLabelValue,
   onChange,
-  onAdd
+  onAdd,
+  showDescription = false
 }) => {
+  var _newOption$descriptio;
   const handleLabelChange = label => {
     // If sync is enabled, automatically set value to label
     const updatedOption = syncLabelValue ? {
@@ -13672,6 +13674,12 @@ const NewOptionRow = ({
     onChange({
       ...newOption,
       value
+    });
+  };
+  const handleDescriptionChange = description => {
+    onChange({
+      ...newOption,
+      description
     });
   };
   const canAdd = syncLabelValue ? newOption.label : newOption.label && newOption.value;
@@ -13696,6 +13704,19 @@ const NewOptionRow = ({
         onChange: handleValueChange,
         placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('newValue'),
         disabled: syncLabelValue,
+        __next40pxDefaultSize: true,
+        __nextHasNoMarginBottom: true,
+        onKeyDown: e => {
+          if (e.key === 'Enter' && canAdd) {
+            onAdd();
+          }
+        }
+      })
+    }), showDescription && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)("td", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.TextControl, {
+        value: (_newOption$descriptio = newOption.description) !== null && _newOption$descriptio !== void 0 ? _newOption$descriptio : '',
+        onChange: handleDescriptionChange,
+        placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('description', 'Beschreibung'),
         __next40pxDefaultSize: true,
         __nextHasNoMarginBottom: true,
         onKeyDown: e => {
@@ -13765,7 +13786,8 @@ const OptionsTable = ({
   onSelectAll,
   onNewOptionChange,
   onAddNewOption,
-  onBulkAddClick
+  onBulkAddClick,
+  showDescription = false
 }) => {
   const sensors = (0,_dnd_kit_core__WEBPACK_IMPORTED_MODULE_7__.useSensors)((0,_dnd_kit_core__WEBPACK_IMPORTED_MODULE_7__.useSensor)(_dnd_kit_core__WEBPACK_IMPORTED_MODULE_7__.PointerSensor), (0,_dnd_kit_core__WEBPACK_IMPORTED_MODULE_7__.useSensor)(_dnd_kit_core__WEBPACK_IMPORTED_MODULE_7__.KeyboardSensor, {
     coordinateGetter: _dnd_kit_sortable__WEBPACK_IMPORTED_MODULE_8__.sortableKeyboardCoordinates
@@ -13811,6 +13833,8 @@ const OptionsTable = ({
                   children: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('label')
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("th", {
                   children: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('value')
+                }), showDescription && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("th", {
+                  children: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('description')
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)("th", {
                   className: "gutenform-options-table-th-actions",
                   children: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('actions')
@@ -13824,12 +13848,14 @@ const OptionsTable = ({
                 onChange: onOptionChange,
                 onDelete: onDelete,
                 isSelected: selectedIndices.has(index),
-                onSelect: onSelect
+                onSelect: onSelect,
+                showDescription: showDescription
               }, `option-${index}`)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_9__.jsx)(_NewOptionRow__WEBPACK_IMPORTED_MODULE_3__.NewOptionRow, {
                 newOption: newOption,
                 syncLabelValue: syncLabelValue,
                 onChange: onNewOptionChange,
-                onAdd: onAddNewOption
+                onAdd: onAddNewOption,
+                showDescription: showDescription
               })]
             })]
           })
@@ -13946,7 +13972,8 @@ const SortableOptionRow = ({
   onChange,
   onDelete,
   isSelected,
-  onSelect
+  onSelect,
+  showDescription = false
 }) => {
   const {
     attributes,
@@ -13986,7 +14013,8 @@ const SortableOptionRow = ({
       option: option,
       syncLabelValue: syncLabelValue,
       onChange: onChange,
-      index: index
+      index: index,
+      showDescription: showDescription
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("td", {
       className: "gutenform-options-table-td-actions",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.Button, {
@@ -14006,8 +14034,10 @@ const OptionFields = ({
   option,
   syncLabelValue,
   onChange,
-  index
+  index,
+  showDescription = false
 }) => {
+  var _option$description;
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("td", {
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.TextControl, {
@@ -14035,6 +14065,19 @@ const OptionFields = ({
         },
         placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('value'),
         disabled: syncLabelValue,
+        __next40pxDefaultSize: true,
+        __nextHasNoMarginBottom: true
+      })
+    }), showDescription && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)("td", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_8__.jsx)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.TextControl, {
+        value: (_option$description = option.description) !== null && _option$description !== void 0 ? _option$description : '',
+        onChange: description => {
+          onChange(index, {
+            ...option,
+            description
+          });
+        },
+        placeholder: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_0__.__)('description', 'Beschreibung'),
         __next40pxDefaultSize: true,
         __nextHasNoMarginBottom: true
       })
@@ -14086,10 +14129,15 @@ const OptionsModal = ({
   syncLabelValue: initialSyncLabelValue,
   onChange,
   onSyncLabelValueChange,
-  presets
+  presets,
+  showDescription = false
 }) => {
   const [localOptions, setLocalOptions] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(options);
-  const [newOption, setNewOption] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)({
+  const [newOption, setNewOption] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(showDescription ? {
+    label: '',
+    value: '',
+    description: ''
+  } : {
     label: '',
     value: ''
   });
@@ -14206,13 +14254,17 @@ const OptionsModal = ({
   const handleAddNewOption = () => {
     // If sync is enabled, use label as value
     const optionToAdd = syncLabelValue ? {
-      label: newOption.label,
+      ...newOption,
       value: newOption.label
     } : newOption;
     if (optionToAdd.label && optionToAdd.value) {
       const newOptions = [...localOptions, optionToAdd];
       setLocalOptions(newOptions);
-      setNewOption({
+      setNewOption(showDescription ? {
+        label: '',
+        value: '',
+        description: ''
+      } : {
         label: '',
         value: ''
       });
@@ -14239,15 +14291,20 @@ const OptionsModal = ({
     onChange(presetOptions);
   };
   const handleStartEmpty = () => {
+    const emptyOption = showDescription ? {
+      label: '',
+      value: '',
+      description: ''
+    } : {
+      label: '',
+      value: ''
+    };
     const emptyOptions = [{
-      label: '',
-      value: ''
+      ...emptyOption
     }, {
-      label: '',
-      value: ''
+      ...emptyOption
     }, {
-      label: '',
-      value: ''
+      ...emptyOption
     }];
     setLocalOptions(emptyOptions);
     onChange(emptyOptions);
@@ -14308,7 +14365,8 @@ const OptionsModal = ({
             onSelectAll: handleSelectAll,
             onNewOptionChange: handleNewOptionChange,
             onAddNewOption: handleAddNewOption,
-            onBulkAddClick: () => setIsBulkAddOpen(true)
+            onBulkAddClick: () => setIsBulkAddOpen(true),
+            showDescription: showDescription
           })]
         })
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_10__.jsx)(_ModalFooter__WEBPACK_IMPORTED_MODULE_6__.ModalFooter, {
@@ -14372,7 +14430,8 @@ const OptionsRepeater = ({
   syncLabelValue,
   onChange,
   onSyncLabelValueChange,
-  presets = []
+  presets = [],
+  showDescription = false
 }) => {
   const [isModalOpen, setIsModalOpen] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_2__.useState)(false);
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_6__.Fragment, {
@@ -14408,7 +14467,8 @@ const OptionsRepeater = ({
       syncLabelValue: syncLabelValue,
       onChange: onChange,
       onSyncLabelValueChange: onSyncLabelValueChange,
-      presets: presets
+      presets: presets,
+      showDescription: showDescription
     })]
   });
 };
@@ -14872,8 +14932,8 @@ function useProviderValidation(providerIds, formClientId) {
     // Recursively extract field names from blocks
     const extractFromBlocks = blocks => {
       blocks.forEach(block => {
-        // Check if block is a field block (input, textarea, select)
-        if (block.name === 'gutenform/input' || block.name === 'gutenform/textarea' || block.name === 'gutenform/select') {
+        // Check if block is a field block
+        if (block.name === 'gutenform/input' || block.name === 'gutenform/textarea' || block.name === 'gutenform/select' || block.name === 'gutenform/checkbox' || block.name === 'gutenform/radio' || block.name === 'gutenform/date-time' || block.name === 'gutenform/slider') {
           const name = block.attributes?.name;
           if (name && typeof name === 'string') {
             fieldNames.add(name.toLowerCase());
@@ -15718,7 +15778,7 @@ const getFormClasses = attributes => {
   return cn('gutenform-form', attributes.successView && 'gutenform-form--success-view');
 };
 const getFieldClasses = attributes => {
-  return cn('gutenform-field', attributes.type && `gutenform-field-type--${attributes.type.toLowerCase()}`, attributes.required && 'gutenform-field--required');
+  return cn('gutenform-field', attributes.type && `gutenform-field-type--${attributes.type.toLowerCase()}`, attributes.required && 'gutenform-field--required', attributes.mode && `gutenform-field--datetime-mode-${attributes.mode}`, attributes.range === true && 'gutenform-field--range');
 };
 
 /***/ }),

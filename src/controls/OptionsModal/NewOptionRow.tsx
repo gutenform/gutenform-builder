@@ -8,9 +8,10 @@ interface NewOptionRowProps {
 	syncLabelValue: boolean;
 	onChange: (option: Option) => void;
 	onAdd: () => void;
+	showDescription?: boolean;
 }
 
-export const NewOptionRow = ({ newOption, syncLabelValue, onChange, onAdd }: NewOptionRowProps) => {
+export const NewOptionRow = ({ newOption, syncLabelValue, onChange, onAdd, showDescription = false }: NewOptionRowProps) => {
 	const handleLabelChange = (label: string) => {
 		// If sync is enabled, automatically set value to label
 		const updatedOption = syncLabelValue
@@ -21,6 +22,10 @@ export const NewOptionRow = ({ newOption, syncLabelValue, onChange, onAdd }: New
 
 	const handleValueChange = (value: string) => {
 		onChange({ ...newOption, value });
+	};
+
+	const handleDescriptionChange = (description: string) => {
+		onChange({ ...newOption, description });
 	};
 
 	const canAdd = syncLabelValue
@@ -60,6 +65,22 @@ export const NewOptionRow = ({ newOption, syncLabelValue, onChange, onAdd }: New
 					}}
 				/>
 			</td>
+			{showDescription && (
+				<td>
+					<TextControl
+						value={newOption.description ?? ''}
+						onChange={handleDescriptionChange}
+						placeholder={__('description', 'Beschreibung')}
+						__next40pxDefaultSize={true}
+						__nextHasNoMarginBottom={true}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter' && canAdd) {
+								onAdd();
+							}
+						}}
+					/>
+				</td>
+			)}
 			<td className="gutenform-options-table-td-actions">
 				<Button
 					onClick={onAdd}

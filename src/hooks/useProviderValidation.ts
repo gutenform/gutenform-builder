@@ -36,11 +36,15 @@ export function useProviderValidation(
     // Recursively extract field names from blocks
     const extractFromBlocks = (blocks: any[]) => {
       blocks.forEach((block: any) => {
-        // Check if block is a field block (input, textarea, select)
+        // Check if block is a field block
         if (
           block.name === 'gutenform/input' ||
           block.name === 'gutenform/textarea' ||
-          block.name === 'gutenform/select'
+          block.name === 'gutenform/select' ||
+          block.name === 'gutenform/checkbox' ||
+          block.name === 'gutenform/radio' ||
+          block.name === 'gutenform/date-time' ||
+          block.name === 'gutenform/slider'
         ) {
           const name = block.attributes?.name
           if (name && typeof name === 'string') {

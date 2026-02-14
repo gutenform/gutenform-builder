@@ -15,6 +15,7 @@ interface SortableOptionRowProps {
 	onDelete: (index: number) => void;
 	isSelected: boolean;
 	onSelect: (index: number, selected: boolean) => void;
+	showDescription?: boolean;
 }
 
 export const SortableOptionRow = ({
@@ -25,6 +26,7 @@ export const SortableOptionRow = ({
 	onDelete,
 	isSelected,
 	onSelect,
+	showDescription = false,
 }: SortableOptionRowProps) => {
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id: `option-${index}`,
@@ -61,7 +63,8 @@ export const SortableOptionRow = ({
 				option={option} 
 				syncLabelValue={syncLabelValue} 
 				onChange={onChange}
-				index={index} 
+				index={index}
+				showDescription={showDescription}
 			/>
 			<td className="gutenform-options-table-td-actions">
 				<Button
@@ -81,9 +84,10 @@ interface OptionFieldsProps {
 	syncLabelValue: boolean;
 	onChange: (index: number, option: Option) => void;
 	index: number;
+	showDescription?: boolean;
 }
 
-const OptionFields = ({ option, syncLabelValue, onChange, index }: OptionFieldsProps) => {
+const OptionFields = ({ option, syncLabelValue, onChange, index, showDescription = false }: OptionFieldsProps) => {
 	return (
 		<>
 			<td>
@@ -109,6 +113,19 @@ const OptionFields = ({ option, syncLabelValue, onChange, index }: OptionFieldsP
 					__nextHasNoMarginBottom={true}
 				/>
 			</td>
+			{showDescription && (
+				<td>
+					<TextControl
+						value={option.description ?? ''}
+						onChange={description => {
+							onChange(index, { ...option, description });
+						}}
+						placeholder={__('description', 'Beschreibung')}
+						__next40pxDefaultSize={true}
+						__nextHasNoMarginBottom={true}
+					/>
+				</td>
+			)}
 		</>
 	)
 }

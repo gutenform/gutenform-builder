@@ -1,0 +1,26 @@
+.gutenform-checkbox-options .gutenform-checkbox-option input:disabled {
+	cursor: default;
+}
+
+.gutenform-checkbox-placeholder {
+	color: #757575;
+}
+
+/* Layout orientation control: WordPress-style icon button group */
+.gutenform-layout-orientation-control .gutenform-layout-button-group {
+	display: inline-flex;
+	border-radius: 4px;
+	overflow: hidden;
+	box-shadow: 0 0 0 1px #1e1e1e;
+}
+.gutenform-layout-orientation-control .gutenform-layout-button-group .gutenform-layout-btn {
+	border-radius: 0;
+	margin: 0;
+	min-width: 36px;
+}
+.gutenform-layout-orientation-control .gutenform-layout-button-group .gutenform-layout-btn:first-child {
+	border-radius: 4px 0 0 4px;
+}
+.gutenform-layout-orientation-control .gutenform-layout-button-group .gutenform-layout-btn:last-child {
+	border-radius: 0 4px 4px 0;
+}

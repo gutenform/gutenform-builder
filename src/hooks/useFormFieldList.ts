@@ -1,6 +1,15 @@
 import { useSelect } from '@wordpress/data';
 
-const FIELD_BLOCK_NAMES = ['gutenform/input', 'gutenform/select', 'gutenform/textarea', 'gutenform/file'];
+const FIELD_BLOCK_NAMES = [
+	'gutenform/input',
+	'gutenform/select',
+	'gutenform/textarea',
+	'gutenform/checkbox',
+	'gutenform/radio',
+	'gutenform/date-time',
+	'gutenform/slider',
+	'gutenform/file',
+];
 
 export type FormFieldOptionValue = { label: string; value: string };
 
@@ -38,7 +47,12 @@ export function useFormFieldList(clientId: string, excludeClientId?: string): Fo
 								name: block.attributes.name,
 								label: block.attributes.label || block.attributes.name || block.name,
 							};
-							if (block.name === 'gutenform/select' && Array.isArray(block.attributes?.options)) {
+							if (
+								(block.name === 'gutenform/select' ||
+									block.name === 'gutenform/checkbox' ||
+									block.name === 'gutenform/radio') &&
+								Array.isArray(block.attributes?.options)
+							) {
 								item.options = block.attributes.options.map((o: { label?: string; value?: string }) => ({
 									label: o.label ?? o.value ?? '',
 									value: o.value ?? '',

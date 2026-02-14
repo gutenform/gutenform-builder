@@ -1,0 +1,98 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "gutenform/checkbox",
+  "version": "0.1.0",
+  "title": "Checkbox",
+  "category": "widgets",
+  "icon": "marker",
+  "description": "Checkbox block for Gutenform.",
+  "ancestor": [
+    "gutenform/form"
+  ],
+  "example": {},
+  "attributes": {
+    "style": {
+      "type": "object",
+      "default": {}
+    },
+    "options": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "styleVariant": {
+      "type": "string",
+      "default": "default"
+    },
+    "layout": {
+      "type": "string",
+      "default": "vertical"
+    },
+    "isConsent": {
+      "type": "boolean",
+      "default": false
+    },
+    "label": {
+      "type": "string",
+      "default": ""
+    },
+    "placeholder": {
+      "type": "string",
+      "default": ""
+    },
+    "help": {
+      "type": "string",
+      "default": ""
+    },
+    "defaultValue": {
+      "type": "string",
+      "default": ""
+    },
+    "required": {
+      "type": "boolean",
+      "default": false
+    },
+    "name": {
+      "type": "string",
+      "default": ""
+    },
+    "id": {
+      "type": "string",
+      "default": ""
+    },
+    "useCustomName": {
+      "type": "boolean",
+      "default": false
+    },
+    "useCustomId": {
+      "type": "boolean",
+      "default": false
+    },
+    "conditionalShow": {
+      "type": "object",
+      "default": null
+    }
+  },
+  "supports": {
+    "html": false
+  },
+  "textdomain": "gutenform",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScript": "file:./view.js"
+}

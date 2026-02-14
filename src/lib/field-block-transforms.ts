@@ -18,6 +18,7 @@ interface CommonFieldAttributes {
   useCustomName?: boolean
   useCustomId?: boolean
   defaultValue?: string
+  conditionalShow?: object | null
 }
 
 /**
@@ -45,6 +46,47 @@ interface SelectAttributes extends CommonFieldAttributes {
 }
 
 /**
+ * Checkbox block attributes.
+ */
+interface CheckboxAttributes extends CommonFieldAttributes {
+  options: Array<{ label: string; value: string }>
+  styleVariant: 'default' | 'toggle' | 'cards' | 'badges'
+  isConsent?: boolean
+}
+
+/**
+ * Radio block attributes.
+ */
+interface RadioAttributes extends CommonFieldAttributes {
+  options: Array<{ label: string; value: string }>
+  styleVariant: 'default' | 'badges' | 'cards'
+  layout: 'horizontal' | 'vertical'
+}
+
+/**
+ * Date/Time block attributes.
+ */
+interface DateTimeAttributes extends CommonFieldAttributes {
+  mode: 'date' | 'time' | 'datetime'
+  range: boolean
+  defaultValueEnd?: string
+  min?: string
+  max?: string
+}
+
+/**
+ * Slider block attributes.
+ */
+interface SliderAttributes extends CommonFieldAttributes {
+  min: number
+  max: number
+  step: number
+  range: boolean
+  defaultValueStart?: number
+  defaultValueEnd?: number
+}
+
+/**
  * Extracts common attributes from any field block.
  */
 export function getCommonAttributes(attributes: any): Partial<CommonFieldAttributes> {
@@ -58,6 +100,7 @@ export function getCommonAttributes(attributes: any): Partial<CommonFieldAttribu
     useCustomName: attributes.useCustomName,
     useCustomId: attributes.useCustomId,
     defaultValue: attributes.defaultValue || '',
+    conditionalShow: attributes.conditionalShow ?? null,
   }
 }
 
@@ -107,5 +150,74 @@ export function transformToSelect(attributes: any): any {
     optionsPopulated: attributes.optionsPopulated || false,
     syncLabelValue: attributes.syncLabelValue || false,
   } as SelectAttributes)
+}
+
+const defaultOptions = [
+  { label: 'Option 1', value: 'option1' },
+  { label: 'Option 2', value: 'option2' },
+]
+
+/**
+ * Transforms any field block to a Checkbox block.
+ */
+export function transformToCheckbox(attributes: any): any {
+  const common = getCommonAttributes(attributes)
+  const options = attributes.options || defaultOptions
+
+  return createBlock('gutenform/checkbox', {
+    ...common,
+    options,
+    styleVariant: attributes.styleVariant || 'default',
+    layout: attributes.layout || 'vertical',
+    isConsent: attributes.isConsent || false,
+  } as CheckboxAttributes)
+}
+
+/**
+ * Transforms any field block to a Radio block.
+ */
+export function transformToRadio(attributes: any): any {
+  const common = getCommonAttributes(attributes)
+  const options = attributes.options || defaultOptions
+
+  return createBlock('gutenform/radio', {
+    ...common,
+    options,
+    styleVariant: attributes.styleVariant || 'default',
+    layout: attributes.layout || 'vertical',
+  } as RadioAttributes)
+}
+
+/**
+ * Transforms any field block to a Date/Time block.
+ */
+export function transformToDateTime(attributes: any): any {
+  const common = getCommonAttributes(attributes)
+
+  return createBlock('gutenform/date-time', {
+    ...common,
+    mode: attributes.mode || 'date',
+    range: attributes.range || false,
+    defaultValueEnd: attributes.defaultValueEnd || '',
+    min: attributes.min || '',
+    max: attributes.max || '',
+  } as DateTimeAttributes)
+}
+
+/**
+ * Transforms any field block to a Slider block.
+ */
+export function transformToSlider(attributes: any): any {
+  const common = getCommonAttributes(attributes)
+
+  return createBlock('gutenform/slider', {
+    ...common,
+    min: attributes.min ?? 0,
+    max: attributes.max ?? 100,
+    step: attributes.step ?? 1,
+    range: attributes.range || false,
+    defaultValueStart: attributes.defaultValueStart ?? attributes.min ?? 0,
+    defaultValueEnd: attributes.defaultValueEnd ?? attributes.max ?? 100,
+  } as SliderAttributes)
 }
 

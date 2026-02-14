@@ -8,11 +8,19 @@ import metadata from './block.json';
 
 import { TextCursorInput } from 'lucide-react';
 import { getInputPresets } from './presets';
-import { transformToTextarea, transformToSelect, transformToInput } from '../../lib/field-block-transforms';
+import {
+	transformToTextarea,
+	transformToSelect,
+	transformToInput,
+	transformToCheckbox,
+	transformToRadio,
+	transformToDateTime,
+	transformToSlider,
+} from '../../lib/field-block-transforms';
 
-registerBlockType( metadata.name as string, {
+registerBlockType(metadata.name as string, {
 	...metadata,
-	icon: (<BlockIcon icon={TextCursorInput} />),
+	icon: <BlockIcon icon={TextCursorInput} />,
 	edit: Edit,
 	save,
 	transforms: {
@@ -27,6 +35,26 @@ registerBlockType( metadata.name as string, {
 				blocks: ['gutenform/select'],
 				transform: (attributes: any) => transformToSelect(attributes),
 			},
+			{
+				type: 'block',
+				blocks: ['gutenform/checkbox'],
+				transform: (attributes: any) => transformToCheckbox(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/radio'],
+				transform: (attributes: any) => transformToRadio(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/date-time'],
+				transform: (attributes: any) => transformToDateTime(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/slider'],
+				transform: (attributes: any) => transformToSlider(attributes),
+			},
 		],
 		from: [
 			{
@@ -39,9 +67,29 @@ registerBlockType( metadata.name as string, {
 				blocks: ['gutenform/select'],
 				transform: (attributes: any) => transformToInput(attributes, 'text'),
 			},
+			{
+				type: 'block',
+				blocks: ['gutenform/checkbox'],
+				transform: (attributes: any) => transformToInput(attributes, 'text'),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/radio'],
+				transform: (attributes: any) => transformToInput(attributes, 'text'),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/date-time'],
+				transform: (attributes: any) => transformToInput(attributes, 'text'),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/slider'],
+				transform: (attributes: any) => transformToInput(attributes, 'text'),
+			},
 		],
 	},
-} as any );
+} as any);
 
 // Block Variations (Presets)
 const presets = getInputPresets();

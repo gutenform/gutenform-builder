@@ -14,8 +14,10 @@ export const getFormClasses = (attributes: any) => {
 
 export const getFieldClasses = (attributes: any) => {
   return cn(
-    'gutenform-field', 
-    attributes.type && `gutenform-field-type--${attributes.type.toLowerCase()}`, 
-    attributes.required && 'gutenform-field--required'
+    'gutenform-field',
+    attributes.type && `gutenform-field-type--${attributes.type.toLowerCase()}`,
+    attributes.required && 'gutenform-field--required',
+    attributes.mode && `gutenform-field--datetime-mode-${attributes.mode}`,
+    attributes.range === true && 'gutenform-field--range'
   )
 }

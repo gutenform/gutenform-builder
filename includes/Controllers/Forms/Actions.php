@@ -33,6 +33,10 @@ class Actions
 		'gutenform/input',
 		'gutenform/textarea',
 		'gutenform/select',
+		'gutenform/checkbox',
+		'gutenform/radio',
+		'gutenform/date-time',
+		'gutenform/slider',
 		'gutenform/file',
 	);
 

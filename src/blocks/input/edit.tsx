@@ -19,7 +19,6 @@ export default function Edit(props: BlockEditProps<InputAttributes>) {
 		(name) => setAttributes({ name }),
 		attributes.useCustomName || false
 	);
-	console.log({attributes});
 
 	return (
 		<>

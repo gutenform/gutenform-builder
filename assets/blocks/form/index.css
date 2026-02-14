@@ -809,14 +809,551 @@ form.wp-block-gutenform-form{
             background-color: var(--field-border-color, var(--field-accent));
         }
     }
+    .gutenform-field--checkbox,
+    .gutenform-field--radio {
+        .gutenform-field__label {
+            display: block;
+            font-weight: var(--field-label-weight, 600);
+            margin-bottom: var(--field-label-margin-bottom, 0.5rem);
+        }
+    }
+    /* ---------- Checkbox & Radio: Input ausblenden, Label + ::before/::after für Optik ---------- */
+    .gutenform-field--checkbox .gutenform-checkbox-option input[type="checkbox"],
+    .gutenform-field--radio .gutenform-radio-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        margin: 0;
+        cursor: pointer;
+        z-index: 1;
+    }
+
+    .gutenform-field--checkbox .gutenform-checkbox-option,
+    .gutenform-field--radio .gutenform-radio-option {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        cursor: pointer;
+        transition: color var(--field-transition);
+    }
+
+    .gutenform-field--checkbox .gutenform-checkbox-option-content,
+    .gutenform-field--radio .gutenform-radio-option-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+        position: relative;
+        z-index: 0;
+    }
+
+    .gutenform-field--checkbox .gutenform-checkbox-option-label,
+    .gutenform-field--radio .gutenform-radio-option-label {
+        font-size: inherit;
+        font-weight: normal;
+    }
+
+    .gutenform-field--checkbox .gutenform-checkbox-option-description,
+    .gutenform-field--radio .gutenform-radio-option-description {
+        font-size: 0.8125em;
+        opacity: 0.85;
+    }
+
+    /* ---------- Layout ---------- */
+    .gutenform-field--layout-vertical .gutenform-checkbox-options,
+    .gutenform-field--layout-vertical .gutenform-radio-options {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .gutenform-field--layout-horizontal .gutenform-checkbox-options,
+    .gutenform-field--layout-horizontal .gutenform-radio-options {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    /* ---------- Checkbox: Default (Label::before = Kästchen, ::after = Haken) ---------- */
+    .gutenform-field--checkbox-default .gutenform-checkbox-option::before {
+        content: "";
+        flex-shrink: 0;
+        width: 1.25rem;
+        height: 1.25rem;
+        border: 2px solid color-mix(in srgb, currentColor 30%, transparent);
+        border-radius: 0.25rem;
+        background: transparent;
+        transition: border-color var(--field-transition), background-color var(--field-transition), box-shadow var(--field-transition);
+    }
+
+    .gutenform-field--checkbox-default .gutenform-checkbox-option::after {
+        content: "";
+        position: absolute;
+        left: 0.4375rem;
+        top: 50%;
+        transform: translateY(-50%) scale(0);
+        width: 0.375rem;
+        height: 0.6875rem;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform-origin: center;
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gutenform-field--checkbox-default .gutenform-checkbox-option:has(input:checked)::before {
+        background: var(--field-accent);
+        border-color: var(--field-accent);
+    }
+
+    .gutenform-field--checkbox-default .gutenform-checkbox-option:has(input:checked)::after {
+        transform: translateY(-50%) rotate(45deg) scale(1);
+    }
+
+    .gutenform-field--checkbox-default .gutenform-checkbox-option:hover::before {
+        border-color: color-mix(in srgb, currentColor 50%, transparent);
+    }
+
+    .gutenform-field--checkbox-default .gutenform-checkbox-option:has(input:focus-visible)::before {
+        box-shadow: var(--field-ring-focus);
+    }
+
+    /* ---------- Checkbox: Toggle (Label::before = Track, ::after = Thumb) ---------- */
+    .gutenform-field--checkbox-toggle .gutenform-checkbox-option {
+        gap: 0.75rem;
+    }
+
+    .gutenform-field--checkbox-toggle .gutenform-checkbox-option::before {
+        content: "";
+        flex-shrink: 0;
+        width: 2.5rem;
+        height: 1.375rem;
+        border-radius: 9999px;
+        background: color-mix(in srgb, currentColor 22%, transparent);
+        border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+        transition: background-color var(--field-transition), border-color var(--field-transition);
+    }
+
+    .gutenform-field--checkbox-toggle .gutenform-checkbox-option::after {
+        content: "";
+        position: absolute;
+        left: 0.1875rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gutenform-field--checkbox-toggle .gutenform-checkbox-option:has(input:checked)::before {
+        background: var(--field-accent);
+        border-color: var(--field-accent);
+    }
+
+    .gutenform-field--checkbox-toggle .gutenform-checkbox-option:has(input:checked)::after {
+        transform: translateY(-50%) translateX(1.125rem);
+    }
+
+    .gutenform-field--checkbox-toggle .gutenform-checkbox-option:has(input:focus-visible)::before {
+        box-shadow: var(--field-ring-focus);
+    }
+
+    /* ---------- Checkbox: Cards & Badges (Label = Karte/Pill, ::before = Kästchen) ---------- */
+    .gutenform-field--checkbox-cards .gutenform-checkbox-option,
+    .gutenform-field--checkbox-badges .gutenform-checkbox-option {
+        padding: 0.75rem 1rem;
+        border-radius: var(--field-rounded);
+        border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+        transition: border-color var(--field-transition), box-shadow var(--field-transition);
+    }
+
+    .gutenform-field--checkbox-badges .gutenform-checkbox-option {
+        background: color-mix(in srgb, currentColor 5%, transparent);
+    }
+
+    .gutenform-field--checkbox-cards .gutenform-checkbox-option {
+        background: transparent;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        min-height: 5.5rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .gutenform-field--checkbox-cards .gutenform-checkbox-option::before {
+        content: "";
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        left: auto;
+        width: 1.125rem;
+        height: 1.125rem;
+        box-sizing: border-box;
+        border: 2px solid color-mix(in srgb, currentColor 35%, transparent);
+        border-radius: 0.25rem;
+        background: transparent;
+        transition: border-color var(--field-transition), background-color var(--field-transition);
+    }
+
+    .gutenform-field--checkbox-cards .gutenform-checkbox-option::after {
+        content: "";
+        position: absolute;
+        top: 1.3125rem;
+        right: 1.3125rem;
+        left: auto;
+        width: 0.3125rem;
+        height: 0.5625rem;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: translate(50%, -50%) scale(0);
+        transform-origin: 50% 50%;
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gutenform-field--checkbox-cards .gutenform-checkbox-option-content {
+        margin-top: auto;
+        text-align: left;
+    }
+
+    .gutenform-field--checkbox-cards .gutenform-checkbox-option:has(input:checked),
+    .gutenform-field--checkbox-badges .gutenform-checkbox-option:has(input:checked) {
+        border-color: var(--field-accent);
+        box-shadow: 0 0 0 1px var(--field-accent);
+    }
+
+    .gutenform-field--checkbox-badges .gutenform-checkbox-option:has(input:checked) {
+        background: var(--field-accent-muted);
+    }
+
+    .gutenform-field--checkbox-cards .gutenform-checkbox-option:has(input:checked) {
+        background: transparent;
+    }
+
+    .gutenform-field--checkbox-cards .gutenform-checkbox-option:has(input:checked)::before {
+        background: var(--field-accent);
+        border-color: var(--field-accent);
+    }
+
+    .gutenform-field--checkbox-cards .gutenform-checkbox-option:has(input:checked)::after {
+        transform: translate(50%, -50%) rotate(45deg) scale(1);
+    }
+
+    .gutenform-field--checkbox-badges .gutenform-checkbox-option {
+        align-items: center;
+    }
+
+    .gutenform-field--checkbox-badges .gutenform-checkbox-option::before {
+        content: "";
+        flex-shrink: 0;
+        width: 1.125rem;
+        height: 1.125rem;
+        box-sizing: border-box;
+        border: 2px solid color-mix(in srgb, currentColor 35%, transparent);
+        border-radius: 0.25rem;
+        background: transparent;
+        transition: border-color var(--field-transition), background-color var(--field-transition);
+    }
+
+    .gutenform-field--checkbox-badges .gutenform-checkbox-option::after {
+        content: "";
+        position: absolute;
+        left: 0.40625rem;
+        top: 50%;
+        width: 0.3125rem;
+        height: 0.5625rem;
+        border: solid #fff;
+        border-width: 0 2px 2px 0;
+        transform: translateY(-50%) scale(0);
+        transform-origin: 50% 50%;
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gutenform-field--checkbox-badges .gutenform-checkbox-option:has(input:checked)::before {
+        background: var(--field-accent);
+        border-color: var(--field-accent);
+    }
+
+    .gutenform-field--checkbox-badges .gutenform-checkbox-option:has(input:checked)::after {
+        transform: translateY(-50%) rotate(45deg) scale(1);
+    }
+
+    .gutenform-field--checkbox-badges .gutenform-checkbox-option {
+        border-radius: 9999px;
+    }
+
+    .gutenform-field--checkbox-cards .gutenform-checkbox-options {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .gutenform-field--checkbox-cards .gutenform-checkbox-option {
+        flex: 1 1 12rem;
+        min-width: 12rem;
+    }
+
+    .gutenform-field--checkbox-badges .gutenform-checkbox-options {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    /* ---------- Radio: Default (Label::before = Kreis, ::after = inner dot when checked) ---------- */
+    .gutenform-field--radio-default .gutenform-radio-option::before {
+        content: "";
+        flex-shrink: 0;
+        width: 1.25rem;
+        height: 1.25rem;
+        border: 2px solid color-mix(in srgb, currentColor 30%, transparent);
+        border-radius: 50%;
+        background: transparent;
+        transition: border-color var(--field-transition), box-shadow var(--field-transition);
+    }
+
+    .gutenform-field--radio-default .gutenform-radio-option::after {
+        content: "";
+        position: absolute;
+        left: 0.3125rem;
+        top: 50%;
+        transform: translateY(-50%) scale(0);
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: var(--field-accent);
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gutenform-field--radio-default .gutenform-radio-option:has(input:checked)::before {
+        border-color: var(--field-accent);
+    }
+
+    .gutenform-field--radio-default .gutenform-radio-option:has(input:checked)::after {
+        transform: translateY(-50%) scale(1);
+    }
+
+    .gutenform-field--radio-default .gutenform-radio-option:hover::before {
+        border-color: color-mix(in srgb, currentColor 50%, transparent);
+    }
+
+    .gutenform-field--radio-default .gutenform-radio-option:has(input:focus-visible)::before {
+        box-shadow: var(--field-ring-focus);
+    }
+
+    /* ---------- Radio: Cards & Badges ---------- */
+    .gutenform-field--radio-cards .gutenform-radio-option,
+    .gutenform-field--radio-badges .gutenform-radio-option {
+        padding: 0.5rem 0.75rem;
+        border-radius: var(--field-rounded);
+        border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+        transition: border-color var(--field-transition), box-shadow var(--field-transition);
+    }
+
+    .gutenform-field--radio-badges .gutenform-radio-option {
+        background: color-mix(in srgb, currentColor 5%, transparent);
+    }
+
+    .gutenform-field--radio-cards .gutenform-radio-option {
+        background: transparent;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        min-height: 5.5rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .gutenform-field--radio-cards .gutenform-radio-option::before {
+        content: "";
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        left: auto;
+        width: 1.125rem;
+        height: 1.125rem;
+        box-sizing: border-box;
+        border: 2px solid color-mix(in srgb, currentColor 35%, transparent);
+        border-radius: 50%;
+        background: transparent;
+        transition: border-color var(--field-transition);
+    }
+
+    .gutenform-field--radio-cards .gutenform-radio-option::after {
+        content: "";
+        position: absolute;
+        top: 1.3125rem;
+        right: 1.3125rem;
+        left: auto;
+        width: 0.375rem;
+        height: 0.375rem;
+        border-radius: 50%;
+        background: var(--field-accent);
+        transform: translate(50%, -50%) scale(0);
+        transform-origin: 50% 50%;
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gutenform-field--radio-cards .gutenform-radio-option-content {
+        margin-top: auto;
+        text-align: left;
+    }
+
+    .gutenform-field--radio-cards .gutenform-radio-option:has(input:checked)::before {
+        border-color: var(--field-accent);
+    }
+
+    .gutenform-field--radio-cards .gutenform-radio-option:has(input:checked)::after {
+        transform: translate(50%, -50%) scale(1);
+    }
+
+    .gutenform-field--radio-cards .gutenform-radio-option:has(input:checked),
+    .gutenform-field--radio-badges .gutenform-radio-option:has(input:checked) {
+        border-color: var(--field-accent);
+        box-shadow: 0 0 0 1px var(--field-accent);
+    }
+
+    .gutenform-field--radio-badges .gutenform-radio-option:has(input:checked) {
+        background: var(--field-accent-muted);
+    }
+
+    .gutenform-field--radio-cards .gutenform-radio-option:has(input:checked) {
+        background: transparent;
+    }
+
+    .gutenform-field--radio-badges .gutenform-radio-option::before {
+        content: "";
+        flex-shrink: 0;
+        width: 1.125rem;
+        height: 1.125rem;
+        border: 2px solid color-mix(in srgb, currentColor 35%, transparent);
+        border-radius: 50%;
+        background: transparent;
+        transition: border-color var(--field-transition);
+    }
+
+    .gutenform-field--radio-badges .gutenform-radio-option::after {
+        content: "";
+        position: absolute;
+        left: 0.375rem;
+        top: 50%;
+        width: 0.375rem;
+        height: 0.375rem;
+        border-radius: 50%;
+        background: var(--field-accent);
+        transform: translateY(-50%) scale(0);
+        transform-origin: 50% 50%;
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .gutenform-field--radio-badges .gutenform-radio-option:has(input:checked)::before {
+        border-color: var(--field-accent);
+    }
+
+    .gutenform-field--radio-badges .gutenform-radio-option:has(input:checked)::after {
+        transform: translateY(-50%) scale(1);
+    }
+
+    .gutenform-field--radio-badges .gutenform-radio-option {
+        border-radius: 9999px;
+    }
+
+    .gutenform-field--radio-badges .gutenform-radio-option::after {
+        left: 0.796875rem;
+    }
+
+    .gutenform-field--radio-cards .gutenform-radio-options {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .gutenform-field--radio-cards .gutenform-radio-option {
+        flex: 1 1 12rem;
+        min-width: 12rem;
+    }
+
+    .gutenform-field--radio-badges .gutenform-radio-options {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    /* Date / Time field */
+    .gutenform-field .gutenform-datetime-inputs {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .gutenform-field .gutenform-datetime-input {
+        flex: 1;
+        min-width: 10rem;
+    }
+
+    .gutenform-field input[type="date"],
+    .gutenform-field input[type="time"],
+    .gutenform-field input[type="datetime-local"] {
+        width: auto;
+        min-width: 0;
+    }
+
+    .gutenform-field--range .gutenform-datetime-inputs .gutenform-datetime-input {
+        flex: 1;
+        min-width: 8rem;
+    }
+
+    /* Slider field */
+    .gutenform-field .gutenform-slider-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .gutenform-field .gutenform-slider-input {
+        flex: 1;
+        min-width: 8rem;
+        height: 1.5rem;
+        accent-color: var(--field-accent);
+        cursor: pointer;
+    }
+
+    .gutenform-field .gutenform-slider-input::-webkit-slider-thumb {
+        cursor: pointer;
+    }
+
+    .gutenform-field .gutenform-slider-input::-moz-range-thumb {
+        cursor: pointer;
+    }
+
+    .gutenform-field .gutenform-slider-separator {
+        opacity: 0.7;
+    }
 
     /* Barrierefreiheit: Reduzierte Bewegung respektieren */
     @media (prefers-reduced-motion: reduce) {
         input, textarea, select,
+        .gutenform-datetime-input,
+        .gutenform-slider-input,
         .wp-block-gutenform-submit button,
         .gutenform-file-upload-zone,
         .gutenform-file-url-input input,
-        .gutenform-file-url-input button {
+        .gutenform-file-url-input button,
+        .gutenform-field--checkbox .gutenform-checkbox-option::before,
+        .gutenform-field--checkbox .gutenform-checkbox-option::after,
+        .gutenform-field--radio .gutenform-radio-option::before,
+        .gutenform-field--radio .gutenform-radio-option::after {
             transition-duration: 0.01ms !important;
         }
 

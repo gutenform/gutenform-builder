@@ -1,0 +1,15 @@
+.gutenform-field .gutenform-slider-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.gutenform-field .gutenform-slider-input {
+	flex: 1;
+	min-width: 120px;
+}
+
+.gutenform-field .gutenform-slider-separator {
+	opacity: 0.7;
+}

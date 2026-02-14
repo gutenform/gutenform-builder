@@ -7,11 +7,19 @@ import save from './save';
 import metadata from './block.json';
 
 import { Pilcrow } from 'lucide-react';
-import { transformToInput, transformToSelect, transformToTextarea } from '../../lib/field-block-transforms';
+import {
+	transformToInput,
+	transformToSelect,
+	transformToTextarea,
+	transformToCheckbox,
+	transformToRadio,
+	transformToDateTime,
+	transformToSlider,
+} from '../../lib/field-block-transforms';
 
-registerBlockType( metadata.name as string, {
+registerBlockType(metadata.name as string, {
 	...metadata,
-	icon: (<BlockIcon icon={Pilcrow} />),
+	icon: <BlockIcon icon={Pilcrow} />,
 	edit: Edit,
 	save,
 	transforms: {
@@ -26,6 +34,26 @@ registerBlockType( metadata.name as string, {
 				blocks: ['gutenform/select'],
 				transform: (attributes: any) => transformToSelect(attributes),
 			},
+			{
+				type: 'block',
+				blocks: ['gutenform/checkbox'],
+				transform: (attributes: any) => transformToCheckbox(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/radio'],
+				transform: (attributes: any) => transformToRadio(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/date-time'],
+				transform: (attributes: any) => transformToDateTime(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/slider'],
+				transform: (attributes: any) => transformToSlider(attributes),
+			},
 		],
 		from: [
 			{
@@ -38,7 +66,27 @@ registerBlockType( metadata.name as string, {
 				blocks: ['gutenform/select'],
 				transform: (attributes: any) => transformToTextarea(attributes),
 			},
+			{
+				type: 'block',
+				blocks: ['gutenform/checkbox'],
+				transform: (attributes: any) => transformToTextarea(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/radio'],
+				transform: (attributes: any) => transformToTextarea(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/date-time'],
+				transform: (attributes: any) => transformToTextarea(attributes),
+			},
+			{
+				type: 'block',
+				blocks: ['gutenform/slider'],
+				transform: (attributes: any) => transformToTextarea(attributes),
+			},
 		],
 	},
-} as any );
+} as any);
 

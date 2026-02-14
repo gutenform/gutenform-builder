@@ -8,6 +8,7 @@ import { OptionsModal } from './OptionsModal';
 export type Option = {
 	label: string;
 	value: string;
+	description?: string;
 };
 
 interface OptionsRepeaterProps {
@@ -20,6 +21,8 @@ interface OptionsRepeaterProps {
 		title: string;
 		options: Option[];
 	}>;
+	/** Show description field for each option (checkbox/radio only) */
+	showDescription?: boolean;
 }
 
 export const OptionsRepeater = ({
@@ -28,6 +31,7 @@ export const OptionsRepeater = ({
 	onChange,
 	onSyncLabelValueChange,
 	presets = [],
+	showDescription = false,
 }: OptionsRepeaterProps) => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -57,6 +61,7 @@ export const OptionsRepeater = ({
 				onChange={onChange}
 				onSyncLabelValueChange={onSyncLabelValueChange}
 				presets={presets}
+				showDescription={showDescription}
 			/>
 		</>
 	);

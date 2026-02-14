@@ -1,0 +1,89 @@
+import { CheckboxAttributes } from '@/blockTypes/checkbox';
+import { hasConditionalShowToOutput } from '@/blockTypes/conditionalLogic';
+import { useBlockProps } from '@wordpress/block-editor';
+import { type BlockSaveProps } from '@wordpress/blocks';
+import { getFieldClasses, cn } from '../../lib/utils';
+
+export default function save(props: BlockSaveProps<CheckboxAttributes>) {
+	const {
+		options,
+		name,
+		id,
+		required,
+		label,
+		help,
+		conditionalShow,
+		isConsent,
+		defaultValue,
+		styleVariant = 'default',
+		layout = 'vertical',
+	} = props.attributes;
+	const className = cn(
+		getFieldClasses(props.attributes),
+		'gutenform-field--checkbox',
+		`gutenform-field--checkbox-${styleVariant}`,
+		`gutenform-field--layout-${layout}`
+	);
+
+	const defaultValues = defaultValue
+		? defaultValue.split(',').map((v) => v.trim())
+		: [];
+
+	return (
+		<div
+			{...useBlockProps.save({
+				className,
+				...(hasConditionalShowToOutput(conditionalShow) && {
+					'data-conditional-show': JSON.stringify(conditionalShow),
+				}),
+				...(isConsent && { 'data-consent': 'true' }),
+				...(required && !isConsent && { 'data-at-least-one': 'true' }),
+			})}
+		>
+			{label && <span className="gutenform-field__label">{label}</span>}
+			<div
+				className={cn(
+					'gutenform-checkbox-options',
+					`gutenform-checkbox--${styleVariant}`,
+					`gutenform-checkbox--layout-${layout}`
+				)}
+				role="group"
+			>
+				{options.map((option, index) => {
+					const inputId = `${id}-${index}`;
+					const checked = defaultValues.includes(option.value);
+					const inputName = isConsent ? name : `${name}[]`;
+
+					return (
+						<label
+							key={index}
+							className="gutenform-checkbox-option"
+							htmlFor={inputId}
+						>
+							<input
+								type="checkbox"
+								name={inputName}
+								value={option.value}
+								id={inputId}
+								required={isConsent ? required : undefined}
+								defaultChecked={checked}
+								data-required={required ? 'true' : undefined}
+							/>
+							<span className="gutenform-checkbox-option-content">
+								<span className="gutenform-checkbox-option-label">
+									{option.label}
+								</span>
+								{option.description && (
+									<span className="gutenform-checkbox-option-description">
+										{option.description}
+									</span>
+								)}
+							</span>
+						</label>
+					);
+				})}
+			</div>
+			{help && <p className="gutenform-field__help">{help}</p>}
+		</div>
+	);
+}
