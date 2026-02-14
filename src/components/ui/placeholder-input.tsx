@@ -137,9 +137,9 @@ export function PlaceholderInput({
             </div>
           </div>
           <div className="max-h-[300px] overflow-y-auto">
-            {placeholders.map((placeholder) => (
+            {placeholders.map((placeholder, index) => (
               <button
-                key={placeholder.value}
+                key={`${placeholder.value}-${index}`}
                 type="button"
                 onClick={() => {
                   insertPlaceholder(placeholder.value)

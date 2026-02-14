@@ -1,12 +1,17 @@
+import { useState } from 'react';
 import { __ } from "@/lib/i18n";
 import { InspectorControls } from '@wordpress/block-editor';
-import { TextControl, PanelBody, SelectControl } from '@wordpress/components';
+import { TextControl, PanelBody, SelectControl, Button, Modal } from '@wordpress/components';
 import { type BlockEditProps } from '@wordpress/blocks';
-import { type FormAttributes } from '@/blockTypes/form';
-import { MailboxSelect, ProviderMultiSelect } from '../../controls';
+import { type FormAttributes, type ProviderOverride } from '@/blockTypes/form';
+import { MailboxSelect, ProviderSelectModal } from '../../controls';
 import skins from '../../skins';
 import { useProviderValidation } from '../../hooks/useProviderValidation';
+import { useProviders } from '../../hooks/useProviders';
+import { useFormFieldList } from '../../hooks/useFormFieldList';
 import { MissingFieldsDialog } from '../../components/block-atoms/MissingFieldsDialog';
+import { ProviderConditionalLogicPanel } from './ProviderConditionalLogicPanel';
+import { FullscreenTemplateEditor } from '../../components/email-template-editor/FullscreenTemplateEditor';
 
 type FormInspectorControlsProps = BlockEditProps<FormAttributes>;
 
@@ -16,6 +21,34 @@ export const FormInspectorControls = ({ attributes, setAttributes, clientId }: F
 		shouldShowDialog,
 		setShouldShowDialog,
 	} = useProviderValidation(attributes.providerIds || [], clientId || '');
+
+	const [isProviderSelectOpen, setIsProviderSelectOpen] = useState(false);
+	const [editingProviderId, setEditingProviderId] = useState<number | null>(null);
+
+	const { providers } = useProviders({ is_active: true });
+	const providerIds = attributes.providerIds || [];
+	const providerOverrides = attributes.providerOverrides || {};
+	const fieldList = useFormFieldList(clientId || '', clientId || '');
+	const formPlaceholders = fieldList.map((f) => ({
+		value: `{${f.name}}`,
+		label: f.label || f.name,
+		description: undefined,
+		category: 'form' as const,
+	}));
+
+	const getProviderName = (id: number) => {
+		const p = providers.find((pr) => pr.id === id);
+		return p ? p.name : `Provider #${id}`;
+	};
+
+	const setProviderOverride = (providerId: number, override: ProviderOverride) => {
+		setAttributes({
+			providerOverrides: {
+				...providerOverrides,
+				[String(providerId)]: override,
+			},
+		});
+	};
 
 	return (
 		<>
@@ -52,20 +85,83 @@ export const FormInspectorControls = ({ attributes, setAttributes, clientId }: F
 						__next40pxDefaultSize={true}
 						__nextHasNoMarginBottom={true}
 					/>
-					<ProviderMultiSelect
-						value={attributes.providerIds || []}
-						onChange={(providerIds) => setAttributes({ providerIds })}
-					/>
+					<div style={{ marginTop: 8 }}>
+						<Button variant="secondary" isSecondary onClick={() => setIsProviderSelectOpen(true)} style={{ width: '100%' }}>
+							{__('selectProviders')}
+						</Button>
+					</div>
 				</PanelBody>
+				{providerIds.length > 0 &&
+					providerIds.map((providerId) => {
+						const override = providerOverrides[String(providerId)] ?? {
+							useProviderLayout: true,
+							content: '',
+							conditionalShow: undefined,
+						};
+						return (
+							<PanelBody key={providerId} title={getProviderName(providerId)} initialOpen={true}>
+								<Button
+									variant="secondary"
+									isSecondary
+									onClick={() => setEditingProviderId(providerId)}
+									style={{ width: '100%', marginBottom: 12 }}
+								>
+									{__('editTemplate')}
+								</Button>
+								<ProviderConditionalLogicPanel
+									formBlockClientId={clientId || ''}
+									conditionalShow={override.conditionalShow ?? undefined}
+									onChange={(conditionalShow) =>
+										setProviderOverride(providerId, {
+											...override,
+											conditionalShow: conditionalShow ?? null,
+										})
+									}
+								/>
+							</PanelBody>
+						);
+					})}
 			</InspectorControls>
+			<ProviderSelectModal
+				open={isProviderSelectOpen}
+				onClose={() => setIsProviderSelectOpen(false)}
+				selectedIds={providerIds}
+				onChange={(providerIds) => setAttributes({ providerIds })}
+			/>
+			<FullscreenTemplateEditor
+				open={editingProviderId !== null}
+				onOpenChange={(open) => !open && setEditingProviderId(null)}
+				initialHtml={editingProviderId !== null ? (providerOverrides[String(editingProviderId)]?.content ?? '') : ''}
+				onSave={() => {}}
+				customPlaceholders={formPlaceholders}
+				showUseProviderLayoutCheckbox={true}
+				initialUseProviderLayout={editingProviderId !== null ? (providerOverrides[String(editingProviderId)]?.useProviderLayout ?? true) : true}
+				onSaveWithMeta={
+					editingProviderId !== null
+						? (data) => {
+								const override = providerOverrides[String(editingProviderId)] ?? {
+									useProviderLayout: true,
+									content: '',
+									conditionalShow: undefined,
+								};
+								setProviderOverride(editingProviderId, {
+									...override,
+									content: data.html,
+									useProviderLayout: data.useProviderLayout,
+								});
+								setEditingProviderId(null);
+							}
+						: undefined
+				}
+				hideTemplateSelection={true}
+				ModalComponent={Modal}
+			/>
 			<MissingFieldsDialog
 				open={shouldShowDialog}
 				onOpenChange={setShouldShowDialog}
 				missingFields={missingFields}
 				formClientId={clientId || ''}
-				onFieldsAdded={() => {
-					// Fields have been added, validation will run again automatically
-				}}
+				onFieldsAdded={() => {}}
 			/>
 		</>
 	);

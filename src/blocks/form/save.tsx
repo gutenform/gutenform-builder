@@ -33,6 +33,7 @@ export default function save(props: BlockSaveProps<FormAttributes>) {
 		mailboxId: props.attributes.mailboxId || '1',
 		formId: props.attributes.formId || '',
 		providerIds: props.attributes.providerIds || [],
+		providerOverrides: props.attributes.providerOverrides || {},
 	};
 	const borderProps = getBorderClassesAndStyles( props.attributes );
 	const colorProps = getColorClassesAndStyles( props.attributes );

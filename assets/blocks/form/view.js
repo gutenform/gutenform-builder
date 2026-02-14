@@ -74,6 +74,7 @@ window.addEventListener('DOMContentLoaded', () => {
       const formIdentifier = formOptions.formId;
       const mailboxId = formOptions.mailboxId;
       const providerIds = formOptions.providerIds || [];
+      const providerOverrides = formOptions.providerOverrides || {};
       if (!formIdentifier) {
         console.error('Form identifier not found');
         return;
@@ -134,7 +135,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const useProviderSystem = (_window$gutenform$use = window.gutenform?.useProviderSystem) !== null && _window$gutenform$use !== void 0 ? _window$gutenform$use : false;
         if (useProviderSystem) {
           // Neuer Provider-basierter Flow
-          const result = await submitFormWithProviders(data, formIdentifier, providerIds);
+          const result = await submitFormWithProviders(data, formIdentifier, providerIds, providerOverrides);
 
           // Show debug view if debug data is present
           if (result.debug) {
@@ -474,11 +475,23 @@ function restoreFormFields(formEl, fields) {
 /**
  * Submits form using the new provider system
  */
-async function submitFormWithProviders(formData, formIdentifier, providerIds) {
+async function submitFormWithProviders(formData, formIdentifier, providerIds, providerOverrides = {}) {
   try {
     const apiUrl = window.gutenform?.apiUrl || '';
     const nonce = window.gutenform?.nonce || '';
     const namespace = window.gutenform?.namespace || 'gutenform/v1';
+
+    // Normalize provider_overrides for API: keys as string IDs, values with snake_case
+    const apiOverrides = {};
+    for (const [feedId, override] of Object.entries(providerOverrides)) {
+      var _override$conditional;
+      if (!override || typeof override !== 'object') continue;
+      apiOverrides[String(feedId)] = {
+        use_provider_layout: !!override.useProviderLayout,
+        content: typeof override.content === 'string' ? override.content : '',
+        conditional_show: (_override$conditional = override.conditionalShow) !== null && _override$conditional !== void 0 ? _override$conditional : undefined
+      };
+    }
     const response = await fetch(`${apiUrl}${namespace}/submit`, {
       method: 'POST',
       headers: {
@@ -488,7 +501,8 @@ async function submitFormWithProviders(formData, formIdentifier, providerIds) {
       body: JSON.stringify({
         form_identifier: formIdentifier,
         provider_ids: providerIds,
-        submission_data: formData
+        submission_data: formData,
+        provider_overrides: apiOverrides
       })
     });
     const result = await response.json();

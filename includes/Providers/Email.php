@@ -71,35 +71,53 @@ class Email extends AbstractProvider
             $form_identifier
         );
 
-        // Check if template is selected
-        $template_name = $provider_settings['email_template'] ?? '';
+        // Form-level override: use_provider_layout = false means use override content as full body
+        $form_use_provider_layout = isset($provider_settings['_form_use_provider_layout']) ? (bool) $provider_settings['_form_use_provider_layout'] : true;
+        $form_content_raw         = isset($provider_settings['_form_content']) ? $provider_settings['_form_content'] : '';
 
-        if (!empty($template_name) && $template_name !== 'custom') {
-            // Load template content
-            $template_content = EmailTemplates::get_template_content($template_name);
-            if ($template_content !== false) {
-                // Templates now use {all_fields} directly, so we just replace all placeholders
-                // If user has custom body content, it will be in the template HTML already
-                $body = $this->replace_placeholders($template_content, $submission_data, $form_identifier);
-            } else {
-                // Template not found, fall back to regular body
-                error_log(sprintf(
-                    'GutenForm Email Provider: Template "%s" not found, using regular body.',
-                    $template_name
-                ));
-                $body = $this->replace_placeholders(
-                    $provider_settings['body'] ?? '',
-                    $submission_data,
-                    $form_identifier
-                );
-            }
+        if ($form_content_raw !== '' && ! $form_use_provider_layout) {
+            // Full body from form override (replace placeholders in content)
+            $body = $this->replace_placeholders($form_content_raw, $submission_data, $form_identifier);
         } else {
-            // Regular body processing (no template or custom)
-            $body = $this->replace_placeholders(
-                $provider_settings['body'] ?? '',
-                $submission_data,
-                $form_identifier
-            );
+            // Build body from template or regular body
+            $template_name = $provider_settings['email_template'] ?? '';
+
+            if (!empty($template_name) && $template_name !== 'custom') {
+                // Load template content
+                $template_content = EmailTemplates::get_template_content($template_name);
+                if ($template_content !== false) {
+                    // Resolve {content}: form override (after placeholder replace) or default {all_fields}
+                    $injected_content = $this->format_all_fields($submission_data);
+                    if ($form_content_raw !== '') {
+                        $injected_content = $this->replace_placeholders($form_content_raw, $submission_data, $form_identifier);
+                    }
+                    $template_content = str_replace('{content}', $injected_content, $template_content);
+                    // Also support legacy {all_fields} in templates
+                    $template_content = str_replace('{all_fields}', $this->format_all_fields($submission_data), $template_content);
+                    $body = $this->replace_placeholders($template_content, $submission_data, $form_identifier);
+                } else {
+                    // Template not found, fall back to regular body
+                    error_log(sprintf(
+                        'GutenForm Email Provider: Template "%s" not found, using regular body.',
+                        $template_name
+                    ));
+                    $body = $this->replace_placeholders(
+                        $provider_settings['body'] ?? '',
+                        $submission_data,
+                        $form_identifier
+                    );
+                }
+            } else {
+                // No template or custom: use body; if it contains {content}, replace with form content or all_fields
+                $body_raw = $provider_settings['body'] ?? '';
+                $injected_content = $this->format_all_fields($submission_data);
+                if ($form_content_raw !== '') {
+                    $injected_content = $this->replace_placeholders($form_content_raw, $submission_data, $form_identifier);
+                }
+                $body_raw = str_replace('{content}', $injected_content, $body_raw);
+                $body_raw = str_replace('{all_fields}', $this->format_all_fields($submission_data), $body_raw);
+                $body = $this->replace_placeholders($body_raw, $submission_data, $form_identifier);
+            }
         }
 
         // Replace placeholders in from_email BEFORE validation
@@ -228,7 +246,7 @@ class Email extends AbstractProvider
                 'type'        => 'textarea',
                 'required'    => true,
                 'default'     => '{all_fields}',
-                'description' => __('Email message. HTML allowed. Placeholders like {field_name} will be replaced.', 'gutenform'),
+                'description' => __('Email message. HTML allowed. Placeholders like {field_name} will be replaced. Use {content} to inject form-specific content when the form has "Use provider layout" enabled.', 'gutenform'),
                 'rows'        => 6,
             ),
             array(

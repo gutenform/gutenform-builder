@@ -504,6 +504,17 @@ class Strings
 			'type' => __('Type:', 'gutenform'),
 			'form' => __('Form:', 'gutenform'),
 			'globalProvider' => __('Global Provider', 'gutenform'),
+			'selectProviders' => __('Select providers', 'gutenform'),
+			'editTemplate' => __('Edit template', 'gutenform'),
+			'useProviderLayout' => __('Use provider layout', 'gutenform'),
+			'useProviderLayoutHelp' => __('When enabled, your content replaces the {content} placeholder in the provider template. When disabled, this HTML is used as the full email body.', 'gutenform'),
+			'contentPlaceholder' => __('Content (replaces {content})', 'gutenform'),
+			'fullEmailBody' => __('Full email body (HTML)', 'gutenform'),
+			'availablePlaceholders' => __('Available placeholders', 'gutenform'),
+			'providerOnlyWhen' => __('Provider only when', 'gutenform'),
+			'insertedPlaceholders' => __('Inserted placeholders', 'gutenform'),
+			'replace' => __('Replace', 'gutenform'),
+			'remove' => __('Remove', 'gutenform'),
 
 			// Labels - Additional strings
 			'manageLabelsDescription' => __('Manage labels for organizing and categorizing form entries.', 'gutenform'),

@@ -14,6 +14,7 @@ export const STANDARD_PLACEHOLDERS = [
   'ip_address',
   'all_fields',
   'form_primary_mail',
+  'content',
 ];
 
 /**

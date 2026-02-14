@@ -69,17 +69,24 @@ interface PlaceholderDraggableProps {
   onPlaceholderSelect?: (placeholder: string) => void
   customPlaceholders?: Placeholder[]
   searchable?: boolean
+  /** Optional root class for styling when Tailwind is not loaded (e.g. block editor) */
+  className?: string
 }
 
 export function PlaceholderDraggable({
   onPlaceholderSelect,
   customPlaceholders = [],
   searchable = true,
+  className,
 }: PlaceholderDraggableProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [draggedPlaceholder, setDraggedPlaceholder] = useState<string | null>(null)
 
-  const allPlaceholders = [...STANDARD_PLACEHOLDERS, ...customPlaceholders]
+  // Form field placeholders first when present, then system placeholders
+  const allPlaceholders =
+    customPlaceholders.length > 0
+      ? [...customPlaceholders, ...STANDARD_PLACEHOLDERS]
+      : [...STANDARD_PLACEHOLDERS]
 
   const filteredPlaceholders = searchTerm
     ? allPlaceholders.filter(
@@ -131,8 +138,14 @@ export function PlaceholderDraggable({
     return labels[category] || category
   }
 
+  // Fixed order: form fields first, then system, then other
+  const categoryOrder = ['form', 'system', 'other']
+  const sortedCategories = Object.entries(groupedPlaceholders).sort(
+    ([a], [b]) => categoryOrder.indexOf(a) - categoryOrder.indexOf(b)
+  )
+
   return (
-    <Card>
+    <Card className={className}>
       <CardHeader>
         <CardTitle className="text-sm">{__("availablePlaceholders") || "Available Placeholders"}</CardTitle>
         <CardDescription className="text-xs">
@@ -150,15 +163,15 @@ export function PlaceholderDraggable({
         )}
 
         <div className="space-y-4 max-h-[400px] overflow-y-auto">
-          {Object.entries(groupedPlaceholders).map(([category, placeholders]) => (
+          {sortedCategories.map(([category, placeholders], categoryIndex) => (
             <div key={category}>
               <div className="text-xs font-semibold text-muted-foreground mb-2">
                 {getCategoryLabel(category)}
               </div>
               <div className="space-y-1">
-                {placeholders.map((placeholder) => (
+                {placeholders.map((placeholder, index) => (
                   <div
-                    key={placeholder.value}
+                    key={`${placeholder.value}-${index}`}
                     draggable
                     onDragStart={(e) => handleDragStart(e, placeholder.value)}
                     onDragEnd={(e) => handleDragEnd(e)}
@@ -170,6 +183,7 @@ export function PlaceholderDraggable({
                       ${draggedPlaceholder === placeholder.value ? 'opacity-50' : ''}
                     `}
                     title={placeholder.description}
+                    data-placeholder-row
                   >
                     <GripVertical className="h-4 w-4 text-muted-foreground shrink-0" />
                     <div className="flex-1 min-w-0">
@@ -183,7 +197,7 @@ export function PlaceholderDraggable({
                   </div>
                 ))}
               </div>
-              {Object.keys(groupedPlaceholders).indexOf(category) < Object.keys(groupedPlaceholders).length - 1 && (
+              {categoryIndex < sortedCategories.length - 1 && (
                 <Separator className="mt-2" />
               )}
             </div>

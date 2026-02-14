@@ -28,12 +28,17 @@ export function useFormFieldList(clientId: string, excludeClientId?: string): Fo
 	return useSelect(
 		(select: any) => {
 			const { getBlockParents, getBlocks, getBlockName } = select('core/block-editor');
-			const parents = getBlockParents(clientId);
 			let formBlockId: string | null = null;
-			for (const pid of parents) {
-				if (getBlockName(pid) === 'gutenform/form') {
-					formBlockId = pid;
-					break;
+			// When clientId is the form block itself (e.g. form inspector), use it as the form root
+			if (getBlockName(clientId) === 'gutenform/form') {
+				formBlockId = clientId;
+			} else {
+				const parents = getBlockParents(clientId);
+				for (const pid of parents) {
+					if (getBlockName(pid) === 'gutenform/form') {
+						formBlockId = pid;
+						break;
+					}
 				}
 			}
 			if (!formBlockId) return [];

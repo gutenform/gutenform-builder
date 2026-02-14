@@ -40,6 +40,10 @@
         "type": "number"
       }
     },
+    "providerOverrides": {
+      "type": "object",
+      "default": {}
+    },
     "successView": {
       "type": "boolean",
       "default": false

@@ -29,12 +29,13 @@ class Handler
     /**
      * Processes a form submission.
      *
-     * @param array  $submission_data The form data
-     * @param string $form_identifier The form identifier
-     * @param array  $provider_ids Array of provider feed IDs (optional)
+     * @param array  $submission_data    The form data
+     * @param string $form_identifier   The form identifier
+     * @param array  $provider_ids       Array of provider feed IDs (optional)
+     * @param array  $provider_overrides Optional form-level overrides per provider ID: [ feed_id => [ use_provider_layout, content, conditional_show? ] ]
      * @return array Result with success, errors, results
      */
-    public function process(array $submission_data, string $form_identifier, array $provider_ids = array()): array
+    public function process(array $submission_data, string $form_identifier, array $provider_ids = array(), array $provider_overrides = array()): array
     {
         $errors  = array();
         $results = array();
@@ -103,6 +104,7 @@ class Handler
                 ->get();
 
             foreach ($provider_feeds as $feed) {
+                $feed_id       = (int) $feed->id;
                 $provider_slug = $feed->provider_type ?? '';
                 $provider      = $registry->get_provider($provider_slug);
 
@@ -119,14 +121,36 @@ class Handler
                     continue;
                 }
 
+                // Conditional logic: skip this provider if condition is not met
+                $override = isset($provider_overrides[ $feed_id ]) && is_array($provider_overrides[ $feed_id ]) ? $provider_overrides[ $feed_id ] : array();
+                if (isset($override['conditional_show']) && $override['conditional_show'] !== null && $override['conditional_show'] !== '') {
+                    $cond_passed = ConditionalEvaluator::evaluate_config($override['conditional_show'], $submission_data);
+                    if (! $cond_passed) {
+                        $results[ $provider_slug . '_' . $feed_id ] = array(
+                            'success'  => true,
+                            'provider' => $provider->get_title(),
+                            'skipped'  => true,
+                            'reason'   => 'conditional_not_met',
+                        );
+                        continue;
+                    }
+                }
+
+                // Merge form-level override into settings for this provider
+                $settings = is_array($feed->settings) ? $feed->settings : array();
+                if (! empty($override)) {
+                    $settings['_form_use_provider_layout'] = isset($override['use_provider_layout']) ? (bool) $override['use_provider_layout'] : true;
+                    $settings['_form_content']                = isset($override['content']) ? $override['content'] : '';
+                }
+
                 try {
                     $success = $provider->process_submission(
                         $submission_data,
-                        $feed->settings ?? array(),
+                        $settings,
                         $form_identifier
                     );
 
-                    $results[$provider_slug] = array(
+                    $results[ $provider_slug . '_' . $feed_id ] = array(
                         'success'  => $success,
                         'provider' => $provider->get_title(),
                     );
@@ -143,7 +167,7 @@ class Handler
                         $provider->get_title(),
                         $e->getMessage()
                     );
-                    $results[$provider_slug] = array(
+                    $results[ $provider_slug . '_' . $feed_id ] = array(
                         'success' => false,
                         'error'   => $e->getMessage(),
                     );

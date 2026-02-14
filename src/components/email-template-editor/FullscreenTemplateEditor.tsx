@@ -1,8 +1,8 @@
 "use client"
 
+import "./fullscreen-template-editor.css"
 import { useState, useEffect, useCallback, useRef } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog.jsx"
-import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent } from "@/components/ui/dialog.jsx"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -15,6 +15,8 @@ import { apiGet, type ApiResponse } from "@/lib/api"
 import Editor from "@monaco-editor/react"
 import { useDebounce } from "@/hooks/useDebounce"
 import { X, Save } from "lucide-react"
+import type { Placeholder } from "@/components/ui/placeholder-draggable"
+import { Checkbox } from "@/components/ui/checkbox"
 
 interface EmailTemplate {
   name: string
@@ -22,35 +24,59 @@ interface EmailTemplate {
   description: string
 }
 
-interface FullscreenTemplateEditorProps {
+export interface FullscreenTemplateEditorProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   initialHtml?: string
   onSave: (html: string) => void
+  /** When provided, form fields etc. are shown in the placeholder list */
+  customPlaceholders?: Placeholder[]
+  /** When true, show "Use provider layout" checkbox and call onSaveWithMeta on save */
+  showUseProviderLayoutCheckbox?: boolean
+  initialUseProviderLayout?: boolean
+  onSaveWithMeta?: (data: { html: string; useProviderLayout: boolean }) => void
+  /** When true, hide the template selection section (e.g. for form-context editor) */
+  hideTemplateSelection?: boolean
+  /** When provided, use this component instead of Radix Dialog (e.g. WordPress Modal for block editor) */
+  ModalComponent?: React.ComponentType<{
+    title: string
+    onRequestClose: () => void
+    children: React.ReactNode
+    className?: string
+    style?: React.CSSProperties
+  }>
 }
-
-
 
 export function FullscreenTemplateEditor({
   open,
   onOpenChange,
   initialHtml = '',
   onSave,
+  customPlaceholders = [],
+  showUseProviderLayoutCheckbox = false,
+  initialUseProviderLayout = true,
+  onSaveWithMeta,
+  hideTemplateSelection = false,
+  ModalComponent: WpModal = undefined,
 }: FullscreenTemplateEditorProps) {
   const [html, setHtml] = useState<string>(String(initialHtml || ''))
+  const [useProviderLayout, setUseProviderLayout] = useState(initialUseProviderLayout)
   const [templates, setTemplates] = useState<EmailTemplate[]>([])
   const [loadingTemplates, setLoadingTemplates] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')
   const [previewHtml, setPreviewHtml] = useState('')
   const editorRef = useRef<any>(null)
 
-  // Load templates on mount
+  // Load templates on mount (skip when hiding template selection)
   useEffect(() => {
     if (open) {
-      loadTemplates()
       setHtml(String(initialHtml || ''))
+      setUseProviderLayout(initialUseProviderLayout)
+      if (!hideTemplateSelection) {
+        loadTemplates()
+      }
     }
-  }, [open, initialHtml])
+  }, [open, initialHtml, initialUseProviderLayout, hideTemplateSelection])
 
   // Update preview when HTML changes (debounced)
   const debouncedHtml = useDebounce(html, 300)
@@ -106,7 +132,11 @@ export function FullscreenTemplateEditor({
 
   const handleSave = () => {
     const htmlString = String(html || '')
-    onSave(htmlString)
+    if (onSaveWithMeta && showUseProviderLayoutCheckbox) {
+      onSaveWithMeta({ html: htmlString, useProviderLayout })
+    } else {
+      onSave(htmlString)
+    }
     onOpenChange(false)
   }
 
@@ -361,80 +391,110 @@ export function FullscreenTemplateEditor({
     }
   }
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] w-[95vw] h-[95vh] max-h-[95vh] p-0 flex flex-col !translate-x-[-50%] !translate-y-[-50%]">
-        <DialogHeader className="px-6 pt-6 pb-4 border-b">
-          <DialogTitle>{__("emailTemplateEditor") || "Email Template Editor"}</DialogTitle>
-          <DialogDescription>
+  if (!open) return null
+
+  const onClose = () => onOpenChange(false)
+
+  const modalContent = (
+    <div className="gutenform-te">
+        <div className="gutenform-te__header">
+          <h2 className="gutenform-te__title">
+            {__("emailTemplateEditor") || __("editTemplate") || "Edit template"}
+          </h2>
+          <p className="gutenform-te__description">
             {__("emailTemplateEditorDescription") || "Edit your email template HTML with live preview"}
-          </DialogDescription>
-        </DialogHeader>
+          </p>
+          {showUseProviderLayoutCheckbox && (
+            <div className="gutenform-te__checkbox-row">
+              <div className="gutenform-te__checkbox-inner">
+                <Checkbox
+                  id="use-provider-layout"
+                  checked={useProviderLayout}
+                  onCheckedChange={(checked) => setUseProviderLayout(checked === true)}
+                />
+                <label htmlFor="use-provider-layout" className="gutenform-te__checkbox-label">
+                  {__("useProviderLayout")}
+                </label>
+              </div>
+              <p className="gutenform-te__checkbox-help">
+                {__("useProviderLayoutHelp")}
+              </p>
+            </div>
+          )}
+        </div>
 
-        <div className="flex-1 flex overflow-hidden">
+        <div className="gutenform-te__main">
           {/* Sidebar */}
-          <div className="w-80 border-r flex flex-col overflow-hidden">
-            <ScrollArea className="flex-1">
-              <div className="p-4 space-y-6">
-                {/* Template Selection */}
-                <div className="space-y-2">
-                  <Label>{__("selectTemplate") || "Select Template"}</Label>
-                  <Select
-                    value={selectedTemplate || 'blank'}
-                    onValueChange={handleTemplateSelect}
-                    disabled={loadingTemplates}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder={__("selectTemplate") || "Select Template"} />
-                    </SelectTrigger>
-                    <SelectContent className="!z-[100000]">
-                      <SelectItem value="blank">{__("blank") || "Blank"}</SelectItem>
-                      {templates.map((template) => (
-                        <SelectItem key={template.name} value={template.name}>
-                          <div>
-                            <div className="font-medium">{template.title}</div>
-                            {template.description && (
-                              <div className="text-xs text-muted-foreground">
-                                {template.description}
+          <div className="gutenform-te__sidebar">
+            <ScrollArea className="gutenform-te__scroll-area">
+              <div className="gutenform-te__sidebar-inner">
+                {/* Template Selection (hidden in form context) */}
+                {!hideTemplateSelection && (
+                  <>
+                    <div className="gutenform-te__section">
+                      <Label>{__("selectTemplate") || "Select Template"}</Label>
+                      <Select
+                        value={selectedTemplate || 'blank'}
+                        onValueChange={handleTemplateSelect}
+                        disabled={loadingTemplates}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={__("selectTemplate") || "Select Template"} />
+                        </SelectTrigger>
+                        <SelectContent className="gutenform-te__select-content">
+                          <SelectItem value="blank">{__("blank") || "Blank"}</SelectItem>
+                          {templates.map((template) => (
+                            <SelectItem key={template.name} value={template.name}>
+                              <div>
+                                <div className="gutenform-te__template-title">{template.title}</div>
+                                {template.description && (
+                                  <div className="gutenform-te__template-desc">
+                                    {template.description}
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Separator />
+                  </>
+                )}
 
-                <Separator />
+                {/* Custom Fields (only when not using custom placeholders from form) */}
+                {customPlaceholders.length === 0 && (
+                  <>
+                    <div className="gutenform-te__section">
+                      <div className="gutenform-te__section-title">
+                        {__("customFields") || "Custom Fields"}
+                      </div>
+                      <CustomFieldInput onFieldAdd={handlePlaceholderInsert} />
+                    </div>
+                    <Separator />
+                  </>
+                )}
 
-                {/* Custom Fields */}
-                <div className="space-y-2">
-                  <div className="text-sm font-semibold">
-                    {__("customFields") || "Custom Fields"}
-                  </div>
-                  <CustomFieldInput onFieldAdd={handlePlaceholderInsert} />
-                </div>
-
-                <Separator />
-
-                {/* Placeholders Section */}
-                <PlaceholderDraggable onPlaceholderSelect={handlePlaceholderInsert} />
+                {/* Placeholders Section (includes form fields when customPlaceholders provided) */}
+                <PlaceholderDraggable
+                  className="gutenform-te__placeholders"
+                  onPlaceholderSelect={handlePlaceholderInsert}
+                  customPlaceholders={customPlaceholders}
+                />
               </div>
             </ScrollArea>
           </div>
 
           {/* Main Content Area - Preview and Editor */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            <div className="flex-1 flex border-b">
+          <div className="gutenform-te__main-area">
+            <div className="gutenform-te__content-row">
               {/* Preview */}
-              <div className="flex-1 flex flex-col">
-                <div className="px-4 py-2 border-b bg-muted/50">
-                  <Label className="text-sm font-semibold">
-                    {__("preview") || "Preview"}
-                  </Label>
+              <div className="gutenform-te__preview-col">
+                <div className="gutenform-te__panel-header">
+                  <Label>{__("preview") || "Preview"}</Label>
                 </div>
-                <div 
-                  className="flex-1 overflow-auto bg-muted/20 p-4 relative"
+                <div
+                  className="gutenform-te__preview-box"
                   onDragOver={(e) => {
                     e.preventDefault()
                     e.stopPropagation()
@@ -445,11 +505,11 @@ export function FullscreenTemplateEditor({
                   {previewHtml ? (
                     <div
                       dangerouslySetInnerHTML={{ __html: previewHtml }}
-                      className="w-full min-h-full border rounded-lg bg-white p-4"
+                      className="gutenform-te__preview-inner"
                       style={{ pointerEvents: 'auto' }}
                     />
                   ) : (
-                    <div className="flex items-center justify-center h-full text-muted-foreground">
+                    <div className="gutenform-te__preview-empty">
                       {__("noPreviewAvailable") || "No preview available"}
                     </div>
                   )}
@@ -457,13 +517,11 @@ export function FullscreenTemplateEditor({
               </div>
 
               {/* HTML Editor */}
-              <div className="flex-1 flex flex-col border-l">
-                <div className="px-4 py-2 border-b bg-muted/50">
-                  <Label className="text-sm font-semibold">
-                    {__("htmlEditor") || "HTML Editor"}
-                  </Label>
+              <div className="gutenform-te__editor-col">
+                <div className="gutenform-te__panel-header">
+                  <Label>{__("htmlEditor") || "HTML Editor"}</Label>
                 </div>
-                <div className="flex-1">
+                <div className="gutenform-te__editor-inner">
                   <Editor
                     height="100%"
                     defaultLanguage="html"
@@ -484,15 +542,46 @@ export function FullscreenTemplateEditor({
           </div>
         </div>
 
-        <DialogFooter className="px-6 py-4 border-t">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+        <div className="gutenform-te__footer">
+          <button type="button" className="gutenform-te__btn gutenform-te__btn--outline" onClick={onClose}>
             {__("cancel") || "Cancel"}
-          </Button>
-          <Button onClick={handleSave}>
-            <Save className="h-4 w-4 mr-2" />
+          </button>
+          <button type="button" className="gutenform-te__btn gutenform-te__btn--primary" onClick={handleSave}>
+            <Save className="h-4 w-4" style={{ marginRight: 8 }} />
             {__("save") || "Save"}
-          </Button>
-        </DialogFooter>
+          </button>
+        </div>
+    </div>
+  )
+
+  if (WpModal) {
+    return (
+      <WpModal
+        title={__("emailTemplateEditor") || __("editTemplate") || "Edit template"}
+        onRequestClose={onClose}
+        className="gutenform-fullscreen-template-editor-wp"
+        style={{
+          maxWidth: '95vw',
+          width: '95vw',
+          height: '95vh',
+          maxHeight: '95vh',
+          padding: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+        }}
+      >
+        <div className="gutenform-te__wp-wrap">
+          {modalContent}
+        </div>
+      </WpModal>
+    )
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[95vw] w-[95vw] h-[95vh] max-h-[95vh] p-0 flex flex-col !translate-x-[-50%] !translate-y-[-50%]">
+        {modalContent}
       </DialogContent>
     </Dialog>
   )
