@@ -41,7 +41,7 @@ export default function save(props: BlockSaveProps<StepNavigationAttributes>) {
 				type="submit"
 				className="gutenform-step-submit"
 				data-action="submit"
-				style={{ display: 'none' }}
+				style={{ display: 'none', pointerEvents: 'none' }}
 			>
 				<span>{attributes.submitLabel}</span>
 			</button>

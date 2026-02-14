@@ -6,4 +6,5 @@
 /* Frontend: hide non-active steps */
 .wp-block-gutenform-step:not(.gutenform-step--active) {
 	display: none;
+	pointer-events: none;
 }

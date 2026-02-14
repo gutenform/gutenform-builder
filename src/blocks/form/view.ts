@@ -296,6 +296,7 @@ function updateStepNavigationButtons(
 	}
 	if (submitBtn) {
 		submitBtn.style.display = isLastStep ? '' : 'none';
+		submitBtn.style.pointerEvents = isLastStep ? '' : 'none';
 	}
 }
 
