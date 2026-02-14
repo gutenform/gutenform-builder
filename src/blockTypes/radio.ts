@@ -6,6 +6,6 @@ export type RadioAttributes = GlobalFieldAttributes & {
 		value: string;
 		description?: string;
 	}>;
-	styleVariant: 'default' | 'badges' | 'cards';
+	styleVariant: 'default' | 'toggle' | 'badges' | 'cards';
 	layout: 'horizontal' | 'vertical';
 };

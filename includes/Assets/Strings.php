@@ -305,6 +305,7 @@ class Strings
 			// Block Editor - Radio Field
 			'radioFieldSettings' => __('Radio Field Settings', 'gutenform'),
 			'radioStyleDefault' => __('Standard', 'gutenform'),
+			'radioStyleToggle' => __('Schalter', 'gutenform'),
 			'radioStyleBadges' => __('Badges', 'gutenform'),
 			'radioStyleCards' => __('Karten', 'gutenform'),
 			'layout' => __('Layout', 'gutenform'),

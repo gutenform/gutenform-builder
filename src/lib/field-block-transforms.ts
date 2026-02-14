@@ -59,7 +59,7 @@ interface CheckboxAttributes extends CommonFieldAttributes {
  */
 interface RadioAttributes extends CommonFieldAttributes {
   options: Array<{ label: string; value: string }>
-  styleVariant: 'default' | 'badges' | 'cards'
+  styleVariant: 'default' | 'toggle' | 'badges' | 'cards'
   layout: 'horizontal' | 'vertical'
 }
 

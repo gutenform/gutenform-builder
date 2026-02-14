@@ -12,6 +12,7 @@ type RadioInspectorControlsProps = BlockEditProps<RadioAttributes>;
 
 const STYLE_OPTIONS = [
 	{ value: 'default', label: __('radioStyleDefault', 'Standard') },
+	{ value: 'toggle', label: __('radioStyleToggle', 'Schalter') },
 	{ value: 'badges', label: __('radioStyleBadges', 'Badges') },
 	{ value: 'cards', label: __('radioStyleCards', 'Karten') },
 ];

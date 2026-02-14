@@ -8544,6 +8544,9 @@ const STYLE_OPTIONS = [{
   value: 'default',
   label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('radioStyleDefault', 'Standard')
 }, {
+  value: 'toggle',
+  label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('radioStyleToggle', 'Schalter')
+}, {
   value: 'badges',
   label: (0,_lib_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('radioStyleBadges', 'Badges')
 }, {
