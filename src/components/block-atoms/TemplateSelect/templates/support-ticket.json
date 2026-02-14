@@ -1,0 +1,29 @@
+{
+  "labelKey": "templateSupportTicket",
+  "category": "advanced",
+  "value": [
+    ["gutenform/input", { "type": "text", "label": { "__": "customerIdOrderNumber", "fallback": "Kunden-ID / Bestellnummer" }, "required": false }],
+    ["gutenform/select", {
+      "label": { "__": "problemCategory", "fallback": "Kategorie des Problems" },
+      "options": [
+        { "label": { "__": "technical", "fallback": "Technisch" }, "value": "technical" },
+        { "label": { "__": "billing", "fallback": "Rechnung" }, "value": "billing" },
+        { "label": { "__": "shipping", "fallback": "Versand" }, "value": "shipping" }
+      ],
+      "required": true
+    }],
+    ["gutenform/select", {
+      "label": { "__": "urgency", "fallback": "Dringlichkeit" },
+      "options": [
+        { "label": { "__": "low", "fallback": "Niedrig" }, "value": "low" },
+        { "label": { "__": "medium", "fallback": "Mittel" }, "value": "medium" },
+        { "label": { "__": "critical", "fallback": "Kritisch" }, "value": "critical" }
+      ],
+      "required": true
+    }],
+    ["gutenform/textarea", { "label": { "__": "problemDescription", "fallback": "Problembeschreibung" }, "required": true, "rows": 5 }],
+    ["gutenform/file", { "label": { "__": "screenshotUpload", "fallback": "Screenshot" }, "required": false, "acceptTypes": "image/*" }],
+    ["gutenform/submit", {}],
+    ["gutenform/success", {}]
+  ]
+}

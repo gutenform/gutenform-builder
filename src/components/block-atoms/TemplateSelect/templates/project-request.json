@@ -1,0 +1,50 @@
+{
+  "labelKey": "templateProjectRequest",
+  "category": "multistep",
+  "value": [
+    ["gutenform/progress", { "variant": "bubbles" }],
+    ["gutenform/step", { "title": { "__": "theProject", "fallback": "Das Projekt" } }, [
+      ["gutenform/select", {
+        "label": { "__": "projectType", "fallback": "Art des Projekts" },
+        "options": [
+          { "label": "Webdesign", "value": "webdesign" },
+          { "label": "SEO", "value": "seo" },
+          { "label": "App", "value": "app" },
+          { "label": "Branding", "value": "branding" }
+        ],
+        "required": true
+      }],
+      ["gutenform/select", {
+        "label": { "__": "currentStatus", "fallback": "Aktueller Status" },
+        "options": [
+          { "label": { "__": "justAnIdea", "fallback": "Nur eine Idee" }, "value": "idea" },
+          { "label": { "__": "specificationAvailable", "fallback": "Spezifikation vorhanden" }, "value": "spec" },
+          { "label": { "__": "relaunch", "fallback": "Relaunch" }, "value": "relaunch" }
+        ],
+        "required": true
+      }],
+      ["gutenform/step-navigation", {}]
+    ]],
+    ["gutenform/step", { "title": { "__": "framework", "fallback": "Rahmenbedingungen" } }, [
+      ["gutenform/select", {
+        "label": { "__": "budgetRange", "fallback": "Budgetrahmen" },
+        "options": [
+          { "label": "< 2.000 €", "value": "under2k" },
+          { "label": "2.000 – 5.000 €", "value": "2k-5k" },
+          { "label": "5.000 – 10.000 €", "value": "5k-10k" },
+          { "label": "> 10.000 €", "value": "over10k" }
+        ],
+        "required": true
+      }],
+      ["gutenform/input", { "type": "date", "label": { "__": "deadline", "fallback": "Deadline" }, "required": false }],
+      ["gutenform/step-navigation", {}]
+    ]],
+    ["gutenform/step", { "title": { "__": "contactDetails", "fallback": "Kontaktdaten" } }, [
+      ["gutenform/input", { "type": "text", "label": { "__": "name", "fallback": "Name" }, "required": true }],
+      ["gutenform/input", { "type": "text", "label": { "__": "company", "fallback": "Firma" }, "required": false }],
+      ["gutenform/input", { "type": "email", "label": { "__": "email", "fallback": "E-Mail" }, "required": true, "isPrimaryMail": true }],
+      ["gutenform/step-navigation", {}]
+    ]],
+    ["gutenform/success", {}]
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "labelKey": "templateBlank",
+  "category": "start",
+  "value": [
+    ["gutenform/submit", {}],
+    ["gutenform/success", {}]
+  ]
+}

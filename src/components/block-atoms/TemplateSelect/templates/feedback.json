@@ -1,0 +1,28 @@
+{
+  "labelKey": "templateFeedback",
+  "category": "advanced",
+  "value": [
+    ["gutenform/select", {
+      "label": { "__": "howSatisfied", "fallback": "Wie zufrieden waren Sie? (1-10)" },
+      "options": [
+        { "label": "1", "value": "1" }, { "label": "2", "value": "2" }, { "label": "3", "value": "3" },
+        { "label": "4", "value": "4" }, { "label": "5", "value": "5" }, { "label": "6", "value": "6" },
+        { "label": "7", "value": "7" }, { "label": "8", "value": "8" }, { "label": "9", "value": "9" }, { "label": "10", "value": "10" }
+      ],
+      "required": true
+    }],
+    ["gutenform/textarea", { "label": { "__": "whatDidYouLike", "fallback": "Was hat Ihnen besonders gut gefallen?" }, "required": false, "rows": 4 }],
+    ["gutenform/textarea", { "label": { "__": "whatCanWeImprove", "fallback": "Was können wir besser machen?" }, "required": false, "rows": 4 }],
+    ["gutenform/select", {
+      "label": { "__": "contactForFollowUp", "fallback": "Dürfen wir Sie für Rückfragen kontaktieren?" },
+      "options": [
+        { "label": { "__": "yes", "fallback": "Ja" }, "value": "yes" },
+        { "label": { "__": "no", "fallback": "Nein" }, "value": "no" }
+      ],
+      "required": true
+    }],
+    ["gutenform/input", { "type": "email", "label": { "__": "emailFollowUp", "fallback": "E-Mail (für Rückfragen)" }, "required": false }],
+    ["gutenform/submit", {}],
+    ["gutenform/success", {}]
+  ]
+}

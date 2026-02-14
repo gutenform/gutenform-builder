@@ -1,0 +1,17 @@
+{
+  "labelKey": "templateBasicMultiStep",
+  "category": "multistep",
+  "value": [
+    ["gutenform/progress", { "variant": "bubbles" }],
+    ["gutenform/step", { "title": { "__": "stepTitlePersonalData", "fallback": "Persönliche Daten" } }, [
+      ["gutenform/input", { "type": "text", "label": { "__": "name", "fallback": "Name" }, "required": true }],
+      ["gutenform/input", { "type": "email", "label": { "__": "email", "fallback": "E-Mail" }, "required": true, "isPrimaryMail": true }],
+      ["gutenform/step-navigation", {}]
+    ]],
+    ["gutenform/step", { "title": { "__": "stepTitleMessage", "fallback": "Nachricht" } }, [
+      ["gutenform/textarea", { "label": { "__": "message", "fallback": "Nachricht" }, "required": true, "rows": 5 }],
+      ["gutenform/step-navigation", {}]
+    ]],
+    ["gutenform/success", {}]
+  ]
+}

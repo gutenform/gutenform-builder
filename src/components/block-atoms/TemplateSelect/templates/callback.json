@@ -1,0 +1,20 @@
+{
+  "labelKey": "templateCallback",
+  "category": "basics",
+  "value": [
+    ["gutenform/input", { "type": "text", "label": { "__": "name", "fallback": "Name" }, "required": true }],
+    ["gutenform/input", { "type": "tel", "label": { "__": "phone", "fallback": "Telefonnummer" }, "required": true }],
+    ["gutenform/select", {
+      "label": { "__": "bestReachability", "fallback": "Beste Erreichbarkeit" },
+      "options": [
+        { "label": { "__": "morning", "fallback": "Vormittags" }, "value": "morning" },
+        { "label": { "__": "afternoon", "fallback": "Nachmittags" }, "value": "afternoon" },
+        { "label": { "__": "evening", "fallback": "Abends" }, "value": "evening" }
+      ],
+      "required": true
+    }],
+    ["gutenform/textarea", { "label": { "__": "reasonForCall", "fallback": "Grund des Anrufs (optional)" }, "required": false, "rows": 3 }],
+    ["gutenform/submit", {}],
+    ["gutenform/success", {}]
+  ]
+}

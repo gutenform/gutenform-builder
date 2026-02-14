@@ -1,0 +1,27 @@
+{
+  "labelKey": "templateProductConfigurator",
+  "category": "advanced",
+  "value": [
+    ["gutenform/select", {
+      "label": { "__": "productChoice", "fallback": "Produktwahl" },
+      "options": [
+        { "label": { "__": "selectAnOption", "fallback": "Bitte wählen" }, "value": "" },
+        { "label": { "__": "basicPackage", "fallback": "Basispaket – 99 €" }, "value": "basic" },
+        { "label": { "__": "premiumPackage", "fallback": "Premium – 199 €" }, "value": "premium" }
+      ],
+      "required": true
+    }],
+    ["gutenform/select", {
+      "label": { "__": "addOns", "fallback": "Zusatzoptionen" },
+      "options": [
+        { "label": { "__": "expressProcessing", "fallback": "Expressbearbeitung +20 €" }, "value": "express" },
+        { "label": { "__": "giftWrapping", "fallback": "Geschenkverpackung +5 €" }, "value": "giftwrap" }
+      ],
+      "required": false
+    }],
+    ["gutenform/textarea", { "label": { "__": "deliveryAddress", "fallback": "Lieferadresse" }, "required": true, "rows": 3 }],
+    ["gutenform/input", { "type": "text", "label": { "__": "billingAddressSame", "fallback": "Rechnungsadresse" }, "required": false, "placeholder": { "__": "sameAsDelivery", "fallback": "Gleiche wie Lieferadresse" } }],
+    ["gutenform/submit", {}],
+    ["gutenform/success", {}]
+  ]
+}

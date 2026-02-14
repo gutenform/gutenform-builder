@@ -1,0 +1,10 @@
+{
+  "labelKey": "basicForm",
+  "category": "start",
+  "value": [
+    ["gutenform/input", { "type": "text", "label": "" }],
+    ["gutenform/textarea", {}],
+    ["gutenform/submit", {}],
+    ["gutenform/success", {}]
+  ]
+}

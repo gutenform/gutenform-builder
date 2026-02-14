@@ -1,0 +1,15 @@
+{
+  "labelKey": "templateNewsletter",
+  "category": "basics",
+  "value": [
+    ["gutenform/input", { "type": "email", "label": { "__": "email", "fallback": "E-Mail" }, "required": true, "isPrimaryMail": true }],
+    ["gutenform/input", { "type": "text", "label": { "__": "firstName", "fallback": "Vorname" }, "required": false, "help": { "__": "newsletterFirstNameHelp", "fallback": "Damit wir dich persönlich ansprechen können" } }],
+    ["gutenform/select", {
+      "label": { "__": "privacyConsent", "fallback": "Datenschutz" },
+      "options": [{ "label": { "__": "iAgreeToPrivacy", "fallback": "Ich stimme den Datenschutzbestimmungen zu" }, "value": "yes" }],
+      "required": true
+    }],
+    ["gutenform/submit", {}],
+    ["gutenform/success", {}]
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "labelKey": "templateTableReservation",
+  "category": "advanced",
+  "value": [
+    ["gutenform/input", { "type": "date", "label": { "__": "date", "fallback": "Datum" }, "required": true }],
+    ["gutenform/input", { "type": "time", "label": { "__": "time", "fallback": "Uhrzeit" }, "required": true }],
+    ["gutenform/input", { "type": "number", "label": { "__": "numberOfGuests", "fallback": "Personenanzahl" }, "required": true, "defaultValue": "2" }],
+    ["gutenform/select", {
+      "label": { "__": "area", "fallback": "Bereich" },
+      "options": [
+        { "label": { "__": "indoors", "fallback": "Innen" }, "value": "indoors" },
+        { "label": { "__": "terrace", "fallback": "Terrasse" }, "value": "terrace" }
+      ],
+      "required": true
+    }],
+    ["gutenform/input", { "type": "text", "label": { "__": "specialOccasions", "fallback": "Besondere Anlässe (z. B. Geburtstag)" }, "required": false }],
+    ["gutenform/submit", {}],
+    ["gutenform/success", {}]
+  ]
+}
