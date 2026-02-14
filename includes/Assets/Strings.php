@@ -83,6 +83,16 @@ class Strings
 			'important' => __('Important', 'gutenform'),
 			'followUp' => __('Follow Up', 'gutenform'),
 
+			// Forms (posts with embedded forms)
+			'forms' => __('Forms', 'gutenform'),
+			'formsOnSite' => __('Forms', 'gutenform'),
+			'noFormsOnSite' => __('No posts with embedded forms found.', 'gutenform'),
+			'formId' => __('Form ID', 'gutenform'),
+			'postTitle' => __('Title', 'gutenform'),
+			'mailbox' => __('Mailbox', 'gutenform'),
+			'fieldsCount' => __('Fields', 'gutenform'),
+			'untitled' => __('Untitled', 'gutenform'),
+
 			// Settings - General
 			'licenseKey' => __('License Key', 'gutenform'),
 			'enterLicenseKey' => __('Enter your license key', 'gutenform'),

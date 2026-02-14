@@ -42,6 +42,7 @@ class Admin
 	 */
 	private $allowed_screens = array(
 		'toplevel_page_gutenform',
+		'gutenform_page_gutenform-forms-usage',
 		'gutenform_page_gutenform-settings',
 	);
 

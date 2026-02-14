@@ -20,6 +20,9 @@ Route::prefix(
 		$route->get('/posts/get', '\Gutenform\Controllers\Posts\Actions@get_all_posts');
 		$route->get('/posts/get/{id}', '\Gutenform\Controllers\Posts\Actions@get_post');
 
+		// Forms usage (posts with embedded forms, grouped by post type).
+		$route->get('/forms/usage', '\Gutenform\Controllers\Forms\Actions@get_usage');
+
 		// Database routes.
 		$route->post('/database/seed-demo', '\Gutenform\Controllers\Database\Actions@seed_demo');
 		$route->get('/database/check-demo-data', '\Gutenform\Controllers\Database\Actions@check_demo_data');

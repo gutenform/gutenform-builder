@@ -4,6 +4,7 @@ import {
     Menu,
     SlidersHorizontal,
     Package2,
+    FileText,
 } from "lucide-react"
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button"
@@ -30,6 +31,13 @@ const navigation = [
         path: "inbox",
         icon: Mail,
         current: true,
+    },
+    {
+        name: "forms",
+        href: "forms-usage",
+        path: "forms-usage",
+        icon: FileText,
+        current: false,
     },
     {
         name: "settings",
@@ -61,12 +69,16 @@ export default function LayoutOne() {
         const gutenForm = typeof window !== 'undefined' ? window.gutenForm : null;
         if (gutenForm?.adminUrl) {
             const base = gutenForm.adminUrl;
-            const page = item.path === 'settings' ? 'gutenform-settings' : 'gutenform';
-            // Preserve settings sub-route (e.g. /providers) when already on settings
-            const settingsHash = location.pathname.startsWith('/settings')
-                ? '#' + location.pathname
-                : '#/settings';
-            return `${base}?page=${page}${item.path === 'settings' ? settingsHash : '#/inbox'}`;
+            let page = 'gutenform';
+            let hash = '#/inbox';
+            if (item.path === 'settings') {
+                page = 'gutenform-settings';
+                hash = location.pathname.startsWith('/settings') ? '#' + location.pathname : '#/settings';
+            } else if (item.path === 'forms-usage') {
+                page = 'gutenform-forms-usage';
+                hash = '#/forms-usage';
+            }
+            return `${base}?page=${page}${hash}`;
         }
         return `#/${item.href}`;
     };

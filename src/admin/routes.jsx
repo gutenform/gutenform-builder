@@ -11,6 +11,7 @@ import ProvidersPage from "./pages/settings/providers";
 import LabelsPage from "./pages/settings/labels";
 import SmtpPage from "./pages/settings/smtp";
 import WelcomePage from "./pages/welcome";
+import FormsUsagePage from "./pages/forms-usage";
 
 export const router = createHashRouter([
 
@@ -31,6 +32,10 @@ export const router = createHashRouter([
       {
         path: "inbox",
         element: <Inbox />,
+      },
+      {
+        path: "forms-usage",
+        element: <FormsUsagePage />,
       },
       {
         path: "settings",

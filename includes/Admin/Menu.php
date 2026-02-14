@@ -53,6 +53,7 @@ class Menu
 		);
 
 		$settings_slug = $this->parent_slug . '-settings';
+		$forms_usage_slug = $this->parent_slug . '-forms-usage';
 
 		$submenu_pages = array(
 			array(
@@ -61,6 +62,14 @@ class Menu
 				'menu_title'  => __('Inbox', 'gutenform'),
 				'capability'  => 'manage_options',
 				'menu_slug'   => $this->parent_slug,
+				'function'    => array($this, 'admin_page'),
+			),
+			array(
+				'parent_slug' => $this->parent_slug,
+				'page_title'  => __('Forms', 'gutenform'),
+				'menu_title'  => __('Forms', 'gutenform'),
+				'capability'  => 'manage_options',
+				'menu_slug'   => $forms_usage_slug,
 				'function'    => array($this, 'admin_page'),
 			),
 			array(
@@ -97,11 +106,16 @@ class Menu
 	{
 		$page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
 		$settings_slug = $this->parent_slug . '-settings';
+		$forms_usage_slug = $this->parent_slug . '-forms-usage';
 
 		if ($page === $settings_slug) {
 			// Only set default hash when empty or not already on a settings sub-route
 			// This preserves #/settings/providers etc. on page reload
 			echo '<script>(function(){var h=window.location.hash;if(!h||h==="#"||h==="#/"||!h.startsWith("#/settings")){window.location.hash="#/settings";}})();</script>';
+		}
+
+		if ($page === $forms_usage_slug) {
+			echo '<script>(function(){var h=window.location.hash;if(!h||h==="#"||h==="#/"||!h.startsWith("#/forms-usage")){window.location.hash="#/forms-usage";}})();</script>';
 		}
 ?>
 		<div id="myplugin" class="myplugin-app"></div>
