@@ -7,6 +7,9 @@
   "category": "widgets",
   "icon": "marker",
   "description": "Input block for Gutenform.",
+  "parent": [
+    "gutenform/form"
+  ],
   "example": {},
   "attributes": {
     "style": {

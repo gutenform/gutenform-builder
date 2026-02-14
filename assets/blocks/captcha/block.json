@@ -7,6 +7,9 @@
   "category": "widgets",
   "icon": "shield",
   "description": "CAPTCHA block for spam protection. Supports FriendlyCaptcha and Google reCAPTCHA.",
+  "parent": [
+    "gutenform/form"
+  ],
   "example": {},
   "attributes": {
     "style": {

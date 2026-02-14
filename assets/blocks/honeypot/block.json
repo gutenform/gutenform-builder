@@ -7,6 +7,9 @@
   "category": "widgets",
   "icon": "hidden",
   "description": "Hidden field for spam detection. Bots will fill this field, humans won't.",
+  "parent": [
+    "gutenform/form"
+  ],
   "example": {},
   "attributes": {
     "style": {

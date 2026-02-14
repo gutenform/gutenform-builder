@@ -2786,7 +2786,7 @@ const twMerge = /*#__PURE__*/createTailwindMerge(getDefaultConfig);
   \*************************************/
 /***/ ((module) => {
 
-module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/input","version":"0.1.0","title":"Input","category":"widgets","icon":"marker","description":"Input block for Gutenform.","example":{},"attributes":{"style":{"type":"object","default":{}},"type":{"type":"string","default":"text"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"help":{"type":"string","default":""},"defaultValue":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"id":{"type":"string","default":""},"useCustomName":{"type":"boolean","default":false},"useCustomId":{"type":"boolean","default":false},"isPrimaryMail":{"type":"boolean","default":false}},"supports":{"html":false},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
+module.exports = /*#__PURE__*/JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"gutenform/input","version":"0.1.0","title":"Input","category":"widgets","icon":"marker","description":"Input block for Gutenform.","parent":["gutenform/form"],"example":{},"attributes":{"style":{"type":"object","default":{}},"type":{"type":"string","default":"text"},"label":{"type":"string","default":""},"placeholder":{"type":"string","default":""},"help":{"type":"string","default":""},"defaultValue":{"type":"string","default":""},"required":{"type":"boolean","default":false},"name":{"type":"string","default":""},"id":{"type":"string","default":""},"useCustomName":{"type":"boolean","default":false},"useCustomId":{"type":"boolean","default":false},"isPrimaryMail":{"type":"boolean","default":false}},"supports":{"html":false},"textdomain":"gutenform","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js"}');
 
 /***/ }),
 
@@ -2827,6 +2827,9 @@ function Edit(props) {
   (0,_lib_use_name_from_label__WEBPACK_IMPORTED_MODULE_2__.useNameFromLabel)(attributes.label, attributes.name, name => setAttributes({
     name
   }), attributes.useCustomName || false);
+  console.log({
+    attributes
+  });
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_5__.jsx)(_inspector_controls__WEBPACK_IMPORTED_MODULE_3__.InputInspectorControls, {
       ...props
@@ -2846,8 +2849,7 @@ function Edit(props) {
         placeholder: attributes.placeholder,
         name: attributes.name,
         id: attributes.id,
-        required: attributes.required,
-        defaultValue: attributes.defaultValue
+        required: attributes.required
       })
     })]
   });

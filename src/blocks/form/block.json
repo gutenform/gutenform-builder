@@ -85,11 +85,10 @@
 		"customClassName": true,
 		"__experimentalExposeControlsToChildren": true,
 		"__experimentalLayout": {
-			"allowSwitching": false,
+			"allowSwitching": true,
 			"allowInheriting": false,
 			"default": {
-				"type": "flex",
-				"flexWrap": "wrap"
+				"type": "flow"
 			}
 		}
 	},

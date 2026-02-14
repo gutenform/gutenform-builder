@@ -19,6 +19,7 @@ export default function Edit(props: BlockEditProps<InputAttributes>) {
 		(name) => setAttributes({ name }),
 		attributes.useCustomName || false
 	);
+	console.log({attributes});
 
 	return (
 		<>
@@ -37,7 +38,6 @@ export default function Edit(props: BlockEditProps<InputAttributes>) {
 					name={attributes.name}
 					id={attributes.id}
 					required={attributes.required}
-					defaultValue={attributes.defaultValue}
 				/>
 			</FieldWrapper>
 		</>

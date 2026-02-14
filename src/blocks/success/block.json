@@ -7,6 +7,7 @@
 	"category": "widgets",
 	"icon": "marker",
 	"description": "Success Section for Gutenform.",
+	"parent": ["gutenform/form"],
 	"example": {},
 	"attributes": {},
 	"supports": {
