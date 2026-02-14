@@ -65,6 +65,10 @@
 		"allowUrlUpload": {
 			"type": "boolean",
 			"default": true
+		},
+		"conditionalShow": {
+			"type": "object",
+			"default": null
 		}
 	},
 	"supports": {

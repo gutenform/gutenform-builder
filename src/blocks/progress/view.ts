@@ -11,25 +11,27 @@ window.addEventListener('DOMContentLoaded', () => {
 		if (!form) return;
 
 		const variant = progressEl.getAttribute('data-variant') || 'bubbles';
-		const steps = form.querySelectorAll('.wp-block-gutenform-step');
-		const totalSteps = steps.length;
+
+		function getVisibleStepTitles(): string[] {
+			const steps = form.querySelectorAll<HTMLElement>('.wp-block-gutenform-step');
+			return Array.from(steps)
+				.filter((step) => !step.classList.contains('gutenform-step--conditional-hidden'))
+				.map((step, index) => step.getAttribute('data-step-title') || `Step ${index + 1}`);
+		}
+
+		const stepTitles = getVisibleStepTitles();
+		const totalSteps = stepTitles.length;
 
 		if (totalSteps === 0) return;
 
-		// Collect step titles
-		const stepTitles: string[] = [];
-		steps.forEach((step, index) => {
-			const title = step.getAttribute('data-step-title') || `Step ${index + 1}`;
-			stepTitles.push(title);
-		});
-
-		// Build initial UI
+		// Build initial UI (visible steps only)
 		buildProgressUI(progressEl, variant, stepTitles, 0, totalSteps);
 
-		// Listen for step changes
+		// Listen for step changes (event already sends visible currentStep and totalSteps)
 		form.addEventListener('gutenform:stepchange', ((e: CustomEvent) => {
-			const { currentStep } = e.detail;
-			buildProgressUI(progressEl, variant, stepTitles, currentStep, totalSteps);
+			const { currentStep, totalSteps: eventTotal } = e.detail;
+			const titles = getVisibleStepTitles();
+			buildProgressUI(progressEl, variant, titles, currentStep, eventTotal);
 		}) as EventListener);
 	});
 });

@@ -59,6 +59,10 @@
     "isPrimaryMail": {
       "type": "boolean",
       "default": false
+    },
+    "conditionalShow": {
+      "type": "object",
+      "default": null
     }
   },
   "supports": {

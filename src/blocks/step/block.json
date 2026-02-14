@@ -17,6 +17,10 @@
 		"stepId": {
 			"type": "string",
 			"default": ""
+		},
+		"conditionalShow": {
+			"type": "object",
+			"default": null
 		}
 	},
 	"usesContext": ["gutenform/activeStep"],

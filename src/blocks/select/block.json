@@ -72,6 +72,14 @@
 		"useCustomId": {
 			"type": "boolean",
 			"default": false
+		},
+		"conditionalShow": {
+			"type": "object",
+			"default": null
+		},
+		"defaultValueFromField": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"supports": {

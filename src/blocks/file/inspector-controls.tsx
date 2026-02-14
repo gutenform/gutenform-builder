@@ -2,13 +2,14 @@ import { __ } from "@/lib/i18n";
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, ToggleControl, TextControl, RangeControl } from '@wordpress/components';
 import { FieldControls } from '../../components/block-atoms/FieldControls';
+import { ConditionalLogicControls } from '../../components/block-atoms/ConditionalLogicControls';
 
 import { type BlockEditProps } from '@wordpress/blocks';
 import { type FileAttributes } from '@/blockTypes/file';
 
 type FileInspectorControlsProps = BlockEditProps<FileAttributes>;
 
-export const FileInspectorControls = ({ attributes, setAttributes }: FileInspectorControlsProps) => {
+export const FileInspectorControls = ({ attributes, setAttributes, clientId }: FileInspectorControlsProps) => {
 	// Get WordPress upload limit (in MB) - this will be passed from PHP
 	const wpUploadLimit = (window as any).gutenform?.uploadLimit || 0;
 	const maxFileSizeHint = wpUploadLimit > 0 
@@ -70,6 +71,13 @@ export const FileInspectorControls = ({ attributes, setAttributes }: FileInspect
 					/>
 				</PanelBody>
 			</InspectorControls>
+			{clientId && (
+				<ConditionalLogicControls
+					clientId={clientId}
+					conditionalShow={attributes.conditionalShow}
+					setAttributes={setAttributes}
+				/>
+			)}
 			<FieldControls
 				attributes={attributes}
 				setAttributes={setAttributes}

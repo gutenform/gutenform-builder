@@ -48,12 +48,25 @@ window.addEventListener('DOMContentLoaded', () => {
 			});
 		}
 
+		// Conditional logic: evaluate field visibility and select default-from-field
+		evaluateFieldConditions(form as HTMLElement);
+		applyDefaultValueFromField(form as HTMLElement);
+		form.addEventListener('input', () => {
+			evaluateFieldConditions(form as HTMLElement);
+			applyDefaultValueFromField(form as HTMLElement);
+		});
+		form.addEventListener('change', () => {
+			evaluateFieldConditions(form as HTMLElement);
+			applyDefaultValueFromField(form as HTMLElement);
+		});
+
 		form.addEventListener('submit', async (e) => {
 			e.preventDefault();
 
-			// For multi-step: only allow submit on the last step
-			if (isMultiStep && currentStep < steps.length - 1) {
-				return;
+			// For multi-step: only allow submit on the last visible step
+			if (isMultiStep) {
+				const visibleStepIndices = getVisibleStepIndices(form as HTMLElement);
+				if (currentStep < visibleStepIndices.length - 1) return;
 			}
 
 			const formIdentifier = formOptions.formId;
@@ -73,9 +86,10 @@ window.addEventListener('DOMContentLoaded', () => {
 			const formData = new FormData(form as HTMLFormElement);
 			const data = Object.fromEntries(formData);
 
-			// Restore step visibility
+			// Restore step visibility (currentStep is visible index)
 			if (isMultiStep) {
-				goToStep(form as HTMLElement, steps, currentStep);
+				const visibleStepIndices = getVisibleStepIndices(form as HTMLElement);
+				goToStepByVisibleIndex(form as HTMLElement, steps, visibleStepIndices, currentStep);
 			}
 			
 			// Extract file upload data from hidden inputs
@@ -130,8 +144,9 @@ window.addEventListener('DOMContentLoaded', () => {
 					// Clear saved progress and reset to first step on successful submit
 					if (isMultiStep) {
 						currentStep = 0;
-						goToStep(form as HTMLElement, steps, 0);
-						updateStepNavigationButtons(form as HTMLElement, steps, 0, steps.length);
+						const visibleStepIndices = getVisibleStepIndices(form as HTMLElement);
+						goToStepByVisibleIndex(form as HTMLElement, steps, visibleStepIndices, 0);
+						updateStepNavigationButtons(form as HTMLElement, steps, visibleStepIndices, 0);
 						if (formOptions.formId) {
 							sessionStorage.removeItem(`gutenform_progress_${formOptions.formId}`);
 						}
@@ -156,8 +171,9 @@ window.addEventListener('DOMContentLoaded', () => {
 				// Reset to first step after legacy submit
 				if (isMultiStep) {
 					currentStep = 0;
-					goToStep(form as HTMLElement, steps, 0);
-					updateStepNavigationButtons(form as HTMLElement, steps, 0, steps.length);
+					const visibleStepIndices = getVisibleStepIndices(form as HTMLElement);
+					goToStepByVisibleIndex(form as HTMLElement, steps, visibleStepIndices, 0);
+					updateStepNavigationButtons(form as HTMLElement, steps, visibleStepIndices, 0);
 					if (formOptions.formId) {
 						sessionStorage.removeItem(`gutenform_progress_${formOptions.formId}`);
 					}
@@ -167,8 +183,150 @@ window.addEventListener('DOMContentLoaded', () => {
 	});
 });
 
+type ConditionalShowRule = {
+	sourceFieldName: string;
+	operator: 'equals' | 'notEquals' | 'isEmpty' | 'isNotEmpty' | 'contains';
+	value?: string;
+};
+
+type ConditionalShowConfig = ConditionalShowRule | { logic: 'and' | 'or'; conditions: ConditionalShowRule[] };
+
+function getSourceFieldValue(formEl: HTMLElement, fieldName: string): string {
+	const field = formEl.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+		`[name="${fieldName}"]`
+	);
+	if (!field) return '';
+	return (field.value || '').trim();
+}
+
+function evaluateSingleCondition(condition: ConditionalShowRule, formEl: HTMLElement): boolean {
+	const raw = getSourceFieldValue(formEl, condition.sourceFieldName);
+	const compare = (condition.value || '').trim();
+	switch (condition.operator) {
+		case 'equals':
+			return raw === compare;
+		case 'notEquals':
+			return raw !== compare;
+		case 'isEmpty':
+			return raw === '';
+		case 'isNotEmpty':
+			return raw !== '';
+		case 'contains':
+			return raw.includes(compare);
+		default:
+			return true;
+	}
+}
+
+function isConditionGroup(c: ConditionalShowConfig): c is { logic: 'and' | 'or'; conditions: ConditionalShowRule[] } {
+	return c !== null && typeof c === 'object' && 'conditions' in c && Array.isArray((c as any).conditions);
+}
+
+function evaluateConditionConfig(config: ConditionalShowConfig, formEl: HTMLElement): boolean {
+	if (isConditionGroup(config)) {
+		const results = config.conditions
+			.filter((r) => r.sourceFieldName)
+			.map((r) => evaluateSingleCondition(r, formEl));
+		if (results.length === 0) return true;
+		return config.logic === 'and' ? results.every(Boolean) : results.some(Boolean);
+	}
+	if (!config?.sourceFieldName) return true;
+	return evaluateSingleCondition(config, formEl);
+}
+
+function evaluateFieldConditions(formEl: HTMLElement): void {
+	formEl.querySelectorAll<HTMLElement>('[data-conditional-show]').forEach((wrapper) => {
+		const json = wrapper.getAttribute('data-conditional-show');
+		if (!json) return;
+		try {
+			const config = JSON.parse(json) as ConditionalShowConfig;
+			const show = evaluateConditionConfig(config, formEl);
+			wrapper.classList.toggle('gutenform-field--conditional-hidden', !show);
+			wrapper.style.display = show ? '' : 'none';
+		} catch (e) {
+			console.warn('Invalid data-conditional-show:', json);
+		}
+	});
+}
+
+function applyDefaultValueFromField(formEl: HTMLElement): void {
+	formEl.querySelectorAll<HTMLElement>('[data-default-value-from-field]').forEach((wrapper) => {
+		const sourceFieldName = wrapper.getAttribute('data-default-value-from-field');
+		if (!sourceFieldName) return;
+		const selectEl = wrapper.querySelector<HTMLSelectElement>('select');
+		if (!selectEl) return;
+		const value = getSourceFieldValue(formEl, sourceFieldName);
+		if (selectEl.value !== value) {
+			selectEl.value = value;
+			selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+		}
+	});
+}
+
 /**
- * Initialize multi-step form logic
+ * Evaluate step conditions and return indices of steps that are visible.
+ * Steps without data-conditional-show are always visible.
+ */
+function getVisibleStepIndices(formEl: HTMLElement): number[] {
+	const steps = formEl.querySelectorAll<HTMLElement>('.wp-block-gutenform-step');
+	const visible: number[] = [];
+	steps.forEach((step, index) => {
+		const json = step.getAttribute('data-conditional-show');
+		if (!json) {
+			visible.push(index);
+			step.classList.remove('gutenform-step--conditional-hidden');
+			step.style.display = '';
+			return;
+		}
+		try {
+			const config = JSON.parse(json) as ConditionalShowConfig;
+			const show = evaluateConditionConfig(config, formEl);
+			step.classList.toggle('gutenform-step--conditional-hidden', !show);
+			step.style.display = show ? '' : 'none';
+			if (show) visible.push(index);
+		} catch (e) {
+			visible.push(index);
+			step.classList.remove('gutenform-step--conditional-hidden');
+			step.style.display = '';
+		}
+	});
+	return visible;
+}
+
+/**
+ * Show the step at visibleIndex (index into visibleStepIndices) and hide others.
+ */
+function goToStepByVisibleIndex(
+	formEl: HTMLElement,
+	steps: NodeListOf<HTMLElement>,
+	visibleStepIndices: number[],
+	visibleIndex: number
+) {
+	const realIndex = visibleStepIndices[visibleIndex] ?? 0;
+	steps.forEach((step, index) => {
+		if (index === realIndex) {
+			step.style.display = '';
+			step.classList.add('gutenform-step--active');
+			step.classList.remove('gutenform-step--hidden');
+		} else {
+			step.style.display = 'none';
+			step.classList.remove('gutenform-step--active');
+			step.classList.add('gutenform-step--hidden');
+		}
+	});
+
+	const event = new CustomEvent('gutenform:stepchange', {
+		detail: {
+			currentStep: visibleIndex,
+			totalSteps: visibleStepIndices.length,
+		},
+		bubbles: true,
+	});
+	formEl.dispatchEvent(event);
+}
+
+/**
+ * Initialize multi-step form logic. Uses visible steps only (steps not hidden by conditional logic).
  */
 function initMultiStepForm(
 	formEl: HTMLElement,
@@ -176,8 +334,8 @@ function initMultiStepForm(
 	formOptions: any,
 	onStepChange: (step: number) => void
 ) {
-	let currentStep = 0;
-	const totalSteps = steps.length;
+	let currentVisibleIndex = 0;
+	let visibleStepIndices = getVisibleStepIndices(formEl);
 	const formId = formOptions.formId;
 
 	// Restore saved progress from sessionStorage
@@ -189,8 +347,10 @@ function initMultiStepForm(
 				if (progressData.fields) {
 					restoreFormFields(formEl, progressData.fields);
 				}
-				if (typeof progressData.currentStep === 'number' && progressData.currentStep < totalSteps) {
-					currentStep = progressData.currentStep;
+				// Recompute visible steps after restoring field values
+				visibleStepIndices = getVisibleStepIndices(formEl);
+				if (typeof progressData.currentStep === 'number' && progressData.currentStep < visibleStepIndices.length) {
+					currentVisibleIndex = progressData.currentStep;
 				}
 			}
 		} catch (e) {
@@ -198,83 +358,75 @@ function initMultiStepForm(
 		}
 	}
 
-	// Show initial step
-	goToStep(formEl, steps, currentStep);
-	onStepChange(currentStep);
-	updateStepNavigationButtons(formEl, steps, currentStep, totalSteps);
+	function refreshVisibleAndGo() {
+		visibleStepIndices = getVisibleStepIndices(formEl);
+		if (currentVisibleIndex >= visibleStepIndices.length) {
+			currentVisibleIndex = Math.max(0, visibleStepIndices.length - 1);
+		}
+		goToStepByVisibleIndex(formEl, steps, visibleStepIndices, currentVisibleIndex);
+		onStepChange(currentVisibleIndex);
+		updateStepNavigationButtons(formEl, steps, visibleStepIndices, currentVisibleIndex);
+	}
 
-	// Listen for step navigation events (dispatched by step-navigation block)
+	// Show initial step
+	refreshVisibleAndGo();
+
 	formEl.addEventListener('gutenform:step-next', ((e: Event) => {
 		e.preventDefault();
-		if (currentStep >= totalSteps - 1) return;
+		visibleStepIndices = getVisibleStepIndices(formEl);
+		if (currentVisibleIndex >= visibleStepIndices.length - 1) return;
 
-		// Validate current step fields before advancing
-		if (!validateStep(steps[currentStep])) return;
+		const currentStepEl = steps[visibleStepIndices[currentVisibleIndex]];
+		if (currentStepEl && !validateStep(currentStepEl)) return;
 
-		currentStep++;
-		goToStep(formEl, steps, currentStep);
-		onStepChange(currentStep);
-		updateStepNavigationButtons(formEl, steps, currentStep, totalSteps);
+		currentVisibleIndex++;
+		goToStepByVisibleIndex(formEl, steps, visibleStepIndices, currentVisibleIndex);
+		onStepChange(currentVisibleIndex);
+		updateStepNavigationButtons(formEl, steps, visibleStepIndices, currentVisibleIndex);
 	}) as EventListener);
 
 	formEl.addEventListener('gutenform:step-prev', ((e: Event) => {
 		e.preventDefault();
-		if (currentStep <= 0) return;
+		if (currentVisibleIndex <= 0) return;
 
-		currentStep--;
-		goToStep(formEl, steps, currentStep);
-		onStepChange(currentStep);
-		updateStepNavigationButtons(formEl, steps, currentStep, totalSteps);
+		currentVisibleIndex--;
+		goToStepByVisibleIndex(formEl, steps, visibleStepIndices, currentVisibleIndex);
+		onStepChange(currentVisibleIndex);
+		updateStepNavigationButtons(formEl, steps, visibleStepIndices, currentVisibleIndex);
 	}) as EventListener);
 
 	formEl.addEventListener('gutenform:step-submit', ((e: Event) => {
 		e.preventDefault();
-		// Validate last step before submitting
-		if (!validateStep(steps[currentStep])) return;
+		visibleStepIndices = getVisibleStepIndices(formEl);
+		const currentStepEl = steps[visibleStepIndices[currentVisibleIndex]];
+		if (currentStepEl && !validateStep(currentStepEl)) return;
 
-		// Trigger form submit
 		const submitEvent = new Event('submit', { cancelable: true, bubbles: true });
 		formEl.dispatchEvent(submitEvent);
 	}) as EventListener);
+
+	// Re-evaluate visible steps when fields change (for conditional step visibility)
+	formEl.addEventListener('input', () => {
+		refreshVisibleAndGo();
+	});
+	formEl.addEventListener('change', () => {
+		refreshVisibleAndGo();
+	});
 }
 
 /**
- * Show a specific step and hide all others
- */
-function goToStep(formEl: HTMLElement, steps: NodeListOf<HTMLElement>, stepIndex: number) {
-	steps.forEach((step, index) => {
-		if (index === stepIndex) {
-			step.style.display = '';
-			step.classList.add('gutenform-step--active');
-			step.classList.remove('gutenform-step--hidden');
-		} else {
-			step.style.display = 'none';
-			step.classList.remove('gutenform-step--active');
-			step.classList.add('gutenform-step--hidden');
-		}
-	});
-
-	// Dispatch step change event for progress block
-	const event = new CustomEvent('gutenform:stepchange', {
-		detail: {
-			currentStep: stepIndex,
-			totalSteps: steps.length,
-		},
-		bubbles: true,
-	});
-	formEl.dispatchEvent(event);
-}
-
-/**
- * Update step navigation buttons visibility (show/hide prev, swap next/submit)
+ * Update step navigation buttons visibility (show/hide prev, swap next/submit).
+ * Uses visible step indices so totalSteps = visibleStepIndices.length.
  */
 function updateStepNavigationButtons(
 	formEl: HTMLElement,
 	steps: NodeListOf<HTMLElement>,
-	currentStep: number,
-	totalSteps: number
+	visibleStepIndices: number[],
+	currentVisibleIndex: number
 ) {
-	const activeStep = steps[currentStep];
+	const totalSteps = visibleStepIndices.length;
+	const realIndex = visibleStepIndices[currentVisibleIndex];
+	const activeStep = realIndex !== undefined ? steps[realIndex] : undefined;
 	if (!activeStep) return;
 
 	const navBlock = activeStep.querySelector('.wp-block-gutenform-step-navigation');
@@ -284,13 +436,11 @@ function updateStepNavigationButtons(
 	const nextBtn = navBlock.querySelector<HTMLElement>('[data-action="next"]');
 	const submitBtn = navBlock.querySelector<HTMLElement>('[data-action="submit"]');
 
-	// Show/hide prev button based on step position
 	if (prevBtn) {
-		prevBtn.style.display = currentStep === 0 ? 'none' : '';
+		prevBtn.style.display = currentVisibleIndex === 0 ? 'none' : '';
 	}
 
-	// Show next on non-last steps, show submit on last step
-	const isLastStep = currentStep === totalSteps - 1;
+	const isLastStep = currentVisibleIndex === totalSteps - 1;
 	if (nextBtn) {
 		nextBtn.style.display = isLastStep ? 'none' : '';
 	}
@@ -301,7 +451,8 @@ function updateStepNavigationButtons(
 }
 
 /**
- * Validate required fields in a step
+ * Validate required fields in a step. Only validates fields that are visible
+ * (not hidden by conditional logic).
  */
 function validateStep(stepEl: HTMLElement): boolean {
 	const requiredFields = stepEl.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
@@ -311,10 +462,13 @@ function validateStep(stepEl: HTMLElement): boolean {
 	let isValid = true;
 
 	requiredFields.forEach((field) => {
+		const wrapper = field.closest('.gutenform-field');
+		if (wrapper?.classList.contains('gutenform-field--conditional-hidden')) {
+			return; // skip validation for conditionally hidden fields
+		}
 		if (!field.value.trim()) {
 			isValid = false;
 			field.classList.add('gutenform-field--invalid');
-			// Use browser native validation UI
 			field.reportValidity();
 		} else {
 			field.classList.remove('gutenform-field--invalid');

@@ -5,6 +5,7 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
 import { InputAttributes } from '@/blockTypes/input';
+import { hasConditionalShowToOutput } from '@/blockTypes/conditionalLogic';
 import { useBlockProps } from '@wordpress/block-editor';
 import { type BlockSaveProps } from '@wordpress/blocks';
 import { getFieldClasses } from '../../lib/utils';
@@ -21,10 +22,16 @@ import { getFieldClasses } from '../../lib/utils';
 export default function save(props: BlockSaveProps<InputAttributes>) {
 	const className = getFieldClasses(props.attributes);
 	const isPrimaryMail = props.attributes.type === 'email' && props.attributes.isPrimaryMail === true;
+	const conditionalShow = props.attributes.conditionalShow;
 	return (
-		<div { ...useBlockProps.save({
-			className,
-		}) }>
+		<div
+			{...useBlockProps.save({
+				className,
+				...(hasConditionalShowToOutput(conditionalShow) && {
+					'data-conditional-show': JSON.stringify(conditionalShow),
+				}),
+			})}
+		>
 			<label htmlFor={props.attributes.id}>{props.attributes.label}</label>
 			<input 
 				type={props.attributes.type} 

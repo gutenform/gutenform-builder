@@ -5,6 +5,7 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
 import { SelectAttributes } from '@/blockTypes/select';
+import { hasConditionalShowToOutput } from '@/blockTypes/conditionalLogic';
 import { useBlockProps } from '@wordpress/block-editor';
 import { type BlockSaveProps } from '@wordpress/blocks';
 import { getFieldClasses } from '../../lib/utils';
@@ -21,12 +22,16 @@ import { __ } from "@/lib/i18n";
  */
 export default function save(props: BlockSaveProps<SelectAttributes>) {
 	const className = getFieldClasses(props.attributes);
-	const { optionsPopulated, options, placeholder, name, id, required, label, help } = props.attributes;
+	const { optionsPopulated, options, placeholder, name, id, required, label, help, conditionalShow, defaultValueFromField } = props.attributes;
 
 	return (
-		<div { ...useBlockProps.save({
-			className,
-		}) }>
+		<div
+			{...useBlockProps.save({
+				className,
+				...(hasConditionalShowToOutput(conditionalShow) && { 'data-conditional-show': JSON.stringify(conditionalShow) }),
+				...(defaultValueFromField && { 'data-default-value-from-field': defaultValueFromField }),
+			})}
+		>
 			<label htmlFor={id}>{label}</label>
 			<select
 				name={name}

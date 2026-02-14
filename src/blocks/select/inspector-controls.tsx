@@ -2,6 +2,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody } from '@wordpress/components';
 import { __ } from "@/lib/i18n";
 import { FieldControls } from '../../components/block-atoms/FieldControls';
+import { ConditionalLogicControls, DefaultValueFromFieldControl } from '../../components/block-atoms/ConditionalLogicControls';
 import { type BlockEditProps } from '@wordpress/blocks';
 import { type SelectAttributes } from '@/blockTypes/select';
 import { OptionsRepeater } from '../../controls/OptionsRepeater';
@@ -11,7 +12,7 @@ import { getSelectPresets } from './presets';
 
 type SelectInspectorControlsProps = BlockEditProps<SelectAttributes>;
 
-export const SelectInspectorControls = ({ attributes, setAttributes }: SelectInspectorControlsProps) => {
+export const SelectInspectorControls = ({ attributes, setAttributes, clientId }: SelectInspectorControlsProps) => {
 	const options = attributes.options || [];
 	const syncLabelValue = attributes.syncLabelValue || false;
 
@@ -49,6 +50,22 @@ export const SelectInspectorControls = ({ attributes, setAttributes }: SelectIns
 					)}
 				</PanelBody>
 			</InspectorControls>
+			{clientId && (
+				<>
+					<ConditionalLogicControls
+						clientId={clientId}
+						conditionalShow={attributes.conditionalShow}
+						setAttributes={setAttributes}
+					/>
+					<InspectorControls>
+						<DefaultValueFromFieldControl
+							clientId={clientId}
+							defaultValueFromField={attributes.defaultValueFromField}
+							setAttributes={setAttributes}
+						/>
+					</InspectorControls>
+				</>
+			)}
 			<FieldControls attributes={attributes} setAttributes={setAttributes} />
 		</>
 	);

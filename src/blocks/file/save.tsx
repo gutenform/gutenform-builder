@@ -5,6 +5,7 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
 import { FileAttributes } from '@/blockTypes/file';
+import { hasConditionalShowToOutput } from '@/blockTypes/conditionalLogic';
 import { useBlockProps } from '@wordpress/block-editor';
 import { type BlockSaveProps } from '@wordpress/blocks';
 import { getFieldClasses } from '../../lib/utils';
@@ -20,6 +21,7 @@ import { getFieldClasses } from '../../lib/utils';
  */
 export default function save(props: BlockSaveProps<FileAttributes>) {
 	const className = getFieldClasses(props.attributes);
+	const conditionalShow = props.attributes.conditionalShow;
 	const dataAttributes: Record<string, string | boolean | number> = {
 		'data-multiple': props.attributes.multiple,
 		'data-accept-types': props.attributes.acceptTypes,
@@ -29,9 +31,12 @@ export default function save(props: BlockSaveProps<FileAttributes>) {
 	};
 
 	return (
-		<div { ...useBlockProps.save({
-			className,
-		}) }>
+		<div
+			{...useBlockProps.save({
+				className,
+				...(hasConditionalShowToOutput(conditionalShow) && { 'data-conditional-show': JSON.stringify(conditionalShow) }),
+			})}
+		>
 			<label htmlFor={props.attributes.id}>{props.attributes.label}</label>
 			<div 
 				className="gutenform-file-upload-field" 

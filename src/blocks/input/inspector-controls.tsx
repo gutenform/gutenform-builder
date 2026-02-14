@@ -3,6 +3,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl, ToggleControl, Notice } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { FieldControls } from '../../components/block-atoms/FieldControls';
+import { ConditionalLogicControls } from '../../components/block-atoms/ConditionalLogicControls';
 import { useFormBlocks } from './use-form-blocks';
 
 import { type BlockEditProps } from '@wordpress/blocks';
@@ -75,6 +76,13 @@ export const InputInspectorControls = ({ attributes, setAttributes, clientId }: 
 					
 				</PanelBody>
 			</InspectorControls>
+			{clientId && (
+				<ConditionalLogicControls
+					clientId={clientId}
+					conditionalShow={attributes.conditionalShow}
+					setAttributes={setAttributes}
+				/>
+			)}
 			<FieldControls
 				attributes={attributes}
 				setAttributes={setAttributes}

@@ -7,5 +7,7 @@ export type SelectAttributes = GlobalFieldAttributes & {
 	}>;
 	optionsPopulated: boolean;
 	syncLabelValue: boolean;
+	/** Name of another field whose current value is used as the select default (dynamic preselection). */
+	defaultValueFromField?: string;
 };
 

@@ -29,14 +29,14 @@ window.addEventListener('DOMContentLoaded', () => {
 				}
 			});
 
-			// Determine current step index
-			const steps = form.querySelectorAll('.wp-block-gutenform-step');
-			let currentStepIndex = 0;
-			steps.forEach((step, index) => {
-				if (step.classList.contains('gutenform-step--active')) {
-					currentStepIndex = index;
-				}
-			});
+			// Determine current step index (visible index for conditional steps)
+			const steps = form.querySelectorAll<HTMLElement>('.wp-block-gutenform-step');
+			const visibleSteps = Array.from(steps).filter(
+				(s) => !s.classList.contains('gutenform-step--conditional-hidden')
+			);
+			const activeStepEl = Array.from(steps).find((s) => s.classList.contains('gutenform-step--active'));
+			let currentStepIndex = activeStepEl ? visibleSteps.indexOf(activeStepEl) : 0;
+			if (currentStepIndex < 0) currentStepIndex = 0;
 
 			// Save to sessionStorage
 			const progressData = {

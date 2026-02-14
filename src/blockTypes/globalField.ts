@@ -1,3 +1,5 @@
+import type { ConditionalShow } from './conditionalLogic';
+
 type GlobalFieldAttributes = {
 	label: string;
 	name: string;
@@ -7,6 +9,8 @@ type GlobalFieldAttributes = {
 	required: boolean;
 	useCustomName: boolean | undefined;
 	useCustomId: boolean | undefined;
+	/** When set, this field is only shown when the condition is met. */
+	conditionalShow?: ConditionalShow;
 };
 
 type GlobalFieldControlsProps = {	

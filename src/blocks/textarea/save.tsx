@@ -5,6 +5,7 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
  */
 import { TextareaAttributes } from '@/blockTypes/textarea';
+import { hasConditionalShowToOutput } from '@/blockTypes/conditionalLogic';
 import { useBlockProps } from '@wordpress/block-editor';
 import { type BlockSaveProps } from '@wordpress/blocks';
 import { getFieldClasses } from '../../lib/utils';
@@ -20,10 +21,14 @@ import { getFieldClasses } from '../../lib/utils';
  */
 export default function save(props: BlockSaveProps<TextareaAttributes>) {
 	const className = getFieldClasses(props.attributes);
+	const conditionalShow = props.attributes.conditionalShow;
 	return (
-		<div { ...useBlockProps.save({
-			className,
-		}) }>
+		<div
+			{...useBlockProps.save({
+				className,
+				...(hasConditionalShowToOutput(conditionalShow) && { 'data-conditional-show': JSON.stringify(conditionalShow) }),
+			})}
+		>
 			<label htmlFor={props.attributes.id}>{props.attributes.label}</label>
 			<textarea rows={props.attributes.rows} placeholder={props.attributes.placeholder} name={props.attributes.name} id={props.attributes.id} required={props.attributes.required} defaultValue={props.attributes.defaultValue} />
 			{props.attributes.help && <p className="gutenform-field__help">{props.attributes.help}</p>}

@@ -10,6 +10,7 @@ import { type BlockEditProps } from '@wordpress/blocks';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { type StepAttributes } from '@/blockTypes/step';
+import { ConditionalLogicControls } from '../../components/block-atoms/ConditionalLogicControls';
 import { allowedBlocks, prioritizedInserterBlocks } from './allowedBlocks';
 import { useUniqueID } from '../../lib/use-unique-id';
 import './editor.css';
@@ -90,7 +91,6 @@ export default function Edit(props: BlockEditProps<StepAttributes>) {
 
 	return (
 		<>
-			{/* Inspector Controls for step title */}
 			<InspectorControls>
 				<PanelBody title={__('step')}>
 					<TextControl
@@ -102,6 +102,13 @@ export default function Edit(props: BlockEditProps<StepAttributes>) {
 					/>
 				</PanelBody>
 			</InspectorControls>
+			{clientId && (
+				<ConditionalLogicControls
+					clientId={clientId}
+					conditionalShow={attributes.conditionalShow}
+					setAttributes={(attrs) => setAttributes(attrs)}
+				/>
+			)}
 
 			<div { ...blockProps }>
 				<div { ...innerBlockProps } />
