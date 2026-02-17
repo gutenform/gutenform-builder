@@ -85,16 +85,28 @@ class Entries extends Model
 
     /**
      * Prepare a date for array / JSON serialization.
+     * Output as ISO 8601 with WordPress timezone so the frontend parses correctly.
      *
      * @param  mixed  $date
      * @return string
      */
     protected function serializeDate($date)
     {
-        if ($date instanceof \DateTimeInterface) {
-            return $date->format('Y-m-d H:i:s');
+        $raw = $this->getRawOriginal('date_created');
+        if ($raw === null || $raw === '') {
+            $raw = isset($this->attributes['date_created']) ? $this->attributes['date_created'] : null;
         }
-        return $date;
+        if ($raw === null || $raw === '') {
+            return $date instanceof \DateTimeInterface ? $date->format('Y-m-d H:i:s') : (string) $date;
+        }
+        // Interpret stored value as WordPress local time and output ISO 8601 with timezone
+        $tz = function_exists('wp_timezone') ? wp_timezone() : new \DateTimeZone('UTC');
+        try {
+            $dt = new \DateTime($raw, $tz);
+            return $dt->format('c');
+        } catch (\Exception $e) {
+            return $date instanceof \DateTimeInterface ? $date->format('Y-m-d H:i:s') : (string) $raw;
+        }
     }
 
     /**

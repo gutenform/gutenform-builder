@@ -151,9 +151,7 @@ const MailItem = ({ item, mail, isSelected, isChecked, onSelect, setMail, onDrag
 }) => {
   const currentMailboxId = item.entry?.mailbox_id;
   const otherMailboxes = mailboxes.filter((mb) => mb.id !== currentMailboxId);
-  //fix the date to be in the correct timezone
-  const date = new Date(item.date);
-  date.setHours(date.getHours() + 1);
+  const date = item.date ? new Date(item.date) : null;
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
@@ -208,9 +206,9 @@ const MailItem = ({ item, mail, isSelected, isChecked, onSelect, setMail, onDrag
                 : "text-muted-foreground"
             )}
           >
-            {formatDistanceToNow(date, {
+            {date ? formatDistanceToNow(date, {
               addSuffix: true,
-            })}
+            }) : '—'}
           </div>
         </div>
         <div className="text-xs font-medium">{item.subject}</div>
