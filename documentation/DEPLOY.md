@@ -14,7 +14,7 @@
 3. **Build-Einstellungen** (werden meist automatisch erkannt)
    - **Framework Preset:** Next.js
    - **Build Command:** `npm run build`
-   - **Output Directory:** `out` (wegen `output: "export"` in `next.config.mjs`)
+   - **Output Directory:** nicht setzen / leer lassen – Vercel erkennt Static Export automatisch
 
 4. **Deploy**
    - **Deploy** starten. Bei jedem Push in den gewählten Branch wird automatisch neu gebaut und deployed.
