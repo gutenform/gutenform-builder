@@ -16,7 +16,7 @@ export default function HomePage() {
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
             Create your WordPress plugin in weeks, not months. Rapidly prototype and deliver your plugin with confidence!
           </p>
-          <img src="/gutenform/artworks/images/dashboard-light.png" alt="Dashboard" className="w-2/3 mx-auto rounded-lg shadow-xl mb-8" />
+          <img src="/artworks/images/dashboard-light.png" alt="Dashboard" className="w-2/3 mx-auto rounded-lg shadow-xl mb-8" />
           <div className="flex justify-center gap-4">
             <Link href="/docs" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-semibold transition duration-300 flex items-center">
               <FaRocket className="mr-2" />
@@ -75,22 +75,22 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold text-center mb-12">Screenshots</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <ScreenshotCard
-              src="/gutenform/artworks/images/dashboard-light.png"
+              src="/artworks/images/dashboard-light.png"
               alt="Dashboard Light Mode"
               title="Dashboard - Light Mode"
             />
             <ScreenshotCard
-              src="/gutenform/artworks/images/dashboard-dark.png"
+              src="/artworks/images/dashboard-dark.png"
               alt="Dashboard Dark Mode"
               title="Dashboard - Dark Mode"
             />
             <ScreenshotCard
-              src="/gutenform/artworks/images/settings-light.png"
+              src="/artworks/images/settings-light.png"
               alt="Settings Light Mode"
               title="Settings - Light Mode"
             />
             <ScreenshotCard
-              src="/gutenform/artworks/images/settings-dark.png"
+              src="/artworks/images/settings-dark.png"
               alt="Settings Dark Mode"
               title="Settings - Dark Mode"
             />
