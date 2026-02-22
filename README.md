@@ -9,14 +9,31 @@ A modern WordPress form builder plugin built with Gutenberg blocks. Create beaut
 ## Features
 
 ### 🎨 Gutenberg Block-Based Forms
-- **Form Block**: Create form containers with customizable settings
-- **Input Block**: Text, email, and other input field types
+- **Form Block**: Create form containers with customizable settings and provider configuration
+- **Input Block**: Text, email, and other input field types (with field transformations)
 - **Textarea Block**: Multi-line text input fields
-- **Submit Block**: Customizable submit buttons
+- **Select Block**: Dropdown and multi-select fields
+- **Checkbox & Radio Blocks**: Single and multiple choice options
+- **Date-Time Block**: Date and time picker fields
+- **Slider Block**: Numeric range input (nouislider)
+- **File Block**: File upload with configurable types and size limits
+- **Submit Block**: Customizable submit buttons (with loading spinner)
+- **Success Block**: Optional success view/modal after submission
 - **Customizable Skins**: Style your forms with different visual themes
+
+### 📋 Multi-Step Forms
+- **Step Block**: Group fields into steps
+- **Step Navigation**: Previous/Next navigation between steps
+- **Progress Block**: Visual progress indicator
+- **Save Progress Block**: Save and resume form progress
+
+### 🛡️ Spam Protection
+- **Captcha Block**: CAPTCHA challenge for form submissions
+- **Honeypot Block**: Invisible honeypot field to catch bots
 
 ### 📬 Submission Management
 - **Inbox Interface**: Gmail-like inbox for managing form submissions
+- **Bulk Actions**: Select and act on multiple entries (status, labels, delete)
 - **Entry Labels**: Organize submissions with custom color-coded labels
 - **Status Management**: Track submissions with statuses (Inbox, Junk, Archive, Trash)
 - **Form Filtering**: Filter submissions by form identifier
@@ -24,16 +41,20 @@ A modern WordPress form builder plugin built with Gutenberg blocks. Create beaut
 
 ### 🔌 Provider System
 - **Extensible Architecture**: Plugin-based provider system for handling form submissions
+- **Form Identifier**: Each form can be linked to providers via form identifier
 - **Built-in Providers**:
-  - **Email Provider**: Send form submissions via email
+  - **Email Provider**: Send form submissions via email (with SMTP support)
   - **Database Provider**: Store submissions in the database
+- **Email Logging**: Log sent emails for debugging and auditing
 - **Custom Providers**: Easily extend with your own providers using WordPress filters
 
-### 🎯 Additional Features
+### 🎯 Admin & Settings
+- **Forms Usage Page**: Overview of where forms are used (posts/pages with embedded forms)
+- **Admin Bar**: Quick access to Inbox and Settings from the WordPress admin bar
+- **SMTP Settings**: Configure SMTP for reliable email delivery
 - **Mailboxes**: Organize forms into different mailboxes
-- **Entry Labels**: Color-coded labels for better organization
-- **Dashboard**: Overview of form statistics and activity
-- **Settings**: Comprehensive settings panel for configuration
+- **Labels**: Color-coded labels for entries
+- **Debug & First Steps**: Toggle debug mode and onboarding
 - **Modern Admin UI**: Built with React, TypeScript, and Tailwind CSS
 
 ## Requirements
@@ -82,25 +103,33 @@ npm run build
 4. Add form fields:
    - Add **Input** blocks for text, email, and other input types
    - Add **Textarea** blocks for multi-line text
-   - Add a **Submit** block to complete your form
+   - Add **Select**, **Checkbox**, or **Radio** blocks for choices
+   - Add **Date-Time** or **Slider** for specialized inputs
+   - Add **File** block for file uploads
+   - Use **Step** and **Step Navigation** for multi-step forms
+   - Add **Captcha** or **Honeypot** for spam protection
+   - Add a **Submit** block and optionally **Success** for completion
 
 ### Managing Submissions
 
-1. Navigate to **Gutenform > Inbox** in the WordPress admin
+1. Navigate to **Gutenform > Inbox** in the WordPress admin (or use the Admin Bar shortcut if enabled)
 2. View all form submissions in the inbox interface
 3. Use filters to:
    - Filter by form identifier
    - Filter by status (Inbox, Junk, Archive, Trash)
    - Filter by labels
-4. Click on any submission to view full details
-5. Organize submissions with labels and status changes
+4. Use bulk actions to change status, apply labels, or delete multiple entries
+5. Click on any submission to view full details
+6. Organize submissions with labels and status changes
 
-### Configuring Providers
+### Configuring Providers & Email
 
-1. Go to **Gutenform > Settings > Providers**
+1. Go to **Gutenform > Settings** (then **Providers** in the sidebar)
 2. Configure your Email provider settings
-3. Configure your Database provider settings
-4. Enable or disable providers as needed
+3. Optionally configure **SMTP** (Gutenform > Settings > SMTP) for reliable delivery
+4. Configure your Database provider settings
+5. Enable or disable providers as needed
+6. View **Email Logs** to debug sent emails
 
 ### Managing Mailboxes
 
@@ -108,11 +137,11 @@ npm run build
 2. Create and manage mailboxes for organizing forms
 3. Assign forms to specific mailboxes
 
-### Managing Labels
+### Forms Usage & Labels
 
-1. Go to **Gutenform > Settings > Labels**
-2. Create custom labels with colors
-3. Apply labels to submissions for better organization
+1. Go to **Gutenform > Forms** to see where forms are used (posts/pages with embedded forms)
+2. Go to **Gutenform > Settings > Labels** to create custom labels with colors
+3. Apply labels to submissions in the Inbox for better organization
 
 ## Development
 
@@ -180,29 +209,66 @@ gutenform/
 
 All API endpoints are prefixed with `/gutenform/v1/`
 
-#### Entries
-- `GET /entries` - Get all entries
-- `GET /entries/{id}` - Get a specific entry
-- `POST /entries` - Create a new entry
-- `PUT /entries/{id}` - Update an entry
-- `DELETE /entries/{id}` - Delete an entry
+#### Submissions & Entries
+- `POST /submit` - Submit a form (frontend)
+- `POST /entries/create` - Create an entry
+- `GET /entries/get` - Get entries (with filters)
+- `GET /entries/get/{id}` - Get a single entry
+- `GET /entries/form-identifiers` - Get form identifiers for filtering
+- `GET /entries/statuses` - Get statuses
+- `POST /entries/update` - Update an entry
+- `POST /entries/delete` - Delete an entry
+- `POST /entries/mark-read` - Mark as read
+- `POST /entries/empty-trash` - Empty trash
+
+#### Forms
+- `GET /forms/usage` - Get forms usage (posts/pages with embedded forms)
+
+#### File Upload
+- `POST /upload` - Upload file(s)
+- `POST /upload-from-url` - Upload from URL
 
 #### Mailboxes
-- `GET /mailboxes` - Get all mailboxes
-- `POST /mailboxes` - Create a mailbox
-- `PUT /mailboxes/{id}` - Update a mailbox
-- `DELETE /mailboxes/{id}` - Delete a mailbox
+- `GET /mailboxes/get` - Get all mailboxes
+- `GET /mailboxes/get/{id}` - Get a mailbox
+- `POST /mailboxes/create` - Create a mailbox
+- `POST /mailboxes/update` - Update a mailbox
+- `POST /mailboxes/delete` - Delete a mailbox
 
 #### Providers
-- `GET /providers` - Get all providers
-- `POST /providers` - Create a provider
-- `PUT /providers/{id}` - Update a provider
+- `GET /providers/get` - Get all providers
+- `GET /providers/get/{id}` - Get a provider
+- `GET /providers/get-by-type/{type}` - Get providers by type
+- `GET /providers/types` - Get provider types
+- `POST /providers/create` - Create a provider
+- `POST /providers/update` - Update a provider
+- `POST /providers/delete` - Delete a provider
 
 #### Entry Labels
-- `GET /entry-labels` - Get all labels
-- `POST /entry-labels` - Create a label
-- `PUT /entry-labels/{id}` - Update a label
-- `DELETE /entry-labels/{id}` - Delete a label
+- `GET /entry-labels/get` - Get all labels
+- `GET /entry-labels/get/{id}` - Get a label
+- `POST /entry-labels/create` - Create a label
+- `POST /entry-labels/update` - Update a label
+- `POST /entry-labels/delete` - Delete a label
+- `POST /entry-labels/attach` - Attach label to entry
+- `POST /entry-labels/detach` - Detach label from entry
+
+#### Settings
+- `GET/POST /settings/smtp` - SMTP settings
+- `POST /settings/smtp/test` - Test SMTP connection
+- `GET/POST /settings/debug` - Debug mode
+- `GET/POST /settings/admin-bar` - Admin bar visibility
+- `GET/POST /settings/skip-first-steps` - Skip onboarding
+- `GET/POST /settings/charts-visible` - Charts visibility
+
+#### Email Logs & Templates
+- `GET /email-logs/get` - Get email logs
+- `GET /email-logs/get/{id}` - Get single log
+- `POST /email-logs/delete` - Delete log
+- `POST /email-logs/delete-all` - Delete all logs
+- `GET /email-templates` - Get templates
+- `GET /email-templates/{name}` - Get template
+- `POST /email-templates/preview` - Preview template
 
 ## Extending Gutenform
 
@@ -255,6 +321,19 @@ GPLv2 or later
 
 For support, please open an issue on the [GitHub repository](https://github.com/yourusername/gutenform).
 
+## Documentation
+
+The `documentation/` folder contains a Next.js app for platform docs and preview. To run it locally:
+
+```bash
+cd documentation
+npm install
+npm run build
+npm run start
+```
+
+See `documentation/DEPLOY.md` for Vercel deployment.
+
 ## Changelog
 
 ### 1.0.0
@@ -264,3 +343,12 @@ For support, please open an issue on the [GitHub repository](https://github.com/
 - Email and Database providers
 - Mailbox and label management
 - Modern React admin interface
+
+### Later updates (since README revamp)
+- **Blocks**: Select, Checkbox, Radio, Date-Time, Slider, File upload, Captcha, Honeypot, Step, Step Navigation, Progress, Save Progress, Success view
+- **Multi-step forms**: Step blocks, navigation, progress indicator, save/resume
+- **Spam protection**: Captcha and Honeypot blocks
+- **Admin**: Forms Usage page, Admin Bar shortcut, SMTP settings, Email logging
+- **Inbox**: Bulk actions, improved filtering
+- **API**: Forms usage, file upload, SMTP/debug/admin-bar, email logs and templates
+- **i18n**: PHP-based translation system for admin and blocks

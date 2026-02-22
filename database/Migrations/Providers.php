@@ -12,6 +12,7 @@ namespace Gutenform\Database\Migrations;
 
 use Gutenform\Interfaces\Migration;
 use Prappo\WpEloquent\Database\Capsule\Manager as Capsule;
+use Prappo\WpEloquent\Database\Schema\Blueprint;
 
 /**
  * Class Providers
@@ -37,27 +38,22 @@ class Providers implements Migration
 	 */
 	public static function up()
 	{
-		global $wpdb;
-		$table_name = $wpdb->prefix . self::$table;
-
-		if (Capsule::schema()->hasTable($table_name)) {
+		// Capsule adds the WordPress table prefix automatically; pass name without prefix.
+		if (Capsule::schema()->hasTable(self::$table)) {
 			return;
 		}
 
-		$sql = "CREATE TABLE IF NOT EXISTS `" . $table_name . "` (
-			`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-			`name` VARCHAR(255) NOT NULL,
-			`provider_type` VARCHAR(50) NOT NULL COMMENT 'Interner Slug des Providers (z.B. db, email).',
-			`form_identifier` VARCHAR(100) DEFAULT NULL COMMENT 'Formular-Identifier. NULL = Globaler Provider',
-			`settings` LONGTEXT NOT NULL COMMENT 'Verschlüsselte Konfigurationsdaten (JSON).',
-			`is_active` TINYINT(1) DEFAULT 1,
-			`date_created` DATETIME NOT NULL,
-			PRIMARY KEY (`id`),
-			KEY `idx_provider_type` (`provider_type`),
-			KEY `idx_form_identifier` (`form_identifier`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-
-		Capsule::connection()->getPdo()->exec($sql);
+		Capsule::schema()->create(self::$table, function (Blueprint $table) {
+			$table->id();
+			$table->string('name', 255);
+			$table->string('provider_type', 50);
+			$table->string('form_identifier', 100)->nullable();
+			$table->longText('settings');
+			$table->tinyInteger('is_active')->default(1);
+			$table->dateTime('date_created');
+			$table->index('provider_type');
+			$table->index('form_identifier');
+		});
 	}
 
 	/**

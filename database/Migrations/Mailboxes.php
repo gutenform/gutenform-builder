@@ -12,6 +12,7 @@ namespace Gutenform\Database\Migrations;
 
 use Gutenform\Interfaces\Migration;
 use Prappo\WpEloquent\Database\Capsule\Manager as Capsule;
+use Prappo\WpEloquent\Database\Schema\Blueprint;
 
 /**
  * Class Mailboxes
@@ -37,24 +38,19 @@ class Mailboxes implements Migration
 	 */
 	public static function up()
 	{
-		global $wpdb;
-		$table_name = $wpdb->prefix . self::$table;
-
-		if (Capsule::schema()->hasTable($table_name)) {
+		// Capsule adds the WordPress table prefix automatically; pass name without prefix.
+		if (Capsule::schema()->hasTable(self::$table)) {
 			return;
 		}
 
-		$sql = "CREATE TABLE IF NOT EXISTS `" . $table_name . "` (
-			`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-			`title` VARCHAR(255) NOT NULL,
-			`is_default` TINYINT(1) DEFAULT 0 COMMENT 'Markiert das Standard-Postfach (1) für die Free-Version.',
-			`date_created` DATETIME NOT NULL,
-			`user_id` BIGINT(20) UNSIGNED DEFAULT NULL,
-			PRIMARY KEY (`id`),
-			KEY `idx_default` (`is_default`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-
-		Capsule::connection()->getPdo()->exec($sql);
+		Capsule::schema()->create(self::$table, function (Blueprint $table) {
+			$table->id();
+			$table->string('title', 255);
+			$table->tinyInteger('is_default')->default(0);
+			$table->dateTime('date_created');
+			$table->unsignedBigInteger('user_id')->nullable();
+			$table->index('is_default');
+		});
 	}
 
 	/**

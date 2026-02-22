@@ -11,6 +11,7 @@ namespace Gutenform\Database\Migrations;
 
 use Gutenform\Interfaces\Migration;
 use Prappo\WpEloquent\Database\Capsule\Manager as Capsule;
+use Prappo\WpEloquent\Database\Schema\Blueprint;
 
 /**
  * Class AddFormIdentifierToProviders
@@ -35,45 +36,39 @@ class AddFormIdentifierToProviders implements Migration {
 	 */
 	public static function up() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . self::$table;
+		$table_name_prefixed = $wpdb->prefix . self::$table;
 
-		// Check if table exists
-		if ( ! Capsule::schema()->hasTable( $table_name ) ) {
+		// Capsule adds the WordPress table prefix automatically; pass name without prefix.
+		if ( ! Capsule::schema()->hasTable( self::$table ) ) {
 			return;
 		}
 
 		// Check if column already exists
-		$column_exists = Capsule::schema()->hasColumn( $table_name, 'form_identifier' );
+		$column_exists = Capsule::schema()->hasColumn( self::$table, 'form_identifier' );
 		if ( $column_exists ) {
 			return;
 		}
 
-		// 1. Remove UNIQUE KEY on provider_type (if it exists)
-		// Check if the unique key exists before trying to drop it
-		$index_exists = $wpdb->get_results(
-			$wpdb->prepare(
-				"SHOW INDEX FROM `%s` WHERE Key_name = 'uk_provider_type'",
-				$table_name
-			)
-		);
+		$driver = Capsule::connection()->getDriverName();
 
-		if ( ! empty( $index_exists ) ) {
-			$wpdb->query( "ALTER TABLE `{$table_name}` DROP INDEX `uk_provider_type`" );
+		// 1. Remove UNIQUE KEY on provider_type (MySQL only; SQLite may not have had it)
+		if ( $driver === 'mysql' ) {
+			$index_exists = $wpdb->get_results(
+				$wpdb->prepare(
+					"SHOW INDEX FROM `%s` WHERE Key_name = 'uk_provider_type'",
+					$table_name_prefixed
+				)
+			);
+			if ( ! empty( $index_exists ) ) {
+				$wpdb->query( "ALTER TABLE `{$table_name_prefixed}` DROP INDEX `uk_provider_type`" );
+			}
 		}
 
-		// 2. Add form_identifier column
-		$wpdb->query(
-			"ALTER TABLE `{$table_name}` 
-			ADD COLUMN `form_identifier` VARCHAR(100) DEFAULT NULL 
-			COMMENT 'Formular-Identifier. NULL = Globaler Provider' 
-			AFTER `provider_type`"
-		);
-
-		// 3. Add index on form_identifier
-		$wpdb->query(
-			"ALTER TABLE `{$table_name}` 
-			ADD KEY `idx_form_identifier` (`form_identifier`)"
-		);
+		// 2. Add form_identifier column and index (Schema Builder works on MySQL and SQLite)
+		Capsule::schema()->table( self::$table, function ( Blueprint $table ) {
+			$table->string( 'form_identifier', 100 )->nullable();
+			$table->index( 'form_identifier' );
+		} );
 	}
 
 	/**
@@ -83,24 +78,25 @@ class AddFormIdentifierToProviders implements Migration {
 	 */
 	public static function down() {
 		global $wpdb;
-		$table_name = $wpdb->prefix . self::$table;
+		$table_name_prefixed = $wpdb->prefix . self::$table;
 
-		// Check if table exists
-		if ( ! Capsule::schema()->hasTable( $table_name ) ) {
+		// Capsule adds the WordPress table prefix automatically.
+		if ( ! Capsule::schema()->hasTable( self::$table ) ) {
 			return;
 		}
 
-		// 1. Remove index on form_identifier
-		$wpdb->query( "ALTER TABLE `{$table_name}` DROP INDEX `idx_form_identifier`" );
+		Capsule::schema()->table( self::$table, function ( Blueprint $table ) {
+			$table->dropIndex( [ 'form_identifier' ] );
+			$table->dropColumn( 'form_identifier' );
+		} );
 
-		// 2. Remove form_identifier column
-		$wpdb->query( "ALTER TABLE `{$table_name}` DROP COLUMN `form_identifier`" );
-
-		// 3. Re-add UNIQUE KEY on provider_type
-		$wpdb->query(
-			"ALTER TABLE `{$table_name}` 
-			ADD UNIQUE KEY `uk_provider_type` (`provider_type`)"
-		);
+		$driver = Capsule::connection()->getDriverName();
+		if ( $driver === 'mysql' ) {
+			$wpdb->query(
+				"ALTER TABLE `{$table_name_prefixed}` 
+				ADD UNIQUE KEY `uk_provider_type` (`provider_type`)"
+			);
+		}
 	}
 }
 

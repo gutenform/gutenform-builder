@@ -12,6 +12,7 @@ namespace Gutenform\Database\Migrations;
 
 use Gutenform\Interfaces\Migration;
 use Prappo\WpEloquent\Database\Capsule\Manager as Capsule;
+use Prappo\WpEloquent\Database\Schema\Blueprint;
 
 /**
  * Class EmailLogs
@@ -37,33 +38,28 @@ class EmailLogs implements Migration
      */
     public static function up()
     {
-        global $wpdb;
-        $table_name = $wpdb->prefix . self::$table;
-
-        if (Capsule::schema()->hasTable($table_name)) {
+        // Capsule adds the WordPress table prefix automatically; pass name without prefix.
+        if (Capsule::schema()->hasTable(self::$table)) {
             return;
         }
 
-        $sql = "CREATE TABLE IF NOT EXISTS `" . $table_name . "` (
-			`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-			`to_email` VARCHAR(255) NOT NULL COMMENT 'Recipient email address.',
-			`subject` VARCHAR(500) DEFAULT NULL COMMENT 'Email subject.',
-			`message` LONGTEXT DEFAULT NULL COMMENT 'Email message body.',
-			`headers` TEXT DEFAULT NULL COMMENT 'Email headers as JSON.',
-			`attachments` TEXT DEFAULT NULL COMMENT 'Attachment file paths as JSON.',
-			`from_email` VARCHAR(255) DEFAULT NULL COMMENT 'Sender email address.',
-			`from_name` VARCHAR(255) DEFAULT NULL COMMENT 'Sender name.',
-			`status` VARCHAR(50) DEFAULT 'sent' COMMENT 'Email status: sent, failed, pending.',
-			`error_message` TEXT DEFAULT NULL COMMENT 'Error message if sending failed.',
-			`date_sent` DATETIME NOT NULL COMMENT 'Date and time when email was sent.',
-			`date_created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			PRIMARY KEY (`id`),
-			KEY `idx_to_email` (`to_email`),
-			KEY `idx_status` (`status`),
-			KEY `idx_date_sent` (`date_sent`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-
-        Capsule::connection()->getPdo()->exec($sql);
+        Capsule::schema()->create(self::$table, function (Blueprint $table) {
+            $table->id();
+            $table->string('to_email', 255);
+            $table->string('subject', 500)->nullable();
+            $table->longText('message')->nullable();
+            $table->text('headers')->nullable();
+            $table->text('attachments')->nullable();
+            $table->string('from_email', 255)->nullable();
+            $table->string('from_name', 255)->nullable();
+            $table->string('status', 50)->default('sent');
+            $table->text('error_message')->nullable();
+            $table->dateTime('date_sent');
+            $table->dateTime('date_created');
+            $table->index('to_email');
+            $table->index('status');
+            $table->index('date_sent');
+        });
     }
 
     /**

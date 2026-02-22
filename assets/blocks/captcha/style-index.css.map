@@ -1,1 +1,0 @@
-{"version":3,"file":"captcha/style-index.css","mappings":";;;AAAA;CACC,aAAa;AACd;;AAEA;CACC,iBAAiB;AAClB","sources":["webpack://gutenform-builder/./src/blocks/captcha/style.css"],"sourcesContent":[".wp-block-gutenform-captcha {\n\tmargin: 1em 0;\n}\n\n.gutenform-captcha-container {\n\tmin-height: 100px;\n}\n\n"],"names":[],"ignoreList":[],"sourceRoot":""}

@@ -12,6 +12,7 @@ namespace Gutenform\Database\Migrations;
 
 use Gutenform\Interfaces\Migration;
 use Prappo\WpEloquent\Database\Capsule\Manager as Capsule;
+use Prappo\WpEloquent\Database\Schema\Blueprint;
 
 /**
  * Class Entries
@@ -37,33 +38,28 @@ class Entries implements Migration
 	 */
 	public static function up()
 	{
-		global $wpdb;
-		$table_name = $wpdb->prefix . self::$table;
-
-		if (Capsule::schema()->hasTable($table_name)) {
+		// Capsule adds the WordPress table prefix automatically; pass name without prefix.
+		if (Capsule::schema()->hasTable(self::$table)) {
 			return;
 		}
 
-		$sql = "CREATE TABLE IF NOT EXISTS `" . $table_name . "` (
-			`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-			`mailbox_id` BIGINT(20) UNSIGNED NOT NULL COMMENT 'Referenziert das Postfach aus wp_gutenform_mailboxes.',
-			`form_identifier` VARCHAR(100) DEFAULT NULL COMMENT 'Vom Nutzer definierter Slug des Formulars (z.B. landing-page-v2).',
-			`wp_post_id` BIGINT(20) UNSIGNED DEFAULT NULL COMMENT 'Die ID der WP-Seite, von der das Formular abgeschickt wurde.',
-			`data` LONGTEXT NOT NULL COMMENT 'Alle Feldwerte als JSON-String.',
-			`ip_address` VARCHAR(45) DEFAULT NULL COMMENT 'IP-Adresse des Absenders (oder anonymisiert).',
-			`is_read` TINYINT(1) DEFAULT 0 COMMENT 'Status: 0=Ungelesen, 1=Gelesen.',
-			`status` VARCHAR(32) DEFAULT 'inbox' COMMENT 'Status des Eintrags, z.B. new, archived, deleted.',
-			`subject` VARCHAR(255) DEFAULT NULL COMMENT 'Betreff des Eintrags (z.B. für E-Mail-Anzeige).',
-			`from_mail` VARCHAR(255) DEFAULT NULL COMMENT 'E-Mail-Adresse des Absenders.',
-			`date_created` DATETIME NOT NULL,
-			PRIMARY KEY (`id`),
-			KEY `idx_mailbox_id` (`mailbox_id`),
-			KEY `idx_wp_post_id` (`wp_post_id`),
-			KEY `idx_identifier` (`form_identifier`),
-			KEY `idx_status` (`status`)
-		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-
-		Capsule::connection()->getPdo()->exec($sql);
+		Capsule::schema()->create(self::$table, function (Blueprint $table) {
+			$table->id();
+			$table->unsignedBigInteger('mailbox_id');
+			$table->string('form_identifier', 100)->nullable();
+			$table->unsignedBigInteger('wp_post_id')->nullable();
+			$table->longText('data');
+			$table->string('ip_address', 45)->nullable();
+			$table->tinyInteger('is_read')->default(0);
+			$table->string('status', 32)->default('inbox');
+			$table->string('subject', 255)->nullable();
+			$table->string('from_mail', 255)->nullable();
+			$table->dateTime('date_created');
+			$table->index('mailbox_id');
+			$table->index('wp_post_id');
+			$table->index('form_identifier');
+			$table->index('status');
+		});
 	}
 
 	/**

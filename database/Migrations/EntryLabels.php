@@ -12,6 +12,7 @@ namespace Gutenform\Database\Migrations;
 
 use Gutenform\Interfaces\Migration;
 use Prappo\WpEloquent\Database\Capsule\Manager as Capsule;
+use Prappo\WpEloquent\Database\Schema\Blueprint;
 
 /**
  * Class EntryLabels
@@ -44,36 +45,28 @@ class EntryLabels implements Migration
 	 */
 	public static function up()
 	{
-		global $wpdb;
-		$labels_table = $wpdb->prefix . self::$labels_table;
-		$rel_table    = $wpdb->prefix . self::$rel_table;
-
+		// Capsule adds the WordPress table prefix automatically; pass names without prefix.
 		// Create labels table.
-		if (! Capsule::schema()->hasTable($labels_table)) {
-			$sql = "CREATE TABLE IF NOT EXISTS `" . $labels_table . "` (
-				`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-				`name` VARCHAR(100) NOT NULL,
-				`description` TEXT DEFAULT NULL COMMENT 'Beschreibung der Label.',
-				`color` VARCHAR(7) DEFAULT '#000000' COMMENT 'Hex-Code für die Farbdarstellung.',
-				`date_created` DATETIME NOT NULL,
-				PRIMARY KEY (`id`),
-				UNIQUE KEY `uk_name` (`name`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-
-			Capsule::connection()->getPdo()->exec($sql);
+		if (! Capsule::schema()->hasTable(self::$labels_table)) {
+			Capsule::schema()->create(self::$labels_table, function (Blueprint $table) {
+				$table->id();
+				$table->string('name', 100);
+				$table->text('description')->nullable();
+				$table->string('color', 7)->default('#000000');
+				$table->dateTime('date_created');
+				$table->unique('name');
+			});
 		}
 
 		// Create label relations table.
-		if (! Capsule::schema()->hasTable($rel_table)) {
-			$sql = "CREATE TABLE IF NOT EXISTS `" . $rel_table . "` (
-				`entry_id` BIGINT(20) UNSIGNED NOT NULL,
-				`label_id` BIGINT(20) UNSIGNED NOT NULL,
-				`date_applied` DATETIME NOT NULL,
-				PRIMARY KEY (`entry_id`, `label_id`),
-				KEY `idx_label_id` (`label_id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
-
-			Capsule::connection()->getPdo()->exec($sql);
+		if (! Capsule::schema()->hasTable(self::$rel_table)) {
+			Capsule::schema()->create(self::$rel_table, function (Blueprint $table) {
+				$table->unsignedBigInteger('entry_id');
+				$table->unsignedBigInteger('label_id');
+				$table->dateTime('date_applied');
+				$table->primary(['entry_id', 'label_id']);
+				$table->index('label_id');
+			});
 		}
 	}
 
