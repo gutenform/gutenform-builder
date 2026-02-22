@@ -1,0 +1,47 @@
+---
+title: Platform API
+description: API für das Gutenform-Plugin – KI-Generierung, Lizenzen, Rate-Limits
+---
+
+Die Gutenform-Plattform stellt Endpoints für das WordPress-Plugin bereit. Basis-URL: **Produktion** `https://gutenform.de`, **Entwicklung** `https://gutenform.vercel.app`.
+
+## Authentifizierung
+
+Alle Endpoints (außer Webhooks) erwarten den Lizenzschlüssel im Header:
+
+```
+x-license-key: sk_xxxx...
+```
+
+## POST /api/v1/ai/generate
+
+Generiert Block-JSON aus einem User-Prompt.
+
+**Header:**
+- `x-license-key` (erforderlich)
+- `Content-Type: application/json`
+
+**Body:**
+```json
+{
+  "prompt": "Erstelle ein Kontaktformular mit Name, E-Mail und Nachricht"
+}
+```
+
+**Erfolg (200):** JSON-Objekt mit den generierten Blöcken.
+
+**Fehler:**
+- `401` – Ungültiger oder abgelaufener Key
+- `402` – Keine Credits
+- `429` – Rate Limit (z. B. 10 Requests/Minute), Header `Retry-After`
+- `400` – Fehlender oder ungültiger Body
+- `503` – KI nicht konfiguriert
+
+## Rate-Limits
+
+Pro Lizenzschlüssel gelten Limits (z. B. 10 Requests pro Minute). Bei Überschreitung wird `429` mit `Retry-After: 60` zurückgegeben.
+
+## Weitere Endpoints (intern)
+
+- **POST /api/license/generate** – Neuen Key generieren (nur für eingeloggte User über das Dashboard).
+- **POST /api/webhooks/lemon-squeezy** – Lemon Squeezy Webhook (Signaturprüfung erforderlich).
