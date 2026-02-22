@@ -1,1 +1,38 @@
-.wp-block-gutenform-step-navigation{align-items:center;display:flex;gap:12px;margin-top:16px}.wp-block-gutenform-step-navigation button{border:1px solid;border-radius:4px;cursor:pointer;font-family:inherit;font-size:inherit;line-height:1.4;padding:10px 24px;transition:opacity .2s ease}.wp-block-gutenform-step-navigation button:hover{opacity:.8}.wp-block-gutenform-step-navigation .gutenform-step-prev{background:transparent;color:inherit}.wp-block-gutenform-step-navigation .gutenform-step-next,.wp-block-gutenform-step-navigation .gutenform-step-submit{background:currentColor;border-color:currentColor}.wp-block-gutenform-step-navigation .gutenform-step-next span,.wp-block-gutenform-step-navigation .gutenform-step-submit span{filter:invert(1)}
+/*!**************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/@wordpress/scripts/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/blocks/step-navigation/style.css ***!
+  \**************************************************************************************************************************************************************************************************************************/
+/* Step Navigation styles */
+.wp-block-gutenform-step-navigation {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	margin-top: 16px;
+}
+.wp-block-gutenform-step-navigation button {
+	padding: 10px 24px;
+	border: 1px solid currentColor;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: inherit;
+	font-family: inherit;
+	line-height: 1.4;
+	transition: opacity 0.2s ease;
+}
+.wp-block-gutenform-step-navigation button:hover {
+	opacity: 0.8;
+}
+.wp-block-gutenform-step-navigation .gutenform-step-prev {
+	background: transparent;
+	color: inherit;
+}
+.wp-block-gutenform-step-navigation .gutenform-step-next,
+.wp-block-gutenform-step-navigation .gutenform-step-submit {
+	background: currentColor;
+	border-color: currentColor;
+}
+.wp-block-gutenform-step-navigation .gutenform-step-next span,
+.wp-block-gutenform-step-navigation .gutenform-step-submit span {
+	/* Invert text color for filled buttons */
+	filter: invert(1);
+}
+

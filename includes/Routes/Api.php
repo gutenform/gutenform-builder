@@ -39,6 +39,12 @@ Route::prefix(
 		$route->post('/entries/mark-read', '\Gutenform\Controllers\Entries\Actions@mark_read');
 		$route->post('/entries/empty-trash', '\Gutenform\Controllers\Entries\Actions@empty_trash');
 
+		// Inbox Folders routes.
+		$route->get('/inbox-folders/get', '\Gutenform\Controllers\InboxFolders\Actions@get');
+		$route->post('/inbox-folders/create', '\Gutenform\Controllers\InboxFolders\Actions@create');
+		$route->post('/inbox-folders/update', '\Gutenform\Controllers\InboxFolders\Actions@update');
+		$route->post('/inbox-folders/delete', '\Gutenform\Controllers\InboxFolders\Actions@delete');
+
 		// Mailboxes routes.
 		$route->post('/mailboxes/create', '\Gutenform\Controllers\Mailboxes\Actions@create');
 		$route->get('/mailboxes/get', '\Gutenform\Controllers\Mailboxes\Actions@get');

@@ -1,0 +1,1 @@
+{"version":3,"file":"date-time/view.js","mappings":";;;;AAAA;AACA;AACA;AACA,G","sources":["webpack://gutenform-builder/./src/blocks/date-time/view.ts"],"sourcesContent":["/**\n * Frontend script for date/time block.\n * Values are submitted via FormData.\n */\n"],"names":[],"ignoreList":[],"sourceRoot":""}

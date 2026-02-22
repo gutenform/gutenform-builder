@@ -1,1 +1,47 @@
-.gutenform-success-modal-content{position:relative}.gutenform-success-modal-close{align-items:center;background:transparent;border:none;border-radius:4px;color:#666;cursor:pointer;display:flex;font-size:28px;height:36px;justify-content:center;line-height:1;padding:5px 10px;position:absolute;left:10px;top:10px;transition:all .2s ease;width:36px;z-index:1}.gutenform-success-modal-close:hover{background-color:#f0f0f0;color:#000}.gutenform-success-modal-close:focus{outline:2px solid #0073aa;outline-offset:2px}
+/*!******************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[2].use[1]!./node_modules/@wordpress/scripts/node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[2].use[2]!./src/blocks/success/style.css ***!
+  \******************************************************************************************************************************************************************************************************************/
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ */
+
+.wp-block-gutenform-success {
+	/* styles for the success block */
+}
+
+.gutenform-success-modal-content {
+	position: relative;
+}
+
+.gutenform-success-modal-close {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	background: transparent;
+	border: none;
+	font-size: 28px;
+	line-height: 1;
+	cursor: pointer;
+	color: #666;
+	padding: 5px 10px;
+	border-radius: 4px;
+	transition: all 0.2s ease;
+	z-index: 1;
+	width: 36px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.gutenform-success-modal-close:hover {
+	background-color: #f0f0f0;
+	color: #000;
+}
+
+.gutenform-success-modal-close:focus {
+	outline: 2px solid #0073aa;
+	outline-offset: 2px;
+}
+

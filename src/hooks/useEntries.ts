@@ -46,6 +46,7 @@ export interface UpdateEntryData {
   is_read?: boolean;
   status?: string;
   labels?: number[];
+  folder_id?: number | null;
 }
 
 /**
@@ -71,6 +72,9 @@ export function useEntries(inboxFilters?: (InboxFilters | undefined)) {
       if (filters?.form_identifier) params.append('form_identifier', filters.form_identifier);
       if (filters?.is_read !== undefined) params.append('is_read', filters.is_read.toString());
       if (filters?.labels && filters.labels.length > 0) params.append('labels', filters.labels.join(','));
+      if (filters?.folder_id != null && filters.folder_id > 0) {
+        params.append('folder_id', filters.folder_id.toString());
+      }
       if (filters?.status) params.append('status', filters.status);
       if (filters?.search) params.append('search', filters.search);
       params.append('page', page.toString());
@@ -310,12 +314,16 @@ export function useFormIdentifiers() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const defaultFilters = useStore($inboxFilters);
   const fetchFormIdentifiers = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-
-      const response = await apiGet<ApiResponse<FormIdentifierCount[]>>('entries/form-identifiers');
+      const filters = $inboxFilters.get();
+      const params = new URLSearchParams();
+      if (filters.mailbox_id) params.set('mailbox_id', String(filters.mailbox_id));
+      params.set('unread_only', '1');
+      const response = await apiGet<ApiResponse<FormIdentifierCount[]>>(`entries/form-identifiers?${params.toString()}`);
       
       if (response.success && response.data) {
         setFormIdentifiers(response.data);
@@ -328,7 +336,7 @@ export function useFormIdentifiers() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [defaultFilters.mailbox_id]);
 
   useEffect(() => {
     fetchFormIdentifiers();
@@ -362,7 +370,7 @@ export function useStatuses() {
       setLoading(true);
       setError(null);
 
-      const response = await apiGet<ApiResponse<StatusCount[]>>(`entries/statuses?mailbox_id=${filters.mailbox_id}`);
+      const response = await apiGet<ApiResponse<StatusCount[]>>(`entries/statuses?mailbox_id=${filters.mailbox_id}&unread_only=1`);
       
       if (response.success && response.data) {
         setStatuses(response.data);
@@ -423,9 +431,9 @@ export function useBulkEntryOperations() {
       setLoading(true);
       setError(null);
 
-      // Update entries one by one (or implement bulk update endpoint)
-      const promises = ids.map(id => 
-        apiPost<ApiResponse<Entry>>('entries/update', { id, status })
+      // Update entries one by one (or implement bulk update endpoint); clear folder so entries leave user folders
+      const promises = ids.map(id =>
+        apiPost<ApiResponse<Entry>>('entries/update', { id, status, folder_id: null })
       );
       
       await Promise.all(promises);

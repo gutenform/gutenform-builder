@@ -1,0 +1,1 @@
+{"version":3,"file":"checkbox/view.js","mappings":";;;;AAAA;AACA;AACA;AACA,G","sources":["webpack://gutenform-builder/./src/blocks/checkbox/view.ts"],"sourcesContent":["/**\n * Frontend script for checkbox block.\n * Checkbox values are submitted via FormData; optional validation (e.g. at-least-one) can be added here.\n */\n"],"names":[],"ignoreList":[],"sourceRoot":""}

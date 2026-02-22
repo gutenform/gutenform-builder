@@ -10,13 +10,14 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
+  ContextMenuSeparator,
   ContextMenuTrigger,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
 } from "@/components/ui/context-menu"
 
-import { Loader2 } from "lucide-react"
+import { Loader2, Inbox, ArchiveX, Archive, Trash2, Folder } from "lucide-react"
 import { useMail } from "@/admin/pages/inbox/use-mail"
 import { Mail as MailType } from "@/components/inbox/mail-display"
 import { __ } from "@/lib/i18n"
@@ -25,15 +26,17 @@ interface MailListProps {
   items: MailType[]
   loading?: boolean
   mailboxes?: { id: number; title: string }[]
+  folders?: { id: number; name: string }[]
   onBulkDelete?: (ids: number[]) => void
   onBulkMove?: (ids: number[], status: string) => void
   onMarkRead?: (id: number, read: boolean) => void
   onDelete?: (id: number) => void
   onMoveTo?: (id: number, status: string) => void
+  onMoveToFolder?: (id: number, folderId: number) => void
   onMoveToMailbox?: (id: number, mailboxId: number) => void
 }
 
-export function MailList({ items, loading = false, mailboxes = [], onBulkDelete, onBulkMove, onMarkRead, onDelete, onMoveTo, onMoveToMailbox }: MailListProps) {
+export function MailList({ items, loading = false, mailboxes = [], folders = [], onBulkDelete, onBulkMove, onMarkRead, onDelete, onMoveTo, onMoveToFolder, onMoveToMailbox }: MailListProps) {
   const [mail, setMail] = useMail()
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set())
   const [draggedItem, setDraggedItem] = useState<MailType | null>(null)
@@ -73,6 +76,25 @@ export function MailList({ items, loading = false, mailboxes = [], onBulkDelete,
   const handleDragStart = (e: React.DragEvent, item: MailType) => {
     setDraggedItem(item)
     e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('text/plain', item.id.toString())
+
+    // Semi-transparent drag image so drop target remains visible
+    const target = e.currentTarget as HTMLElement
+    const rect = target.getBoundingClientRect()
+    const ghost = target.cloneNode(true) as HTMLElement
+    ghost.style.opacity = '0.5'
+    ghost.style.pointerEvents = 'none'
+    ghost.style.position = 'absolute'
+    ghost.style.top = '-9999px'
+    ghost.style.left = '0'
+    ghost.style.width = `${rect.width}px`
+    ghost.style.backgroundColor = 'rgba(255, 255, 255, 0.5)'
+    ghost.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)'
+    document.body.appendChild(ghost)
+    const offsetX = e.clientX - rect.left
+    const offsetY = e.clientY - rect.top
+    e.dataTransfer.setDragImage(ghost, offsetX, offsetY)
+    requestAnimationFrame(() => ghost.remove())
   }
 
   const handleDragEnd = () => {
@@ -120,8 +142,10 @@ export function MailList({ items, loading = false, mailboxes = [], onBulkDelete,
               onMarkRead={onMarkRead}
               onDelete={onDelete}
               onMoveTo={onMoveTo}
+              onMoveToFolder={onMoveToFolder}
               onMoveToMailbox={onMoveToMailbox}
               mailboxes={mailboxes}
+              folders={folders}
             />
               ))}
             </>
@@ -134,7 +158,7 @@ export function MailList({ items, loading = false, mailboxes = [], onBulkDelete,
 
 type MailConfig = { selected: number | null };
 
-const MailItem = ({ item, mail, isSelected, isChecked, onSelect, setMail, onDragStart, onDragEnd, onMarkRead, onDelete, onMoveTo, onMoveToMailbox, mailboxes = [] }: { 
+const MailItem = ({ item, mail, isSelected, isChecked, onSelect, setMail, onDragStart, onDragEnd, onMarkRead, onDelete, onMoveTo, onMoveToFolder, onMoveToMailbox, mailboxes = [], folders = [] }: { 
   item: MailType
   mail: MailConfig
   setMail: (config: MailConfig | ((prev: MailConfig) => MailConfig)) => void
@@ -146,8 +170,10 @@ const MailItem = ({ item, mail, isSelected, isChecked, onSelect, setMail, onDrag
   onMarkRead?: (id: number, read: boolean) => void
   onDelete?: (id: number) => void
   onMoveTo?: (id: number, status: string) => void
+  onMoveToFolder?: (id: number, folderId: number) => void
   onMoveToMailbox?: (id: number, mailboxId: number) => void
   mailboxes?: { id: number; title: string }[]
+  folders?: { id: number; name: string }[]
 }) => {
   const currentMailboxId = item.entry?.mailbox_id;
   const otherMailboxes = mailboxes.filter((mb) => mb.id !== currentMailboxId);
@@ -166,8 +192,6 @@ const MailItem = ({ item, mail, isSelected, isChecked, onSelect, setMail, onDrag
             if (onDragStart) {
               onDragStart(e, item)
             }
-            e.dataTransfer.effectAllowed = 'move'
-            e.dataTransfer.setData('text/plain', item.id.toString())
           }}
           onDragEnd={(e) => {
             if (onDragEnd) {
@@ -232,12 +256,41 @@ const MailItem = ({ item, mail, isSelected, isChecked, onSelect, setMail, onDrag
         <ContextMenuItem onClick={() => onMarkRead && onMarkRead(item.id, !item.read)}>
           {item.read ? __('markAsUnread') : __('markAsRead')}
         </ContextMenuItem>
-        <ContextMenuItem onClick={() => onMoveTo && onMoveTo(item.id, 'archive')}>
-          {__('moveToArchive')}
-        </ContextMenuItem>
-        <ContextMenuItem onClick={() => onMoveTo && onMoveTo(item.id, 'trash')}>
-          {__('moveToTrash')}
-        </ContextMenuItem>
+        <ContextMenuSub>
+          <ContextMenuSubTrigger>{__('moveTo')}</ContextMenuSubTrigger>
+          <ContextMenuSubContent>
+            <ContextMenuItem onClick={() => onMoveTo && onMoveTo(item.id, 'inbox')}>
+              <Inbox className="mr-2 h-4 w-4" />
+              {__('inbox')}
+            </ContextMenuItem>
+            <ContextMenuItem onClick={() => onMoveTo && onMoveTo(item.id, 'junk')}>
+              <ArchiveX className="mr-2 h-4 w-4" />
+              {__('junk')}
+            </ContextMenuItem>
+            <ContextMenuItem onClick={() => onMoveTo && onMoveTo(item.id, 'archive')}>
+              <Archive className="mr-2 h-4 w-4" />
+              {__('moveToArchive')}
+            </ContextMenuItem>
+            <ContextMenuItem onClick={() => onMoveTo && onMoveTo(item.id, 'trash')}>
+              <Trash2 className="mr-2 h-4 w-4" />
+              {__('moveToTrash')}
+            </ContextMenuItem>
+            {folders.length > 0 && onMoveToFolder && (
+              <>
+                <ContextMenuSeparator />
+                {folders.map((folder) => (
+                  <ContextMenuItem
+                    key={folder.id}
+                    onClick={() => onMoveToFolder(item.id, folder.id)}
+                  >
+                    <Folder className="mr-2 h-4 w-4" />
+                    {folder.name}
+                  </ContextMenuItem>
+                ))}
+              </>
+            )}
+          </ContextMenuSubContent>
+        </ContextMenuSub>
         {otherMailboxes.length > 0 && onMoveToMailbox && (
           <ContextMenuSub>
             <ContextMenuSubTrigger>{__('moveToMailbox')}</ContextMenuSubTrigger>

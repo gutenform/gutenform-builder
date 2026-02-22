@@ -3,6 +3,8 @@ import React from "react"
 import {
   Archive,
   ArchiveX,
+  Folder,
+  Inbox,
   MoreVertical,
   RefreshCw,
   Trash2,
@@ -11,6 +13,10 @@ import {
 import {
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
   Avatar,
@@ -57,9 +63,19 @@ export interface Mail {
   entry?: Entry; // Full entry object for body rendering
 }
 
+export interface MoveToFolder {
+  id: number
+  name: string
+}
+
 interface MailDisplayProps {
   mail: Mail | null
   onRefresh?: () => void
+  /** Flat list of user folders for "Move to" submenu */
+  folders?: MoveToFolder[]
+  /** Mailboxes for "Move to mailbox" (other than current) */
+  mailboxes?: { id: number; title: string }[]
+  onMoveToMailbox?: (entryId: number, mailboxId: number) => void
 }
 
 // Helper component to format all fields as a Table
@@ -161,8 +177,10 @@ function AllFieldsTable({ data }: { data: Record<string, any> }) {
   );
 }
 
-export function MailDisplay({ mail, onRefresh }: MailDisplayProps) {
-  const {updateEntry} = useUpdateEntry();
+export function MailDisplay({ mail, onRefresh, folders = [], mailboxes = [], onMoveToMailbox }: MailDisplayProps) {
+  const { updateEntry } = useUpdateEntry();
+  const currentMailboxId = mail?.entry?.mailbox_id
+  const otherMailboxes = mailboxes.filter((mb) => mb.id !== currentMailboxId)
   const {labels, refetch: refetchLabels} = useEntryLabels();
   const { provider: databaseProvider } = useProviderByType('database');
   
@@ -380,13 +398,90 @@ export function MailDisplay({ mail, onRefresh }: MailDisplayProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={async () => {
-              if(!mail) return;
-              await updateEntry({
-                id: mail.id,
-                is_read: !mail.read,
-              });
+              if (!mail) return;
+              await updateEntry({ id: mail.id, is_read: !mail.read });
               onRefresh?.();
-            }}>{mail?.read ? __('markAsUnread') : __('markAsRead')}</DropdownMenuItem>
+            }}>
+              {mail?.read ? __('markAsUnread') : __('markAsRead')}
+            </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <span>{__('moveTo')}</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem onClick={async () => {
+                  if (!mail) return;
+                  await updateEntry({ id: mail.id, status: 'inbox', folder_id: null });
+                  onRefresh?.();
+                }}>
+                  <Inbox className="mr-2 h-4 w-4" />
+                  {__('inbox')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={async () => {
+                  if (!mail) return;
+                  await updateEntry({ id: mail.id, status: 'junk', folder_id: null });
+                  onRefresh?.();
+                }}>
+                  <ArchiveX className="mr-2 h-4 w-4" />
+                  {__('junk')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={async () => {
+                  if (!mail) return;
+                  await updateEntry({ id: mail.id, status: 'archive', folder_id: null });
+                  onRefresh?.();
+                }}>
+                  <Archive className="mr-2 h-4 w-4" />
+                  {__('archive')}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={async () => {
+                  if (!mail) return;
+                  await updateEntry({ id: mail.id, status: 'trash', folder_id: null });
+                  onRefresh?.();
+                }}>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  {__('trash')}
+                </DropdownMenuItem>
+                {folders.length > 0 && (
+                  <>
+                    <DropdownMenuSeparator />
+                    {folders.map((folder) => (
+                      <DropdownMenuItem
+                        key={folder.id}
+                        onClick={async () => {
+                          if (!mail) return;
+                          await updateEntry({ id: mail.id, folder_id: folder.id });
+                          onRefresh?.();
+                        }}
+                      >
+                        <Folder className="mr-2 h-4 w-4" />
+                        {folder.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </>
+                )}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            {otherMailboxes.length > 0 && onMoveToMailbox && (
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <span>{__('moveToMailbox')}</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  {otherMailboxes.map((mailbox) => (
+                    <DropdownMenuItem
+                      key={mailbox.id}
+                      onClick={async () => {
+                        if (!mail) return;
+                        onMoveToMailbox(mail.id, mailbox.id);
+                        onRefresh?.();
+                      }}
+                    >
+                      {mailbox.title}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

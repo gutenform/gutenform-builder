@@ -5,10 +5,11 @@ export interface InboxFilters {
   status: string;
   search: string;
   form_identifier: string;
-  labels: number[]; 
+  labels: number[];
   is_read: number | undefined;
   page: number;
   per_page: number;
+  folder_id: number | null;
 }
 
 export const $inboxFilters = atom<InboxFilters>({
@@ -20,6 +21,7 @@ export const $inboxFilters = atom<InboxFilters>({
   is_read: undefined,
   page: 1,
   per_page: 10,
+  folder_id: null,
 });
 
 export const setInboxFilters = (data: Partial<InboxFilters>) => {

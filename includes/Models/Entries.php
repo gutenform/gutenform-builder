@@ -63,6 +63,7 @@ class Entries extends Model
         'subject',
         'from_mail',
         'date_created',
+        'folder_id',
     );
 
     /**
@@ -117,6 +118,16 @@ class Entries extends Model
     public function mailbox()
     {
         return $this->belongsTo(Mailboxes::class, 'mailbox_id');
+    }
+
+    /**
+     * Get the folder that owns the entry (optional).
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function folder()
+    {
+        return $this->belongsTo(InboxFolder::class, 'folder_id');
     }
 
     /**

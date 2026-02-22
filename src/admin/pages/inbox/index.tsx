@@ -9,10 +9,13 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { __ } from "@/lib/i18n";
 import { toast } from "sonner"
+import { useInboxFolders } from "./use-inbox-folders"
 
 const getStatusCount = (statuses: StatusCount[], status: string = 'new') => {
   return statuses.find((s) => s.status === status)?.count || 0;
 }
+/** Sidebar: only show number when unread count > 0 */
+const sidebarCount = (n: number) => (n > 0 ? n.toString() : undefined);
 
 export default function MailPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -56,6 +59,13 @@ export default function MailPage() {
   const { markRead } = useMarkEntryRead();
   const { deleteEntry } = useDeleteEntry();
   const { updateEntry: updateEntryFn } = useUpdateEntry();
+  const {
+    foldersTree,
+    createFolder,
+    updateFolder,
+    deleteFolder,
+    refetch: refetchFolders,
+  } = useInboxFolders();
 
   const AUTO_REFRESH_STORAGE_KEY = 'gutenform-inbox-auto-refresh';
   const [autoRefresh, setAutoRefresh] = useState(() => {
@@ -74,6 +84,7 @@ export default function MailPage() {
     refetchFormIdentifiers();
     refetchStatuses();
     refetchLabels();
+    refetchFolders();
   };
 
   // Refresh every 5 seconds when auto-refresh is enabled
@@ -111,7 +122,7 @@ export default function MailPage() {
   const additionalNavLinks: NavLink[] = formIdentifiers?.map((formIdentifier) => {
     return {
       title: formIdentifier.form_identifier,
-      label: formIdentifier.count.toString(),
+      label: sidebarCount(formIdentifier.count),
       variant: filter.form_identifier === formIdentifier.form_identifier ? "default" : "ghost",
       onClick: () => {
         if(filter.form_identifier === formIdentifier.form_identifier) {
@@ -125,15 +136,15 @@ export default function MailPage() {
 
   const setStatus = (nextStatus: string) => {
     if(filter.status === nextStatus) {
-      setInboxFilters({ status: 'inbox' });
+      setInboxFilters({ status: 'inbox', folder_id: null });
     } else {
-      setInboxFilters({ status: nextStatus });
+      setInboxFilters({ status: nextStatus, folder_id: null });
     }
   }
 
   const handleDropOnStatus = async (entryId: number, status: string) => {
     try {
-      await updateEntryFn({ id: entryId, status })
+      await updateEntryFn({ id: entryId, status, folder_id: null })
       toast({
         title: __('entryMoved'),
         description: __('entryMovedDescription'),
@@ -168,11 +179,11 @@ export default function MailPage() {
   const defaultNavLinks: NavLink[] = [
     {
       title: __('inbox'),
-      label: getStatusCount(statuses, 'inbox').toString(),
+      label: sidebarCount(getStatusCount(statuses, 'inbox')),
       icon: Inbox,
-      variant: filter.status === 'inbox' ? "default" : "ghost",
+      variant: filter.status === 'inbox' && filter.folder_id == null ? "default" : "ghost",
       onClick: () => {
-        setInboxFilters({ labels: [], is_read: undefined, status: 'inbox' });
+        setInboxFilters({ labels: [], is_read: undefined, status: 'inbox', folder_id: null });
       },
       onDrop: (entryId) => handleDropOnStatus(entryId, 'inbox'),
       dropType: 'status',
@@ -180,9 +191,9 @@ export default function MailPage() {
     },
     {
       title: __('junk'),
-      label: getStatusCount(statuses, 'junk').toString(),
+      label: sidebarCount(getStatusCount(statuses, 'junk')),
       icon: ArchiveX,
-      variant: filter.status === 'junk' ? "default" : "ghost",
+      variant: filter.status === 'junk' && filter.folder_id == null ? "default" : "ghost",
       onClick: () => {
         setStatus('junk');
       },
@@ -192,9 +203,9 @@ export default function MailPage() {
     },
     {
       title: __('archive'),
-      label: getStatusCount(statuses, 'archive').toString(),
+      label: sidebarCount(getStatusCount(statuses, 'archive')),
       icon: Archive,
-      variant: filter.status === 'archive' ? "default" : "ghost",
+      variant: filter.status === 'archive' && filter.folder_id == null ? "default" : "ghost",
       onClick: () => {
         setStatus('archive');
       },
@@ -204,9 +215,9 @@ export default function MailPage() {
     },
     {
       title: __('trash'),
-      label: getStatusCount(statuses, 'trash').toString(),
+      label: sidebarCount(getStatusCount(statuses, 'trash')),
       icon: Trash2,
-      variant: filter.status === 'trash' ? "default" : "ghost",
+      variant: filter.status === 'trash' && filter.folder_id == null ? "default" : "ghost",
       onClick: () => {
         setStatus('trash');
       },
@@ -243,6 +254,47 @@ export default function MailPage() {
           defaultNavLinks={defaultNavLinks}
           additionalNavLinks={additionalNavLinks}
           labelNavLinks={labelNavLinks}
+          foldersTree={foldersTree}
+          activeFolderId={filter.folder_id}
+          onSelectFolder={(folderId) => setInboxFilters({ folder_id: folderId })}
+          onCreateFolder={async (params) => {
+            try {
+              const folder = await createFolder(params);
+              toast({ title: __('folderCreated') });
+              return folder;
+            } catch (err) {
+              toast({ title: __('error'), description: err?.message || __('errorOccurred'), variant: 'destructive' });
+              throw err;
+            }
+          }}
+          onUpdateFolder={async (params) => {
+            try {
+              const folder = await updateFolder(params);
+              toast({ title: __('folderUpdated') });
+              return folder;
+            } catch (err) {
+              toast({ title: __('error'), description: err?.message || __('errorOccurred'), variant: 'destructive' });
+              throw err;
+            }
+          }}
+          onDeleteFolder={async (id) => {
+            try {
+              await deleteFolder(id);
+              toast({ title: __('folderDeleted') });
+            } catch (err) {
+              toast({ title: __('error'), description: err?.message || __('errorOccurred'), variant: 'destructive' });
+              throw err;
+            }
+          }}
+          onDropEntry={async (entryId, folderId) => {
+            try {
+              await updateEntryFn({ id: entryId, folder_id: folderId });
+              toast({ title: __('entryMoved'), description: __('entryMovedDescription') });
+              refetchAll();
+            } catch (err) {
+              toast({ title: __('error'), description: err?.message || __('errorOccurred'), variant: 'destructive' });
+            }
+          }}
           mails={entriesListing}
           loading={entriesLoading}
           autoRefresh={autoRefresh}
@@ -316,7 +368,23 @@ export default function MailPage() {
           }}
           onMoveTo={async (id, status) => {
             try {
-              await updateEntryFn({ id, status })
+              await updateEntryFn({ id, status, folder_id: null })
+              toast({
+                title: __('entryMoved'),
+                description: __('entryMovedDescription'),
+              })
+              refetchAll()
+            } catch (err: any) {
+              toast({
+                title: __('error'),
+                description: err.message || __('errorOccurred'),
+                variant: 'destructive',
+              })
+            }
+          }}
+          onMoveToFolder={async (id, folderId) => {
+            try {
+              await updateEntryFn({ id, folder_id: folderId })
               toast({
                 title: __('entryMoved'),
                 description: __('entryMovedDescription'),
@@ -332,7 +400,7 @@ export default function MailPage() {
           }}
           onMoveToMailbox={async (id, mailboxId) => {
             try {
-              await updateEntryFn({ id, mailbox_id: mailboxId })
+              await updateEntryFn({ id, mailbox_id: mailboxId, folder_id: null })
               toast({
                 title: __('entryMovedToMailbox'),
                 description: __('entryMovedDescription'),

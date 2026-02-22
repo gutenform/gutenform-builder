@@ -9,6 +9,9 @@ import { AccountSwitcher } from "@/components/inbox/account-switcher"
 import { MailDisplay } from "@/components/inbox/mail-display"
 import { MailList } from "@/components/inbox/mail-list"
 import { Nav } from "@/components/inbox/nav"
+import { CollapsibleSection } from "@/components/inbox/collapsible-section"
+import { FolderNav } from "@/components/inbox/folder-nav"
+import type { InboxFolderItem } from "@/admin/pages/inbox/use-inbox-folders"
 import { Mail as MailType } from "@/components/inbox/mail-display"
 import { useMail } from "@/admin/pages/inbox/use-mail"
 import { cn } from "@/lib/utils"
@@ -63,10 +66,18 @@ interface MailProps {
   onMarkRead?: (id: number, read: boolean) => void
   onDelete?: (id: number) => void
   onMoveTo?: (id: number, status: string) => void
+  onMoveToFolder?: (id: number, folderId: number) => void
   onMoveToMailbox?: (id: number, mailboxId: number) => void
   mailboxes?: { id: number; title: string }[]
   onRefresh?: () => void
   onEmptyTrash?: () => void
+  foldersTree?: InboxFolderItem[]
+  activeFolderId?: number | null
+  onSelectFolder?: (folderId: number | null) => void
+  onCreateFolder?: (params: { name: string; parent_id?: number | null }) => Promise<InboxFolderItem>
+  onUpdateFolder?: (params: { id: number; name?: string; parent_id?: number | null }) => Promise<InboxFolderItem>
+  onDeleteFolder?: (id: number) => Promise<void>
+  onDropEntry?: (entryId: number, folderId: number) => void
 }
 
 export function MailComp({
@@ -85,16 +96,36 @@ export function MailComp({
   onMarkRead,
   onDelete,
   onMoveTo,
+  onMoveToFolder,
   onMoveToMailbox,
   mailboxes = [],
   onRefresh,
   onEmptyTrash,
+  foldersTree = [],
+  activeFolderId = null,
+  onSelectFolder,
+  onCreateFolder,
+  onUpdateFolder,
+  onDeleteFolder,
+  onDropEntry,
 }: MailProps) {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed)
   const [mail] = useMail()
   const filter = useStore($inboxFilters)
   const [showEmptyTrashDialog, setShowEmptyTrashDialog] = useState(false)
   const [emptying, setEmptying] = useState(false)
+
+  const foldersFlat = React.useMemo(() => {
+    const out: { id: number; name: string }[] = []
+    const walk = (list: InboxFolderItem[]) => {
+      list.forEach((f) => {
+        out.push({ id: f.id, name: f.name })
+        if (f.children?.length) walk(f.children)
+      })
+    }
+    walk(foldersTree)
+    return out
+  }, [foldersTree])
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -129,16 +160,45 @@ export function MailComp({
             isCollapsed={isCollapsed}
             links={defaultNavLinks}
           />
+          {onSelectFolder && onCreateFolder && onUpdateFolder && onDeleteFolder && (
+            <>
+              <Separator />
+              <FolderNav
+                foldersTree={foldersTree}
+                activeFolderId={activeFolderId ?? null}
+                isCollapsed={isCollapsed}
+                onSelectFolder={onSelectFolder}
+                onCreateFolder={onCreateFolder}
+                onUpdateFolder={onUpdateFolder}
+                onDeleteFolder={onDeleteFolder}
+                onDropEntry={onDropEntry}
+              />
+            </>
+          )}
           <Separator />
-          <Nav
+          <CollapsibleSection
+            title={__("forms")}
+            storageKey="gutenform-inbox-forms-collapsed"
+            defaultOpen={false}
             isCollapsed={isCollapsed}
-            links={additionalNavLinks}
-          />
+          >
+            <Nav
+              isCollapsed={isCollapsed}
+              links={additionalNavLinks}
+            />
+          </CollapsibleSection>
           <Separator />
-          <Nav
+          <CollapsibleSection
+            title={__("labels")}
+            storageKey="gutenform-inbox-labels-collapsed"
+            defaultOpen={false}
             isCollapsed={isCollapsed}
-            links={labelNavLinks}
-          />
+          >
+            <Nav
+              isCollapsed={isCollapsed}
+              links={labelNavLinks}
+            />
+          </CollapsibleSection>
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={defaultLayout[1]} minSize={30} className="h-full overflow-y-auto"
@@ -201,8 +261,10 @@ export function MailComp({
               onMarkRead={onMarkRead}
               onDelete={onDelete}
               onMoveTo={onMoveTo}
+              onMoveToFolder={onMoveToFolder}
               onMoveToMailbox={onMoveToMailbox}
               mailboxes={mailboxes}
+              folders={foldersFlat}
             />
           </Tabs>
           
@@ -259,6 +321,9 @@ export function MailComp({
           <MailDisplay
             mail={mails.find((item) => item.id === mail.selected) || null}
             onRefresh={onRefresh}
+            folders={foldersFlat}
+            mailboxes={mailboxes}
+            onMoveToMailbox={onMoveToMailbox}
           />
         </ResizablePanel>
       </ResizablePanelGroup>

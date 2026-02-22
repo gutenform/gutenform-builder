@@ -12,6 +12,7 @@
 namespace Gutenform\Controllers\Entries;
 
 use Gutenform\Models\Entries;
+use Gutenform\Models\InboxFolder;
 
 /**
  * Class Actions
@@ -97,11 +98,26 @@ class Actions
 				$query->where('is_read', $is_read ? 1 : 0);
 			}
 
-			// Filter by status.
-			if ($request->get_param('status')) {
-				$status = sanitize_text_field($request->get_param('status'));
-				if (!empty($status)) {
-					$query->where('status', $status);
+			// Filter by folder_id: when viewing a user folder, show only its entries; when viewing system folders (Inbox/Junk/Archive/Trash), show only entries not in any user folder.
+			if ($request->has_param('folder_id')) {
+				$folder_id = absint($request->get_param('folder_id'));
+				if ($folder_id > 0) {
+					$query->where('folder_id', $folder_id);
+				} else {
+					$query->whereNull('folder_id');
+				}
+			} else {
+				// No folder_id in request: system folder view — only show entries that are not in any user folder.
+				$query->whereNull('folder_id');
+			}
+
+			// Filter by status (ignored when folder_id is set).
+			if (!$request->has_param('folder_id') || absint($request->get_param('folder_id')) <= 0) {
+				if ($request->get_param('status')) {
+					$status = sanitize_text_field($request->get_param('status'));
+					if (!empty($status)) {
+						$query->where('status', $status);
+					}
 				}
 			}
 
@@ -240,6 +256,28 @@ class Actions
 				$entry->labels()->sync($request->get_param('labels'));
 			}
 
+			if ($request->has_param('folder_id')) {
+				$folder_id = $request->get_param('folder_id');
+				if ($folder_id === null || $folder_id === '') {
+					$entry->folder_id = null;
+				} else {
+					$folder_id = absint($folder_id);
+					if ($folder_id > 0) {
+						$folder = InboxFolder::where('id', $folder_id)->where('mailbox_id', $entry->mailbox_id)->first();
+						if (!$folder) {
+							return new \WP_Error(
+								'invalid_folder',
+								__('Folder not found or does not belong to this mailbox.', 'gutenform'),
+								array('status' => 400)
+							);
+						}
+						$entry->folder_id = $folder_id;
+					} else {
+						$entry->folder_id = null;
+					}
+				}
+			}
+
 			$entry->save();
 
 			// Load labels after save
@@ -348,9 +386,22 @@ class Actions
 	public function get_form_identifiers(\WP_REST_Request $request)
 	{
 		try {
+			$mailbox_id  = $request->get_param('mailbox_id');
+			$unread_only = $request->get_param('unread_only');
+
 			$query = Entries::selectRaw('form_identifier, COUNT(*) as count')
 				->whereNotNull('form_identifier')
-				->where('form_identifier', '!=', '')
+				->where('form_identifier', '!=', '');
+
+			if (!empty($mailbox_id)) {
+				$query = $query->where('mailbox_id', $mailbox_id);
+			}
+
+			if ($unread_only) {
+				$query = $query->where('is_read', 0);
+			}
+
+			$query = $query
 				->groupBy('form_identifier')
 				->orderBy('count', 'DESC')
 				->get();
@@ -384,14 +435,20 @@ class Actions
 	public function get_statuses(\WP_REST_Request $request)
 	{
 		try {
-			$mailbox_id = $request->get_param('mailbox_id');
+			$mailbox_id   = $request->get_param('mailbox_id');
+			$unread_only  = $request->get_param('unread_only');
 
 			$query = Entries::selectRaw('status, COUNT(*) as count')
 				->whereNotNull('status')
-				->where('status', '!=', '');
+				->where('status', '!=', '')
+				->whereNull('folder_id');
 
 			if (!empty($mailbox_id)) {
 				$query = $query->where('mailbox_id', $mailbox_id);
+			}
+
+			if ($unread_only) {
+				$query = $query->where('is_read', 0);
 			}
 
 			$query = $query
