@@ -92,6 +92,7 @@ class Strings
 			'mailbox' => __('Mailbox', 'gutenform'),
 			'fieldsCount' => __('Fields', 'gutenform'),
 			'untitled' => __('Untitled', 'gutenform'),
+			'patternUsedIn' => __('Pattern used in', 'gutenform'),
 
 			// Settings - General
 			'licenseKey' => __('License Key', 'gutenform'),

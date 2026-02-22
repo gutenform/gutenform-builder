@@ -88,6 +88,72 @@ class Actions
 	}
 
 	/**
+	 * Recursively collect all core/block ref IDs found in a block list.
+	 *
+	 * @param array $blocks Parsed blocks.
+	 * @return array<int> List of wp_block post IDs that are referenced.
+	 */
+	private function find_block_refs(array $blocks)
+	{
+		$refs = array();
+		foreach ($blocks as $block) {
+			$name = isset($block['blockName']) ? $block['blockName'] : '';
+			if ($name === 'core/block' && !empty($block['attrs']['ref'])) {
+				$refs[] = (int) $block['attrs']['ref'];
+			}
+			if (!empty($block['innerBlocks'])) {
+				$refs = array_merge($refs, $this->find_block_refs($block['innerBlocks']));
+			}
+		}
+		return $refs;
+	}
+
+	/**
+	 * Build a map of wp_block ID => list of posts that reference it (post_id, post_title, post_type, edit_link, view_link).
+	 * Only considers post types that are not wp_block.
+	 *
+	 * @param array $post_types List of post type names (including wp_block).
+	 * @return array<int, array{array{post_id: int, post_title: string, post_type: string, edit_link: string, view_link: string}}>
+	 */
+	private function build_block_usage_map(array $post_types)
+	{
+		$other_types = array_diff($post_types, array('wp_block'));
+		if (empty($other_types)) {
+			return array();
+		}
+
+		$posts = get_posts(array(
+			'post_type'      => $other_types,
+			'post_status'    => array('publish', 'draft', 'private', 'pending'),
+			'posts_per_page' => -1,
+			'no_found_rows'  => true,
+		));
+
+		$map = array();
+		foreach ($posts as $post) {
+			$blocks = parse_blocks($post->post_content);
+			$refs = $this->find_block_refs($blocks);
+			$refs = array_unique($refs);
+			$edit_link = get_edit_post_link($post->ID, 'raw');
+			$view_link = get_permalink($post->ID);
+			$entry = array(
+				'post_id'    => $post->ID,
+				'post_title' => $post->post_title ? $post->post_title : '',
+				'post_type'  => $post->post_type,
+				'edit_link'  => $edit_link ? $edit_link : '',
+				'view_link'  => $view_link ? $view_link : '',
+			);
+			foreach ($refs as $ref_id) {
+				if (!isset($map[$ref_id])) {
+					$map[$ref_id] = array();
+				}
+				$map[$ref_id][] = $entry;
+			}
+		}
+		return $map;
+	}
+
+	/**
 	 * Get all posts that contain at least one gutenform/form block, grouped by post type.
 	 *
 	 * @param \WP_REST_Request $request The REST request object.
@@ -178,6 +244,17 @@ class Actions
 					'edit_link'      => $edit_link ? $edit_link : '',
 					'view_link'      => $view_link ? $view_link : '',
 				);
+			}
+		}
+
+		// For wp_block (patterns): add where each pattern is used.
+		if (isset($by_post_type['wp_block']) && !empty($by_post_type['wp_block']['posts'])) {
+			$block_usage_map = $this->build_block_usage_map($post_types);
+			foreach ($by_post_type['wp_block']['posts'] as $idx => $row) {
+				$block_id = $row['post_id'];
+				$by_post_type['wp_block']['posts'][$idx]['used_in'] = isset($block_usage_map[$block_id])
+					? $block_usage_map[$block_id]
+					: array();
 			}
 		}
 

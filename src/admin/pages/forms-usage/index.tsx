@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { apiGet } from "@/lib/api";
 import { __ } from "@/lib/i18n";
 import {
@@ -10,6 +10,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Pencil, ExternalLink } from "lucide-react";
+
+type UsedInEntry = {
+  post_id: number;
+  post_title: string;
+  post_type: string;
+  edit_link: string;
+  view_link: string;
+};
 
 type FormRow = {
   post_id: number;
@@ -23,6 +31,7 @@ type FormRow = {
   field_count: number;
   edit_link: string;
   view_link: string;
+  used_in?: UsedInEntry[];
 };
 
 type PostTypeGroup = {
@@ -112,48 +121,72 @@ export default function FormsUsagePage() {
               </TableHeader>
               <TableBody>
                 {group.posts.map((row) => (
-                  <TableRow key={`${row.post_id}-${row.form_id}`}>
-                    <TableCell className="font-mono text-xs">{row.form_id || "—"}</TableCell>
-                    <TableCell>
-                      <span className="font-medium">{row.post_title || __("untitled")}</span>
-                      {row.form_title ? (
-                        <span className="block text-xs text-muted-foreground">
-                          {row.form_title}
-                        </span>
-                      ) : null}
-                    </TableCell>
-                    <TableCell>{row.mailbox}</TableCell>
-                    <TableCell className="text-muted-foreground text-sm">
-                      {row.providers || "—"}
-                    </TableCell>
-                    <TableCell className="text-right">{row.field_count}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        {row.edit_link ? (
-                          <a
-                            href={row.edit_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground"
-                            title={__("edit")}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </a>
+                  <React.Fragment key={`${row.post_id}-${row.form_id}`}>
+                    <TableRow>
+                      <TableCell className="font-mono text-xs">{row.form_id || "—"}</TableCell>
+                      <TableCell>
+                        <span className="font-medium">{row.post_title || __("untitled")}</span>
+                        {row.form_title ? (
+                          <span className="block text-xs text-muted-foreground">
+                            {row.form_title}
+                          </span>
                         ) : null}
-                        {row.view_link ? (
-                          <a
-                            href={row.view_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground"
-                            title={__("view")}
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                          </a>
-                        ) : null}
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                      </TableCell>
+                      <TableCell>{row.mailbox}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">
+                        {row.providers || "—"}
+                      </TableCell>
+                      <TableCell className="text-right">{row.field_count}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          {row.edit_link ? (
+                            <a
+                              href={row.edit_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground"
+                              title={__("edit")}
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </a>
+                          ) : null}
+                          {row.view_link ? (
+                            <a
+                              href={row.view_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground"
+                              title={__("view")}
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                            </a>
+                          ) : null}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                    {row.used_in && row.used_in.length > 0 ? (
+                      <TableRow key={`${row.post_id}-${row.form_id}-used-in`} className="bg-muted/40">
+                        <TableCell colSpan={6} className="py-2 text-sm">
+                          <span className="font-medium text-muted-foreground">
+                            {__("patternUsedIn")}:
+                          </span>{" "}
+                          {row.used_in.map((entry, i) => (
+                            <span key={entry.post_id}>
+                              {i > 0 ? ", " : null}
+                              <a
+                                href={entry.edit_link || entry.view_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline"
+                              >
+                                {entry.post_title || __("untitled")}
+                              </a>
+                            </span>
+                          ))}
+                        </TableCell>
+                      </TableRow>
+                    ) : null}
+                  </React.Fragment>
                 ))}
               </TableBody>
             </Table>
