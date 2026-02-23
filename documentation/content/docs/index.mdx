@@ -1,87 +1,27 @@
 ---
 title: Get Started
-description: Get started with the Gutenform
+description: Get started with Gutenform
 ---
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 
+Gutenform is a WordPress form builder plugin that uses Gutenberg blocks to create forms. Form submissions are collected in an inbox-style interface with support for labels, statuses, and multiple providers.
 
-The plugin consists of two main components: the frontend, built with React, and the backend, which communicates via an API.
+## Quick Start
 
-To get started, you need to clone the repository and install the dependencies. Then you can rename the plugin and start development. It's that simple!
+1. **Install**: Activate the plugin in WordPress
+2. **Setup**: Follow the welcome checklist to configure your first provider, mailbox, and labels
+3. **Build**: Create a page and add the Form block with input fields
+4. **Manage**: View submissions in the Inbox
 
-## Clone the repository
+## Documentation
 
-<Tabs items={['bash']}>
-    <Tab value="bash">
-  ```bash
-  git clone https://github.com/wp-plugin-boilerplate/wp-plugin-boilerplate.git
-  ```
-    </Tab>
-</Tabs>
-
-
-## Install the dependencies
-
-<Tabs items={['bash']}>
-    <Tab value="bash">
-```bash
-npm install
-composer install
-```
-    </Tab>
-</Tabs>
-
-## Rename the plugin
-
-You can easly rename the plugin by changing data in `plugin-config.json` file.
-
-
-```json title="plugin-config.json"
-{
-  "plugin_name": "WordPress Plugin Boilerplate",
-  "plugin_description": "A boilerplate for WordPress plugins.",
-  "plugin_version": "1.0.0",
-  "plugin_file_name": "gutenform.php",
-  "author_name": "Prappo",
-  "author_uri": "https://prappo.github.io",
-  "text_domain": "gutenform",
-  "domain_path": "/languages",
-  "main_class_name": "WordPressPluginBoilerplate",
-  "main_function_name": "wordpress_plugin_boilerplate_init",
-  "namespace": "WordPressPluginBoilerplate",
-  "plugin_prefix": "wpb",
-  "constant_prefix": "WPB"
-}
-```
-
-
-Then run the following command to rename the plugin files:
-
-<Tabs items={['bash']}>
-    <Tab value="bash">
-```bash
-npm run rename
-``` 
-    </Tab>
-</Tabs>
-
-## Start the development
-
-<Tabs items={['bash']}>
-    <Tab value="bash">
-```bash
-npm run dev
-```
-</Tab>
-</Tabs>
-
-## Start the development with WordPress backend
-
-<Tabs items={['bash']}>
-    <Tab value="bash">
-```bash
-npm run dev:server
-```
-    </Tab>
-</Tabs>
-
+- [Blocks](/docs/blocks) — Gutenberg blocks (Form, Input, Select, Textarea, File, Submit, Success, Captcha, Honeypot)
+- [Conditional Logic](/docs/conditional-logic) — Field and step visibility, required logic, default value from field
+- [Inbox](/docs/inbox) — Entry management, labels, statuses, bulk actions
+- [Inbox: Folders & Collapsible](/docs/inbox-folders-collapsible) — Custom folders, collapsible Form-IDs and Labels sections
+- [Providers](/docs/providers) — Database and Email providers, mailbox assignment
+- [Mailboxes](/docs/mailboxes) — Mailbox management
+- [Labels](/docs/labels) — Entry labels for organization
+- [Settings](/docs/settings) — SMTP, Debug, Skip-First-Steps
+- [Email Templates](/docs/email-templates) — Classic, Colorful, Modern templates
+- [API Reference](/docs/api) — REST API routes overview
+- [Plugin Boilerplate](/docs/plugin-boilerplate) — Structure, ORM, development, API routes

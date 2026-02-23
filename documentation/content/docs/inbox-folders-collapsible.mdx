@@ -1,0 +1,59 @@
+---
+title: Inbox Folders & Collapsible
+description: Custom folders, collapsible Form-IDs and Labels sections
+---
+
+The Inbox supports custom folders for organizing entries and collapsible sidebar sections for Form-IDs and Labels.
+
+## Collapsible Sections
+
+The sidebar has two sections that can be collapsed:
+
+- **Form-IDs (Formulare)**: Filter entries by form. Collapsed by default.
+- **Labels**: Filter entries by label. Collapsed by default.
+
+The open/closed state is persisted (e.g. in `localStorage`) so it is restored on the next visit. Each section has a header with title and chevron; clicking the header toggles the section.
+
+**Location**: `src/components/inbox/mail.tsx` — Collapsible wrappers and persistence for both sections.
+
+## Folder Structure
+
+### System Folders vs Custom Folders
+
+- **System folders**: Inbox, Junk, Archive, Trash. They are fixed and filter by entry `status` (inbox, junk, archive, trash). They are always shown at the top of the sidebar.
+- **Custom folders**: User-created folders shown in a single block below the system folders. They form a tree (nested folders supported). Entries can be assigned to a folder via `folder_id`; clicking a folder shows all entries in that folder regardless of status.
+
+### Custom Folders
+
+- **One tree per mailbox**: All custom folders for a mailbox are in one list/tree under the system folders.
+- **Nested folders**: Folders can have a parent (`parent_id`); the UI shows them as a tree with indentation and expand/collapse.
+- **Actions**: Create folder, create subfolder, rename, delete, move (e.g. drag & drop). Deleting a folder clears `folder_id` on its entries; status is unchanged.
+- **Filtering**: Selecting a custom folder filters entries by `folder_id`. Selecting a system folder filters by `status` (and typically ignores or clears folder context as designed).
+
+### Data Model
+
+- **Table `wp_gutenform_inbox_folders`**: `id`, `mailbox_id`, `parent_id`, `name`, `sort_order`, `date_created`.
+- **Entries**: `wp_gutenform_entries` has optional `folder_id` (FK to `wp_gutenform_inbox_folders`). Entries keep their `status`; folder is an additional grouping.
+
+### API
+
+- **GET** `inbox-folders/get?mailbox_id=…` — Returns folders for the mailbox (tree or flat with `parent_id`).
+- **POST** `inbox-folders/create` — Body: `mailbox_id`, `name`, optional `parent_id`, `sort_order`.
+- **POST** `inbox-folders/update` — Body: `id`, optional `name`, `parent_id`, `sort_order`.
+- **POST** `inbox-folders/delete` — Body: `id`. Deletes folder and clears `folder_id` on affected entries.
+
+Entries API is extended to filter by `folder_id` when loading the list and to accept `folder_id` when updating an entry (e.g. move to folder).
+
+### Key Files
+
+- **Backend**: `database/Migrations/` (InboxFolders, AddFolderIdToEntries), `includes/Models/InboxFolder.php`, `includes/Controllers/InboxFolders/Actions.php`, `includes/Routes/Api.php`.
+- **Frontend**: `src/admin/pages/inbox/index.tsx`, `src/admin/pages/inbox/use-inbox-folders.ts`, `src/components/inbox/mail.tsx`, `src/components/inbox/folder-nav.tsx`, inbox stores (e.g. `folder_id` in filters).
+
+## UX Summary
+
+| Area        | Behaviour |
+|------------|-----------|
+| Form-IDs   | Collapsible, default collapsed. State persisted. |
+| Labels     | Collapsible, default collapsed. State persisted. |
+| Below system folders | One block with all custom folders (tree). Create, rename, delete, move. |
+| Entries    | Can be assigned to a folder; filter and move by folder; drag & drop into folders where implemented. |

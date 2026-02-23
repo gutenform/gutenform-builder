@@ -1,0 +1,30 @@
+---
+description: How to document the Gutenform plugin (where, when, format)
+globs: "**/*.md","**/*.mdx","documentation/content/**"
+alwaysApply: false
+---
+
+# Plugin Documentation
+
+## Where
+
+- **Single source of truth**: `documentation/content/docs/` — all docs as MDX. Index/entry: `index.mdx`. Sidebar is file-based.
+
+No separate `docs/` folder; everything lives in the docs app.
+
+## When
+
+- New feature → new `.mdx` in `documentation/content/docs/` + link in `index.mdx`.
+- API/behaviour/attribute changes → update relevant doc and key files section.
+
+## Format
+
+- **File**: `documentation/content/docs/<name>.mdx`.
+- **Frontmatter**: `title`, `description`.
+- **Sections**: Overview, Editor/UI, Data model/API, Key files (paths like `src/...`, `includes/...`).
+- Use fumadocs-ui components where helpful (e.g. `Files`, `Folder`, `File`, `Tabs`, `Tab`).
+
+## Checklist (new feature)
+
+1. Add `documentation/content/docs/<feature>.mdx` (frontmatter + content).
+2. Add entry in `documentation/content/docs/index.mdx`.

@@ -1,0 +1,211 @@
+---
+title: Plugin Boilerplate
+description: Structure, ORM, Development and API Routes
+---
+
+The plugin consists of two main components: the frontend, built with React, and the backend, which communicates via an API. This section covers folder structure, database ORM, development workflow, and REST API routes.
+
+## Structure
+
+### Base Structure
+
+import { File, Folder, Files } from 'fumadocs-ui/components/files';
+
+<Files>
+  <Folder name="gutenform" defaultOpen>
+    <Folder name="config">
+      <File name="plugin.php" />
+    </Folder>
+    <Folder name="database">
+      <Folder name="Migrations">
+        <File name="create_posts_table.php" />
+        <File name="create_users_table.php" />
+      </Folder>
+      <Folder name="Seeders">
+        <File name="PostSeeder.php" />
+        <File name="UserSeeder.php" />
+      </Folder>
+    </Folder>
+    <Folder name="includes">
+      <Folder name="Admin"><File name="Menu.php" /></Folder>
+      <Folder name="Controllers" />
+      <Folder name="Core" />
+      <Folder name="Frontend" />
+      <Folder name="Interfaces" />
+      <Folder name="Models" />
+      <Folder name="Routes" />
+      <Folder name="Traits" />
+      <File name="functions.php" />
+    </Folder>
+    <Folder name="src">
+      <Folder name="admin">
+        <Folder name="components" />
+        <Folder name="pages" />
+        <Folder name="lib" />
+        <Folder name="types" />
+        <File name="App.jsx" />
+        <File name="main.jsx" />
+        <File name="index.css" />
+        <File name="router.jsx" />
+      </Folder>
+    </Folder>
+    <Folder name="libs" />
+    <Folder name="views" />
+    <Folder name="vendor" />
+    <File name="plugin.php" />
+    <File name="uninstall.php" />
+    <File name="gutenform.php" />
+  </Folder>
+</Files>
+
+### Root Directory
+
+- `plugin.php`: Initializes the plugin and includes necessary files.
+- `uninstall.php`: Contains code that runs when the plugin is uninstalled.
+- `gutenform.php`: The primary plugin file that WordPress uses to identify and load the plugin.
+
+### Config
+
+The `config` directory stores configuration files (e.g. `plugin.php` with plugin-wide settings and constants).
+
+### Database
+
+- **Migrations**: `database/Migrations` — creating and modifying database tables.
+- **Seeders**: `database/Seeders` — populating the database with initial data.
+
+### Includes
+
+- **Admin**: Admin-specific functionality.
+- **Controllers**: Classes for handling plugin actions.
+- **Core**: Core plugin classes.
+- **Frontend**: Frontend-specific functionality.
+- **Interfaces**: Interfaces used throughout the plugin.
+- **Models**: Classes for interacting with the database.
+- **Routes**: Custom routes and endpoints (`includes/Routes/Api.php`).
+- **Traits**: Reusable trait files.
+- `functions.php`: Utility functions.
+
+### JavaScript (src)
+
+- **admin**: React application — `components`, `pages`, `lib`, `types`, `App.jsx`, `main.jsx`, `router.jsx`, `index.css`.
+- **libs**: Third-party or custom libraries.
+- **views**: Template files for HTML output.
+- **vendor**: Composer dependencies.
+
+---
+
+## ORM
+
+If you are familiar with Laravel, you will find this ORM very familiar. It is a simple and easy-to-use ORM for WordPress.
+
+You can find the ORM documentation [here](https://github.com/prappo/wp-eloquent).
+
+Create your model in `includes/Models` (e.g. `includes/Models/Posts.php`):
+
+```php
+<?php
+
+namespace WordPressPluginBoilerplate\Models;
+
+use Prappo\WpEloquent\Database\Eloquent\Model;
+
+class Posts extends Model {
+	protected $table = 'posts';
+	protected $fillable = array( 'post_title', 'post_content' );
+}
+```
+
+Examples:
+
+```php
+$posts = Posts::all();
+$post = Posts::create( array( 'post_title' => 'Hello World', 'post_content' => 'This is a test post' ) );
+$post = Posts::find( 1 );
+$post->post_title = 'Hello World';
+$post->save();
+$post->delete();
+$posts = Posts::where( 'post_title', 'like', '%hello%' )->get();
+$posts = Posts::orderBy( 'post_title', 'desc' )->get();
+```
+
+---
+
+## Development
+
+### Project Overview
+
+This is a headless WordPress plugin. Frontend is built with React, Tailwind CSS and shadcn/ui.
+
+### Frontend
+
+- **Frontend**: `src/frontend/` — routes in `src/frontend/routes.jsx`, entry in `src/frontend/main.jsx`.
+- **Admin panel**: `src/admin/` — routes in `src/admin/routes.jsx`, entry in `src/admin/main.jsx`. URL: `http://your-domain.com/wp-admin/admin.php?page=gutenform`, hash routes e.g. `#your-page-slug`. Uses `react-router-dom`. Menu registration: `includes/Admin/Menu.php`.
+
+### Get Started
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+
+Clone, install and rename the plugin via `plugin-config.json`, then:
+
+<Tabs items={['bash']}>
+  <Tab value="bash">
+
+```bash
+git clone https://github.com/wp-plugin-boilerplate/wp-plugin-boilerplate.git
+npm install
+composer install
+npm run rename
+npm run dev
+```
+
+For development with WordPress backend: `npm run dev:server`
+
+  </Tab>
+</Tabs>
+
+### Adding a New Admin Page
+
+1. Create `src/admin/pages/{your-page-slug}.jsx`.
+2. Add route and import the page in `src/admin/routes.jsx`.
+3. Add menu item in `includes/Admin/Menu.php`.
+4. If storing data: add model in `includes/Models/`, migration in `database/Migrations/`.
+5. If manipulating data: add controller in `includes/Controllers/{YourController}/Actions.php`.
+6. Add endpoint in `includes/Routes/Api.php`.
+7. Use `fetch`: GET for read-only, POST for create/update/delete. Base URL: `gutenForm.apiUrl + 'gutenForm/v1/{custom-route}'`.
+
+### Adding a New Component
+
+- Create `src/admin/components/{your-component-name}/`.
+- Use it in `src/admin/pages/{your-page-slug}.jsx`.
+- shadcn/ui components live in `src/admin/components/ui`.
+
+### Passing Data from Backend to Frontend
+
+Add key-value pairs in `includes/Frontend/Frontend.php` in the `get_data` method. Data is available in the frontend as the `gutenForm` object (or the object defined in the `OBJ_NAME` constant in Frontend.php).
+
+---
+
+## API Routes
+
+Routes are defined in `includes/Routes/Api.php`.
+
+### Structure
+
+```php title="includes/Routes/Api.php"
+Route::method( 'your-prefix', 'your-endpoint', 'your-callback', $auth = false );
+```
+
+### Syntax
+
+```php
+Route::get( $prefix, $endpoint, $callback, $auth = false );
+Route::post( $prefix, $endpoint, $callback, $auth = false );
+
+// Multiple routes in a prefix group.
+Route::prefix( $prefix, function( Route $route ) {
+    $route->get( $endpoint, $callback, $auth = false );
+    $route->post( $endpoint, $callback, $auth = false );
+});
+```
+
+Callbacks are controller methods. Controllers live in `includes/Controllers`.

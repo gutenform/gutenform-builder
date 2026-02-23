@@ -1,0 +1,87 @@
+---
+title: Conditional Logic
+description: Field and step visibility, required logic, default value from field
+---
+
+Conditional Logic lets you show or hide form fields and steps based on the value of other fields. This enables dynamic forms that adapt to user input.
+
+## Overview
+
+- **Field-Level**: Fields can be shown or hidden depending on another field's value (e.g. show "Company" only when "Type" equals "Business").
+- **Step-Level**: Entire steps can be shown or hidden (e.g. skip a step when a condition is not met).
+- **Required**: Required fields are only validated when they are visible. Hidden fields are not validated and are not treated as missing on submit.
+- **Select "Default from Field"**: A Select field can use the current value of another field as its selected option (dynamic preselection).
+
+## Field-Level Conditional Logic
+
+### In the Block Editor
+
+For field blocks (Input, Select, Textarea, etc.) the sidebar offers:
+
+- **Show field when (Conditional Show)**: Choose another form field, an operator, and optionally a comparison value.
+  - **Source field**: Any other field in the same form (by `name`).
+  - **Operators**: equals, not equals, is empty, is not empty, contains.
+  - **Value**: Optional; used with "equals", "not equals", "contains".
+
+The field is only visible when the condition is true. On load and when the source field changes, visibility is re-evaluated.
+
+### Select: Default Value from Field
+
+For Select blocks there is an additional option:
+
+- **Default value from field**: Pick another form field. The Select's selected value is set from that field's current value and updates when the source field changes.
+
+### Data Model
+
+Conditions are stored in block attributes and output in the frontend as data attributes:
+
+- `data-conditional-show`: JSON with `sourceFieldName`, `operator`, and optional `value`.
+- `data-default-value-from-field`: (Select only) name of the source field.
+
+The frontend (`view.ts`) evaluates these on load and on `change`/`input` of the source fields and updates visibility and Select default value accordingly.
+
+## Step-Level Conditional Logic
+
+### In the Block Editor
+
+For the Step block:
+
+- **Step only visible when**: Same pattern as fields — source field, operator, optional value. The step is only shown when the condition is true.
+
+### Behaviour in Multi-Step Forms
+
+- **Visible steps**: Only steps whose condition is true are considered "visible". Navigation (Next/Back) and the progress indicator use only visible steps.
+- **Validation**: Only the currently visible step is validated when moving forward.
+- **Submit**: Only visible steps and their fields are included in validation and in the submitted data; hidden steps are skipped.
+
+### Data Model
+
+The Step block outputs `data-conditional-show` (JSON) on its container. The view computes the list of visible steps and updates navigation and progress accordingly.
+
+## Required Logic
+
+- A field can still be marked **Required** in the editor.
+- **Validation**: Only visible fields are checked for required. Fields hidden by conditional logic are not validated.
+- **Submit**: Hidden fields are not treated as missing; they can be omitted or sent empty depending on implementation.
+
+## Technical Reference
+
+### Key Files
+
+- **Blocks**: Field blocks and Step block use `conditionalShow` and (for Select) `defaultValueFromField` in attributes and InspectorControls.
+- **Save**: `data-conditional-show` and `data-default-value-from-field` are rendered on the field/step container.
+- **Frontend**: `src/blocks/form/view.ts` — `evaluateConditions()`, visibility handling, `getVisibleSteps()`, `goToStep()` over visible steps only, `validateStep()` for visible fields only.
+
+### Evaluation
+
+- One evaluation pass reads all elements with `data-conditional-show`, gets current form values by field name, applies the operator, and sets visibility (e.g. class or `display`).
+- For steps, the list of visible step indices is updated and navigation/progress use this list.
+- Evaluation runs on `DOMContentLoaded` and on `change`/`input` on the form (debouncing optional).
+
+### Field List for Dropdowns
+
+In the editor, the list of form fields for "Source field" and "Default value from field" is built from the form block's descendants that have a `name` attribute (e.g. via block tree or context).
+
+---
+
+*Conditional Logic is implemented in Phase 1. A future Form Flow Canvas (visual flow editor with React Flow) is not yet implemented.*
