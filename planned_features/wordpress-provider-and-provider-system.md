@@ -79,18 +79,17 @@ public function get_action_types(): array
 
 ### 2.2 Feld-Mapping (Form-Block)
 
-- **Konzept:** Pro Provider-Feed (und ggf. pro Aktionstyp) wird gespeichert, welches **Formularfeld** (Block-`name`/clientId) auf welchen **Slot** des Providers gemappt ist.
+- **Konzept:** Pro Provider-Feed (und ggf. pro Aktionstyp) wird gespeichert, welches **Formularfeld** (Feld-`name`) auf welchen **Slot** des Providers gemappt ist.
 - **Slots** werden vom Provider/Aktionstyp definiert (z. B. `username`, `email`, `password`, `title`, `content`, `meta_*`). Im Form-Block wird pro Slot ein Dropdown angeboten: „Welches Feld?“ → Liste der Formularfelder (name + label).
-- **Speicherort:**  
-  - Option A: In den Provider-`settings` als `field_mapping`: `{ "username": "field_abc", "email": "field_def" }` (Feld-Name/ID).  
-  - Option B: Form-Block-Attribute: `providerFieldMappings`: `{ providerFeedId: { slotKey: fieldName } }`.  
-  Empfehlung: **Option A** (settings), damit das Mapping zum Provider gehört und formularübergreifend konsistent konfigurierbar ist; Form-Block sendet bei Submit nur die gewohnten Feldnamen – der Provider transformiert anhand des gespeicherten Mappings.
-- **Submit-Pipeline:** Der Handler übergibt `submission_data` (Feldname → Wert). Provider mit Feld-Mapping können aus den Settings `field_mapping` lesen (Slot → Feldname), die Daten entsprechend umschlüsseln und dann z. B. `post_title`, `user_email` etc. befüllen.
+- **Speicherort:** **Form-Block-Attribute** – `providerFieldMappings`: `{ [providerFeedId]: { [slotKey]: fieldName } }`.  
+  **Begründung:** Beim Anlegen des Providers ist noch unbekannt, in welchem Formular er verwendet wird; die verfügbaren Felder kennt man erst im konkreten Formular. Daher gehört das Mapping zum Form-Block, nicht zu den Provider-Settings.
+- **Submit-Pipeline:** Beim Absenden sendet das Frontend neben `submission_data` und `provider_ids`/`provider_overrides` auch **`providerFieldMappings`** (aus den Form-Block-Attributen). Der Handler (oder der Provider) wendet das Mapping pro Feed an (Slot → Feldname, Wert aus `submission_data`) und übergibt die umgeschlüsselten Daten an den Provider (z. B. `post_title`, `user_email`).
 
-**UI (Form-Block / Provider-Einstellungen):**
+**UI (Form-Block):**
 
-- Beim Bearbeiten eines Providers (oder beim Zuweisen zum Formular): Wenn der gewählte Provider/Aktionstyp `field_mapping_slots` hat, Sektion „Feld-Mapping“ anzeigen: pro Slot ein Select mit den aktuellen Formularfeldern (aus dem Form-Block-Kontext).
-- Felder-Liste: wie bisher aus dem Form-Block (z. B. `useFormFieldList`) – Namen und ggf. Label der Felder.
+- **Beim Zuweisen eines Providers zum Formular:** Sobald ein Provider mit Feld-Mapping-Slots (z. B. WordPress „Registrieren“) ausgewählt wird, öffnet sich ein **Modal** zur Feld-Zuordnung: Pro Slot (z. B. Benutzername, E-Mail, Passwort) ein Dropdown mit den aktuellen Formularfeldern (aus `useFormFieldList`). Nach Bestätigung wird das Mapping in `providerFieldMappings[providerFeedId]` gespeichert und das Modal geschlossen.
+- **Zum Bearbeiten des Mappings:** In den **Provider-Einstellungen des Form-Blocks** (Sidebar, Panel pro zugewiesenem Provider) erscheint ein Button **„Feld-Mapping bearbeiten“** (oder „Felder zuordnen“). Klick öffnet dasselbe Modal mit der aktuellen Zuordnung; Änderungen werden wieder in `providerFieldMappings` geschrieben.
+- Felder-Liste: aus dem Form-Block-Kontext (z. B. `useFormFieldList`) – Namen und Label der Felder.
 
 ### 2.3 Erweiterbarkeit: Eigene Provider (Theme/Plugin)
 
@@ -118,7 +117,7 @@ add_filter( 'gutenform/available_providers', function( array $provider_classes )
 | Thema | Maßnahme |
 |-------|----------|
 | Aktionstypen | `AbstractProvider::get_action_types()`, API `providers/types` um `action_types` erweitern, DB `action_type` |
-| Feld-Mapping | Slots pro Aktionstyp; Mapping in Provider-`settings.field_mapping`; UI im Form-Block/Provider-Settings |
+| Feld-Mapping | Slots pro Aktionstyp; Mapping in Form-Block-Attribut `providerFieldMappings`; Modal beim Zuweisen, Button „Feld-Mapping bearbeiten“ in Provider-Settings des Form-Blocks |
 | Erweiterbarkeit | Filter `gutenform/available_providers` beibehalten; Doku + Code-Kommentare |
 | Abwärtskompatibilität | Provider ohne Aktionstypen → ein Default-Aktionstyp; bestehende Feeds ohne `action_type` → wie bisher |
 
@@ -251,17 +250,17 @@ add_filter( 'gutenform/available_providers', function( array $provider_classes )
 
 Bestehende Provider (Email, Database) liefern z. B. `action_types: [{ "slug": "default", "title": "...", "field_mapping_slots": [] }]` und weiterhin `fields` für die bisherigen Settings.
 
-### 5.2 Provider-Feed (DB) mit action_type und field_mapping
+### 5.2 Provider-Feed (DB) und Form-Block-Mapping
 
-- `wp_gutenform_providers.action_type`: z. B. `login`, `register`, `create_post`, `comment`.
-- `wp_gutenform_providers.settings`: JSON; kann enthalten:
-  - `field_mapping`: `{ "username": "field_login", "password": "field_pass" }`
-  - typspezifische Einstellungen (z. B. `post_type`, `post_status`, `role`).
+- **DB:** `wp_gutenform_providers.action_type`: z. B. `login`, `register`, `create_post`, `comment`.  
+  `wp_gutenform_providers.settings`: nur typspezifische Einstellungen (z. B. `post_type`, `post_status`, `role`). **Kein** `field_mapping` – das ist formularspezifisch.
+- **Form-Block-Attribute:** `providerFieldMappings`: `{ [providerFeedId]: { [slotKey]: fieldName } }` (z. B. `{ "42": { "username": "login_feld", "password": "passwort_feld" } }`). Wird beim Submit mitgesendet.
 
 ### 5.3 Submit: Daten an Provider
 
-- Handler ruft weiterhin `$provider->process_submission( $submission_data, $provider_settings, $form_identifier )` auf.
-- Provider (z. B. WordPress) liest aus `$provider_settings` den `action_type` und `field_mapping`, rekonstruiert die erwarteten Werte (z. B. `user_login`, `user_password`) und führt die Aktion aus.
+- Frontend sendet: `submission_data`, `provider_ids`, `provider_overrides`, **`provider_field_mappings`** (aus Form-Block-Attribut `providerFieldMappings`).
+- Handler übergibt pro Feed die **gemappten Daten** (Slot → Wert aus `submission_data` anhand des Mappings) an den Provider, oder übergibt `submission_data` plus das Mapping für diesen Feed; der Provider rekonstruiert die Slots. Empfehlung: Handler wendet Mapping an und übergibt ein Array mit Slot-Keys (z. B. `username`, `password`) an den Provider.
+- Provider (z. B. WordPress) erhält so die erwarteten Werte (z. B. `user_login`, `user_password`) und führt die Aktion aus.
 
 ---
 
@@ -276,9 +275,9 @@ Bestehende Provider (Email, Database) liefern z. B. `action_types: [{ "slug": 
 | 1.3 | Email/Database: `get_action_types()` überschreiben, ein Default-Typ mit bisherigen `get_settings_fields()` |
 | 1.4 | API `providers/types`: Response um `action_types` pro Provider erweitern |
 | 1.5 | Provider-Feed CRUD: `action_type` beim Erstellen/Bearbeiten speichern und auslesen |
-| 1.6 | Feld-Mapping: Struktur `field_mapping_slots` pro Aktionstyp definieren; in Settings `field_mapping` speichern |
-| 1.7 | Form-Block / Provider-Settings-UI: Sektion „Feld-Mapping“ anzeigen wenn Slots vorhanden; Dropdown pro Slot mit Formularfeldern |
-| 1.8 | Handler: `field_mapping` an Provider übergeben; Provider wandelt submission_data ggf. in slot-basierte Daten um (intern) |
+| 1.6 | Feld-Mapping: Struktur `field_mapping_slots` pro Aktionstyp definieren; Form-Block-Attribut `providerFieldMappings` (pro Feed) |
+| 1.7 | Form-Block: Beim Zuweisen eines Providers mit Slots **Modal** zur Feld-Zuordnung öffnen; in Provider-Settings pro Feed Button **„Feld-Mapping bearbeiten“** → dasselbe Modal |
+| 1.8 | Submit: Frontend sendet `provider_field_mappings` mit; Handler wendet Mapping pro Feed an und übergibt slot-basierte Daten an den Provider |
 | 1.9 | Doku: `documentation/content/docs/provider-system.mdx` (Nutzung + Erweiterung); Kommentare in AbstractProvider + Registry |
 
 ### Phase 2: Input-Block Password
@@ -320,7 +319,8 @@ Bestehende Provider (Email, Database) liefern z. B. `action_types: [{ "slug": 
 
 ### 7.2 Feld-Mapping im Handler
 
-- Handler ändert sich optional: entweder übergibt er `submission_data` unverändert und der Provider liest `field_mapping` aus Settings und holt sich die Werte selbst; oder der Handler wandelt vorher um. Empfehlung: **Provider macht die Umwandlung** (Slot → Feldname aus mapping, dann Wert aus submission_data).
+- **Form-Block** speichert `providerFieldMappings` (pro providerFeedId: slotKey → fieldName). Beim Submit sendet das Frontend dieses Mapping mit.
+- **Handler** erhält `provider_field_mappings` aus dem Request, wendet pro Feed das Mapping an (slotKey → Wert aus `submission_data[fieldName]`) und übergibt die slot-basierten Daten an den Provider (oder übergibt submission_data + Mapping; dann macht der Provider die Umwandlung). Empfehlung: **Handler wendet Mapping an** und übergibt dem Provider ein bereits slot-keyed Array.
 
 ### 7.3 Erweiterbarkeit
 

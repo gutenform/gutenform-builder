@@ -43,9 +43,9 @@ Provider bestimmen, wohin Formularabsendungen gehen und wie sie verarbeitet werd
 - Provider-Typen kommen über API `providers/types`; neue Provider erscheinen automatisch in der Provider-Auswahl (ProviderTypeGrid), sobald sie in der Registry sind.
 - Wenn der Provider **Aktionstypen** und **Feld-Mapping-Slots** hat: API-Response in `get_provider_types()` um `action_types` pro Provider erweitern (siehe Plan `planned_features/wordpress-provider-and-provider-system.md`). Form-Block/Provider-Settings zeigen dann die Feld-Mapping-UI an.
 
-### 5. Provider-Feed (DB)
+### 5. Provider-Feed (DB) und Feld-Mapping (Form-Block)
 
-- Tabelle `wp_gutenform_providers`: Einträge mit `provider_type` = Slug des Providers. Optional `action_type` (wenn Aktionstypen genutzt werden) und in `settings` ein `field_mapping` (Slot → Formularfeld-Name).
+- Tabelle `wp_gutenform_providers`: Einträge mit `provider_type` = Slug, optional `action_type`. **Feld-Mapping** wird nicht in den Provider-Settings gespeichert, sondern pro Formular im **Form-Block-Attribut** `providerFieldMappings` (weil beim Anlegen des Providers die Formulare/Felder noch unbekannt sind). Beim Zuweisen eines Providers zum Formular: Modal zur Feld-Zuordnung; in den Provider-Settings des Form-Blocks: Button „Feld-Mapping bearbeiten“ öffnet dasselbe Modal.
 
 ### 6. Sicherheit & i18n
 
