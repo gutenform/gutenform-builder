@@ -11,13 +11,13 @@
 .gutenform-progress-bar__track {
 	flex: 1;
 	height: 8px;
-	background: #e5e7eb;
+	background: color-mix(in srgb, currentColor 20%, transparent);
 	border-radius: 4px;
 	overflow: hidden;
 }
 .gutenform-progress-bar__fill {
 	height: 100%;
-	background: var(--gutenform-accent);
+	background: currentColor;
 	border-radius: 4px;
 	transition: width 0.3s ease;
 }
@@ -26,7 +26,7 @@
 	font-weight: 600;
 	min-width: 40px;
 	text-align: left;
-	color: var(--gutenform-accent);
+	color: currentColor;
 }
 /* Bubbles variant */
 .gutenform-progress-bubbles {
@@ -48,32 +48,32 @@
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
-	border: 2px solid #d1d5db;
+	border: 2px solid currentColor;
 	background: #fff;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-size: 14px;
 	font-weight: 600;
-	color: #9ca3af;
+	color: color-mix(in srgb, currentColor 40%, transparent);
 	position: relative;
 	z-index: 1;
 	transition: all 0.3s ease;
 }
 .gutenform-progress-bubble--active .gutenform-progress-bubble__circle {
-	border-color: var(--gutenform-accent);
-	color: var(--gutenform-accent);
-	box-shadow: 0 0 0 4px color-mix(in srgb, var(--gutenform-accent) 15%, transparent);
+	border-color: currentColor;
+	color: currentColor;
+	box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 15%, transparent);
 }
 .gutenform-progress-bubble--completed .gutenform-progress-bubble__circle {
-	border-color: var(--gutenform-accent);
-	background: var(--gutenform-accent);
-	color: #fff;
+	border-color: currentColor;
+	background: color-mix(in srgb, currentColor 10%, transparent);
+	color: currentColor;
 }
 .gutenform-progress-bubble__title {
 	margin-top: 8px;
 	font-size: 12px;
-	color: #9ca3af;
+	color: color-mix(in srgb, currentColor 40%, transparent);
 	text-align: center;
 	max-width: 100%;
 	overflow: hidden;
@@ -81,11 +81,11 @@
 	white-space: nowrap;
 }
 .gutenform-progress-bubble--active .gutenform-progress-bubble__title {
-	color: var(--gutenform-accent);
+	color: currentColor;
 	font-weight: 600;
 }
 .gutenform-progress-bubble--completed .gutenform-progress-bubble__title {
-	color: var(--gutenform-accent);
+	color: currentColor;
 }
 /* Connecting line between bubbles */
 .gutenform-progress-bubble__line {
@@ -94,11 +94,11 @@
 	right: calc(50% + 24px);
 	width: calc(100% - 48px);
 	height: 2px;
-	background: #d1d5db;
+	background: color-mix(in srgb, currentColor 40%, transparent);
 	z-index: 0;
 	transition: background 0.3s ease;
 }
 .gutenform-progress-bubble__line--completed {
-	background: var(--gutenform-accent);
+	background: currentColor;
 }
 
