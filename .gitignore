@@ -10,6 +10,8 @@ lerna-debug.log*
 
 node_modules
 dist
+# Built Gutenberg block bundles (regenerate with npm run block:build)
+assets/blocks/
 release
 dist-ssr
 *.local
