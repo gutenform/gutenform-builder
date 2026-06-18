@@ -2,10 +2,9 @@
 
 pkgs.mkShell {
   buildInputs = with pkgs; [
-    # Node.js and package managers
-    nodejs_20
-    nodePackages.npm
-    nodePackages.yarn
+    # Node.js and package managers (npm is bundled with nodejs_22)
+    nodejs_22
+    yarn
     
     # PHP and Composer
     php83
