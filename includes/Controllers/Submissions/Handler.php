@@ -138,9 +138,25 @@ class Handler
 
                 // Merge form-level override into settings for this provider
                 $settings = is_array($feed->settings) ? $feed->settings : array();
-                if (! empty($override)) {
+				if (! empty($override)) {
                     $settings['_form_use_provider_layout'] = isset($override['use_provider_layout']) ? (bool) $override['use_provider_layout'] : true;
                     $settings['_form_content']                = isset($override['content']) ? $override['content'] : '';
+
+                    if (isset($override['google_sheets']) && is_array($override['google_sheets'])) {
+                        $allowed = array(
+                            'spreadsheet_id',
+                            'spreadsheet_name',
+                            'sheet_name',
+                            'column_mapping',
+                            'drive_folder_id',
+                            'drive_folder_name',
+                        );
+                        foreach ($allowed as $key) {
+                            if (isset($override['google_sheets'][ $key ])) {
+                                $settings[ $key ] = $override['google_sheets'][ $key ];
+                            }
+                        }
+                    }
                 }
 
                 try {

@@ -2,12 +2,41 @@
  * API utility functions for Gutenform
  */
 
-declare const gutenForm: {
-  apiUrl: string;
-};
+declare global {
+  interface Window {
+    gutenForm?: {
+      apiUrl?: string;
+      nonce?: string;
+      namespace?: string;
+    };
+    gutenform?: {
+      apiUrl?: string;
+      nonce?: string;
+      namespace?: string;
+    };
+    wpApiSettings?: {
+      nonce?: string;
+    };
+  }
+}
 
-const API_BASE_URL = gutenForm?.apiUrl || '';
 const API_NAMESPACE = 'gutenform/v1';
+
+function getApiBaseUrl(): string {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+
+  return window.gutenForm?.apiUrl || window.gutenform?.apiUrl || '';
+}
+
+function getRestNonce(): string {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+
+  return window.wpApiSettings?.nonce || window.gutenForm?.nonce || window.gutenform?.nonce || '';
+}
 
 /**
  * Get the full API URL for an endpoint
@@ -15,7 +44,7 @@ const API_NAMESPACE = 'gutenform/v1';
 export function getApiUrl(endpoint: string): string {
   // Remove leading slash if present
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-  return `${API_BASE_URL}${API_NAMESPACE}/${cleanEndpoint}`;
+  return `${getApiBaseUrl()}${API_NAMESPACE}/${cleanEndpoint}`;
 }
 
 /**
@@ -28,7 +57,7 @@ export async function apiRequest<T = any>(
   const url = getApiUrl(endpoint);
   
   // Get WordPress REST API nonce
-  const nonce = (window as any).wpApiSettings?.nonce || (window as any).gutenForm?.nonce || '';
+  const nonce = getRestNonce();
   
   const defaultHeaders: HeadersInit = {
     'Content-Type': 'application/json',

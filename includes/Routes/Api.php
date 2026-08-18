@@ -77,6 +77,22 @@ Route::prefix(
 		$route->post('/upload', '\Gutenform\Controllers\FileUpload\Actions@upload');
 		$route->post('/upload-from-url', '\Gutenform\Controllers\FileUpload\Actions@upload_from_url');
 
+		// Google integration routes
+		$route->post('/google/credentials', '\Gutenform\Controllers\Google\Actions@save_credentials');
+		$route->get('/google/status', '\Gutenform\Controllers\Google\Actions@get_status');
+		$route->get('/google/auth-url', '\Gutenform\Controllers\Google\Actions@get_auth_url');
+		$route->get('/google/callback', '\Gutenform\Controllers\Google\Actions@oauth_callback', false);
+		$route->post('/google/disconnect', '\Gutenform\Controllers\Google\Actions@disconnect');
+		$route->get('/google/spreadsheets', '\Gutenform\Controllers\Google\Actions@list_spreadsheets');
+		$route->post('/google/spreadsheets', '\Gutenform\Controllers\Google\Actions@create_spreadsheet');
+		$route->get('/google/sheets', '\Gutenform\Controllers\Google\Actions@list_sheets');
+		$route->get('/google/sheet-headers', '\Gutenform\Controllers\Google\Actions@get_sheet_headers');
+		$route->post('/google/sheets', '\Gutenform\Controllers\Google\Actions@create_sheet');
+		$route->get('/google/drive-folders', '\Gutenform\Controllers\Google\Actions@list_drive_folders');
+		$route->get('/google/form-fields', '\Gutenform\Controllers\Google\Actions@get_form_fields');
+		$route->get('/google/picker-config', '\Gutenform\Controllers\Google\Actions@get_picker_config');
+		$route->post('/google/test-submission', '\Gutenform\Controllers\Google\Actions@test_submission');
+
 		// Settings routes
 		$route->get('/settings/smtp', '\Gutenform\Controllers\Settings\Actions@get_smtp_settings');
 		$route->post('/settings/smtp', '\Gutenform\Controllers\Settings\Actions@save_smtp_settings');

@@ -11,6 +11,7 @@ import { useProviders } from '../../hooks/useProviders';
 import { useFormFieldList } from '../../hooks/useFormFieldList';
 import { MissingFieldsDialog } from '../../components/block-atoms/MissingFieldsDialog';
 import { ProviderConditionalLogicPanel } from './ProviderConditionalLogicPanel';
+import { GoogleSheetsFormPanel } from '../../components/providers/google-sheets/GoogleSheetsFormPanel';
 import { FullscreenTemplateEditor } from '../../components/email-template-editor/FullscreenTemplateEditor';
 
 type FormInspectorControlsProps = BlockEditProps<FormAttributes>;
@@ -97,9 +98,25 @@ export const FormInspectorControls = ({ attributes, setAttributes, clientId }: F
 							useProviderLayout: true,
 							content: '',
 							conditionalShow: undefined,
+							googleSheets: undefined,
 						};
+						const provider = providers.find((p) => p.id === providerId);
 						return (
 							<PanelBody key={providerId} title={getProviderName(providerId)} initialOpen={true}>
+								{provider?.provider_type === 'google-sheets' && (
+									<GoogleSheetsFormPanel
+										formClientId={clientId || ''}
+										formIdentifier={attributes.formId}
+										config={override.googleSheets || {}}
+										onChange={(googleSheets) =>
+											setProviderOverride(providerId, {
+												...override,
+												googleSheets,
+											})
+										}
+									/>
+								)}
+								{provider?.provider_type !== 'google-sheets' && (
 								<Button
 									variant="secondary"
 									isSecondary
@@ -108,6 +125,8 @@ export const FormInspectorControls = ({ attributes, setAttributes, clientId }: F
 								>
 									{__('editTemplate')}
 								</Button>
+								)}
+								{provider?.provider_type !== 'google-sheets' && (
 								<ProviderConditionalLogicPanel
 									formBlockClientId={clientId || ''}
 									conditionalShow={override.conditionalShow ?? undefined}
@@ -118,6 +137,7 @@ export const FormInspectorControls = ({ attributes, setAttributes, clientId }: F
 										})
 									}
 								/>
+								)}
 							</PanelBody>
 						);
 					})}

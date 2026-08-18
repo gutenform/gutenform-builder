@@ -529,7 +529,14 @@ async function submitFormWithProviders(
 	formData: Record<string, FormDataEntryValue>,
 	formIdentifier: string,
 	providerIds: number[],
-	providerOverrides: Record<string, { useProviderLayout: boolean; content: string; conditionalShow?: unknown }> = {}
+	providerOverrides: Record<string, { useProviderLayout: boolean; content: string; conditionalShow?: unknown; googleSheets?: {
+		spreadsheetId?: string;
+		spreadsheetName?: string;
+		sheetName?: string;
+		columnMapping?: Array<{ field: string; column: string }>;
+		driveFolderId?: string;
+		driveFolderName?: string;
+	} }> = {}
 ): Promise<{ success: boolean; message?: string; errors?: string[] }> {
 	try {
 		const apiUrl = window.gutenform?.apiUrl || '';
@@ -537,14 +544,35 @@ async function submitFormWithProviders(
 		const namespace = window.gutenform?.namespace || 'gutenform/v1';
 
 		// Normalize provider_overrides for API: keys as string IDs, values with snake_case
-		const apiOverrides: Record<string, { use_provider_layout: boolean; content: string; conditional_show?: unknown }> = {};
+		const apiOverrides: Record<string, {
+			use_provider_layout: boolean;
+			content: string;
+			conditional_show?: unknown;
+			google_sheets?: Record<string, unknown>;
+		}> = {};
 		for (const [feedId, override] of Object.entries(providerOverrides)) {
 			if (!override || typeof override !== 'object') continue;
-			apiOverrides[String(feedId)] = {
+			const entry: {
+				use_provider_layout: boolean;
+				content: string;
+				conditional_show?: unknown;
+				google_sheets?: Record<string, unknown>;
+			} = {
 				use_provider_layout: !!override.useProviderLayout,
 				content: typeof override.content === 'string' ? override.content : '',
 				conditional_show: override.conditionalShow ?? undefined,
 			};
+			if (override.googleSheets && typeof override.googleSheets === 'object') {
+				entry.google_sheets = {
+					spreadsheet_id: override.googleSheets.spreadsheetId || '',
+					spreadsheet_name: override.googleSheets.spreadsheetName || '',
+					sheet_name: override.googleSheets.sheetName || '',
+					drive_folder_id: override.googleSheets.driveFolderId || '',
+					drive_folder_name: override.googleSheets.driveFolderName || '',
+					column_mapping: override.googleSheets.columnMapping || [],
+				};
+			}
+			apiOverrides[String(feedId)] = entry;
 		}
 
 		const response = await fetch(

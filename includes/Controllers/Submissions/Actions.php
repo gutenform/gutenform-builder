@@ -78,6 +78,28 @@ class Actions {
 				'content'            => isset( $override['content'] ) ? wp_kses_post( $override['content'] ) : '',
 				'conditional_show'   => isset( $override['conditional_show'] ) ? $override['conditional_show'] : null,
 			);
+			if ( isset( $override['google_sheets'] ) && is_array( $override['google_sheets'] ) ) {
+				$gs = $override['google_sheets'];
+				$sanitized_overrides[ $feed_id ]['google_sheets'] = array(
+					'spreadsheet_id'   => isset( $gs['spreadsheet_id'] ) ? sanitize_text_field( (string) $gs['spreadsheet_id'] ) : '',
+					'spreadsheet_name' => isset( $gs['spreadsheet_name'] ) ? sanitize_text_field( (string) $gs['spreadsheet_name'] ) : '',
+					'sheet_name'       => isset( $gs['sheet_name'] ) ? sanitize_text_field( (string) $gs['sheet_name'] ) : '',
+					'drive_folder_id'  => isset( $gs['drive_folder_id'] ) ? sanitize_text_field( (string) $gs['drive_folder_id'] ) : '',
+					'drive_folder_name'=> isset( $gs['drive_folder_name'] ) ? sanitize_text_field( (string) $gs['drive_folder_name'] ) : '',
+					'column_mapping'   => array(),
+				);
+				if ( ! empty( $gs['column_mapping'] ) && is_array( $gs['column_mapping'] ) ) {
+					foreach ( $gs['column_mapping'] as $map ) {
+						if ( ! is_array( $map ) ) {
+							continue;
+						}
+						$sanitized_overrides[ $feed_id ]['google_sheets']['column_mapping'][] = array(
+							'field'  => isset( $map['field'] ) ? sanitize_text_field( (string) $map['field'] ) : '',
+							'column' => isset( $map['column'] ) ? sanitize_text_field( (string) $map['column'] ) : '',
+						);
+					}
+				}
+			}
 			// Keep conditional_show as array for evaluator (logic + conditions)
 			if ( $sanitized_overrides[ $feed_id ]['conditional_show'] !== null && ! is_array( $sanitized_overrides[ $feed_id ]['conditional_show'] ) ) {
 				$sanitized_overrides[ $feed_id ]['conditional_show'] = null;

@@ -46,6 +46,7 @@ class Registry {
 		$base_providers = array(
 			Email::class,
 			Database::class,
+			GoogleSheets::class,
 		);
 
 		// Hook für externe Provider

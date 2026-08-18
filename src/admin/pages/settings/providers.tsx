@@ -48,9 +48,9 @@ import {
 import { Plus, Trash2, Edit2, Settings } from "lucide-react"
 import { EmailPreview } from "@/components/ui/email-preview"
 import { ProviderTypeGrid } from "@/components/providers/ProviderTypeGrid"
+import { GoogleSheetsConfig } from "@/components/providers/google-sheets/GoogleSheetsConfig"
 
 const COMING_SOON_PROVIDERS = [
-  { slug: "google-sheets", title: "Google Sheets" },
   { slug: "salesforce", title: "Salesforce" },
   { slug: "onoffice", title: "onOffice" },
   { slug: "supabase", title: "Supabase" },
@@ -609,7 +609,12 @@ export default function ProvidersPage() {
                 />
                 
                 {/* Dynamic fields based on selected provider type */}
-                {selectedType && selectedType.fields.map((field) => (
+                {selectedType && selectedType.slug === 'google-sheets' ? (
+                  <GoogleSheetsConfig
+                    settings={settings}
+                    onChange={handleSettingChange}
+                  />
+                ) : selectedType && selectedType.fields.map((field) => (
                   <React.Fragment key={field.name}>
                     <DynamicField
                       field={field}
