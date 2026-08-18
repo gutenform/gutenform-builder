@@ -149,8 +149,11 @@ class Admin
 			if (wp_script_is($handle, 'registered')) {
 				// Pass strings to block editor via gutenform object (lowercase)
 				$editor_data = array(
-					'strings' => Strings::get_strings(),
+					'strings'     => Strings::get_strings(),
 					'uploadLimit' => $upload_limit_mb,
+					'apiUrl'      => rest_url(),
+					'nonce'       => wp_create_nonce( 'wp_rest' ),
+					'namespace'   => GF_ROUTE_PREFIX,
 				);
 				wp_localize_script($handle, 'gutenform', $editor_data);
 				// Also pass via gutenForm for consistency
