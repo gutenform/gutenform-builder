@@ -10,12 +10,34 @@ const API_BASE_URL = gutenForm?.apiUrl || '';
 const API_NAMESPACE = 'gutenform/v1';
 
 /**
- * Get the full API URL for an endpoint
+ * Get the full API URL for an endpoint.
+ *
+ * The endpoint may carry its own query string (e.g. "providers/get?is_active=true"),
+ * and the base URL may *already* be a query string: on a site with plain
+ * permalinks, rest_url() returns "https://example.com/index.php?rest_route=/"
+ * rather than "https://example.com/wp-json/".
+ *
+ * Concatenating the two naively produced a second "?" in that case, so
+ * WordPress parsed the whole thing -- filters included -- as the route name and
+ * answered 404 rest_no_route. Every request that passes a filter (the provider
+ * list, entry filtering, ...) silently returned nothing on those sites.
  */
 export function getApiUrl(endpoint: string): string {
   // Remove leading slash if present
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-  return `${API_BASE_URL}${API_NAMESPACE}/${cleanEndpoint}`;
+
+  const separatorIndex = cleanEndpoint.indexOf('?');
+  const path = separatorIndex === -1 ? cleanEndpoint : cleanEndpoint.slice(0, separatorIndex);
+  const query = separatorIndex === -1 ? '' : cleanEndpoint.slice(separatorIndex + 1);
+
+  const url = `${API_BASE_URL}${API_NAMESPACE}/${path}`;
+
+  if (!query) {
+    return url;
+  }
+
+  // Append with "&" when the base already opened a query string.
+  return `${url}${url.includes('?') ? '&' : '?'}${query}`;
 }
 
 /**
