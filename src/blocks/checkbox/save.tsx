@@ -29,8 +29,14 @@ export default function save(props: BlockSaveProps<CheckboxAttributes>) {
 		? defaultValue.split(',').map((v) => v.trim())
 		: [];
 
+	// A consent checkbox is a single control: its own <label> already names it,
+	// so wrapping it in a fieldset would make a screen reader announce the text
+	// twice. Only a real multi-option group becomes a fieldset/legend.
+	const Wrapper = isConsent ? 'div' : 'fieldset';
+	const GroupLabel = isConsent ? 'span' : 'legend';
+
 	return (
-		<div
+		<Wrapper
 			{...useBlockProps.save({
 				className,
 				...(hasConditionalShowToOutput(conditionalShow) && {
@@ -39,15 +45,16 @@ export default function save(props: BlockSaveProps<CheckboxAttributes>) {
 				...(isConsent && { 'data-consent': 'true' }),
 				...(required && !isConsent && { 'data-at-least-one': 'true' }),
 			})}
+			aria-describedby={help ? `${id}-help` : undefined}
+			aria-required={required && !isConsent ? 'true' : undefined}
 		>
-			{label && <span className="gutenform-field__label">{label}</span>}
+			{label && <GroupLabel className="gutenform-field__label">{label}</GroupLabel>}
 			<div
 				className={cn(
 					'gutenform-checkbox-options',
 					`gutenform-checkbox--${styleVariant}`,
 					`gutenform-checkbox--layout-${layout}`
 				)}
-				role="group"
 			>
 				{options.map((option, index) => {
 					const inputId = `${id}-${index}`;
@@ -84,6 +91,6 @@ export default function save(props: BlockSaveProps<CheckboxAttributes>) {
 				})}
 			</div>
 			{help && <p className="gutenform-field__help" id={`${id}-help`}>{help}</p>}
-		</div>
+		</Wrapper>
 	);
 }

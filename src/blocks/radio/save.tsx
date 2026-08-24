@@ -25,22 +25,26 @@ export default function save(props: BlockSaveProps<RadioAttributes>) {
 	);
 
 	return (
-		<div
+		// A group of radios is a native fieldset/legend, so the group's own
+		// label is announced before the options instead of floating loose next
+		// to them. aria-describedby ties the help text to the whole group.
+		<fieldset
 			{...useBlockProps.save({
 				className,
 				...(hasConditionalShowToOutput(conditionalShow) && {
 					'data-conditional-show': JSON.stringify(conditionalShow),
 				}),
 			})}
+			aria-describedby={help ? `${id}-help` : undefined}
+			aria-required={required ? 'true' : undefined}
 		>
-			{label && <span className="gutenform-field__label">{label}</span>}
+			{label && <legend className="gutenform-field__label">{label}</legend>}
 			<div
 				className={cn(
 					'gutenform-radio-options',
 					`gutenform-radio--${styleVariant}`,
 					`gutenform-radio--layout-${layout}`
 				)}
-				role="radiogroup"
 			>
 				{options.map((option, index) => {
 					const inputId = `${id}-${index}`;
@@ -75,6 +79,6 @@ export default function save(props: BlockSaveProps<RadioAttributes>) {
 				})}
 			</div>
 			{help && <p className="gutenform-field__help" id={`${id}-help`}>{help}</p>}
-		</div>
+		</fieldset>
 	);
 }

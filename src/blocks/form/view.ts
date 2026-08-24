@@ -215,6 +215,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function setSubmitLoading(formEl: HTMLElement, loading: boolean) {
 	formEl.classList.toggle('gutenform-form--submitting', loading);
+	// Announce the pending state instead of only greying the button out.
+	formEl.setAttribute('aria-busy', loading ? 'true' : 'false');
 	const buttons = formEl.querySelectorAll<HTMLButtonElement>('button[type="submit"], [data-action="submit"]');
 	buttons.forEach((btn) => {
 		btn.disabled = loading;
@@ -281,6 +283,20 @@ function evaluateFieldConditions(formEl: HTMLElement): void {
 			const show = evaluateConditionConfig(config, formEl);
 			wrapper.classList.toggle('gutenform-field--conditional-hidden', !show);
 			wrapper.style.display = show ? '' : 'none';
+
+			// A hidden field that is still `required` silently blocks submission:
+			// the browser refuses to submit a form with an invalid control it
+			// cannot focus, and the submit event never fires -- so nothing
+			// happens and nothing explains why. Disabling the controls while
+			// hidden takes them out of both validation and FormData, which is
+			// also what the server expects for a conditional field.
+			wrapper
+				.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(
+					'input, select, textarea'
+				)
+				.forEach((control) => {
+					control.disabled = !show;
+				});
 		} catch (e) {
 			console.warn('Invalid data-conditional-show:', json);
 		}
@@ -334,6 +350,37 @@ function getVisibleStepIndices(formEl: HTMLElement): number[] {
 /**
  * Show the step at visibleIndex (index into visibleStepIndices) and hide others.
  */
+/**
+ * Moves focus into a freshly shown step and announces which step it is.
+ *
+ * Without this, changing step leaves focus on the (now hidden) Next button, so
+ * a screen reader user is told nothing changed and a keyboard user is dropped
+ * back at the top of the document.
+ */
+function focusStep(formEl: HTMLElement, stepEl: HTMLElement, visibleIndex: number, total: number) {
+	if (!stepEl) return;
+
+	// The step container is not natively focusable.
+	stepEl.setAttribute('tabindex', '-1');
+	stepEl.focus({ preventScroll: false });
+
+	let liveRegion = formEl.querySelector<HTMLElement>('.gutenform-step-status');
+	if (!liveRegion) {
+		liveRegion = document.createElement('p');
+		liveRegion.className = 'gutenform-step-status gutenform-visually-hidden';
+		liveRegion.setAttribute('role', 'status');
+		liveRegion.setAttribute('aria-live', 'polite');
+		formEl.insertBefore(liveRegion, formEl.firstChild);
+	}
+
+	const title = stepEl.getAttribute('data-step-title') || '';
+	const label = formString('stepAnnouncement', 'Step %1$s of %2$s')
+		.replace('%1$s', String(visibleIndex + 1))
+		.replace('%2$s', String(total));
+
+	liveRegion.textContent = title ? `${label}: ${title}` : label;
+}
+
 function goToStepByVisibleIndex(
 	formEl: HTMLElement,
 	steps: NodeListOf<HTMLElement>,
@@ -421,6 +468,7 @@ function initMultiStepForm(
 		goToStepByVisibleIndex(formEl, steps, visibleStepIndices, currentVisibleIndex);
 		onStepChange(currentVisibleIndex);
 		updateStepNavigationButtons(formEl, steps, visibleStepIndices, currentVisibleIndex);
+		focusStep(formEl, steps[visibleStepIndices[currentVisibleIndex]], currentVisibleIndex, visibleStepIndices.length);
 	}) as EventListener);
 
 	formEl.addEventListener('gutenform:step-prev', ((e: Event) => {
@@ -431,6 +479,7 @@ function initMultiStepForm(
 		goToStepByVisibleIndex(formEl, steps, visibleStepIndices, currentVisibleIndex);
 		onStepChange(currentVisibleIndex);
 		updateStepNavigationButtons(formEl, steps, visibleStepIndices, currentVisibleIndex);
+		focusStep(formEl, steps[visibleStepIndices[currentVisibleIndex]], currentVisibleIndex, visibleStepIndices.length);
 	}) as EventListener);
 
 	formEl.addEventListener('gutenform:step-submit', ((e: Event) => {
