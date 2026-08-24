@@ -33,18 +33,6 @@ class Frontend
 	const DEV_SKIN_SCRIPT = 'src/skins/default/skin.js';
 
 	/**
-	 * Get the active skin name from settings.
-	 * 
-	 * @return string The active skin name.
-	 */
-	private function get_active_skin()
-	{
-		// TODO: Get from settings/options
-		// For now, default to 'default'
-		return get_option('gutenform_skin', 'default');
-	}
-
-	/**
 	 * Frontend bootstrapper.
 	 *
 	 * @return void
