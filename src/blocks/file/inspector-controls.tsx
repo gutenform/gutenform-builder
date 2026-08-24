@@ -61,14 +61,6 @@ export const FileInspectorControls = ({ attributes, setAttributes, clientId }: F
 						__next40pxDefaultSize={true}
 						__nextHasNoMarginBottom={true}
 					/>
-
-					<ToggleControl
-						label={__('allowUrlUpload', 'Allow URL upload')}
-						checked={attributes.allowUrlUpload}
-						onChange={(allowUrlUpload) => setAttributes({ allowUrlUpload })}
-						help={__('allowUrlUploadHelp', 'Allow users to upload files by providing a URL')}
-						__nextHasNoMarginBottom={true}
-					/>
 				</PanelBody>
 			</InspectorControls>
 			{clientId && (

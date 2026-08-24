@@ -73,14 +73,15 @@ class Database extends AbstractProvider
             );
 
             $mailbox_id = absint($provider_settings['mailbox_id'] ?? 1);
-            
-            // Log mailbox assignment
-            error_log(sprintf(
-                'GutenForm Database Provider: Saving entry to mailbox_id: %d for form "%s"',
-                $mailbox_id,
-                $form_identifier
-            ));
-            
+
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log(sprintf(
+                    'GutenForm Database Provider: Saving entry to mailbox_id: %d for form "%s"',
+                    $mailbox_id,
+                    $form_identifier
+                ));
+            }
+
             $entry = new Entries();
             $entry->mailbox_id      = $mailbox_id;
             $entry->form_identifier = $form_identifier;
@@ -94,20 +95,24 @@ class Database extends AbstractProvider
 
             $result = $entry->save();
 
-            if ($result) {
-                error_log(sprintf(
-                    'GutenForm Database Provider: Entry saved successfully (ID: %d, Mailbox ID: %d) for form "%s"',
-                    $entry->id,
-                    $entry->mailbox_id,
-                    $form_identifier
-                ));
-            } else {
-                error_log('GutenForm Database Provider Error: Failed to save entry');
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                if ($result) {
+                    error_log(sprintf(
+                        'GutenForm Database Provider: Entry saved successfully (ID: %d, Mailbox ID: %d) for form "%s"',
+                        $entry->id,
+                        $entry->mailbox_id,
+                        $form_identifier
+                    ));
+                } else {
+                    error_log('GutenForm Database Provider Error: Failed to save entry');
+                }
             }
 
             return $result;
         } catch (\Exception $e) {
-            error_log('GutenForm Database Provider Error: ' . $e->getMessage());
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('GutenForm Database Provider Error: ' . $e->getMessage());
+            }
             return false;
         }
     }

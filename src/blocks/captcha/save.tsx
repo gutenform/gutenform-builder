@@ -9,8 +9,6 @@ export default function save(props: BlockSaveProps<CaptchaAttributes>) {
 		<div { ...useBlockProps.save({
 			className,
 			'data-captcha-type': props.attributes.captchaType,
-			'data-site-key': props.attributes.siteKey || '',
-			'data-api-key': props.attributes.apiKey || '',
 		}) }>
 			{props.attributes.label && <label htmlFor={props.attributes.id}>{props.attributes.label}</label>}
 			<div className="gutenform-captcha-container" data-name={props.attributes.name} data-id={props.attributes.id}></div>

@@ -19,14 +19,6 @@
 			"default": "friendlycaptcha",
 			"enum": ["friendlycaptcha", "recaptcha"]
 		},
-		"siteKey": {
-			"type": "string",
-			"default": ""
-		},
-		"apiKey": {
-			"type": "string",
-			"default": ""
-		},
 		"label": {
 			"type": "string",
 			"default": ""

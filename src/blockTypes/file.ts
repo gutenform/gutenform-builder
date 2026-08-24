@@ -5,6 +5,5 @@ export type FileAttributes = GlobalFieldAttributes & {
 	acceptTypes: string;
 	maxFileSize: number;
 	maxFiles: number;
-	allowUrlUpload: boolean;
 };
 

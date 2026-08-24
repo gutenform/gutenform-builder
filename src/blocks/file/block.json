@@ -62,10 +62,6 @@
 			"type": "number",
 			"default": 5
 		},
-		"allowUrlUpload": {
-			"type": "boolean",
-			"default": true
-		},
 		"conditionalShow": {
 			"type": "object",
 			"default": null

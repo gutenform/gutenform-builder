@@ -64,12 +64,13 @@ class Handler
                 $database_settings['mailbox_id'] = $this->get_default_mailbox_id();
             }
             
-            // Log mailbox assignment for debugging
-            error_log(sprintf(
-                'GutenForm Handler: Processing submission for form "%s" with mailbox_id: %d',
-                $form_identifier,
-                $database_settings['mailbox_id']
-            ));
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log(sprintf(
+                    'GutenForm Handler: Processing submission for form "%s" with mailbox_id: %d',
+                    $form_identifier,
+                    $database_settings['mailbox_id']
+                ));
+            }
             
             try {
                 $success = $database_provider->process_submission(

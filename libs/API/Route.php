@@ -11,6 +11,8 @@ namespace Gutenform\Libs\API;
 
 use Gutenform\Libs\API\ApiRouteException;
 
+defined('ABSPATH') || exit;
+
 /**
  * Class ApiRoute
  *
@@ -21,6 +23,13 @@ class Route
 
 	private const METHOD_GET  = 'GET';
 	private const METHOD_POST = 'POST';
+
+	/**
+	 * Explicit opt-in marker for a route that must stay open to anonymous
+	 * requests (e.g. form submission, file upload). Pass this as the auth
+	 * argument -- routes are deny-by-default otherwise.
+	 */
+	public const ALLOW_PUBLIC = '__gutenform_public_route__';
 
 	/**
 	 * All registerd routes.
@@ -133,11 +142,13 @@ class Route
 	 * @param string               $prefix route prefix.
 	 * @param string               $endpoint route endpoint.
 	 * @param string               $callback callback.
-	 * @param bool|string|callable $auth auth callback.
+	 * @param bool|string|callable $auth auth callback. Deny-by-default: omitting this
+	 *                                   (or passing null/false) denies the request.
+	 *                                   Pass Route::ALLOW_PUBLIC to explicitly open a route.
 	 *
 	 * @return array
 	 */
-	private function prepare_route_data($method, $prefix, $endpoint, $callback, $auth = false)
+	private function prepare_route_data($method, $prefix, $endpoint, $callback, $auth = null)
 	{
 		$data = array(
 			'prefix'   => $prefix,
@@ -165,7 +176,7 @@ class Route
 	 *
 	 * @return void
 	 */
-	private function get_normal($endpoint, $callback, $auth = false)
+	private function get_normal($endpoint, $callback, $auth = null)
 	{
 		$prefix = $this->current['prefix'];
 		$route  = $this->prepare_route_data(self::METHOD_GET, $prefix, $endpoint, $callback, $auth);
@@ -185,7 +196,7 @@ class Route
 	 *
 	 * @return void
 	 */
-	private function get_with_namespace($prefix, $endpoint, $callback, $auth = false)
+	private function get_with_namespace($prefix, $endpoint, $callback, $auth = null)
 	{
 		self::$routes[$prefix][] = $this->prepare_route_data(self::METHOD_GET, $prefix, $endpoint, $callback, $auth);
 	}
@@ -201,7 +212,7 @@ class Route
 	 *
 	 * @return void
 	 */
-	public function post_normal($endpoint, $callback, $auth = false)
+	public function post_normal($endpoint, $callback, $auth = null)
 	{
 		$prefix = $this->current['prefix'];
 		$route  = $this->prepare_route_data(self::METHOD_POST, $prefix, $endpoint, $callback, $auth);
@@ -221,7 +232,7 @@ class Route
 	 *
 	 * @return void
 	 */
-	private function post_with_namespace($prefix, $endpoint, $callback, $auth = false)
+	private function post_with_namespace($prefix, $endpoint, $callback, $auth = null)
 	{
 		self::$routes[$prefix][] = $this->prepare_route_data(self::METHOD_POST, $prefix, $endpoint, $callback, $auth);
 	}
@@ -333,12 +344,14 @@ class Route
 	 */
 	private static function prepare_callback($callback)
 	{
-		if (false === $callback) {
+		// Deny-by-default: no auth argument (null) and explicit false both deny.
+		if (null === $callback || false === $callback) {
 			return '__return_false';
 		}
 
-		if (true === $callback) {
-			return '__return_false';
+		// Explicit opt-in to a public route, or a plain "must be logged in" flag.
+		if (true === $callback || self::ALLOW_PUBLIC === $callback) {
+			return '__return_true';
 		}
 
 		if (! is_array($callback) && is_callable($callback)) {
@@ -395,11 +408,8 @@ class Route
 					'methods'             => $route->method,
 					'permission_callback' => $auth,
 					'callback'            => $callback,
+					'args'                => self::extract_args($route->endpoint),
 				);
-
-				if (false === $route->auth) {
-					$args['permission_callback'] = '__return_true';
-				}
 
 				if (! isset($route->prefix)) {
 					throw new ApiRouteException("{$route->endpoint} must have a prefix");
@@ -413,18 +423,54 @@ class Route
 	}
 
 	/**
+	 * Builds a sanitize/validate args schema for URL placeholders.
+	 *
+	 * Currently constrains the common `{id}` placeholder to numeric values;
+	 * other placeholder names keep WordPress' default (string) handling since
+	 * they don't share a single safe type across routes.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $endpoint api endpoint with `{placeholder}` segments.
+	 *
+	 * @return array
+	 */
+	private static function extract_args($endpoint)
+	{
+		$args = array();
+
+		if (preg_match_all('/\{(\w+)\}/', $endpoint, $matches)) {
+			foreach ($matches[1] as $name) {
+				if ('id' === $name) {
+					$args[$name] = array(
+						'validate_callback' => function ($value) {
+							return is_numeric($value);
+						},
+						'sanitize_callback' => 'absint',
+					);
+				}
+			}
+		}
+
+		return $args;
+	}
+
+	/**
 	 * Convert URL schema to regex pattern.
 	 *
 	 * @since 1.0.0
 	 */
 	private static function convert_to_regex($url)
 	{
-		// Replace placeholders with regex patterns.
-		// Use [^/]+ to match any characters except slashes (works for both numbers and strings).
+		// Replace placeholders with regex patterns. The {id} placeholder is
+		// constrained to digits since every route using it looks up a numeric
+		// primary key; other placeholders keep the permissive [^/]+ match.
 		$regex = preg_replace_callback(
 			'/\{(\w+)\}/',
 			function ($matches) {
-				return '(?P<' . $matches[1] . '>[^/]+)'; // Capture any characters except slashes.
+				$name    = $matches[1];
+				$pattern = ('id' === $name) ? '[0-9]+' : '[^/]+';
+				return '(?P<' . $name . '>' . $pattern . ')';
 			},
 			$url
 		);

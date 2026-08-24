@@ -45,15 +45,6 @@ export default function Edit(props: BlockEditProps<FileAttributes>) {
 							<span className="gutenform-file-upload-text-secondary">{__('orDragAndDrop', __('or drag and drop it here'))}</span>
 						</p>
 					</div>
-					{attributes.allowUrlUpload && (
-						<div className="gutenform-file-upload-url">
-							<p>{__('orUploadFromUrl', __('Or upload from URL'))}</p>
-							<div className="gutenform-file-upload-url-input">
-								<input type="text" placeholder={__('addFileUrl', __('Add file URL'))} disabled />
-								<button type="button" disabled>{__('upload', __('Upload'))}</button>
-							</div>
-						</div>
-					)}
 				</div>
 			</FieldWrapper>
 		</>

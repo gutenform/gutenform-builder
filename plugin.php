@@ -1,6 +1,7 @@
 <?php
 
 use Gutenform\Core\Api;
+use Gutenform\Core\Capabilities;
 use Gutenform\Core\Deactivate;
 use Gutenform\Core\Smtp;
 use Gutenform\Core\EmailLogger;
@@ -60,12 +61,14 @@ final class Gutenform
 			Menu::get_instance()->init();
 			Admin::get_instance()->bootstrap();
 			Deactivate::get_instance()->init();
+			\Gutenform\Core\Crypto::maybe_show_unavailable_notice();
 		}
 
 		// Admin bar (runs on frontend and admin).
 		AdminBar::get_instance()->init();
 
 		// Initialze core functionalities.
+		Capabilities::get_instance()->init();
 		Frontend::get_instance()->bootstrap();
 		API::get_instance()->init();
 		Smtp::get_instance()->init();

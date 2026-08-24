@@ -11,6 +11,7 @@
 namespace Gutenform\Core;
 
 use Gutenform\Traits\Base;
+use Gutenform\Core\Crypto;
 
 defined('ABSPATH') || exit;
 
@@ -66,17 +67,10 @@ class Smtp
 		if (!empty($settings['auth']) && $settings['auth']) {
 			$phpmailer->SMTPAuth = true;
 			$phpmailer->Username = sanitize_text_field($settings['username'] ?? '');
-			
-			// Decrypt password if it's base64 encoded
+
 			$password = $settings['password'] ?? '';
 			if (!empty($password)) {
-				// Check if password is base64 encoded
-				$decoded = base64_decode($password, true);
-				if ($decoded !== false) {
-					$phpmailer->Password = $decoded;
-				} else {
-					$phpmailer->Password = $password;
-				}
+				$phpmailer->Password = Crypto::decrypt($password);
 			}
 		} else {
 			$phpmailer->SMTPAuth = false;

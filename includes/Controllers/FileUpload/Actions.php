@@ -11,437 +11,325 @@
 
 namespace Gutenform\Controllers\FileUpload;
 
+use Gutenform\Core\UploadTokens;
+
 defined('ABSPATH') || exit;
 
 /**
  * File Upload Actions Class
  *
  * Handles REST API requests for file uploads.
+ *
+ * This endpoint is reachable by anonymous visitors (form submitters), so every
+ * uploaded file is run through WordPress' own upload pipeline
+ * (wp_handle_upload()) with a server-side MIME allowlist that the client
+ * cannot widen -- the accept_types request parameter is only ever used to
+ * narrow that allowlist for a nicer error message, never to bypass it.
+ * Successful uploads are stored outside any web-executable context and handed
+ * back only as an opaque, single-use token; no attachment_id, path, or URL
+ * that a submission could use to reference an arbitrary existing file.
  */
 class Actions
 {
+	/**
+	 * MIME types this endpoint will ever accept, regardless of what the
+	 * client requests. Intersected with WordPress' own
+	 * get_allowed_mime_types() at request time, and filterable for sites
+	 * that need to widen (never narrow-bypass) this set.
+	 *
+	 * @return array<string, string> extension(s) => mime type, as expected by wp_handle_upload()'s 'mimes' override.
+	 */
+	private function get_allowed_mimes(): array
+	{
+		$allowed = array(
+			'jpg|jpeg|jpe' => 'image/jpeg',
+			'gif'          => 'image/gif',
+			'png'          => 'image/png',
+			'webp'         => 'image/webp',
+			'svg'          => 'image/svg+xml',
+			'pdf'          => 'application/pdf',
+			'doc'          => 'application/msword',
+			'docx'         => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+			'xls'          => 'application/vnd.ms-excel',
+			'xlsx'         => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+			'ppt'          => 'application/vnd.ms-powerpoint',
+			'pptx'         => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+			'txt'          => 'text/plain',
+			'csv'          => 'text/csv',
+			'zip'          => 'application/zip',
+		);
 
-    /**
-     * Handles file upload request.
-     *
-     * @param \WP_REST_Request $request The REST request object.
-     * @return array|\WP_Error The uploaded file data or error.
-     */
-    public function upload(\WP_REST_Request $request)
-    {
-        // 1. Nonce verification
-        $nonce = $request->get_header('X-WP-Nonce');
-        if (!wp_verify_nonce($nonce, 'wp_rest')) {
-            return new \WP_Error(
-                'invalid_nonce',
-                __('Invalid nonce.', 'gutenform-builder'),
-                array('status' => 403)
-            );
-        }
+		/**
+		 * Filters the MIME allowlist for Gutenform's public file upload endpoint.
+		 * This is always intersected with WordPress' own get_allowed_mime_types(),
+		 * so it can only narrow, never grant a type WordPress itself disallows.
+		 *
+		 * @param array<string, string> $allowed extension(s) => mime type.
+		 */
+		$allowed = apply_filters('gutenform/upload/allowed_mimes', $allowed);
 
-        // 2. Check if files were uploaded
-        if (empty($_FILES['file'])) {
-            return new \WP_Error(
-                'no_file',
-                __('No file was uploaded.', 'gutenform-builder'),
-                array('status' => 400)
-            );
-        }
+		$wp_mimes = get_allowed_mime_types();
 
-        // 3. Get upload parameters from request
-        $field_name = sanitize_text_field($request->get_param('field_name') ?? '');
-        $max_file_size = absint($request->get_param('max_file_size') ?? 0);
-        $accept_types = sanitize_text_field($request->get_param('accept_types') ?? '');
+		return array_intersect($allowed, $wp_mimes);
+	}
 
-        // 4. Handle single or multiple files
-        $files = array();
-        if (is_array($_FILES['file']['name'])) {
-            // Multiple files
-            $file_count = count($_FILES['file']['name']);
-            for ($i = 0; $i < $file_count; $i++) {
-                $file = array(
-                    'name'     => $_FILES['file']['name'][$i],
-                    'type'     => $_FILES['file']['type'][$i],
-                    'tmp_name' => $_FILES['file']['tmp_name'][$i],
-                    'error'    => $_FILES['file']['error'][$i],
-                    'size'     => $_FILES['file']['size'][$i],
-                );
-                $result = $this->process_single_file($file, $field_name, $max_file_size, $accept_types);
-                if (is_wp_error($result)) {
-                    return $result;
-                }
-                $files[] = $result;
-            }
-        } else {
-            // Single file
-            $result = $this->process_single_file($_FILES['file'], $field_name, $max_file_size, $accept_types);
-            if (is_wp_error($result)) {
-                return $result;
-            }
-            $files[] = $result;
-        }
+	/**
+	 * Handles file upload request.
+	 *
+	 * @param \WP_REST_Request $request The REST request object.
+	 * @return array|\WP_Error The uploaded file data or error.
+	 */
+	public function upload(\WP_REST_Request $request)
+	{
+		if (empty($_FILES['file'])) {
+			return new \WP_Error(
+				'no_file',
+				__('No file was uploaded.', 'gutenform-builder'),
+				array('status' => 400)
+			);
+		}
 
-        // 5. Return success response
-        return array(
-            'success' => true,
-            'files'   => $files,
-        );
-    }
+		$field_name    = sanitize_text_field($request->get_param('field_name') ?? '');
+		$max_file_size = absint($request->get_param('max_file_size') ?? 0);
+		$accept_types  = sanitize_text_field($request->get_param('accept_types') ?? '');
 
-    /**
-     * Processes a single file upload.
-     *
-     * @param array  $file         The file array from $_FILES.
-     * @param string $field_name   The field name.
-     * @param int    $max_file_size Maximum file size in MB (0 = use WordPress limit).
-     * @param string $accept_types  Accepted file types.
-     * @return array|\WP_Error File data or error.
-     */
-    private function process_single_file($file, $field_name, $max_file_size, $accept_types)
-    {
-        // 1. Check for upload errors
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            return new \WP_Error(
-                'upload_error',
-                $this->get_upload_error_message($file['error']),
-                array('status' => 400)
-            );
-        }
+		$files = array();
+		if (is_array($_FILES['file']['name'])) {
+			$file_count = count($_FILES['file']['name']);
+			for ($i = 0; $i < $file_count; $i++) {
+				$file = array(
+					'name'     => $_FILES['file']['name'][$i],
+					'type'     => $_FILES['file']['type'][$i],
+					'tmp_name' => $_FILES['file']['tmp_name'][$i],
+					'error'    => $_FILES['file']['error'][$i],
+					'size'     => $_FILES['file']['size'][$i],
+				);
+				$result = $this->process_single_file($file, $field_name, $max_file_size, $accept_types);
+				if (is_wp_error($result)) {
+					return $result;
+				}
+				$files[] = $result;
+			}
+		} else {
+			$result = $this->process_single_file($_FILES['file'], $field_name, $max_file_size, $accept_types);
+			if (is_wp_error($result)) {
+				return $result;
+			}
+			$files[] = $result;
+		}
 
-        // 2. Validate file size
-        $file_size_mb = $file['size'] / 1024 / 1024;
-        $wp_max_size = wp_max_upload_size() / 1024 / 1024;
-        $effective_max = $max_file_size > 0 ? min($max_file_size, $wp_max_size) : $wp_max_size;
+		return array(
+			'success' => true,
+			'files'   => $files,
+		);
+	}
 
-        if ($file_size_mb > $effective_max) {
-            return new \WP_Error(
-                'file_too_large',
-                sprintf(
-                    __('File is too large. Maximum size is %s MB.', 'gutenform-builder'),
-                    $effective_max
-                ),
-                array('status' => 400)
-            );
-        }
+	/**
+	 * Processes a single file upload.
+	 *
+	 * @param array  $file          The file array (single-file $_FILES shape).
+	 * @param string $field_name    The field name.
+	 * @param int    $max_file_size Maximum file size in MB (0 = use WordPress limit).
+	 * @param string $accept_types  Client-requested accepted file types (a UI hint, not authoritative).
+	 * @return array|\WP_Error File data (with an upload token) or error.
+	 */
+	private function process_single_file($file, $field_name, $max_file_size, $accept_types)
+	{
+		if ($file['error'] !== UPLOAD_ERR_OK) {
+			return new \WP_Error(
+				'upload_error',
+				$this->get_upload_error_message($file['error']),
+				array('status' => 400)
+			);
+		}
 
-        // 3. Validate file type
-        if (!empty($accept_types)) {
-            $is_valid = $this->validate_file_type($file, $accept_types);
-            if (!$is_valid) {
-                return new \WP_Error(
-                    'invalid_file_type',
-                    __('Invalid file type. Please check the accepted file types.', 'gutenform-builder'),
-                    array('status' => 400)
-                );
-            }
-        }
+		$file_size_mb  = $file['size'] / 1024 / 1024;
+		$wp_max_size   = wp_max_upload_size() / 1024 / 1024;
+		$effective_max = $max_file_size > 0 ? min($max_file_size, $wp_max_size) : $wp_max_size;
 
-        // 4. Get WordPress upload directory and create gutenform subdirectory
-        $upload_dir = wp_upload_dir();
-        $gutenform_dir = $upload_dir['basedir'] . '/gutenform';
+		if ($file_size_mb > $effective_max) {
+			return new \WP_Error(
+				'file_too_large',
+				sprintf(
+					__('File is too large. Maximum size is %s MB.', 'gutenform-builder'),
+					$effective_max
+				),
+				array('status' => 400)
+			);
+		}
 
-        // Create year/month subdirectory
-        $year = date('Y');
-        $month = date('m');
-        $gutenform_dir = $gutenform_dir . '/' . $year . '/' . $month;
+		$allowed_mimes = $this->get_allowed_mimes();
 
-        // Create directories if they don't exist
-        if (!file_exists($gutenform_dir)) {
-            wp_mkdir_p($gutenform_dir);
-        }
+		// If the block declared accepted types, use them to narrow the allowlist
+		// for this request (better error message) -- but never to widen it.
+		if (! empty($accept_types)) {
+			$requested = $this->filter_mimes_by_accept($allowed_mimes, $accept_types);
+			if (empty($requested)) {
+				return new \WP_Error(
+					'invalid_file_type',
+					__('Invalid file type. Please check the accepted file types.', 'gutenform-builder'),
+					array('status' => 400)
+				);
+			}
+			$allowed_mimes = $requested;
+		}
 
-        // 5. Sanitize file name
-        $file_name = sanitize_file_name($file['name']);
-        $file_name = wp_unique_filename($gutenform_dir, $file_name);
-        $file_path = $gutenform_dir . '/' . $file_name;
+		if (empty($allowed_mimes)) {
+			return new \WP_Error(
+				'invalid_file_type',
+				__('This file type is not allowed.', 'gutenform-builder'),
+				array('status' => 400)
+			);
+		}
 
-        // 6. Move uploaded file
-        if (!move_uploaded_file($file['tmp_name'], $file_path)) {
-            return new \WP_Error(
-                'move_failed',
-                __('Failed to move uploaded file.', 'gutenform-builder'),
-                array('status' => 500)
-            );
-        }
+		require_once ABSPATH . 'wp-admin/includes/file.php';
 
-        // 7. Set correct file permissions
-        chmod($file_path, 0644);
+		add_filter('upload_dir', array($this, 'filter_upload_dir'));
+		$overrides = array(
+			'test_form' => false,
+			'mimes'     => $allowed_mimes,
+		);
+		$handled = wp_handle_upload($file, $overrides);
+		remove_filter('upload_dir', array($this, 'filter_upload_dir'));
 
-        // 8. Get file URL
-        $file_url = $upload_dir['baseurl'] . '/gutenform/' . $year . '/' . $month . '/' . $file_name;
+		if (isset($handled['error'])) {
+			return new \WP_Error(
+				'upload_failed',
+				$handled['error'],
+				array('status' => 400)
+			);
+		}
 
-        // 9. Optionally create WordPress attachment (for media library integration)
-        $attachment_id = null;
-        if (function_exists('wp_insert_attachment')) {
-            $attachment_data = array(
-                'post_mime_type' => $file['type'],
-                'post_title'     => preg_replace('/\.[^.]+$/', '', $file_name),
-                'post_content'   => '',
-                'post_status'    => 'inherit',
-            );
+		$this->ensure_directory_protected(dirname($handled['file']));
 
-            $attachment_id = wp_insert_attachment($attachment_data, $file_path);
-            if (!is_wp_error($attachment_id)) {
-                require_once(ABSPATH . 'wp-admin/includes/image.php');
-                $attachment_metadata = wp_generate_attachment_metadata($attachment_id, $file_path);
-                wp_update_attachment_metadata($attachment_id, $attachment_metadata);
-            }
-        }
+		$file_data = array(
+			'name'          => wp_basename($handled['file']),
+			'original_name' => sanitize_file_name($file['name']),
+			'type'          => $handled['type'],
+			'size'          => (int) $file['size'],
+			'path'          => $handled['file'],
+			'url'           => $handled['url'],
+		);
 
-        // 10. Return file data
-        return array(
-            'url'           => $file_url,
-            'name'          => $file_name,
-            'original_name' => $file['name'],
-            'type'          => $file['type'],
-            'size'          => $file['size'],
-            'attachment_id' => $attachment_id,
-        );
-    }
+		$token = UploadTokens::issue($file_data);
 
-    /**
-     * Validates file type against accepted types.
-     *
-     * @param array  $file         The file array.
-     * @param string $accept_types Comma-separated list of accepted types.
-     * @return bool True if valid, false otherwise.
-     */
-    private function validate_file_type($file, $accept_types)
-    {
-        $accepted = array_map('trim', explode(',', $accept_types));
-        $file_type = $file['type'];
-        $file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+		return array(
+			'token'         => $token,
+			'name'          => $file_data['name'],
+			'original_name' => $file_data['original_name'],
+			'type'          => $file_data['type'],
+			'size'          => $file_data['size'],
+			'url'           => $file_data['url'],
+		);
+	}
 
-        foreach ($accepted as $accept) {
-            // Check MIME type (e.g., image/*, application/pdf)
-            if (strpos($accept, '*') !== false) {
-                $pattern = str_replace('*', '.*', preg_quote($accept, '/'));
-                if (preg_match('/^' . $pattern . '$/i', $file_type)) {
-                    return true;
-                }
-            } elseif ($accept === $file_type) {
-                return true;
-            }
+	/**
+	 * Narrows a mime allowlist to entries matching the client's requested
+	 * accept_types (extensions and/or MIME wildcards like image/*).
+	 *
+	 * @param array<string, string> $allowed_mimes extension(s) => mime type.
+	 * @param string                $accept_types  Comma-separated list from the request.
+	 * @return array<string, string>
+	 */
+	private function filter_mimes_by_accept(array $allowed_mimes, string $accept_types): array
+	{
+		$accepted = array_map('trim', explode(',', $accept_types));
+		$matched  = array();
 
-            // Check file extension (e.g., .pdf, .jpg)
-            if (strpos($accept, '.') === 0) {
-                $ext = substr($accept, 1);
-                if (strtolower($ext) === $file_extension) {
-                    return true;
-                }
-            }
-        }
+		foreach ($allowed_mimes as $ext_pattern => $mime) {
+			$extensions = explode('|', $ext_pattern);
 
-        return false;
-    }
+			foreach ($accepted as $accept) {
+				if (strpos($accept, '*') !== false) {
+					$pattern = str_replace('*', '.*', preg_quote($accept, '/'));
+					if (preg_match('/^' . $pattern . '$/i', $mime)) {
+						$matched[$ext_pattern] = $mime;
+						continue 2;
+					}
+				} elseif ($accept === $mime) {
+					$matched[$ext_pattern] = $mime;
+					continue 2;
+				} elseif (strpos($accept, '.') === 0) {
+					$ext = strtolower(substr($accept, 1));
+					if (in_array($ext, $extensions, true)) {
+						$matched[$ext_pattern] = $mime;
+						continue 2;
+					}
+				}
+			}
+		}
 
-    /**
-     * Gets upload error message.
-     *
-     * @param int $error_code The upload error code.
-     * @return string Error message.
-     */
-    private function get_upload_error_message($error_code)
-    {
-        switch ($error_code) {
-            case UPLOAD_ERR_INI_SIZE:
-            case UPLOAD_ERR_FORM_SIZE:
-                return __('File exceeds the maximum upload size.', 'gutenform-builder');
-            case UPLOAD_ERR_PARTIAL:
-                return __('File was only partially uploaded.', 'gutenform-builder');
-            case UPLOAD_ERR_NO_FILE:
-                return __('No file was uploaded.', 'gutenform-builder');
-            case UPLOAD_ERR_NO_TMP_DIR:
-                return __('Missing temporary folder.', 'gutenform-builder');
-            case UPLOAD_ERR_CANT_WRITE:
-                return __('Failed to write file to disk.', 'gutenform-builder');
-            case UPLOAD_ERR_EXTENSION:
-                return __('File upload stopped by extension.', 'gutenform-builder');
-            default:
-                return __('Unknown upload error.', 'gutenform-builder');
-        }
-    }
+		return $matched;
+	}
 
-    /**
-     * Handles URL-based file upload.
-     *
-     * @param \WP_REST_Request $request The REST request object.
-     * @return array|\WP_Error The uploaded file data or error.
-     */
-    public function upload_from_url(\WP_REST_Request $request)
-    {
-        // 1. Nonce verification
-        $nonce = $request->get_header('X-WP-Nonce');
-        if (!wp_verify_nonce($nonce, 'wp_rest')) {
-            return new \WP_Error(
-                'invalid_nonce',
-                __('Invalid nonce.', 'gutenform-builder'),
-                array('status' => 403)
-            );
-        }
+	/**
+	 * Redirects wp_handle_upload() into wp-content/uploads/gutenform/Y/m/
+	 * instead of the default uploads root.
+	 *
+	 * @param array $dirs WordPress upload dir info.
+	 * @return array
+	 */
+	public function filter_upload_dir($dirs)
+	{
+		$dirs['subdir'] = '/gutenform' . $dirs['subdir'];
+		$dirs['path']   = $dirs['basedir'] . $dirs['subdir'];
+		$dirs['url']    = $dirs['baseurl'] . $dirs['subdir'];
 
-        // 2. Get URL from request
-        $file_url = esc_url_raw($request->get_param('url') ?? '');
-        if (empty($file_url)) {
-            return new \WP_Error(
-                'no_url',
-                __('No URL provided.', 'gutenform-builder'),
-                array('status' => 400)
-            );
-        }
+		return $dirs;
+	}
 
-        // 3. Validate URL
-        if (!filter_var($file_url, FILTER_VALIDATE_URL)) {
-            return new \WP_Error(
-                'invalid_url',
-                __('Invalid URL provided.', 'gutenform-builder'),
-                array('status' => 400)
-            );
-        }
+	/**
+	 * Ensures a .htaccess (Apache) and index.php (any server) exist in the
+	 * upload directory to stop uploaded files from ever being executed as
+	 * PHP, and to stop directory listing.
+	 *
+	 * @param string $dir Absolute directory path.
+	 * @return void
+	 */
+	private function ensure_directory_protected(string $dir): void
+	{
+		$htaccess = $dir . '/.htaccess';
+		if (! file_exists($htaccess)) {
+			file_put_contents(
+				$htaccess,
+				"# Deny execution of any script in this directory.\n" .
+					"<FilesMatch \"\\.(php|php[0-9]?|phtml|pl|py|cgi|asp|aspx|sh|exe)$\">\n" .
+					"  Require all denied\n" .
+					"</FilesMatch>\n" .
+					"php_flag engine off\n"
+			);
+		}
 
-        // 4. Get upload parameters
-        $field_name = sanitize_text_field($request->get_param('field_name') ?? '');
-        $max_file_size = absint($request->get_param('max_file_size') ?? 0);
-        $accept_types = sanitize_text_field($request->get_param('accept_types') ?? '');
+		$index = $dir . '/index.php';
+		if (! file_exists($index)) {
+			file_put_contents($index, "<?php\n// Silence is golden.\n");
+		}
+	}
 
-        // 5. Download file from URL
-        $response = wp_remote_get($file_url, array(
-            'timeout' => 30,
-            'sslverify' => true,
-        ));
-
-        if (is_wp_error($response)) {
-            return new \WP_Error(
-                'download_failed',
-                __('Failed to download file from URL.', 'gutenform-builder'),
-                array('status' => 500)
-            );
-        }
-
-        $response_code = wp_remote_retrieve_response_code($response);
-        if ($response_code !== 200) {
-            return new \WP_Error(
-                'download_failed',
-                sprintf(__('Failed to download file. HTTP status: %d', 'gutenform-builder'), $response_code),
-                array('status' => 500)
-            );
-        }
-
-        $file_content = wp_remote_retrieve_body($response);
-        $file_size = strlen($file_content);
-
-        // 6. Validate file size
-        $file_size_mb = $file_size / 1024 / 1024;
-        $wp_max_size = wp_max_upload_size() / 1024 / 1024;
-        $effective_max = $max_file_size > 0 ? min($max_file_size, $wp_max_size) : $wp_max_size;
-
-        if ($file_size_mb > $effective_max) {
-            return new \WP_Error(
-                'file_too_large',
-                sprintf(
-                    __('File is too large. Maximum size is %s MB.', 'gutenform-builder'),
-                    $effective_max
-                ),
-                array('status' => 400)
-            );
-        }
-
-        // 7. Get file name and type from URL or headers
-        $file_name = basename(parse_url($file_url, PHP_URL_PATH));
-        if (empty($file_name)) {
-            $file_name = 'uploaded-file-' . time();
-        }
-
-        $content_type = wp_remote_retrieve_header($response, 'content-type');
-        if (empty($content_type)) {
-            $content_type = 'application/octet-stream';
-        }
-
-        // 8. Create temporary file array for validation
-        $temp_file = array(
-            'name' => $file_name,
-            'type' => $content_type,
-            'size' => $file_size,
-        );
-
-        // 9. Validate file type
-        if (!empty($accept_types)) {
-            $is_valid = $this->validate_file_type($temp_file, $accept_types);
-            if (!$is_valid) {
-                return new \WP_Error(
-                    'invalid_file_type',
-                    __('Invalid file type. Please check the accepted file types.', 'gutenform-builder'),
-                    array('status' => 400)
-                );
-            }
-        }
-
-        // 10. Get WordPress upload directory and create gutenform subdirectory
-        $upload_dir = wp_upload_dir();
-        $gutenform_dir = $upload_dir['basedir'] . '/gutenform';
-
-        // Create year/month subdirectory
-        $year = date('Y');
-        $month = date('m');
-        $gutenform_dir = $gutenform_dir . '/' . $year . '/' . $month;
-
-        // Create directories if they don't exist
-        if (!file_exists($gutenform_dir)) {
-            wp_mkdir_p($gutenform_dir);
-        }
-
-        // 11. Sanitize file name
-        $file_name = sanitize_file_name($file_name);
-        $file_name = wp_unique_filename($gutenform_dir, $file_name);
-        $file_path = $gutenform_dir . '/' . $file_name;
-
-        // 12. Save file
-        $saved = file_put_contents($file_path, $file_content);
-        if ($saved === false) {
-            return new \WP_Error(
-                'save_failed',
-                __('Failed to save file.', 'gutenform-builder'),
-                array('status' => 500)
-            );
-        }
-
-        // 13. Set correct file permissions
-        chmod($file_path, 0644);
-
-        // 14. Get file URL
-        $file_url_result = $upload_dir['baseurl'] . '/gutenform/' . $year . '/' . $month . '/' . $file_name;
-
-        // 15. Optionally create WordPress attachment
-        $attachment_id = null;
-        if (function_exists('wp_insert_attachment')) {
-            $attachment_data = array(
-                'post_mime_type' => $content_type,
-                'post_title'     => preg_replace('/\.[^.]+$/', '', $file_name),
-                'post_content'   => '',
-                'post_status'    => 'inherit',
-            );
-
-            $attachment_id = wp_insert_attachment($attachment_data, $file_path);
-            if (!is_wp_error($attachment_id)) {
-                require_once(ABSPATH . 'wp-admin/includes/image.php');
-                $attachment_metadata = wp_generate_attachment_metadata($attachment_id, $file_path);
-                wp_update_attachment_metadata($attachment_id, $attachment_metadata);
-            }
-        }
-
-        // 16. Return file data
-        return array(
-            'success' => true,
-            'files'   => array(
-                array(
-                    'url'           => $file_url_result,
-                    'name'          => $file_name,
-                    'original_name' => basename($file_url),
-                    'type'          => $content_type,
-                    'size'          => $file_size,
-                    'attachment_id' => $attachment_id,
-                ),
-            ),
-        );
-    }
+	/**
+	 * Gets upload error message.
+	 *
+	 * @param int $error_code The upload error code.
+	 * @return string Error message.
+	 */
+	private function get_upload_error_message($error_code)
+	{
+		switch ($error_code) {
+			case UPLOAD_ERR_INI_SIZE:
+			case UPLOAD_ERR_FORM_SIZE:
+				return __('File exceeds the maximum upload size.', 'gutenform-builder');
+			case UPLOAD_ERR_PARTIAL:
+				return __('File was only partially uploaded.', 'gutenform-builder');
+			case UPLOAD_ERR_NO_FILE:
+				return __('No file was uploaded.', 'gutenform-builder');
+			case UPLOAD_ERR_NO_TMP_DIR:
+				return __('Missing temporary folder.', 'gutenform-builder');
+			case UPLOAD_ERR_CANT_WRITE:
+				return __('Failed to write file to disk.', 'gutenform-builder');
+			case UPLOAD_ERR_EXTENSION:
+				return __('File upload stopped by extension.', 'gutenform-builder');
+			default:
+				return __('Unknown upload error.', 'gutenform-builder');
+		}
+	}
 }

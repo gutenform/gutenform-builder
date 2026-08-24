@@ -10,6 +10,7 @@
 namespace Gutenform\Controllers\Settings;
 
 use Gutenform\Core\Debug;
+use Gutenform\Core\Crypto;
 use Gutenform\Admin\AdminBar;
 
 defined('ABSPATH') || exit;
@@ -132,7 +133,7 @@ class Actions
 		// Encrypt password if provided
 		if (!empty($settings['password'])) {
 			// Only update password if a new one is provided
-			$settings['password'] = base64_encode($settings['password']);
+			$settings['password'] = Crypto::encrypt($settings['password']);
 		} else {
 			// Keep existing password if not provided
 			$existing = get_option('gutenform_smtp_settings', array());
@@ -269,9 +270,9 @@ class Actions
 			'from_name' => sanitize_text_field($test_settings['from_name'] ?? get_bloginfo('name')),
 		);
 		
-		// Handle password - if it's a new password, encode it; otherwise use existing
+		// Handle password - if it's a new password, encrypt it; otherwise use existing
 		if (!empty($test_settings['password'])) {
-			$temp_settings['password'] = base64_encode($test_settings['password']);
+			$temp_settings['password'] = Crypto::encrypt($test_settings['password']);
 		} elseif (isset($original_settings['password'])) {
 			$temp_settings['password'] = $original_settings['password'];
 		} else {
@@ -316,12 +317,13 @@ class Actions
 		$headers[] = 'Reply-To: ' . $from_email;
 		$headers[] = 'Content-Type: text/html; charset=UTF-8';
 
-		// Log for debugging
-		error_log(sprintf(
-			'Gutenform SMTP Test: Sending test email to %s from %s',
-			$test_email,
-			$from_email
-		));
+		if (defined('WP_DEBUG') && WP_DEBUG) {
+			error_log(sprintf(
+				'Gutenform SMTP Test: Sending test email to %s from %s',
+				$test_email,
+				$from_email
+			));
+		}
 
 		// Capture PHPMailer errors
 		global $phpmailer;
@@ -364,13 +366,14 @@ class Actions
 			);
 		}
 
-		// Log the exact values being passed to wp_mail
-		error_log(sprintf(
-			'Gutenform SMTP Test: Calling wp_mail() with to=%s, subject=%s, headers=%s',
-			$test_email,
-			$subject,
-			implode(' | ', $headers)
-		));
+		if (defined('WP_DEBUG') && WP_DEBUG) {
+			error_log(sprintf(
+				'Gutenform SMTP Test: Calling wp_mail() with to=%s, subject=%s, headers=%s',
+				$test_email,
+				$subject,
+				implode(' | ', $headers)
+			));
+		}
 
 		$result = wp_mail($test_email, $subject, $message, $headers);
 		
@@ -401,6 +404,98 @@ class Actions
 			'test_failed',
 			$detailed_error,
 			array('status' => 500)
+		);
+	}
+
+	/**
+	 * Get CAPTCHA settings. Secret keys are never returned -- masked instead,
+	 * matching the SMTP password pattern.
+	 *
+	 * @return array|\WP_Error
+	 */
+	public function get_captcha_settings()
+	{
+		if (!current_user_can('manage_options')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('You do not have permission to view CAPTCHA settings.', 'gutenform-builder'),
+				array('status' => 403)
+			);
+		}
+
+		$settings = get_option('gutenform_captcha_settings', array());
+		$masked   = array();
+
+		foreach (array('recaptcha', 'friendlycaptcha') as $provider) {
+			$provider_settings = is_array($settings[$provider] ?? null) ? $settings[$provider] : array();
+			$masked[$provider]  = array(
+				'enabled'    => !empty($provider_settings['enabled']),
+				'site_key'   => $provider_settings['site_key'] ?? '',
+				'secret_key' => !empty($provider_settings['secret_key']) ? '••••••••' : '',
+			);
+		}
+
+		return array(
+			'success' => true,
+			'data'    => $masked,
+		);
+	}
+
+	/**
+	 * Save CAPTCHA settings.
+	 *
+	 * @param \WP_REST_Request $request
+	 * @return array|\WP_Error
+	 */
+	public function save_captcha_settings(\WP_REST_Request $request)
+	{
+		$nonce = $request->get_header('X-WP-Nonce');
+		if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('Security check failed.', 'gutenform-builder'),
+				array('status' => 403)
+			);
+		}
+
+		if (!current_user_can('manage_options')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('You do not have permission to manage CAPTCHA settings.', 'gutenform-builder'),
+				array('status' => 403)
+			);
+		}
+
+		$params   = $request->get_json_params();
+		$existing = get_option('gutenform_captcha_settings', array());
+		$settings = array();
+
+		foreach (array('recaptcha', 'friendlycaptcha') as $provider) {
+			$incoming = is_array($params[$provider] ?? null) ? $params[$provider] : array();
+			$current  = is_array($existing[$provider] ?? null) ? $existing[$provider] : array();
+
+			$secret_key = $current['secret_key'] ?? '';
+			if (!empty($incoming['secret_key'])) {
+				// A masked value (dots) coming back from the client means "unchanged".
+				$submitted = sanitize_text_field($incoming['secret_key']);
+				if (false === strpos($submitted, '•')) {
+					$secret_key = Crypto::encrypt($submitted);
+				}
+			}
+
+			$settings[$provider] = array(
+				'enabled'    => !empty($incoming['enabled']),
+				'site_key'   => isset($incoming['site_key']) ? sanitize_text_field($incoming['site_key']) : ($current['site_key'] ?? ''),
+				'secret_key' => $secret_key,
+			);
+		}
+
+		update_option('gutenform_captcha_settings', $settings, false);
+
+		return array(
+			'success' => true,
+			'message' => __('CAPTCHA settings saved successfully.', 'gutenform-builder'),
+			'data'    => $this->get_captcha_settings(),
 		);
 	}
 

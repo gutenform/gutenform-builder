@@ -27,7 +27,6 @@ export default function save(props: BlockSaveProps<FileAttributes>) {
 		'data-accept-types': props.attributes.acceptTypes,
 		'data-max-file-size': props.attributes.maxFileSize,
 		'data-max-files': props.attributes.maxFiles,
-		'data-allow-url-upload': props.attributes.allowUrlUpload,
 	};
 
 	return (
@@ -67,15 +66,6 @@ export default function save(props: BlockSaveProps<FileAttributes>) {
 						aria-label={props.attributes.label || 'File upload'}
 					/>
 				</div>
-				{props.attributes.allowUrlUpload && (
-					<div className="gutenform-file-upload-url">
-						<p>Or upload from URL</p>
-						<div className="gutenform-file-upload-url-input">
-							<input type="url" className="gutenform-file-url-input" placeholder="Add file URL" />
-							<button type="button" className="gutenform-file-url-upload-btn">Upload</button>
-						</div>
-					</div>
-				)}
 				<div className="gutenform-file-upload-list"></div>
 			</div>
 			{props.attributes.help && <p className="gutenform-field__help">{props.attributes.help}</p>}
