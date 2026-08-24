@@ -1,0 +1,78 @@
+# Files and directories that must never end up in the distributed plugin.
+#
+# Read by `wp dist-archive` and by 10up/action-wordpress-plugin-deploy, which is
+# what the release now uses instead of the hand-maintained `distFiles` list in
+# gruntfile.cjs. That list silently missed src/** (276 files, ~25.9k LOC),
+# several dev configs, and the planning documents -- all of which were shipping
+# inside the release zip.
+#
+# Everything the plugin needs at runtime must NOT be listed here:
+#   assets/  includes/  libs/  database/  languages/  vendor/
+#   gutenform-builder.php  plugin.php  uninstall.php  readme.txt  LICENSE
+
+# --- Version control / CI ---
+.git
+.gitignore
+.gitattributes
+.github
+.distignore
+
+# --- Sources (compiled into assets/ at build time) ---
+src
+.storybook
+
+# --- Dependencies / lockfiles ---
+node_modules
+package.json
+package-lock.json
+yarn.lock
+composer.json
+composer.lock
+
+# --- Build & tooling configs ---
+webpack.config.js
+webpack.config.cjs
+vite.config.js
+vite.admin.config.js
+postcss.config.cjs
+postcss.config.js
+tailwind.config.js
+tsconfig.json
+components.json
+phpcs.xml.dist
+phpunit.xml.dist
+phpstan.neon.dist
+.prettierrc.json
+.prettierignore
+.editorconfig
+.wp-env.json
+.envrc
+shell.nix
+.cursor
+
+# --- Tests ---
+tests
+test-results
+
+# --- Docs & internal planning (not shipped to users) ---
+documentation
+planned_features
+readme-assets
+README.md
+README-boilerplate.md
+CONTRIBUTING.md
+provider-integration-plan.md
+providersetup.md
+
+# --- Build output that must not ship ---
+release
+artifacts
+artworks
+bin
+*.map
+assets/admin/dist/**/*.js.map
+
+# --- Local noise ---
+.DS_Store
+*.log
+*~

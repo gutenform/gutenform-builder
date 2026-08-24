@@ -46,8 +46,11 @@ class AdminBar
 		}
 
 		add_action('admin_bar_menu', array($this, 'add_admin_bar_menu'), 100);
-		add_action('wp_head', array($this, 'render_styles'));
-		add_action('admin_head', array($this, 'render_styles'));
+		// Must run on the enqueue hooks, not wp_head/admin_head: by the time
+		// those fire, styles have already been printed and an inline style
+		// added there would never be output.
+		add_action('wp_enqueue_scripts', array($this, 'render_styles'));
+		add_action('admin_enqueue_scripts', array($this, 'render_styles'));
 	}
 
 	/**
@@ -184,63 +187,82 @@ class AdminBar
 	 */
 	public function render_styles()
 	{
-		?>
-		<style>
-			/* Gutenform Admin Bar */
-			#wpadminbar .gutenform-admin-bar-node .ab-icon.dashicons {
-				font-size: 18px !important;
-				line-height: 1.3 !important;
-				width: 20px !important;
-				height: 20px !important;
-				margin-right: 4px !important;
-			}
+		// Registered against a (style-less) handle and attached with
+		// wp_add_inline_style() rather than echoed as a raw <style> block, so the
+		// CSS goes through WordPress' own enqueue pipeline -- required for the
+		// WordPress.org review, and it means the styles can be dequeued.
+		$handle = 'gutenform-admin-bar';
 
-			#wpadminbar .gutenform-admin-bar-node .ab-icon.dashicons::before {
-				font-size: 18px !important;
-				line-height: 1.3 !important;
-			}
+		if (! wp_style_is($handle, 'registered')) {
+			wp_register_style($handle, false, array(), GF_VERSION);
+		}
 
-			#wpadminbar .gutenform-admin-bar-node > .ab-item {
-				display: flex !important;
-				align-items: center !important;
-			}
+		if (! wp_style_is($handle, 'enqueued')) {
+			wp_enqueue_style($handle);
+			wp_add_inline_style($handle, self::get_styles());
+		}
+	}
 
-			/* Unread bubble */
-			#wpadminbar .gf-admin-bar-bubble {
-				display: inline-block;
-				background: #d63638;
-				color: #fff;
-				font-size: 10px;
-				font-weight: 600;
-				line-height: 1;
-				min-width: 16px;
-				height: 16px;
-				padding: 3px 5px;
-				border-radius: 10px;
-				text-align: center;
-				margin-left: 6px;
-				vertical-align: middle;
-				box-sizing: border-box;
-			}
+	/**
+	 * The admin bar CSS.
+	 *
+	 * @return string
+	 */
+	private static function get_styles(): string
+	{
+		return '/* Gutenform Admin Bar */
+#wpadminbar .gutenform-admin-bar-node .ab-icon.dashicons {
+    font-size: 18px !important;
+    line-height: 1.3 !important;
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 4px !important;
+}
 
-			/* Mailbox unread count in dropdown */
-			#wpadminbar .gf-admin-bar-count {
-				opacity: .7;
-				font-size: 12px;
-			}
+#wpadminbar .gutenform-admin-bar-node .ab-icon.dashicons::before {
+    font-size: 18px !important;
+    line-height: 1.3 !important;
+}
 
-			/* Separator */
-			#wpadminbar .gf-admin-bar-separator > .ab-item {
-				height: auto !important;
-				padding: 0 10px !important;
-				cursor: default !important;
-			}
+#wpadminbar .gutenform-admin-bar-node > .ab-item {
+    display: flex !important;
+    align-items: center !important;
+}
 
-			#wpadminbar .gf-admin-bar-separator > .ab-item:hover {
-				background: none !important;
-				color: inherit !important;
-			}
-		</style>
-		<?php
+/* Unread bubble */
+#wpadminbar .gf-admin-bar-bubble {
+    display: inline-block;
+    background: #d63638;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1;
+    min-width: 16px;
+    height: 16px;
+    padding: 3px 5px;
+    border-radius: 10px;
+    text-align: center;
+    margin-left: 6px;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+/* Mailbox unread count in dropdown */
+#wpadminbar .gf-admin-bar-count {
+    opacity: .7;
+    font-size: 12px;
+}
+
+/* Separator */
+#wpadminbar .gf-admin-bar-separator > .ab-item {
+    height: auto !important;
+    padding: 0 10px !important;
+    cursor: default !important;
+}
+
+#wpadminbar .gf-admin-bar-separator > .ab-item:hover {
+    background: none !important;
+    color: inherit !important;
+}';
 	}
 }

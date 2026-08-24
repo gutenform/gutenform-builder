@@ -110,14 +110,25 @@ class Menu
 		$settings_slug = $this->parent_slug . '-settings';
 		$forms_usage_slug = $this->parent_slug . '-forms-usage';
 
+		// Set the default hash route for the SPA when the page is opened without
+		// one. Printed via wp_print_inline_script_tag() rather than a raw echo so
+		// WordPress can apply its script attributes/filters (and so this passes
+		// the WP.org review's escaping checks).
+		$default_route = '';
 		if ($page === $settings_slug) {
-			// Only set default hash when empty or not already on a settings sub-route
-			// This preserves #/settings/providers etc. on page reload
-			echo '<script>(function(){var h=window.location.hash;if(!h||h==="#"||h==="#/"||!h.startsWith("#/settings")){window.location.hash="#/settings";}})();</script>';
+			$default_route = '#/settings';
+		} elseif ($page === $forms_usage_slug) {
+			$default_route = '#/forms-usage';
 		}
 
-		if ($page === $forms_usage_slug) {
-			echo '<script>(function(){var h=window.location.hash;if(!h||h==="#"||h==="#/"||!h.startsWith("#/forms-usage")){window.location.hash="#/forms-usage";}})();</script>';
+		if ('' !== $default_route) {
+			// Preserves deeper routes like #/settings/providers on reload.
+			wp_print_inline_script_tag(
+				sprintf(
+					'(function(){var r=%s;var h=window.location.hash;if(!h||h==="#"||h==="#/"||h.indexOf(r)!==0){window.location.hash=r;}})();',
+					wp_json_encode($default_route)
+				)
+			);
 		}
 ?>
 		<div id="myplugin" class="myplugin-app"></div>
