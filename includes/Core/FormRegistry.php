@@ -121,6 +121,7 @@ class FormRegistry
 				'provider_ids'       => $this->sanitize_provider_ids($attrs['providerIds'] ?? array()),
 				'provider_overrides' => $this->sanitize_provider_overrides($attrs['providerOverrides'] ?? array()),
 				'field_count'        => (int) $form['field_count'],
+				'settings'           => $this->sanitize_form_settings($attrs['formSettings'] ?? array()),
 			);
 
 			$fields = BlockScanner::extract_field_schema($form['inner_blocks']);
@@ -307,6 +308,49 @@ class FormRegistry
 		}
 
 		return $ids;
+	}
+
+	/**
+	 * Sanitizes the formSettings object attribute written by the Form Settings
+	 * modal. Anything not recognised here is dropped rather than stored.
+	 *
+	 * @param mixed $settings Raw formSettings attribute.
+	 * @return array
+	 */
+	private function sanitize_form_settings($settings): array
+	{
+		if (! is_array($settings)) {
+			return array();
+		}
+
+		$spam    = is_array($settings['spamProtection'] ?? null) ? $settings['spamProtection'] : array();
+		$privacy = is_array($settings['privacy'] ?? null) ? $settings['privacy'] : array();
+		$advanced = is_array($settings['advanced'] ?? null) ? $settings['advanced'] : array();
+
+		$captcha_type = (string) ($spam['captchaType'] ?? 'friendlycaptcha');
+		if (! in_array($captcha_type, array('friendlycaptcha', 'recaptcha'), true)) {
+			$captcha_type = 'friendlycaptcha';
+		}
+
+		$retention_days = isset($privacy['retentionDays']) ? absint($privacy['retentionDays']) : 0;
+
+		return array(
+			'spam_protection' => array(
+				// Both default to on: a form that predates these settings keeps
+				// the protective behaviour rather than silently losing it.
+				'honeypot'     => ! isset($spam['honeypot']) || (bool) $spam['honeypot'],
+				'captcha'      => ! isset($spam['captcha']) || (bool) $spam['captcha'],
+				'captcha_type' => $captcha_type,
+			),
+			'privacy' => array(
+				'store_ip'       => ! isset($privacy['storeIp']) || (bool) $privacy['storeIp'],
+				// 0 means "keep forever".
+				'retention_days' => $retention_days,
+			),
+			'advanced' => array(
+				'css_class' => isset($advanced['cssClass']) ? sanitize_html_class((string) $advanced['cssClass']) : '',
+			),
+		);
 	}
 
 	/**

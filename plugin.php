@@ -77,6 +77,7 @@ final class Gutenform
 		// Initialze core functionalities.
 		Capabilities::get_instance()->init();
 		FormRegistry::get_instance()->init();
+		\Gutenform\Core\Retention::get_instance()->init();
 		Frontend::get_instance()->bootstrap();
 		API::get_instance()->init();
 		Smtp::get_instance()->init();

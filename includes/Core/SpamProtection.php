@@ -43,14 +43,20 @@ class SpamProtection
 	 * @param int   $rendered_at     Client-supplied unix timestamp (ms) of when the form rendered.
 	 * @return \WP_Error|null
 	 */
-	public function check(array $submission_data, int $rendered_at): ?\WP_Error
+	public function check(array $submission_data, int $rendered_at, array $form_settings = array()): ?\WP_Error
 	{
+		$spam_settings = $form_settings['spam_protection'] ?? array();
+
+		// Rate limiting and submit timing are not per-form opt-outs: they cost
+		// a legitimate visitor nothing and are the cheapest defence available.
 		$rate_limit_error = $this->check_rate_limit();
 		if (null !== $rate_limit_error) {
 			return $rate_limit_error;
 		}
 
-		if ($this->is_honeypot_filled($submission_data)) {
+		$honeypot_enabled = ! isset($spam_settings['honeypot']) || (bool) $spam_settings['honeypot'];
+
+		if ($honeypot_enabled && $this->is_honeypot_filled($submission_data)) {
 			// Don't tell a bot why it failed -- generic rejection.
 			return new \WP_Error('spam_rejected', __('Submission rejected.', 'gutenform-builder'), array('status' => 400));
 		}
@@ -179,8 +185,16 @@ class SpamProtection
 	 * @param array $submission_data Raw submission_data.
 	 * @return bool
 	 */
-	public function verify_captcha(array $submission_data): bool
+	public function verify_captcha(array $submission_data, array $form_settings = array()): bool
 	{
+		$spam_settings = $form_settings['spam_protection'] ?? array();
+
+		// A form can switch CAPTCHA off; it cannot switch it on for a provider
+		// the site has not configured (there'd be no secret to verify against).
+		if (isset($spam_settings['captcha']) && ! $spam_settings['captcha']) {
+			return true;
+		}
+
 		$settings = get_option('gutenform_captcha_settings', array());
 
 		$recaptcha = $settings['recaptcha'] ?? array();

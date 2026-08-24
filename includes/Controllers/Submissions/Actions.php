@@ -90,14 +90,16 @@ class Actions {
 		}
 
 		// 4. Server-side spam protection: rate limit, honeypot, submit timing, CAPTCHA.
+		// Per-form toggles come from the server-side config, not the request.
+		$form_settings   = $form_config['config']['settings'] ?? array();
 		$spam_protection = new SpamProtection();
 
-		$spam_error = $spam_protection->check( $submission_data, $rendered_at );
+		$spam_error = $spam_protection->check( $submission_data, $rendered_at, $form_settings );
 		if ( null !== $spam_error ) {
 			return $spam_error;
 		}
 
-		if ( ! $spam_protection->verify_captcha( $submission_data ) ) {
+		if ( ! $spam_protection->verify_captcha( $submission_data, $form_settings ) ) {
 			return new \WP_Error(
 				'captcha_failed',
 				__( 'CAPTCHA verification failed. Please try again.', 'gutenform-builder' ),

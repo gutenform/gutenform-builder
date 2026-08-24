@@ -46,6 +46,7 @@ export default function save(props: BlockSaveProps<FormAttributes>) {
 		getFormClasses(props.attributes),
 		borderProps.className,
 		colorProps.className,
+		props.attributes.formSettings?.advanced?.cssClass || undefined,
 	);
 
 	const style = {

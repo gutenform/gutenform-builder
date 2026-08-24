@@ -5,9 +5,10 @@ import { ToolbarGroup, ToolbarButton, Modal } from '@wordpress/components';
 import { type BlockEditProps } from '@wordpress/blocks';
 import { type FormAttributes } from '@/blockTypes/form';
 import { type TemplateArray } from '@wordpress/blocks';
-import { Eye, EyeOff, LayoutTemplate } from 'lucide-react';
+import { Eye, EyeOff, LayoutTemplate, Settings } from 'lucide-react';
 import BlockIcon from '../../components/block-atoms/BlockIcon';
 import TemplateSelect from '../../components/block-atoms/TemplateSelect';
+import { FormSettingsModal } from '../../components/form-settings/FormSettingsModal';
 
 type FormBlockControlsProps = BlockEditProps<FormAttributes> & {
 	hasBlocks?: boolean;
@@ -17,10 +18,12 @@ type FormBlockControlsProps = BlockEditProps<FormAttributes> & {
 export const FormBlockControls = ({
 	attributes,
 	setAttributes,
+	clientId,
 	hasBlocks = false,
 	onReplaceWithTemplate,
 }: FormBlockControlsProps) => {
 	const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
 	const handleTemplateSelect = (template: TemplateArray) => {
 		onReplaceWithTemplate?.(template);
@@ -45,7 +48,22 @@ export const FormBlockControls = ({
 						isActive={attributes.successView}
 					/>
 				</ToolbarGroup>
+				<ToolbarGroup>
+					<ToolbarButton
+						icon={<BlockIcon icon={Settings} clean={true} />}
+						label={__('formSettings', 'Form Settings')}
+						onClick={() => setIsSettingsOpen(true)}
+					/>
+				</ToolbarGroup>
 			</BlockControls>
+			{isSettingsOpen && clientId && (
+				// Same component the nested-block toolbar opens -- here it just
+				// happens to be the form's own clientId.
+				<FormSettingsModal
+					formClientId={clientId}
+					onClose={() => setIsSettingsOpen(false)}
+				/>
+			)}
 			{isTemplateModalOpen && (
 				<Modal
 					title={__('changeTemplate')}

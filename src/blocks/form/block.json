@@ -60,6 +60,10 @@
 			"type": "string",
 			"default": ""
 		},
+		"formSettings": {
+			"type": "object",
+			"default": {}
+		},
 		"activeStep": {
 			"type": "number",
 			"default": 0

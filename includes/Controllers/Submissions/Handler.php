@@ -234,9 +234,10 @@ class Handler
             : true;
         $settings['_form_content'] = isset($override['content']) ? (string) $override['content'] : '';
 
-        $settings['_feed_id']    = $feed_id;
-        $settings['_form_title'] = (string) ($config['form_title'] ?? $form_identifier);
-        $settings['wp_post_id']  = $post_id;
+        $settings['_feed_id']       = $feed_id;
+        $settings['_form_title']    = (string) ($config['form_title'] ?? $form_identifier);
+        $settings['wp_post_id']     = $post_id;
+        $settings['_form_settings'] = is_array($config['settings'] ?? null) ? $config['settings'] : array();
 
         return $settings;
     }

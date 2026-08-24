@@ -17,6 +17,7 @@
  */
 
 use Gutenform\Core\Install;
+use Gutenform\Core\Retention;
 
 defined('ABSPATH') || exit;
 
@@ -39,3 +40,6 @@ add_action('plugins_loaded', 'gutenform_init');
 
 // Hook for plugin activation.
 register_activation_hook(__FILE__, array(Install::get_instance(), 'init'));
+
+// Clear our scheduled jobs on deactivation so they don't linger in wp_cron.
+register_deactivation_hook(__FILE__, array(Retention::class, 'unschedule'));

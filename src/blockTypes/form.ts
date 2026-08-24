@@ -12,6 +12,28 @@ export type ProviderOverride = {
 	settings?: Record<string, unknown>;
 };
 
+/**
+ * Everything added by the Form Settings modal lives in this one object
+ * attribute rather than a dozen top-level attributes, so save.tsx and any
+ * future deprecations stay manageable. mailboxId / providerIds /
+ * providerOverrides deliberately stay top-level for backwards compatibility
+ * with forms saved before this existed.
+ */
+export type FormSettings = {
+	spamProtection?: {
+		honeypot?: boolean;
+		captcha?: boolean;
+		captchaType?: 'friendlycaptcha' | 'recaptcha';
+	};
+	privacy?: {
+		storeIp?: boolean;
+		retentionDays?: number;
+	};
+	advanced?: {
+		cssClass?: string;
+	};
+};
+
 export type FormAttributes = {
 	layout?: any;
 	mailboxId: string;
@@ -25,4 +47,5 @@ export type FormAttributes = {
 	successMessage?: string;
 	errorMessage?: string;
 	redirectUrl?: string;
+	formSettings?: FormSettings;
 };
