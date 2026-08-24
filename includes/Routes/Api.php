@@ -49,6 +49,8 @@ Route::prefix(
 		$route->post('/entries/delete', '\Gutenform\Controllers\Entries\Actions@delete', $manage_entries);
 		$route->post('/entries/mark-read', '\Gutenform\Controllers\Entries\Actions@mark_read', $manage_entries);
 		$route->post('/entries/empty-trash', '\Gutenform\Controllers\Entries\Actions@empty_trash', $manage_entries);
+		// Exporting is reading, so it needs the view capability rather than manage.
+		$route->get('/entries/export', '\Gutenform\Controllers\Entries\Export@export', $view_entries);
 
 		// Inbox Folders routes.
 		$route->get('/inbox-folders/get', '\Gutenform\Controllers\InboxFolders\Actions@get', $view_entries);

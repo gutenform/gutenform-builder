@@ -74,7 +74,7 @@ export default function save(props: BlockSaveProps<RadioAttributes>) {
 					);
 				})}
 			</div>
-			{help && <p className="gutenform-field__help">{help}</p>}
+			{help && <p className="gutenform-field__help" id={`${id}-help`}>{help}</p>}
 		</div>
 	);
 }

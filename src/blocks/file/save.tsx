@@ -68,7 +68,7 @@ export default function save(props: BlockSaveProps<FileAttributes>) {
 				</div>
 				<div className="gutenform-file-upload-list"></div>
 			</div>
-			{props.attributes.help && <p className="gutenform-field__help">{props.attributes.help}</p>}
+			{props.attributes.help && <p className="gutenform-field__help" id={`${props.attributes.id}-help`}>{props.attributes.help}</p>}
 		</div>
 	);
 }

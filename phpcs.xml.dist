@@ -1,11 +1,14 @@
 <?xml version="1.0"?>
-<ruleset name="WordPress Coding Standards">
+<ruleset name="Gutenform Builder">
 
-	<config name="testVersion" value="7.2"/>
-	<config name="minimum_supported_wp_version" value="5.9" />
+	<description>Coding standards for Gutenform Builder, aligned with what the WordPress.org plugin review checks.</description>
+
+	<!-- Match the plugin header: Requires PHP 7.4, Requires at least 6.5. -->
+	<config name="testVersion" value="7.4-"/>
+	<config name="minimum_supported_wp_version" value="6.5" />
 	<config name="text_domain" value="gutenform-builder"/>
 
-	<rule ref="PHPCompatibility">
+	<rule ref="PHPCompatibilityWP">
 		<exclude name="PHPCompatibility.FunctionNameRestrictions.ReservedFunctionNames.FunctionDoubleUnderscore" />
 		<exclude name="PHPCompatibility.FunctionNameRestrictions.ReservedFunctionNames.MethodDoubleUnderscore" />
 	</rule>
@@ -13,34 +16,64 @@
 	<rule ref="WordPress-Core">
 		<exclude name="Generic.Commenting.DocComment.MissingShort" />
 		<exclude name="Generic.NamingConventions.CamelCapsFunctionName.MethodDoubleUnderscore" />
-		<exclude name="Generic.Commenting.DocComment.MissingShort" />
 		<exclude name="Generic.Commenting.DocComment.ShortNotCapital" />
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag" />
 		<exclude name="Squiz.Commenting.InlineComment.WrongStyle" />
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
 		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
-		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
- 		<exclude name="WordPress.NamingConventions.ValidFunctionName.FunctionDoubleUnderscore" />
+		<exclude name="WordPress.NamingConventions.ValidFunctionName.FunctionDoubleUnderscore" />
 		<exclude name="WordPress.NamingConventions.ValidFunctionName.MethodDoubleUnderscore" />
+
+		<!--
+			This codebase is PSR-4 / namespaced with 4-space indentation in most
+			files, which conflicts with WordPress-Core's tabs-and-Yoda house style.
+			Reformatting all of it is not what the plugin review is about; the
+			security and escaping sniffs below are.
+		-->
+		<exclude name="Generic.WhiteSpace.DisallowSpaceIndent" />
+		<exclude name="WordPress.PHP.YodaConditions" />
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
 	</rule>
 
-	<rule ref="WordPress-Docs"/>
+	<!--
+		The sniffs the review actually cares about: escaping, sanitization,
+		nonces, SQL preparation, and unsafe functions. These live in
+		WordPress-Extra and WordPress.Security and were previously missing
+		from this ruleset entirely.
+	-->
+	<rule ref="WordPress-Extra">
+		<exclude name="Generic.WhiteSpace.DisallowSpaceIndent" />
+		<exclude name="WordPress.PHP.YodaConditions" />
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
+		<exclude name="Universal.Operators.DisallowShortTernary" />
+	</rule>
 
+	<rule ref="WordPress.Security"/>
 	<rule ref="WordPress.WP.I18n"/>
-
-	<rule ref="PEAR.Functions.FunctionCallSignature">
-		<properties>
-			<property name="allowMultipleArguments" value="false"/>
-		</properties>
-	</rule>
+	<rule ref="WordPress.DB.PreparedSQL"/>
 
 	<arg value="ps"/>
 	<arg name="extensions" value="php"/>
+	<arg name="basepath" value="."/>
+	<arg name="parallel" value="8"/>
 
-	<exclude-pattern>*/bin/*</exclude-pattern>
-	<exclude-pattern>*/build/*</exclude-pattern>
-	<exclude-pattern>*/lib/*</exclude-pattern>
+	<!-- What to scan: our own PHP only. -->
+	<file>gutenform-builder.php</file>
+	<file>plugin.php</file>
+	<file>uninstall.php</file>
+	<file>includes</file>
+	<file>database</file>
+
+	<!--
+		libs/ holds vendored third-party code (a copy of @kucrut/vite-for-wp and
+		the API router); it is excluded deliberately rather than reformatted.
+		Note the previous ruleset excluded "*/lib/*", which never matched
+		anything because the directory is called libs/.
+	-->
+	<exclude-pattern>*/libs/*</exclude-pattern>
 	<exclude-pattern>*/vendor/*</exclude-pattern>
-	<exclude-pattern>*/tests/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
 	<exclude-pattern>*/assets/*</exclude-pattern>
+	<exclude-pattern>*/build/*</exclude-pattern>
+	<exclude-pattern>*/tests/*</exclude-pattern>
 </ruleset>

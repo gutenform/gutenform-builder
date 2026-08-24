@@ -83,7 +83,7 @@ export default function save(props: BlockSaveProps<CheckboxAttributes>) {
 					);
 				})}
 			</div>
-			{help && <p className="gutenform-field__help">{help}</p>}
+			{help && <p className="gutenform-field__help" id={`${id}-help`}>{help}</p>}
 		</div>
 	);
 }
