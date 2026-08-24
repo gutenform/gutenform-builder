@@ -15,6 +15,8 @@ use Gutenform\Database\Seeders\MailboxesSeeder as SeedersMailboxes;
 use Gutenform\Database\Seeders\DatabaseProviderSeeder;
 use Gutenform\Traits\Base;
 
+defined('ABSPATH') || exit;
+
 /**
  * This class is responsible for the functionality
  * which is required to set up after activating the plugin
@@ -36,6 +38,8 @@ class Install
 		// $this->install_pages(); // Not needed - using standard WordPress frontend
 		$this->install_tables();
 		$this->insert_data();
+		Capabilities::grant_role_capabilities();
+		update_option('gutenform_capabilities_version', Capabilities::VERSION, false);
 	}
 
 	/**

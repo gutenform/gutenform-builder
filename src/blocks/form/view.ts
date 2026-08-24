@@ -29,7 +29,8 @@ window.addEventListener('DOMContentLoaded', () => {
             return;
         };
         const formOptions = JSON.parse(formDataOptions);
-        console.log(formOptions);
+        // Server-side spam check: how long between this form rendering and submit.
+        const renderedAt = Date.now();
 
 		// Load skin CSS dynamically
 		const skinName = form.getAttribute('data-skin') || formOptions.skin || 'default';
@@ -129,16 +130,14 @@ window.addEventListener('DOMContentLoaded', () => {
 			if (primaryMailField && primaryMailField.name) {
 				data['_primary_mail_field'] = primaryMailField.name;
 			}
-			
-			console.log(data);
-			
+
 			// Feature Flag prüfen
 			// @ts-expect-error - useProviderSystem is added dynamically by PHP
 			const useProviderSystem = window.gutenform?.useProviderSystem ?? false;
-			
+
 			if (useProviderSystem) {
 				// Neuer Provider-basierter Flow
-				const result = await submitFormWithProviders(data, formIdentifier, providerIds, providerOverrides);
+				const result = await submitFormWithProviders(data, formIdentifier, providerIds, providerOverrides, renderedAt);
 				
 				// Show debug view if debug data is present
 				if (result.debug) {
@@ -147,7 +146,6 @@ window.addEventListener('DOMContentLoaded', () => {
 				
 				if (result.success) {
 					// Success-Handling (z.B. Success-Message anzeigen)
-					console.log('Form submitted successfully', result);
 					form.classList.add('gutenform-form--success-view');
 					//clear form
 					if (form instanceof HTMLFormElement) {
@@ -529,7 +527,8 @@ async function submitFormWithProviders(
 	formData: Record<string, FormDataEntryValue>,
 	formIdentifier: string,
 	providerIds: number[],
-	providerOverrides: Record<string, { useProviderLayout: boolean; content: string; conditionalShow?: unknown }> = {}
+	providerOverrides: Record<string, { useProviderLayout: boolean; content: string; conditionalShow?: unknown }> = {},
+	renderedAt: number = 0
 ): Promise<{ success: boolean; message?: string; errors?: string[] }> {
 	try {
 		const apiUrl = window.gutenform?.apiUrl || '';
@@ -560,6 +559,7 @@ async function submitFormWithProviders(
 					provider_ids: providerIds,
 					submission_data: formData,
 					provider_overrides: apiOverrides,
+					rendered_at: renderedAt,
 				}),
 			}
 		);

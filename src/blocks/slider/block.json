@@ -39,7 +39,7 @@
 		"animationDuration": { "type": "number", "default": 300 }
 	},
 	"supports": { "html": false },
-	"textdomain": "gutenform",
+	"textdomain": "gutenform-builder",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",

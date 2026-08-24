@@ -19,14 +19,6 @@
 			"default": "friendlycaptcha",
 			"enum": ["friendlycaptcha", "recaptcha"]
 		},
-		"siteKey": {
-			"type": "string",
-			"default": ""
-		},
-		"apiKey": {
-			"type": "string",
-			"default": ""
-		},
 		"label": {
 			"type": "string",
 			"default": ""
@@ -59,7 +51,7 @@
 	"supports": {
 		"html": false
 	},
-	"textdomain": "gutenform",
+	"textdomain": "gutenform-builder",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",

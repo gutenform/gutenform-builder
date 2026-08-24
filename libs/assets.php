@@ -31,7 +31,12 @@ function get_manifest( string $manifest_dir ): object {
 	// Avoid repeatedly opening & decoding the same file.
 	static $manifests = array();
 
-	$file_names = array( $dev_manifest, 'manifest' );
+	// Only consider the dev-server manifest when WP_DEBUG is enabled, so a stray
+	// vite-dev-server.json left in a production build can never trigger loading
+	// unreviewed external-origin JavaScript on a live site.
+	$file_names = ( defined( 'WP_DEBUG' ) && WP_DEBUG )
+		? array( $dev_manifest, 'manifest' )
+		: array( 'manifest' );
 
 	foreach ( $file_names as $file_name ) {
 		$is_dev        = $file_name === $dev_manifest;

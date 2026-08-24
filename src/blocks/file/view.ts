@@ -11,7 +11,7 @@ interface UploadedFile {
 	original_name: string;
 	type: string;
 	size: number;
-	attachment_id?: number;
+	token: string;
 }
 
 interface FileUploadState {
@@ -34,9 +34,7 @@ function initFileUploadField(field: HTMLElement) {
 	const uploadZone = field.querySelector<HTMLElement>('.gutenform-file-upload-zone');
 	const fileInput = field.querySelector<HTMLInputElement>('.gutenform-file-input');
 	const fileList = field.querySelector<HTMLElement>('.gutenform-file-upload-list');
-	const urlInput = field.querySelector<HTMLInputElement>('.gutenform-file-url-input');
-	const urlUploadBtn = field.querySelector<HTMLButtonElement>('.gutenform-file-url-upload-btn');
-	
+
 	if (!uploadZone || !fileInput || !fileList) {
 		return;
 	}
@@ -47,7 +45,6 @@ function initFileUploadField(field: HTMLElement) {
 	const acceptTypes = field.getAttribute('data-accept-types') || '';
 	const maxFileSize = parseInt(field.getAttribute('data-max-file-size') || '0', 10);
 	const maxFiles = parseInt(field.getAttribute('data-max-files') || '5', 10);
-	const allowUrlUpload = field.getAttribute('data-allow-url-upload') === 'true';
 
 	const uploadedFiles: UploadedFile[] = [];
 	const uploadStates = new Map<File, FileUploadState>();
@@ -87,25 +84,6 @@ function initFileUploadField(field: HTMLElement) {
 		// Reset input to allow selecting the same file again
 		target.value = '';
 	});
-
-	// URL upload
-	if (allowUrlUpload && urlInput && urlUploadBtn) {
-		urlUploadBtn.addEventListener('click', () => {
-			const url = urlInput.value.trim();
-			if (url) {
-				handleUrlUpload(url);
-			}
-		});
-
-		urlInput.addEventListener('keypress', (e) => {
-			if (e.key === 'Enter') {
-				const url = urlInput.value.trim();
-				if (url) {
-					handleUrlUpload(url);
-				}
-			}
-		});
-	}
 
 	function handleFiles(files: File[]) {
 		// Check max files limit
@@ -239,57 +217,6 @@ function initFileUploadField(field: HTMLElement) {
 		xhr.send(formData);
 	}
 
-	function handleUrlUpload(url: string) {
-		if (!urlInput || !urlUploadBtn) {
-			return;
-		}
-
-		// Disable input and button
-		urlInput.disabled = true;
-		urlUploadBtn.disabled = true;
-		urlUploadBtn.textContent = 'Uploading...';
-
-		const apiUrl = (window as any).gutenform?.apiUrl || '';
-		const nonce = (window as any).gutenform?.nonce || '';
-		const namespace = (window as any).gutenform?.namespace || 'gutenform/v1';
-
-		fetch(`${apiUrl}${namespace}/upload-from-url`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-WP-Nonce': nonce,
-			},
-			body: JSON.stringify({
-				url: url,
-				field_name: fieldName,
-				max_file_size: maxFileSize > 0 ? maxFileSize : undefined,
-				accept_types: acceptTypes || undefined,
-			}),
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				if (data.success && data.files && data.files.length > 0) {
-					data.files.forEach((file: UploadedFile) => {
-						uploadedFiles.push(file);
-						const fileItem = createUrlUploadedFileItem(file);
-						fileList.appendChild(fileItem);
-					});
-					updateHiddenInput();
-					urlInput.value = '';
-				} else {
-					showError(data.message || 'Upload failed');
-				}
-			})
-			.catch((error) => {
-				showError(error.message || 'Network error');
-			})
-			.finally(() => {
-				urlInput.disabled = false;
-				urlUploadBtn.disabled = false;
-				urlUploadBtn.textContent = 'Upload';
-			});
-	}
-
 	function createFileItem(file: File, state: FileUploadState): HTMLElement {
 		const item = document.createElement('div');
 		item.className = 'gutenform-file-item';
@@ -365,36 +292,6 @@ function initFileUploadField(field: HTMLElement) {
 				});
 			}
 		}
-	}
-
-	function createUrlUploadedFileItem(file: UploadedFile): HTMLElement {
-		const item = document.createElement('div');
-		item.className = 'gutenform-file-item gutenform-file-item--success';
-		const isImage = file.type.startsWith('image/');
-		const fileSize = formatFileSize(file.size);
-		
-		item.innerHTML = `
-			<div class="gutenform-file-item-info">
-				${isImage ? `<img src="${escapeHtml(file.url)}" alt="${escapeHtml(file.name)}" class="gutenform-file-item-thumbnail" />` : ''}
-				<span class="gutenform-file-item-name">${escapeHtml(file.original_name || file.name)}</span>
-				<span class="gutenform-file-item-size">${fileSize}</span>
-			</div>
-			<button type="button" class="gutenform-file-item-remove" aria-label="Remove file">×</button>
-		`;
-		
-		const removeBtn = item.querySelector('.gutenform-file-item-remove');
-		if (removeBtn) {
-			removeBtn.addEventListener('click', () => {
-				const index = uploadedFiles.findIndex(f => f.url === file.url);
-				if (index > -1) {
-					uploadedFiles.splice(index, 1);
-					updateHiddenInput();
-				}
-				item.remove();
-			});
-		}
-		
-		return item;
 	}
 
 	function validateFileType(file: File, acceptTypes: string): boolean {

@@ -7,9 +7,10 @@
  * Author: Streamery
  * Author URI: https://streamery.de
  * License: GPL-2.0-or-later
- * Version: 0.0.1
- * Update URI: false
- * Text Domain: gutenform
+ * Version: 1.0.0
+ * Requires at least: 6.5
+ * Requires PHP: 7.4
+ * Text Domain: gutenform-builder
  * Domain Path: /languages
  *
  * @package Gutenform

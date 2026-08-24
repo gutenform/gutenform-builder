@@ -117,33 +117,54 @@ abstract class AbstractProvider
      * - {ip_address} - Client IP address
      * - {all_fields} - All form fields as a list (key: value)
      *
-     * @param string $content The string with placeholders
-     * @param array  $submission_data The form data
-     * @param string $form_identifier The form identifier
-     * @return string String with replaced placeholders
+     * @param string $content       The string with placeholders.
+     * @param array  $submission_data The form data.
+     * @param string $form_identifier The form identifier.
+     * @param bool   $escape_values Whether field values should be HTML-escaped before
+     *                              substitution. Pass true only when $content is going to be
+     *                              rendered as HTML (an email body) -- leave false (default)
+     *                              for plain-text contexts like a Subject header, an email
+     *                              address, or a From name, where escaping would corrupt the
+     *                              value instead of protecting anything (those all still go
+     *                              through their own sanitize_email()/sanitize_text_field()
+     *                              afterwards).
+     * @return string String with replaced placeholders.
      */
     protected function replace_placeholders(
         string $content,
         array $submission_data,
-        string $form_identifier
+        string $form_identifier,
+        bool $escape_values = false
     ): string {
         $replacements = array();
 
+        $prepare = function ($value) use ($escape_values) {
+            if (is_array($value)) {
+                $value = implode(', ', array_map(function ($item) {
+                    return is_scalar($item) ? (string) $item : '';
+                }, $value));
+            } else {
+                $value = (string) $value;
+            }
+
+            return $escape_values ? esc_html($value) : $value;
+        };
+
         // Replace form field values
         foreach ($submission_data as $key => $value) {
-            $replacements['{' . $key . '}'] = is_array($value) ? implode(', ', $value) : $value;
+            $replacements['{' . $key . '}'] = $prepare($value);
         }
 
         // Standard placeholders
-        $replacements['{form_identifier}'] = $form_identifier;
-        $replacements['{form_title}']     = $this->get_form_title($form_identifier);
-        $replacements['{site_name}']      = get_bloginfo('name');
+        $replacements['{form_identifier}'] = $prepare($form_identifier);
+        $replacements['{form_title}']     = $prepare($this->get_form_title($form_identifier));
+        $replacements['{site_name}']      = $prepare(get_bloginfo('name'));
         $replacements['{date}']           = current_time('Y-m-d');
         $replacements['{time}']           = current_time('H:i:s');
         $replacements['{ip_address}']    = $this->get_client_ip();
         $replacements['{all_fields}']    = $this->format_all_fields($submission_data);
-        
-        // Primary mail placeholder
+
+        // Primary mail placeholder (already validated by is_email()/sanitize_email(), never escaped)
         $replacements['{form_primary_mail}'] = $this->get_primary_mail($submission_data);
 
         // Replace all placeholders
@@ -205,22 +226,25 @@ abstract class AbstractProvider
             if (is_array($value)) {
                 // Check if this is a file array (has 'url' key in first element)
                 if (!empty($value) && is_array($value[0]) && isset($value[0]['url'])) {
-                    // This is a file upload field
+                    // This is a file upload field. format_file_field() builds its own
+                    // markup from esc_url()/esc_html()-wrapped pieces -- safe as-is.
                     $formatted_value = $this->format_file_field($value);
                 } else {
-                    $formatted_value = implode(', ', $value);
+                    $formatted_value = esc_html(implode(', ', array_map(function ($item) {
+                        return is_scalar($item) ? (string) $item : '';
+                    }, $value)));
                 }
             } elseif (is_bool($value)) {
-                $formatted_value = $value ? __('Yes', 'gutenform') : __('No', 'gutenform');
+                $formatted_value = $value ? __('Yes', 'gutenform-builder') : __('No', 'gutenform-builder');
             } else {
-                $formatted_value = (string) $value;
+                $formatted_value = esc_html((string) $value);
             }
 
             $rows .= '<tr style="border-bottom:1px solid #eee;"><td style="padding: 5px 10px; font-weight:bold; text-align:left;">' . esc_html($key) . '</td><td style="padding: 5px 10px;">' . $formatted_value . '</td></tr>';
         }
 
         $table = '<table style="border-collapse:collapse;width:100%;background:#fafbfc;border:1px solid #eaeaea;font-family:sans-serif;font-size:14px;margin:10px 0 15px 0;">';
-        $table .= '<thead><tr style="background:#f0f4f8;"><th style="padding:8px 10px; text-align:left; border-bottom:2px solid #eaeaea;">' . __('Field', 'gutenform') . '</th><th style="padding:8px 10px;text-align:left; border-bottom:2px solid #eaeaea;">' . __('Value', 'gutenform') . '</th></tr></thead>';
+        $table .= '<thead><tr style="background:#f0f4f8;"><th style="padding:8px 10px; text-align:left; border-bottom:2px solid #eaeaea;">' . __('Field', 'gutenform-builder') . '</th><th style="padding:8px 10px;text-align:left; border-bottom:2px solid #eaeaea;">' . __('Value', 'gutenform-builder') . '</th></tr></thead>';
         $table .= '<tbody>' . $rows . '</tbody>';
         $table .= '</table>';
 
@@ -244,32 +268,37 @@ abstract class AbstractProvider
     /**
      * Gets the client IP address.
      *
-     * @return string The IP address
+     * Trusts only REMOTE_ADDR by default -- every X-Forwarded-For-style header
+     * is set by the client's own request and is trivially spoofable unless a
+     * specific trusted reverse proxy strips/overwrites it, which this plugin
+     * has no way to know. Sites that do run behind such a proxy can opt in to
+     * a specific header via the gutenform/client_ip/trusted_header filter.
+     *
+     * @return string The IP address.
      */
     protected function get_client_ip(): string
     {
-        $ip_keys = array(
-            'HTTP_CLIENT_IP',
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_FORWARDED',
-            'HTTP_X_CLUSTER_CLIENT_IP',
-            'HTTP_FORWARDED_FOR',
-            'HTTP_FORWARDED',
-            'REMOTE_ADDR',
-        );
+        $remote_addr = isset($_SERVER['REMOTE_ADDR']) ? trim((string) $_SERVER['REMOTE_ADDR']) : '';
 
-        foreach ($ip_keys as $key) {
-            if (array_key_exists($key, $_SERVER) === true) {
-                foreach (explode(',', $_SERVER[$key]) as $ip) {
-                    $ip = trim($ip);
-                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
-                        return $ip;
-                    }
+        /**
+         * Filters which $_SERVER header (if any) to trust for the client IP ahead of
+         * REMOTE_ADDR. Only enable this if a trusted, misconfiguration-proof reverse
+         * proxy sits in front of the site and is known to set/overwrite this header.
+         *
+         * @param string|null $header e.g. 'HTTP_X_FORWARDED_FOR'. Null (default) trusts only REMOTE_ADDR.
+         */
+        $trusted_header = apply_filters('gutenform/client_ip/trusted_header', null);
+
+        if (! empty($trusted_header) && array_key_exists($trusted_header, $_SERVER)) {
+            foreach (explode(',', $_SERVER[$trusted_header]) as $ip) {
+                $ip = trim($ip);
+                if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
+                    return $ip;
                 }
             }
         }
 
-        return $_SERVER['REMOTE_ADDR'] ?? '';
+        return filter_var($remote_addr, FILTER_VALIDATE_IP) !== false ? $remote_addr : '';
     }
 
     /**

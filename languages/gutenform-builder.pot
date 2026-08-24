@@ -12,7 +12,7 @@ msgstr ""
 "POT-Creation-Date: 2025-12-16T22:16:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
-"X-Domain: gutenform\n"
+"X-Domain: gutenform-builder\n"
 
 #. Plugin Name of the plugin
 #: gutenform-builder.php

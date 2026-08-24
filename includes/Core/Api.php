@@ -5,6 +5,8 @@ namespace Gutenform\Core;
 use Gutenform\Traits\Base;
 use Gutenform\Libs\API\Config;
 
+defined('ABSPATH') || exit;
+
 /**
  * Class API
  *

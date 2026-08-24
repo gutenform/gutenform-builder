@@ -8,6 +8,8 @@ use Gutenform\Traits\Base;
 use Gutenform\Libs\Assets;
 use Gutenform\Assets\Strings;
 
+defined('ABSPATH') || exit;
+
 /**
  * Class Admin
  *
@@ -75,7 +77,7 @@ class Admin
 				// Load translations for JavaScript
 				// Use same path format as load_plugin_textdomain
 				$plugin_rel_path = dirname(plugin_basename(GF_PLUGIN_FILE)) . '/languages';
-				wp_set_script_translations(self::HANDLE, 'gutenform', $plugin_rel_path);
+				wp_set_script_translations(self::HANDLE, 'gutenform-builder', $plugin_rel_path);
 			}
 		}
 	}

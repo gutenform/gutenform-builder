@@ -7,6 +7,8 @@ namespace Gutenform\Assets;
 use Gutenform\Traits\Base;
 use Gutenform\Libs\Assets;
 
+defined('ABSPATH') || exit;
+
 /**
  * Class Frontend
  *
@@ -65,16 +67,30 @@ class Frontend
 		// Get REST API URL and nonce
 		$api_url = rest_url();
 		$nonce = wp_create_nonce('wp_rest');
+		$captcha = $this->get_public_captcha_config();
+
+		// reCAPTCHA stays a third-party *service* call (documented in readme.txt), but
+		// per WP.org guideline 8 it must be enqueued, never DOM-injected by our JS.
+		if (!empty($captcha['recaptcha']['enabled']) && !empty($captcha['recaptcha']['siteKey'])) {
+			wp_enqueue_script(
+				'gutenform-recaptcha',
+				'https://www.google.com/recaptcha/api.js?render=' . rawurlencode($captcha['recaptcha']['siteKey']),
+				array(),
+				null,
+				true
+			);
+		}
 
 		// Always set the gutenform object inline so it's available before view scripts run
 		$inline_script = sprintf(
-			'window.gutenform = window.gutenform || {}; window.gutenform.assetsUrl = %s; window.gutenform.pluginUrl = %s; window.gutenform.apiUrl = %s; window.gutenform.nonce = %s; window.gutenform.namespace = %s; window.gutenform.useProviderSystem = %s;',
+			'window.gutenform = window.gutenform || {}; window.gutenform.assetsUrl = %s; window.gutenform.pluginUrl = %s; window.gutenform.apiUrl = %s; window.gutenform.nonce = %s; window.gutenform.namespace = %s; window.gutenform.useProviderSystem = %s; window.gutenform.captcha = %s;',
 			wp_json_encode(GF_ASSETS_URL),
 			wp_json_encode(GF_URL),
 			wp_json_encode($api_url),
 			wp_json_encode($nonce),
 			wp_json_encode(GF_ROUTE_PREFIX),
-			wp_json_encode(gutenform_use_provider_system())
+			wp_json_encode(gutenform_use_provider_system()),
+			wp_json_encode($captcha)
 		);
 
 		// Try to add inline script to wp-blocks, fallback to wp-util if not available
@@ -87,7 +103,7 @@ class Frontend
 		} else {
 			// Fallback: add directly to head
 			add_action('wp_head', function () use ($inline_script) {
-				echo '<script>' . $inline_script . '</script>' . "\n";
+				wp_print_inline_script_tag($inline_script);
 			}, 1);
 		}
 
@@ -124,9 +140,32 @@ class Frontend
 					'nonce'            => $nonce,
 					'namespace'        => GF_ROUTE_PREFIX,
 					'useProviderSystem' => gutenform_use_provider_system(),
+					'captcha'          => $captcha,
 				)
 			);
 		}
+	}
+
+	/**
+	 * Public (non-secret) CAPTCHA config for the frontend: whether each
+	 * provider is enabled and its site key. Never includes the secret key.
+	 *
+	 * @return array
+	 */
+	private function get_public_captcha_config(): array
+	{
+		$settings = get_option('gutenform_captcha_settings', array());
+		$config   = array();
+
+		foreach (array('recaptcha', 'friendlycaptcha') as $provider) {
+			$provider_settings = is_array($settings[$provider] ?? null) ? $settings[$provider] : array();
+			$config[$provider]  = array(
+				'enabled' => !empty($provider_settings['enabled']),
+				'siteKey' => $provider_settings['site_key'] ?? '',
+			);
+		}
+
+		return $config;
 	}
 
 	/**

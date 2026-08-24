@@ -135,7 +135,6 @@ export function GeneralForm() {
       description: __("settingsSavedDescription"),
     })
     // TODO: Implement API call to save settings
-    console.log("Settings data:", data)
   }
 
   return (

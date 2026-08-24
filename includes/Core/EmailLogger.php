@@ -164,7 +164,9 @@ class EmailLogger
             EmailLogs::create($log_data);
         } catch (\Exception $e) {
             // Log error but don't break email sending
-            error_log('Gutenform Email Logger Error: ' . $e->getMessage());
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('Gutenform Email Logger Error: ' . $e->getMessage());
+            }
         }
 
         // Clear current email data

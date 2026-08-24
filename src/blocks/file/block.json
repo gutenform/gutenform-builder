@@ -62,10 +62,6 @@
 			"type": "number",
 			"default": 5
 		},
-		"allowUrlUpload": {
-			"type": "boolean",
-			"default": true
-		},
 		"conditionalShow": {
 			"type": "object",
 			"default": null
@@ -74,7 +70,7 @@
 	"supports": {
 		"html": false
 	},
-	"textdomain": "gutenform",
+	"textdomain": "gutenform-builder",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",

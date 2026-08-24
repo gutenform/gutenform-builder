@@ -4,6 +4,8 @@ namespace Gutenform\Admin;
 
 use Gutenform\Traits\Base;
 
+defined('ABSPATH') || exit;
+
 /**
  * Class Menu
  *
@@ -43,8 +45,8 @@ class Menu
 	{
 
 		add_menu_page(
-			__('Gutenform', 'gutenform'),
-			__('Gutenform', 'gutenform'),
+			__('Gutenform', 'gutenform-builder'),
+			__('Gutenform', 'gutenform-builder'),
 			'manage_options',
 			$this->parent_slug,
 			array($this, 'admin_page'),
@@ -58,24 +60,24 @@ class Menu
 		$submenu_pages = array(
 			array(
 				'parent_slug' => $this->parent_slug,
-				'page_title'  => __('Inbox', 'gutenform'),
-				'menu_title'  => __('Inbox', 'gutenform'),
+				'page_title'  => __('Inbox', 'gutenform-builder'),
+				'menu_title'  => __('Inbox', 'gutenform-builder'),
 				'capability'  => 'manage_options',
 				'menu_slug'   => $this->parent_slug,
 				'function'    => array($this, 'admin_page'),
 			),
 			array(
 				'parent_slug' => $this->parent_slug,
-				'page_title'  => __('Forms', 'gutenform'),
-				'menu_title'  => __('Forms', 'gutenform'),
+				'page_title'  => __('Forms', 'gutenform-builder'),
+				'menu_title'  => __('Forms', 'gutenform-builder'),
 				'capability'  => 'manage_options',
 				'menu_slug'   => $forms_usage_slug,
 				'function'    => array($this, 'admin_page'),
 			),
 			array(
 				'parent_slug' => $this->parent_slug,
-				'page_title'  => __('Settings', 'gutenform'),
-				'menu_title'  => __('Settings', 'gutenform'),
+				'page_title'  => __('Settings', 'gutenform-builder'),
+				'menu_title'  => __('Settings', 'gutenform-builder'),
 				'capability'  => 'manage_options',
 				'menu_slug'   => $settings_slug,
 				'function'    => array($this, 'admin_page'),

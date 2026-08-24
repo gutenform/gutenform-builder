@@ -2,6 +2,8 @@
 
 namespace Gutenform\Traits;
 
+defined('ABSPATH') || exit;
+
 /**
  * Trait Base
  *

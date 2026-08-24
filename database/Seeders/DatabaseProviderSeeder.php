@@ -13,6 +13,8 @@ namespace Gutenform\Database\Seeders;
 use Gutenform\Models\Providers;
 use Gutenform\Models\Mailboxes;
 
+defined('ABSPATH') || exit;
+
 /**
  * Class DatabaseProviderSeeder
  *
@@ -44,12 +46,12 @@ class DatabaseProviderSeeder
             // Create default Database Provider.
             Providers::create(
                 array(
-                    'name'            => __('Database Provider (Standard)', 'gutenform'),
+                    'name'            => __('Database Provider (Standard)', 'gutenform-builder'),
                     'provider_type'   => 'database',
                     'form_identifier' => null, // Global provider
                     'settings'        => array(
                         'mailbox_id'  => $mailbox_id,
-                        'subject'     => __('Neue Formular-Übermittlung: {form_title}', 'gutenform'),
+                        'subject'     => __('Neue Formular-Übermittlung: {form_title}', 'gutenform-builder'),
                         'body'        => '{all_fields}',
                         'from_email'  => get_option('admin_email'),
                     ),

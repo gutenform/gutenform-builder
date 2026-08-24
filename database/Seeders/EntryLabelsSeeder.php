@@ -12,6 +12,8 @@ namespace Gutenform\Database\Seeders;
 
 use Gutenform\Models\EntryLabels;
 
+defined('ABSPATH') || exit;
+
 /**
  * Class EntryLabels
  *
@@ -41,8 +43,8 @@ class EntryLabelsSeeder
 				'date_created' => $current_date,
 			),
 			array(
-				'name'         => __('Follow Up', 'gutenform'),
-				'description'  => __('Entries that need follow-up', 'gutenform'),
+				'name'         => __('Follow Up', 'gutenform-builder'),
+				'description'  => __('Entries that need follow-up', 'gutenform-builder'),
 				'color'        => '#f59e0b', // Amber
 				'date_created' => $current_date,
 			),

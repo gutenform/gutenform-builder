@@ -35,7 +35,7 @@ class Actions
         if (!current_user_can('manage_options')) {
             return new \WP_Error(
                 'rest_forbidden',
-                __('You do not have permission to view email templates.', 'gutenform'),
+                __('You do not have permission to view email templates.', 'gutenform-builder'),
                 array('status' => 403)
             );
         }
@@ -60,7 +60,7 @@ class Actions
         if (!current_user_can('manage_options')) {
             return new \WP_Error(
                 'rest_forbidden',
-                __('You do not have permission to view email templates.', 'gutenform'),
+                __('You do not have permission to view email templates.', 'gutenform-builder'),
                 array('status' => 403)
             );
         }
@@ -69,7 +69,7 @@ class Actions
         if (empty($template_name)) {
             return new \WP_Error(
                 'missing_template_name',
-                __('Template name is required.', 'gutenform'),
+                __('Template name is required.', 'gutenform-builder'),
                 array('status' => 400)
             );
         }
@@ -78,7 +78,7 @@ class Actions
         if ($content === false) {
             return new \WP_Error(
                 'template_not_found',
-                __('Template not found.', 'gutenform'),
+                __('Template not found.', 'gutenform-builder'),
                 array('status' => 404)
             );
         }
@@ -108,7 +108,7 @@ class Actions
         if (!current_user_can('manage_options')) {
             return new \WP_Error(
                 'rest_forbidden',
-                __('You do not have permission to preview email templates.', 'gutenform'),
+                __('You do not have permission to preview email templates.', 'gutenform-builder'),
                 array('status' => 403)
             );
         }
@@ -118,7 +118,7 @@ class Actions
         if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
             return new \WP_Error(
                 'rest_forbidden',
-                __('Security check failed.', 'gutenform'),
+                __('Security check failed.', 'gutenform-builder'),
                 array('status' => 403)
             );
         }
@@ -130,7 +130,7 @@ class Actions
         if (empty($template_name)) {
             return new \WP_Error(
                 'missing_template_name',
-                __('Template name is required.', 'gutenform'),
+                __('Template name is required.', 'gutenform-builder'),
                 array('status' => 400)
             );
         }
@@ -139,7 +139,7 @@ class Actions
         if ($template_content === false) {
             return new \WP_Error(
                 'template_not_found',
-                __('Template not found.', 'gutenform'),
+                __('Template not found.', 'gutenform-builder'),
                 array('status' => 404)
             );
         }

@@ -1,6 +1,7 @@
 <?php
 
 use Gutenform\Core\Api;
+use Gutenform\Core\Capabilities;
 use Gutenform\Core\Deactivate;
 use Gutenform\Core\Smtp;
 use Gutenform\Core\EmailLogger;
@@ -33,12 +34,17 @@ final class Gutenform
 	 */
 	public function __construct()
 	{
-		define('GF_VERSION', '0.0.1');
-		define('GF_PLUGIN_FILE', __FILE__);
-		define('GF_DIR', plugin_dir_path(__FILE__));
-		define('GF_URL', plugin_dir_url(__FILE__));
+		// GF_PLUGIN_FILE must point at the main plugin bootstrap file (gutenform-builder.php),
+		// not this file, since plugin_basename()/get_file_data() need the file WordPress
+		// registered as the plugin (the one carrying the plugin header).
+		define('GF_PLUGIN_FILE', __DIR__ . '/gutenform-builder.php');
+		define('GF_DIR', plugin_dir_path(GF_PLUGIN_FILE));
+		define('GF_URL', plugin_dir_url(GF_PLUGIN_FILE));
 		define('GF_ASSETS_URL', GF_URL . '/assets');
 		define('GF_ROUTE_PREFIX', 'gutenform/v1');
+
+		$plugin_data = get_file_data(GF_PLUGIN_FILE, array('Version' => 'Version'));
+		define('GF_VERSION', ! empty($plugin_data['Version']) ? $plugin_data['Version'] : '1.0.0');
 	}
 
 	/**
@@ -55,12 +61,14 @@ final class Gutenform
 			Menu::get_instance()->init();
 			Admin::get_instance()->bootstrap();
 			Deactivate::get_instance()->init();
+			\Gutenform\Core\Crypto::maybe_show_unavailable_notice();
 		}
 
 		// Admin bar (runs on frontend and admin).
 		AdminBar::get_instance()->init();
 
 		// Initialze core functionalities.
+		Capabilities::get_instance()->init();
 		Frontend::get_instance()->bootstrap();
 		API::get_instance()->init();
 		Smtp::get_instance()->init();
@@ -98,6 +106,6 @@ final class Gutenform
 	 */
 	public function i18n()
 	{
-		load_plugin_textdomain('gutenform', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+		load_plugin_textdomain('gutenform-builder', false, dirname(plugin_basename(GF_PLUGIN_FILE)) . '/languages/');
 	}
 }

@@ -28,7 +28,7 @@ class Actions
         if (!current_user_can('manage_options')) {
             return new \WP_Error(
                 'rest_forbidden',
-                __('You do not have permission to view email logs.', 'gutenform'),
+                __('You do not have permission to view email logs.', 'gutenform-builder'),
                 array('status' => 403)
             );
         }
@@ -73,7 +73,7 @@ class Actions
         if (!current_user_can('manage_options')) {
             return new \WP_Error(
                 'rest_forbidden',
-                __('You do not have permission to view email logs.', 'gutenform'),
+                __('You do not have permission to view email logs.', 'gutenform-builder'),
                 array('status' => 403)
             );
         }
@@ -84,7 +84,7 @@ class Actions
         if (!$log) {
             return new \WP_Error(
                 'not_found',
-                __('Email log not found.', 'gutenform'),
+                __('Email log not found.', 'gutenform-builder'),
                 array('status' => 404)
             );
         }
@@ -107,7 +107,7 @@ class Actions
         if (!current_user_can('manage_options')) {
             return new \WP_Error(
                 'rest_forbidden',
-                __('You do not have permission to delete email logs.', 'gutenform'),
+                __('You do not have permission to delete email logs.', 'gutenform-builder'),
                 array('status' => 403)
             );
         }
@@ -118,7 +118,7 @@ class Actions
         if (!$log) {
             return new \WP_Error(
                 'not_found',
-                __('Email log not found.', 'gutenform'),
+                __('Email log not found.', 'gutenform-builder'),
                 array('status' => 404)
             );
         }
@@ -127,7 +127,7 @@ class Actions
 
         return array(
             'success' => true,
-            'message' => __('Email log deleted successfully.', 'gutenform'),
+            'message' => __('Email log deleted successfully.', 'gutenform-builder'),
         );
     }
 
@@ -143,7 +143,7 @@ class Actions
         if (!current_user_can('manage_options')) {
             return new \WP_Error(
                 'rest_forbidden',
-                __('You do not have permission to delete email logs.', 'gutenform'),
+                __('You do not have permission to delete email logs.', 'gutenform-builder'),
                 array('status' => 403)
             );
         }
@@ -152,7 +152,7 @@ class Actions
 
         return array(
             'success' => true,
-            'message' => __('All email logs deleted successfully.', 'gutenform'),
+            'message' => __('All email logs deleted successfully.', 'gutenform-builder'),
         );
     }
 }

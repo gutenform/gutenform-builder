@@ -73,7 +73,7 @@ class AdminBar
 
 		// Build the title with optional bubble.
 		$title = '<span class="ab-icon dashicons dashicons-email"></span>';
-		$title .= '<span class="ab-label">' . esc_html__('Gutenform', 'gutenform') . '</span>';
+		$title .= '<span class="ab-label">' . esc_html__('Gutenform', 'gutenform-builder') . '</span>';
 
 		if ($unread_count > 0) {
 			$display_count = $unread_count > 99 ? '99+' : $unread_count;
@@ -123,7 +123,7 @@ class AdminBar
 		$wp_admin_bar->add_node(array(
 			'id'     => 'gutenform-settings',
 			'parent' => 'gutenform',
-			'title'  => esc_html__('Settings', 'gutenform'),
+			'title'  => esc_html__('Settings', 'gutenform-builder'),
 			'href'   => admin_url('admin.php?page=gutenform-settings#/settings'),
 		));
 	}

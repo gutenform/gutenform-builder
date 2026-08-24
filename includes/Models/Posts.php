@@ -4,6 +4,8 @@ namespace Gutenform\Models;
 
 use Prappo\WpEloquent\Database\Eloquent\Model;
 
+defined('ABSPATH') || exit;
+
 class Posts extends Model {
 	/**
 	 * The table associated with the model.

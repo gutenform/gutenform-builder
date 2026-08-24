@@ -64,12 +64,13 @@ class Handler
                 $database_settings['mailbox_id'] = $this->get_default_mailbox_id();
             }
             
-            // Log mailbox assignment for debugging
-            error_log(sprintf(
-                'GutenForm Handler: Processing submission for form "%s" with mailbox_id: %d',
-                $form_identifier,
-                $database_settings['mailbox_id']
-            ));
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log(sprintf(
+                    'GutenForm Handler: Processing submission for form "%s" with mailbox_id: %d',
+                    $form_identifier,
+                    $database_settings['mailbox_id']
+                ));
+            }
             
             try {
                 $success = $database_provider->process_submission(
@@ -83,11 +84,11 @@ class Handler
                 );
 
                 if (! $success) {
-                    $errors[] = __('Database Provider could not process the submission.', 'gutenform');
+                    $errors[] = __('Database Provider could not process the submission.', 'gutenform-builder');
                 }
             } catch (\Exception $e) {
                 $errors[] = sprintf(
-                    __('Database Provider Error: %s', 'gutenform'),
+                    __('Database Provider Error: %s', 'gutenform-builder'),
                     $e->getMessage()
                 );
                 $results['database'] = array(
@@ -110,7 +111,7 @@ class Handler
 
                 if (! $provider) {
                     $errors[] = sprintf(
-                        __('Provider "%s" not found.', 'gutenform'),
+                        __('Provider "%s" not found.', 'gutenform-builder'),
                         $provider_slug
                     );
                     continue;
@@ -157,13 +158,13 @@ class Handler
 
                     if (! $success) {
                         $errors[] = sprintf(
-                            __('Provider "%s" could not process the submission.', 'gutenform'),
+                            __('Provider "%s" could not process the submission.', 'gutenform-builder'),
                             $provider->get_title()
                         );
                     }
                 } catch (\Exception $e) {
                     $errors[] = sprintf(
-                        __('Error in Provider "%s": %s', 'gutenform'),
+                        __('Error in Provider "%s": %s', 'gutenform-builder'),
                         $provider->get_title(),
                         $e->getMessage()
                     );
@@ -250,12 +251,12 @@ class Handler
      */
     private function create_default_database_provider() {
         $provider = new Providers();
-        $provider->name            = __( 'Database Provider (Default)', 'gutenform' );
+        $provider->name            = __( 'Database Provider (Default)', 'gutenform-builder' );
         $provider->provider_type   = 'database';
         $provider->form_identifier = null; // Global
         $provider->settings        = array(
             'mailbox_id'  => $this->get_default_mailbox_id(),
-            'subject'     => __( 'New Form Submission: {form_title}', 'gutenform' ),
+            'subject'     => __( 'New Form Submission: {form_title}', 'gutenform-builder' ),
             'body'        => '{all_fields}',
             'from_email'  => get_option( 'admin_email' ),
         );

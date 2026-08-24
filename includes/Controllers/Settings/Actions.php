@@ -10,6 +10,7 @@
 namespace Gutenform\Controllers\Settings;
 
 use Gutenform\Core\Debug;
+use Gutenform\Core\Crypto;
 use Gutenform\Admin\AdminBar;
 
 defined('ABSPATH') || exit;
@@ -27,7 +28,7 @@ class Actions
 		if (!current_user_can('manage_options')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('You do not have permission to view SMTP settings.', 'gutenform'),
+				__('You do not have permission to view SMTP settings.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -72,7 +73,7 @@ class Actions
 		if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('Security check failed.', 'gutenform'),
+				__('Security check failed.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -81,7 +82,7 @@ class Actions
 		if (!current_user_can('manage_options')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('You do not have permission to manage settings.', 'gutenform'),
+				__('You do not have permission to manage settings.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -107,7 +108,7 @@ class Actions
 			if (empty($settings['host'])) {
 				return new \WP_Error(
 					'invalid_settings',
-					__('SMTP host is required when SMTP is enabled.', 'gutenform'),
+					__('SMTP host is required when SMTP is enabled.', 'gutenform-builder'),
 					array('status' => 400)
 				);
 			}
@@ -115,7 +116,7 @@ class Actions
 			if ($settings['auth'] && empty($settings['username'])) {
 				return new \WP_Error(
 					'invalid_settings',
-					__('SMTP username is required when authentication is enabled.', 'gutenform'),
+					__('SMTP username is required when authentication is enabled.', 'gutenform-builder'),
 					array('status' => 400)
 				);
 			}
@@ -123,7 +124,7 @@ class Actions
 			if (!is_email($settings['from_email'])) {
 				return new \WP_Error(
 					'invalid_settings',
-					__('Invalid from email address.', 'gutenform'),
+					__('Invalid from email address.', 'gutenform-builder'),
 					array('status' => 400)
 				);
 			}
@@ -132,7 +133,7 @@ class Actions
 		// Encrypt password if provided
 		if (!empty($settings['password'])) {
 			// Only update password if a new one is provided
-			$settings['password'] = base64_encode($settings['password']);
+			$settings['password'] = Crypto::encrypt($settings['password']);
 		} else {
 			// Keep existing password if not provided
 			$existing = get_option('gutenform_smtp_settings', array());
@@ -152,13 +153,13 @@ class Actions
 			
 			return array(
 				'success' => true,
-				'message' => __('SMTP settings saved successfully.', 'gutenform'),
+				'message' => __('SMTP settings saved successfully.', 'gutenform-builder'),
 				'data' => $saved_settings,
 			);
 		} catch (\Exception $e) {
 			return new \WP_Error(
 				'save_failed',
-				__('Failed to save SMTP settings: ', 'gutenform') . $e->getMessage(),
+				__('Failed to save SMTP settings: ', 'gutenform-builder') . $e->getMessage(),
 				array('status' => 500)
 			);
 		}
@@ -177,7 +178,7 @@ class Actions
 		if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('Security check failed.', 'gutenform'),
+				__('Security check failed.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -186,7 +187,7 @@ class Actions
 		if (!current_user_can('manage_options')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('You do not have permission to test SMTP settings.', 'gutenform'),
+				__('You do not have permission to test SMTP settings.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -206,7 +207,7 @@ class Actions
 		if (empty($test_settings['enabled'])) {
 			return new \WP_Error(
 				'smtp_disabled',
-				__('SMTP is not enabled.', 'gutenform'),
+				__('SMTP is not enabled.', 'gutenform-builder'),
 				array('status' => 400)
 			);
 		}
@@ -223,7 +224,7 @@ class Actions
 		if (empty($test_email_raw) || !is_email($test_email_raw)) {
 			return new \WP_Error(
 				'invalid_email',
-				__('Invalid test email address. Please provide a valid email address.', 'gutenform'),
+				__('Invalid test email address. Please provide a valid email address.', 'gutenform-builder'),
 				array('status' => 400)
 			);
 		}
@@ -235,7 +236,7 @@ class Actions
 		if (empty($test_email) || !is_email($test_email)) {
 			return new \WP_Error(
 				'invalid_email',
-				sprintf(__('Invalid test email address after sanitization: %s', 'gutenform'), $test_email_raw),
+				sprintf(__('Invalid test email address after sanitization: %s', 'gutenform-builder'), $test_email_raw),
 				array('status' => 400)
 			);
 		}
@@ -251,7 +252,7 @@ class Actions
 			if (empty($from_email) || !is_email($from_email)) {
 				return new \WP_Error(
 					'invalid_from_email',
-					__('Invalid from email address. Please provide a valid email address in the From Email field.', 'gutenform'),
+					__('Invalid from email address. Please provide a valid email address in the From Email field.', 'gutenform-builder'),
 					array('status' => 400)
 				);
 			}
@@ -269,9 +270,9 @@ class Actions
 			'from_name' => sanitize_text_field($test_settings['from_name'] ?? get_bloginfo('name')),
 		);
 		
-		// Handle password - if it's a new password, encode it; otherwise use existing
+		// Handle password - if it's a new password, encrypt it; otherwise use existing
 		if (!empty($test_settings['password'])) {
-			$temp_settings['password'] = base64_encode($test_settings['password']);
+			$temp_settings['password'] = Crypto::encrypt($test_settings['password']);
 		} elseif (isset($original_settings['password'])) {
 			$temp_settings['password'] = $original_settings['password'];
 		} else {
@@ -289,7 +290,7 @@ class Actions
 			
 			return new \WP_Error(
 				'invalid_from_email',
-				__('Invalid from email address. Please provide a valid email address.', 'gutenform'),
+				__('Invalid from email address. Please provide a valid email address.', 'gutenform-builder'),
 				array('status' => 400)
 			);
 		}
@@ -301,14 +302,14 @@ class Actions
 			
 			return new \WP_Error(
 				'invalid_test_email',
-				__('Invalid test email address. Please provide a valid email address.', 'gutenform'),
+				__('Invalid test email address. Please provide a valid email address.', 'gutenform-builder'),
 				array('status' => 400)
 			);
 		}
 
 		// Send test email with proper headers
-		$subject = __('Gutenform SMTP Test Email', 'gutenform');
-		$message = __('This is a test email from Gutenform SMTP settings.', 'gutenform');
+		$subject = __('Gutenform SMTP Test Email', 'gutenform-builder');
+		$message = __('This is a test email from Gutenform SMTP settings.', 'gutenform-builder');
 		
 		// Set email headers to ensure from_email is used
 		$headers = array();
@@ -316,12 +317,13 @@ class Actions
 		$headers[] = 'Reply-To: ' . $from_email;
 		$headers[] = 'Content-Type: text/html; charset=UTF-8';
 
-		// Log for debugging
-		error_log(sprintf(
-			'Gutenform SMTP Test: Sending test email to %s from %s',
-			$test_email,
-			$from_email
-		));
+		if (defined('WP_DEBUG') && WP_DEBUG) {
+			error_log(sprintf(
+				'Gutenform SMTP Test: Sending test email to %s from %s',
+				$test_email,
+				$from_email
+			));
+		}
 
 		// Capture PHPMailer errors
 		global $phpmailer;
@@ -342,7 +344,7 @@ class Actions
 			
 			return new \WP_Error(
 				'empty_test_email',
-				__('Test email address is empty. Please provide a valid email address.', 'gutenform'),
+				__('Test email address is empty. Please provide a valid email address.', 'gutenform-builder'),
 				array('status' => 400)
 			);
 		}
@@ -359,18 +361,19 @@ class Actions
 			
 			return new \WP_Error(
 				'invalid_test_email_final',
-				sprintf(__('Invalid test email address before sending: %s', 'gutenform'), $test_email),
+				sprintf(__('Invalid test email address before sending: %s', 'gutenform-builder'), $test_email),
 				array('status' => 400)
 			);
 		}
 
-		// Log the exact values being passed to wp_mail
-		error_log(sprintf(
-			'Gutenform SMTP Test: Calling wp_mail() with to=%s, subject=%s, headers=%s',
-			$test_email,
-			$subject,
-			implode(' | ', $headers)
-		));
+		if (defined('WP_DEBUG') && WP_DEBUG) {
+			error_log(sprintf(
+				'Gutenform SMTP Test: Calling wp_mail() with to=%s, subject=%s, headers=%s',
+				$test_email,
+				$subject,
+				implode(' | ', $headers)
+			));
+		}
 
 		$result = wp_mail($test_email, $subject, $message, $headers);
 		
@@ -383,7 +386,7 @@ class Actions
 		if ($result) {
 			return array(
 				'success' => true,
-				'message' => sprintf(__('Test email sent successfully to %s.', 'gutenform'), $test_email),
+				'message' => sprintf(__('Test email sent successfully to %s.', 'gutenform-builder'), $test_email),
 			);
 		}
 
@@ -394,13 +397,105 @@ class Actions
 		} elseif (isset($phpmailer) && is_object($phpmailer) && !empty($phpmailer->ErrorInfo)) {
 			$detailed_error = $phpmailer->ErrorInfo;
 		} else {
-			$detailed_error = __('Failed to send test email. Please check your SMTP settings, credentials, and server configuration.', 'gutenform');
+			$detailed_error = __('Failed to send test email. Please check your SMTP settings, credentials, and server configuration.', 'gutenform-builder');
 		}
 
 		return new \WP_Error(
 			'test_failed',
 			$detailed_error,
 			array('status' => 500)
+		);
+	}
+
+	/**
+	 * Get CAPTCHA settings. Secret keys are never returned -- masked instead,
+	 * matching the SMTP password pattern.
+	 *
+	 * @return array|\WP_Error
+	 */
+	public function get_captcha_settings()
+	{
+		if (!current_user_can('manage_options')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('You do not have permission to view CAPTCHA settings.', 'gutenform-builder'),
+				array('status' => 403)
+			);
+		}
+
+		$settings = get_option('gutenform_captcha_settings', array());
+		$masked   = array();
+
+		foreach (array('recaptcha', 'friendlycaptcha') as $provider) {
+			$provider_settings = is_array($settings[$provider] ?? null) ? $settings[$provider] : array();
+			$masked[$provider]  = array(
+				'enabled'    => !empty($provider_settings['enabled']),
+				'site_key'   => $provider_settings['site_key'] ?? '',
+				'secret_key' => !empty($provider_settings['secret_key']) ? '••••••••' : '',
+			);
+		}
+
+		return array(
+			'success' => true,
+			'data'    => $masked,
+		);
+	}
+
+	/**
+	 * Save CAPTCHA settings.
+	 *
+	 * @param \WP_REST_Request $request
+	 * @return array|\WP_Error
+	 */
+	public function save_captcha_settings(\WP_REST_Request $request)
+	{
+		$nonce = $request->get_header('X-WP-Nonce');
+		if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('Security check failed.', 'gutenform-builder'),
+				array('status' => 403)
+			);
+		}
+
+		if (!current_user_can('manage_options')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('You do not have permission to manage CAPTCHA settings.', 'gutenform-builder'),
+				array('status' => 403)
+			);
+		}
+
+		$params   = $request->get_json_params();
+		$existing = get_option('gutenform_captcha_settings', array());
+		$settings = array();
+
+		foreach (array('recaptcha', 'friendlycaptcha') as $provider) {
+			$incoming = is_array($params[$provider] ?? null) ? $params[$provider] : array();
+			$current  = is_array($existing[$provider] ?? null) ? $existing[$provider] : array();
+
+			$secret_key = $current['secret_key'] ?? '';
+			if (!empty($incoming['secret_key'])) {
+				// A masked value (dots) coming back from the client means "unchanged".
+				$submitted = sanitize_text_field($incoming['secret_key']);
+				if (false === strpos($submitted, '•')) {
+					$secret_key = Crypto::encrypt($submitted);
+				}
+			}
+
+			$settings[$provider] = array(
+				'enabled'    => !empty($incoming['enabled']),
+				'site_key'   => isset($incoming['site_key']) ? sanitize_text_field($incoming['site_key']) : ($current['site_key'] ?? ''),
+				'secret_key' => $secret_key,
+			);
+		}
+
+		update_option('gutenform_captcha_settings', $settings, false);
+
+		return array(
+			'success' => true,
+			'message' => __('CAPTCHA settings saved successfully.', 'gutenform-builder'),
+			'data'    => $this->get_captcha_settings(),
 		);
 	}
 
@@ -415,7 +510,7 @@ class Actions
 		if (!current_user_can('manage_options')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('You do not have permission to view debug settings.', 'gutenform'),
+				__('You do not have permission to view debug settings.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -439,7 +534,7 @@ class Actions
 		if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('Security check failed.', 'gutenform'),
+				__('Security check failed.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -448,7 +543,7 @@ class Actions
 		if (!current_user_can('manage_options')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('You do not have permission to manage debug settings.', 'gutenform'),
+				__('You do not have permission to manage debug settings.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -466,15 +561,15 @@ class Actions
 			return array(
 				'success' => true,
 				'message' => $enabled 
-					? __('Debug mode enabled.', 'gutenform')
-					: __('Debug mode disabled.', 'gutenform'),
+					? __('Debug mode enabled.', 'gutenform-builder')
+					: __('Debug mode disabled.', 'gutenform-builder'),
 				'enabled' => Debug::is_enabled(),
 			);
 		}
 
 		return new \WP_Error(
 			'update_failed',
-			__('Failed to update debug mode.', 'gutenform'),
+			__('Failed to update debug mode.', 'gutenform-builder'),
 			array('status' => 500)
 		);
 	}
@@ -490,7 +585,7 @@ class Actions
 		if (!current_user_can('manage_options')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('You do not have permission to view settings.', 'gutenform'),
+				__('You do not have permission to view settings.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -516,7 +611,7 @@ class Actions
 		if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('Security check failed.', 'gutenform'),
+				__('Security check failed.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -525,7 +620,7 @@ class Actions
 		if (!current_user_can('manage_options')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('You do not have permission to manage settings.', 'gutenform'),
+				__('You do not have permission to manage settings.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -538,8 +633,8 @@ class Actions
 		return array(
 			'success' => true,
 			'message' => $skipped 
-				? __('First steps skipped.', 'gutenform')
-				: __('First steps re-enabled.', 'gutenform'),
+				? __('First steps skipped.', 'gutenform-builder')
+				: __('First steps re-enabled.', 'gutenform-builder'),
 			'skipped' => $skipped,
 		);
 	}
@@ -555,7 +650,7 @@ class Actions
 		if (!current_user_can('manage_options')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('You do not have permission to view settings.', 'gutenform'),
+				__('You do not have permission to view settings.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -587,7 +682,7 @@ class Actions
 		if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('Security check failed.', 'gutenform'),
+				__('Security check failed.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -596,7 +691,7 @@ class Actions
 		if (!current_user_can('manage_options')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('You do not have permission to manage settings.', 'gutenform'),
+				__('You do not have permission to manage settings.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -609,8 +704,8 @@ class Actions
 		return array(
 			'success' => true,
 			'message' => $visible 
-				? __('Charts are now visible.', 'gutenform')
-				: __('Charts are now hidden.', 'gutenform'),
+				? __('Charts are now visible.', 'gutenform-builder')
+				: __('Charts are now hidden.', 'gutenform-builder'),
 			'visible' => $visible,
 		);
 	}
@@ -626,7 +721,7 @@ class Actions
 		if (!current_user_can('manage_options')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('You do not have permission to view settings.', 'gutenform'),
+				__('You do not have permission to view settings.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -650,7 +745,7 @@ class Actions
 		if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('Security check failed.', 'gutenform'),
+				__('Security check failed.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -659,7 +754,7 @@ class Actions
 		if (!current_user_can('manage_options')) {
 			return new \WP_Error(
 				'rest_forbidden',
-				__('You do not have permission to manage settings.', 'gutenform'),
+				__('You do not have permission to manage settings.', 'gutenform-builder'),
 				array('status' => 403)
 			);
 		}
@@ -672,8 +767,8 @@ class Actions
 		return array(
 			'success' => true,
 			'message' => $enabled
-				? __('Admin bar menu enabled.', 'gutenform')
-				: __('Admin bar menu disabled.', 'gutenform'),
+				? __('Admin bar menu enabled.', 'gutenform-builder')
+				: __('Admin bar menu disabled.', 'gutenform-builder'),
 			'enabled' => $enabled,
 		);
 	}
