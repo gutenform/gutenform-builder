@@ -130,7 +130,6 @@ export default function Step3({ stepCount }: StepProps) {
           setSuccessMessageVisiblity(false);
         }
       }
-      console.log(data);
       // Handle response or set form submission state
     } catch (error) {
       console.error("Error submitting form", error);

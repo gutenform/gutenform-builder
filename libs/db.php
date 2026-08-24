@@ -11,4 +11,6 @@ namespace Gutenform\Libs\DatabaseConnection;
 
 use Prappo\WpEloquent\Application;
 
+defined('ABSPATH') || exit;
+
 Application::bootWp();

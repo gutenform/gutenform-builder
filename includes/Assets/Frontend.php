@@ -7,6 +7,8 @@ namespace Gutenform\Assets;
 use Gutenform\Traits\Base;
 use Gutenform\Libs\Assets;
 
+defined('ABSPATH') || exit;
+
 /**
  * Class Frontend
  *

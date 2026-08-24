@@ -11,6 +11,8 @@ namespace Gutenform\Libs\API;
 
 use Exception;
 
+defined('ABSPATH') || exit;
+
 /**
  * Class ApiRouteException
  *

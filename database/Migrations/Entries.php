@@ -14,6 +14,8 @@ use Gutenform\Interfaces\Migration;
 use Prappo\WpEloquent\Database\Capsule\Manager as Capsule;
 use Prappo\WpEloquent\Database\Schema\Blueprint;
 
+defined('ABSPATH') || exit;
+
 /**
  * Class Entries
  *

@@ -12,6 +12,8 @@ namespace Gutenform\Database\Seeders;
 
 use Gutenform\Models\Mailboxes;
 
+defined('ABSPATH') || exit;
+
 /**
  * Class MailboxesSeeder
  *
@@ -39,7 +41,7 @@ class MailboxesSeeder
             // Create default mailbox.
             Mailboxes::create(
                 array(
-                    'title'       => __('Default Mailbox', 'gutenform'),
+                    'title'       => __('Default Mailbox', 'gutenform-builder'),
                     'is_default'  => true,
                     'date_created' => $current_date,
                     'user_id'     => null, // Default mailbox is not user-specific.

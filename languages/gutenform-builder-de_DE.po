@@ -11,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: 2025-12-16 14:47+0000\n"
 "Language: de_DE\n"
 "X-Generator: WP-CLI 2.11.0\n"
-"X-Domain: gutenform\n"
+"X-Domain: gutenform-builder\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Plugin Name of the plugin

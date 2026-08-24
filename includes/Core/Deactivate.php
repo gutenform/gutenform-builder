@@ -4,6 +4,8 @@ namespace Gutenform\Core;
 
 use Gutenform\Traits\Base;
 
+defined('ABSPATH') || exit;
+
 /**
  * Class Deactivate
  *
@@ -71,23 +73,23 @@ class Deactivate
 				<div id="gutenform-deactivate-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100000;">
 					<div class="gutenform-modal-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center;">
 						<div class="gutenform-modal-content" style="background: #fff; padding: 30px; border-radius: 8px; max-width: 500px; width: 90%; box-shadow: 0 4px 20px rgba(0,0,0,0.3); position: relative; z-index: 100001;">
-							<h2 style="margin-top: 0; margin-bottom: 15px;"><?php echo esc_js(__('Deactivate Gutenform', 'gutenform')); ?></h2>
-							<p style="margin-bottom: 20px;"><?php echo esc_js(__('What would you like to do?', 'gutenform')); ?></p>
+							<h2 style="margin-top: 0; margin-bottom: 15px;"><?php echo esc_js(__('Deactivate Gutenform', 'gutenform-builder')); ?></h2>
+							<p style="margin-bottom: 20px;"><?php echo esc_js(__('What would you like to do?', 'gutenform-builder')); ?></p>
 							<div style="margin-bottom: 20px;">
 								<label style="display: block; margin-bottom: 10px; cursor: pointer;">
 									<input type="radio" name="gutenform_deactivate_option" value="disable" checked style="margin-right: 8px;">
-									<strong><?php echo esc_js(__('Just disable the plugin', 'gutenform')); ?></strong>
-									<p style="margin: 5px 0 0 24px; opacity: 0.8; font-size: 13px;"><?php echo esc_js(__('Keep all data and settings. You can reactivate the plugin later.', 'gutenform')); ?></p>
+									<strong><?php echo esc_js(__('Just disable the plugin', 'gutenform-builder')); ?></strong>
+									<p style="margin: 5px 0 0 24px; opacity: 0.8; font-size: 13px;"><?php echo esc_js(__('Keep all data and settings. You can reactivate the plugin later.', 'gutenform-builder')); ?></p>
 								</label>
 								<label style="display: block; margin-bottom: 10px; cursor: pointer;color: #F00;">
 									<input type="radio" name="gutenform_deactivate_option" value="remove" style="margin-right: 8px;">
-									<strong><?php echo esc_js(__('Disable and remove database tables', 'gutenform')); ?></strong>
-									<p style="margin: 5px 0 0 24px; opacity: 0.8; font-size: 13px;"><?php echo esc_js(__('This will permanently delete all form entries, accounts, and settings. This action cannot be undone.', 'gutenform')); ?></p>
+									<strong><?php echo esc_js(__('Disable and remove database tables', 'gutenform-builder')); ?></strong>
+									<p style="margin: 5px 0 0 24px; opacity: 0.8; font-size: 13px;"><?php echo esc_js(__('This will permanently delete all form entries, accounts, and settings. This action cannot be undone.', 'gutenform-builder')); ?></p>
 								</label>
 							</div>
 							<div style="display: flex; gap: 10px; justify-content: flex-end;">
-								<button type="button" class="gutenform-modal-cancel button" style="margin-right: 10px;"><?php echo esc_js(__('Cancel', 'gutenform')); ?></button>
-								<button type="button" class="gutenform-modal-confirm button button-primary"><?php echo esc_js(__('Continue', 'gutenform')); ?></button>
+								<button type="button" class="gutenform-modal-cancel button" style="margin-right: 10px;"><?php echo esc_js(__('Cancel', 'gutenform-builder')); ?></button>
+								<button type="button" class="gutenform-modal-confirm button button-primary"><?php echo esc_js(__('Continue', 'gutenform-builder')); ?></button>
 							</div>
 						</div>
 					</div>
@@ -159,7 +161,7 @@ class Deactivate
 					var $button = $(this);
 					var originalText = $button.text();
 
-					$button.prop('disabled', true).text('<?php echo esc_js(__('Processing...', 'gutenform')); ?>');
+					$button.prop('disabled', true).text('<?php echo esc_js(__('Processing...', 'gutenform-builder')); ?>');
 
 					if (option === 'remove') {
 						// Remove database tables via REST API
@@ -189,10 +191,10 @@ class Deactivate
 
 								if (success) {
 									// Proceed with deactivation
-									alert('<?php echo esc_js(__('Database tables removed successfully. Deactivating plugin...', 'gutenform')); ?>');
+									alert('<?php echo esc_js(__('Database tables removed successfully. Deactivating plugin...', 'gutenform-builder')); ?>');
 									window.location.href = deactivateLinkHref;
 								} else {
-									var errorMsg = message || '<?php echo esc_js(__('Error removing database tables. Please try again.', 'gutenform')); ?>';
+									var errorMsg = message || '<?php echo esc_js(__('Error removing database tables. Please try again.', 'gutenform-builder')); ?>';
 									console.error('Gutenform: Database removal failed:', errorMsg);
 									alert(errorMsg);
 									$button.prop('disabled', false).text(originalText);
@@ -205,7 +207,7 @@ class Deactivate
 									responseText: xhr.responseText,
 									statusCode: xhr.status
 								});
-								var errorMsg = '<?php echo esc_js(__('Error removing database tables. Please try again.', 'gutenform')); ?>';
+								var errorMsg = '<?php echo esc_js(__('Error removing database tables. Please try again.', 'gutenform-builder')); ?>';
 								if (xhr.responseText) {
 									try {
 										var errorResponse = JSON.parse(xhr.responseText);

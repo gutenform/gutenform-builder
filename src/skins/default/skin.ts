@@ -7,8 +7,6 @@
 
 import './index.css';
 
-console.log('default skin');
-
 export default {
     label: 'Default',
     name: 'default',

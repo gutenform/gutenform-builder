@@ -29,7 +29,6 @@ const deleteAccount = async () => {
     const result = await response.json();
     return result;
   } catch (error) {
-    console.log("Error while deleting account");
     throw error;
   }
 };

@@ -2,6 +2,8 @@
 
 namespace Gutenform\Interfaces;
 
+defined('ABSPATH') || exit;
+
 /**
  * Interface Migration
  *

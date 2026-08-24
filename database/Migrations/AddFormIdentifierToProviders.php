@@ -55,8 +55,8 @@ class AddFormIdentifierToProviders implements Migration {
 		if ( $driver === 'mysql' ) {
 			$index_exists = $wpdb->get_results(
 				$wpdb->prepare(
-					"SHOW INDEX FROM `%s` WHERE Key_name = 'uk_provider_type'",
-					$table_name_prefixed
+					"SHOW INDEX FROM `{$table_name_prefixed}` WHERE Key_name = %s",
+					'uk_provider_type'
 				)
 			);
 			if ( ! empty( $index_exists ) ) {

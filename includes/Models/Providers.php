@@ -13,6 +13,8 @@ namespace Gutenform\Models;
 
 use Prappo\WpEloquent\Database\Eloquent\Model;
 
+defined('ABSPATH') || exit;
+
 /**
  * Class Providers
  *
