@@ -20,6 +20,16 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-metadata/#view-script
  */
 
+/**
+ * Translatable frontend string, localized from PHP onto window.gutenform
+ * (see includes/Assets/Frontend.php). The second argument is the English
+ * fallback used when no translation is available.
+ */
+function formString(key: string, fallback: string): string {
+	const strings = (window as any).gutenform?.strings || {};
+	return strings[key] || fallback;
+}
+
 window.addEventListener('DOMContentLoaded', () => {
 	const form = document.querySelectorAll('.wp-block-gutenform-form');
 	form.forEach(form => {
@@ -70,10 +80,9 @@ window.addEventListener('DOMContentLoaded', () => {
 				if (currentStep < visibleStepIndices.length - 1) return;
 			}
 
+			// Only the identifier is sent: which provider feeds run, with which
+			// settings, is resolved server-side from the form index.
 			const formIdentifier = formOptions.formId;
-			const mailboxId = formOptions.mailboxId;
-			const providerIds = formOptions.providerIds || [];
-			const providerOverrides = formOptions.providerOverrides || {};
 
 			if (!formIdentifier) {
 				console.error('Form identifier not found');
@@ -131,59 +140,28 @@ window.addEventListener('DOMContentLoaded', () => {
 				data['_primary_mail_field'] = primaryMailField.name;
 			}
 
-			// Feature Flag prüfen
-			// @ts-expect-error - useProviderSystem is added dynamically by PHP
-			const useProviderSystem = window.gutenform?.useProviderSystem ?? false;
+			clearFormMessage(form as HTMLElement);
+			clearFieldErrors(form as HTMLElement);
 
-			if (useProviderSystem) {
-				// Neuer Provider-basierter Flow
-				const result = await submitFormWithProviders(data, formIdentifier, providerIds, providerOverrides, renderedAt);
-				
-				// Show debug view if debug data is present
-				if (result.debug) {
-					showDebugView(result.debug);
+			const result = await submitFormWithProviders(data, formIdentifier, renderedAt);
+
+			// Show debug view if debug data is present
+			if (result.debug) {
+				showDebugView(result.debug);
+			}
+
+			if (result.success) {
+				form.classList.add('gutenform-form--success-view');
+
+				if (form instanceof HTMLFormElement) {
+					form.reset();
+					// Also clear file upload lists
+					const fileLists = form.querySelectorAll('.gutenform-file-upload-list');
+					fileLists.forEach(list => {
+						list.innerHTML = '';
+					});
 				}
-				
-				if (result.success) {
-					// Success-Handling (z.B. Success-Message anzeigen)
-					form.classList.add('gutenform-form--success-view');
-					//clear form
-					if (form instanceof HTMLFormElement) {
-						form.reset();
-						// Also clear file upload lists
-						const fileLists = form.querySelectorAll('.gutenform-file-upload-list');
-						fileLists.forEach(list => {
-							list.innerHTML = '';
-						});
-					}
-					// Clear saved progress and reset to first step on successful submit
-					if (isMultiStep) {
-						currentStep = 0;
-						const visibleStepIndices = getVisibleStepIndices(form as HTMLElement);
-						goToStepByVisibleIndex(form as HTMLElement, steps, visibleStepIndices, 0);
-						updateStepNavigationButtons(form as HTMLElement, steps, visibleStepIndices, 0);
-						if (formOptions.formId) {
-							sessionStorage.removeItem(`gutenform_progress_${formOptions.formId}`);
-						}
-					}
-					// TODO: Show success message to user
-				} else {
-					// Error-Handling
-					console.error('Form submission failed', result.errors);
-					// TODO: Show error message to user
-				}
-			} else {
-				// Legacy-Flow (aktueller Code)
-				if (!window.gutenform?.Entries) {
-					console.error('Entries API not found');
-					return;
-				}
-				window.gutenform?.Entries.create({
-					mailbox_id: mailboxId,
-					form_identifier: formIdentifier,
-					data,
-				});
-				// Reset to first step after legacy submit
+				// Clear saved progress and reset to first step on successful submit
 				if (isMultiStep) {
 					currentStep = 0;
 					const visibleStepIndices = getVisibleStepIndices(form as HTMLElement);
@@ -193,6 +171,40 @@ window.addEventListener('DOMContentLoaded', () => {
 						sessionStorage.removeItem(`gutenform_progress_${formOptions.formId}`);
 					}
 				}
+
+				const redirectUrl = formOptions.redirectUrl || '';
+				if (redirectUrl) {
+					window.location.assign(redirectUrl);
+					return;
+				}
+
+				// If the form has a gutenform/success block, the success-view class
+				// reveals it; otherwise fall back to an inline confirmation.
+				if (!form.querySelector('.wp-block-gutenform-success')) {
+					showFormMessage(
+						form as HTMLElement,
+						'success',
+						formOptions.successMessage
+							|| result.message
+							|| formString('submitSuccess', 'Thank you! Your submission has been received.')
+					);
+				}
+			} else {
+				// Field-level errors from server-side schema validation.
+				if (result.fieldErrors && Object.keys(result.fieldErrors).length > 0) {
+					showFieldErrors(form as HTMLElement, result.fieldErrors);
+					focusFirstInvalidField(form as HTMLElement, steps, isMultiStep, (step: number) => {
+						currentStep = step;
+					});
+				}
+
+				showFormMessage(
+					form as HTMLElement,
+					'error',
+					result.message
+						|| formOptions.errorMessage
+						|| formString('submitError', 'Your submission could not be sent. Please try again.')
+				);
 			}
 			} finally {
 				setSubmitLoading(form as HTMLElement, false);
@@ -520,31 +532,28 @@ function restoreFormFields(formEl: HTMLElement, fields: Record<string, string>) 
 	});
 }
 
+interface SubmitResult {
+	success: boolean;
+	message?: string;
+	errors?: string[];
+	fieldErrors?: Record<string, string>;
+	debug?: unknown;
+}
+
 /**
- * Submits form using the new provider system
+ * Submits the form. The payload deliberately carries only the identifier and
+ * the field values -- provider selection and settings are resolved server-side
+ * (see includes/Core/FormRegistry.php).
  */
 async function submitFormWithProviders(
 	formData: Record<string, FormDataEntryValue>,
 	formIdentifier: string,
-	providerIds: number[],
-	providerOverrides: Record<string, { useProviderLayout: boolean; content: string; conditionalShow?: unknown }> = {},
 	renderedAt: number = 0
-): Promise<{ success: boolean; message?: string; errors?: string[] }> {
+): Promise<SubmitResult> {
 	try {
 		const apiUrl = window.gutenform?.apiUrl || '';
 		const nonce = window.gutenform?.nonce || '';
 		const namespace = window.gutenform?.namespace || 'gutenform/v1';
-
-		// Normalize provider_overrides for API: keys as string IDs, values with snake_case
-		const apiOverrides: Record<string, { use_provider_layout: boolean; content: string; conditional_show?: unknown }> = {};
-		for (const [feedId, override] of Object.entries(providerOverrides)) {
-			if (!override || typeof override !== 'object') continue;
-			apiOverrides[String(feedId)] = {
-				use_provider_layout: !!override.useProviderLayout,
-				content: typeof override.content === 'string' ? override.content : '',
-				conditional_show: override.conditionalShow ?? undefined,
-			};
-		}
 
 		const response = await fetch(
 			`${apiUrl}${namespace}/submit`,
@@ -556,36 +565,122 @@ async function submitFormWithProviders(
 				},
 				body: JSON.stringify({
 					form_identifier: formIdentifier,
-					provider_ids: providerIds,
 					submission_data: formData,
-					provider_overrides: apiOverrides,
 					rendered_at: renderedAt,
 				}),
 			}
 		);
-		
+
 		const result = await response.json();
-		
-		if (result.success) {
-			return { 
-				success: true, 
-				message: result.message,
-				debug: result.debug || null,
-			};
-		} else {
+
+		if (response.ok && result.success) {
 			return {
-				success: false,
-				errors: result.data?.errors || [result.message || 'Unknown error'],
-				debug: result.debug || null,
+				success: true,
+				message: result.message,
+				debug: result.debug || result.data?.debug || null,
 			};
 		}
+
+		// WP_Error responses put the extra payload under `data`.
+		return {
+			success: false,
+			message: result.message || undefined,
+			errors: result.data?.errors || (result.message ? [result.message] : ['Unknown error']),
+			fieldErrors: result.data?.field_errors || undefined,
+			debug: result.data?.debug || null,
+		};
 	} catch (error) {
-		console.error('Form submission error', error);
 		return {
 			success: false,
 			errors: ['Network error: ' + (error instanceof Error ? error.message : 'Unknown error')],
 		};
 	}
+}
+
+/**
+ * Renders a form-level success or error message.
+ */
+function showFormMessage(formEl: HTMLElement, type: 'success' | 'error', message: string) {
+	clearFormMessage(formEl);
+
+	const box = document.createElement('div');
+	box.className = `gutenform-form-message gutenform-form-message--${type}`;
+	box.setAttribute('role', type === 'error' ? 'alert' : 'status');
+	box.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+	box.textContent = message;
+
+	formEl.insertBefore(box, formEl.firstChild);
+	box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function clearFormMessage(formEl: HTMLElement) {
+	formEl.querySelectorAll('.gutenform-form-message').forEach((el) => el.remove());
+}
+
+/**
+ * Attaches server-side validation errors to their fields, wiring up
+ * aria-invalid / aria-describedby so screen readers announce them.
+ */
+function showFieldErrors(formEl: HTMLElement, fieldErrors: Record<string, string>) {
+	Object.entries(fieldErrors).forEach(([fieldName, message]) => {
+		const field = formEl.querySelector<HTMLElement>(
+			`[name="${CSS.escape(fieldName)}"], [name="${CSS.escape(fieldName + '[]')}"]`
+		);
+		if (!field) return;
+
+		const wrapper = field.closest('.gutenform-field') || field.parentElement;
+		if (!wrapper) return;
+
+		field.setAttribute('aria-invalid', 'true');
+
+		const errorEl = document.createElement('p');
+		const errorId = `gutenform-error-${fieldName.replace(/[^A-Za-z0-9_-]/g, '')}`;
+		errorEl.className = 'gutenform-field__error';
+		errorEl.id = errorId;
+		errorEl.textContent = message;
+
+		field.setAttribute('aria-describedby', errorId);
+		wrapper.appendChild(errorEl);
+	});
+}
+
+function clearFieldErrors(formEl: HTMLElement) {
+	formEl.querySelectorAll('.gutenform-field__error').forEach((el) => el.remove());
+	formEl.querySelectorAll('[aria-invalid="true"]').forEach((el) => {
+		el.removeAttribute('aria-invalid');
+		el.removeAttribute('aria-describedby');
+	});
+}
+
+/**
+ * Moves focus to the first field that failed validation -- and, in a
+ * multi-step form, switches to the step that field lives on, so the error
+ * isn't announced for something the visitor can't see.
+ */
+function focusFirstInvalidField(
+	formEl: HTMLElement,
+	steps: NodeListOf<HTMLElement>,
+	isMultiStep: boolean,
+	onStepChange: (step: number) => void
+) {
+	const invalid = formEl.querySelector<HTMLElement>('[aria-invalid="true"]');
+	if (!invalid) return;
+
+	if (isMultiStep) {
+		const owningStep = invalid.closest('.wp-block-gutenform-step');
+		if (owningStep) {
+			const visibleStepIndices = getVisibleStepIndices(formEl);
+			const stepIndex = Array.from(steps).indexOf(owningStep as HTMLElement);
+			const visiblePosition = visibleStepIndices.indexOf(stepIndex);
+			if (visiblePosition > -1) {
+				goToStepByVisibleIndex(formEl, steps, visibleStepIndices, visiblePosition);
+				updateStepNavigationButtons(formEl, steps, visibleStepIndices, visiblePosition);
+				onStepChange(visiblePosition);
+			}
+		}
+	}
+
+	invalid.focus();
 }
 
 /**

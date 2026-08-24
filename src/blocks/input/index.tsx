@@ -1,4 +1,4 @@
-import { registerBlockType, registerBlockVariation } from '@wordpress/blocks';
+import { registerBlockType } from '@wordpress/blocks';
 import BlockIcon from '../../components/block-atoms/BlockIcon';
 import './style.css';
 
@@ -8,6 +8,7 @@ import metadata from './block.json';
 
 import { TextCursorInput } from 'lucide-react';
 import { getInputPresets } from './presets';
+import { registerFieldVariations } from '../../lib/field-variations';
 import {
 	transformToTextarea,
 	transformToSelect,
@@ -92,17 +93,5 @@ registerBlockType(metadata.name as string, {
 } as any);
 
 // Block Variations (Presets)
-const presets = getInputPresets();
-
-presets.forEach((preset) => {
-	registerBlockVariation('gutenform/input', {
-		name: preset.name,
-		title: preset.title,
-		attributes: {
-			type: preset.type,
-			label: preset.label || preset.title,
-			placeholder: preset.placeholder || '',
-		},
-	});
-});
+registerFieldVariations(metadata.name as string, getInputPresets());
 

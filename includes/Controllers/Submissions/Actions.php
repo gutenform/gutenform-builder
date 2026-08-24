@@ -10,6 +10,7 @@
 
 namespace Gutenform\Controllers\Submissions;
 
+use Gutenform\Core\FormRegistry;
 use Gutenform\Core\SpamProtection;
 use Gutenform\Core\UploadTokens;
 
@@ -20,9 +21,15 @@ defined( 'ABSPATH' ) || exit;
  *
  * Handles REST API requests for form submissions. This is one of only two
  * public (unauthenticated) routes in the plugin, so every value coming out of
- * the request is treated as hostile: sanitized, capped, and -- for file
- * fields -- resolved only from server-issued upload tokens, never from
- * whatever attachment_id/url/path the client happens to send.
+ * the request is treated as hostile: sanitized, capped, validated against the
+ * server-side field schema, and -- for file fields -- resolved only from
+ * server-issued upload tokens, never from whatever attachment_id/url/path the
+ * client happens to send.
+ *
+ * Which provider feeds run, with which settings and mail body, is likewise
+ * resolved server-side from Core\FormRegistry. The request's provider_ids and
+ * provider_overrides parameters are accepted but ignored, purely so an older
+ * cached frontend script doesn't break.
  */
 class Actions {
 
@@ -36,7 +43,7 @@ class Actions {
 	private const MAX_STRING_LEN      = 20000;
 
 	/**
-	 * Verarbeitet eine Formular-Submission.
+	 * Processes a form submission.
 	 *
 	 * @param \WP_REST_Request $request
 	 * @return array|\WP_Error
@@ -57,10 +64,8 @@ class Actions {
 		$raw_submission_data = is_array( $raw_submission_data ) ? $raw_submission_data : array();
 		$submission_data     = $this->sanitize_submission_data( $raw_submission_data );
 
-		$form_identifier    = sanitize_text_field( $request->get_param( 'form_identifier' ) ?? '' );
-		$provider_ids       = $request->get_param( 'provider_ids' ) ?? array();
-		$provider_overrides = $request->get_param( 'provider_overrides' ) ?? array();
-		$rendered_at         = absint( $request->get_param( 'rendered_at' ) ?? 0 );
+		$form_identifier = sanitize_text_field( $request->get_param( 'form_identifier' ) ?? '' );
+		$rendered_at     = absint( $request->get_param( 'rendered_at' ) ?? 0 );
 
 		// 3. Validation
 		if ( empty( $form_identifier ) ) {
@@ -71,15 +76,30 @@ class Actions {
 			);
 		}
 
+		// Resolve the form's configuration server-side. Lazy-rebuilds the index
+		// if this form has never been seen (content from an older version, a
+		// widget, a template part, ...).
+		$form_config = FormRegistry::get_instance()->get_form_config( $form_identifier );
+
+		if ( null === $form_config ) {
+			return new \WP_Error(
+				'unknown_form',
+				__( 'This form could not be found.', 'gutenform-builder' ),
+				array( 'status' => 404 )
+			);
+		}
+
 		// 4. Server-side spam protection: rate limit, honeypot, submit timing, CAPTCHA.
+		// Per-form toggles come from the server-side config, not the request.
+		$form_settings   = $form_config['config']['settings'] ?? array();
 		$spam_protection = new SpamProtection();
 
-		$spam_error = $spam_protection->check( $submission_data, $rendered_at );
+		$spam_error = $spam_protection->check( $submission_data, $rendered_at, $form_settings );
 		if ( null !== $spam_error ) {
 			return $spam_error;
 		}
 
-		if ( ! $spam_protection->verify_captcha( $submission_data ) ) {
+		if ( ! $spam_protection->verify_captcha( $submission_data, $form_settings ) ) {
 			return new \WP_Error(
 				'captcha_failed',
 				__( 'CAPTCHA verification failed. Please try again.', 'gutenform-builder' ),
@@ -94,44 +114,30 @@ class Actions {
 		// dropped rather than failing the whole submission.
 		$submission_data = $this->resolve_file_fields( $submission_data );
 
-		// Validation: provider_ids must be an array
-		if ( ! is_array( $provider_ids ) ) {
-			$provider_ids = array();
-		}
+		// 6. Validate against the server-side field schema: enforce required
+		// fields, check select/radio/checkbox values against the options the
+		// form actually offers, and drop fields the form doesn't define.
+		$validator  = new FieldValidator();
+		$validation = $validator->validate( $submission_data, $form_config['fields'] ?? array() );
 
-		// Sanitize provider_ids
-		$provider_ids = array_map( 'absint', $provider_ids );
-		$provider_ids = array_filter( $provider_ids ); // Remove 0 and negative values
-
-		// Sanitize provider_overrides: key = feed id (int), value = { use_provider_layout, content, conditional_show? }
-		if ( ! is_array( $provider_overrides ) ) {
-			$provider_overrides = array();
-		}
-		$sanitized_overrides = array();
-		foreach ( $provider_overrides as $feed_id => $override ) {
-			$feed_id = absint( $feed_id );
-			if ( $feed_id <= 0 ) {
-				continue;
-			}
-			if ( ! is_array( $override ) ) {
-				continue;
-			}
-			$sanitized_overrides[ $feed_id ] = array(
-				'use_provider_layout' => isset( $override['use_provider_layout'] ) ? (bool) $override['use_provider_layout'] : true,
-				'content'            => isset( $override['content'] ) ? wp_kses_post( $override['content'] ) : '',
-				'conditional_show'   => isset( $override['conditional_show'] ) ? $override['conditional_show'] : null,
+		if ( ! empty( $validation['errors'] ) ) {
+			return new \WP_Error(
+				'validation_failed',
+				__( 'Please check the highlighted fields.', 'gutenform-builder' ),
+				array(
+					'status'       => 422,
+					'field_errors' => $validation['errors'],
+				)
 			);
-			// Keep conditional_show as array for evaluator (logic + conditions)
-			if ( $sanitized_overrides[ $feed_id ]['conditional_show'] !== null && ! is_array( $sanitized_overrides[ $feed_id ]['conditional_show'] ) ) {
-				$sanitized_overrides[ $feed_id ]['conditional_show'] = null;
-			}
 		}
 
-		// 6. Call Submission Handler
-		$handler = new Handler();
-		$result  = $handler->process( $submission_data, $form_identifier, $provider_ids, $sanitized_overrides );
+		$submission_data = $validation['data'];
 
-		// 7. Return response
+		// 7. Call Submission Handler with the server-resolved configuration.
+		$handler = new Handler();
+		$result  = $handler->process( $submission_data, $form_identifier, $form_config );
+
+		// 8. Return response
 		if ( $result['success'] ) {
 			return array(
 				'success' => true,

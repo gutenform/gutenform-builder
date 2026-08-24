@@ -6,7 +6,7 @@ import './style.css';
 import Edit from './edit';
 import save from './save';
 import metadata from './block.json';
-import withStepToolbar from './with-step-toolbar';
+import withFormToolbar from './with-form-toolbar';
 
 import { LayoutDashboard } from 'lucide-react';
 
@@ -17,5 +17,6 @@ registerBlockType( metadata.name as string, {
 	save,
 } as any );
 
-// Register the step toolbar filter so it shows on ALL blocks inside a stepped form
-addFilter('editor.BlockEdit', 'gutenform/with-step-toolbar', withStepToolbar);
+// Registers the step switcher AND the Form Settings button on every block
+// inside a form, at any nesting depth.
+addFilter('editor.BlockEdit', 'gutenform/with-form-toolbar', withFormToolbar);

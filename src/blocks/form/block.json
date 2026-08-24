@@ -48,6 +48,22 @@
 			"type": "boolean",
 			"default": false
 		},
+		"successMessage": {
+			"type": "string",
+			"default": ""
+		},
+		"errorMessage": {
+			"type": "string",
+			"default": ""
+		},
+		"redirectUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"formSettings": {
+			"type": "object",
+			"default": {}
+		},
 		"activeStep": {
 			"type": "number",
 			"default": 0

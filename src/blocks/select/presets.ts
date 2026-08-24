@@ -1,4 +1,4 @@
-import { __ } from "@/lib/i18n";
+import { __ } from '@/lib/i18n';
 import { type Option } from '../../controls/OptionsRepeater';
 
 export const getSelectPresets = (): Array<{
@@ -67,4 +67,3 @@ export const getSelectPresets = (): Array<{
 		],
 	},
 ];
-

@@ -1,4 +1,4 @@
-import { registerBlockType, registerBlockVariation } from '@wordpress/blocks';
+import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@/lib/i18n';
 import BlockIcon from '../../components/block-atoms/BlockIcon';
 import './style.css';
@@ -9,6 +9,7 @@ import metadata from './block.json';
 
 import { CheckSquare } from 'lucide-react';
 import { getCheckboxPresets } from './presets';
+import { registerFieldVariations } from '../../lib/field-variations';
 import {
 	transformToInput,
 	transformToTextarea,
@@ -71,19 +72,4 @@ registerBlockType(metadata.name as string, {
 } as any);
 
 // Block Variations (Presets including Consent)
-const presets = getCheckboxPresets();
-
-presets.forEach((preset) => {
-	registerBlockVariation('gutenform/checkbox', {
-		name: preset.name,
-		title: preset.title,
-		attributes: {
-			label: preset.label || preset.title,
-			options: preset.options,
-			required: preset.required ?? false,
-			isConsent: preset.isConsent ?? false,
-			styleVariant: 'default',
-			layout: 'vertical',
-		},
-	});
-});
+registerFieldVariations(metadata.name as string, getCheckboxPresets());

@@ -10,4 +10,6 @@ export type CheckboxAttributes = GlobalFieldAttributes & {
 	layout: 'horizontal' | 'vertical';
 	/** Single consent checkbox (e.g. privacy policy); uses single name, not name[]. */
 	isConsent?: boolean;
+	/** Preset variation slug (consent, newsletter, etc.). */
+	presetName?: string;
 };

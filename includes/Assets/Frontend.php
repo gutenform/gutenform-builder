@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Gutenform\Assets;
 
+use Gutenform\Core\BlockScanner;
 use Gutenform\Traits\Base;
 use Gutenform\Libs\Assets;
 
@@ -64,6 +65,12 @@ class Frontend
 	 */
 	public function localize_script()
 	{
+		// Only emit any of this on pages that actually contain a form -- this
+		// used to run on every single frontend request.
+		if (! $this->current_page_has_form()) {
+			return;
+		}
+
 		// Get REST API URL and nonce
 		$api_url = rest_url();
 		$nonce = wp_create_nonce('wp_rest');
@@ -83,14 +90,15 @@ class Frontend
 
 		// Always set the gutenform object inline so it's available before view scripts run
 		$inline_script = sprintf(
-			'window.gutenform = window.gutenform || {}; window.gutenform.assetsUrl = %s; window.gutenform.pluginUrl = %s; window.gutenform.apiUrl = %s; window.gutenform.nonce = %s; window.gutenform.namespace = %s; window.gutenform.useProviderSystem = %s; window.gutenform.captcha = %s;',
+			'window.gutenform = window.gutenform || {}; window.gutenform.assetsUrl = %s; window.gutenform.pluginUrl = %s; window.gutenform.apiUrl = %s; window.gutenform.nonce = %s; window.gutenform.namespace = %s; window.gutenform.captcha = %s; window.gutenform.strings = %s; window.gutenform.postId = %s;',
 			wp_json_encode(GF_ASSETS_URL),
 			wp_json_encode(GF_URL),
 			wp_json_encode($api_url),
 			wp_json_encode($nonce),
 			wp_json_encode(GF_ROUTE_PREFIX),
-			wp_json_encode(gutenform_use_provider_system()),
-			wp_json_encode($captcha)
+			wp_json_encode($captcha),
+			wp_json_encode($this->get_frontend_strings()),
+			wp_json_encode(is_singular() ? (int) get_queried_object_id() : 0)
 		);
 
 		// Try to add inline script to wp-blocks, fallback to wp-util if not available
@@ -107,25 +115,6 @@ class Frontend
 			}, 1);
 		}
 
-		// Enqueue the Entries API class script
-		// Check for built file in assets folder first, fallback to src for development
-		// wp-scripts outputs to assets/blocks, so the file will be at assets/blocks/lib/gutenform-entries.js
-		$entries_script_path = GF_DIR . '/assets/blocks/lib/gutenform-entries.js';
-		if (file_exists($entries_script_path)) {
-			$entries_script_url = GF_ASSETS_URL . '/blocks/lib/gutenform-entries.js';
-		} else {
-			// Fallback to src for development
-			$entries_script_url = GF_URL . '/src/lib/gutenform-entries.js';
-		}
-
-		wp_enqueue_script(
-			'gutenform-entries',
-			$entries_script_url,
-			array(),
-			GF_VERSION,
-			true
-		);
-
 		// Also try to localize the view script if it's registered
 		// WordPress generates handles like: gutenform-form-view-script
 		$view_script_handle = 'gutenform-form-view-script';
@@ -134,16 +123,86 @@ class Frontend
 				$view_script_handle,
 				'gutenform',
 				array(
-					'assetsUrl'        => GF_ASSETS_URL,
-					'pluginUrl'        => GF_URL,
-					'apiUrl'           => $api_url,
-					'nonce'            => $nonce,
-					'namespace'        => GF_ROUTE_PREFIX,
-					'useProviderSystem' => gutenform_use_provider_system(),
-					'captcha'          => $captcha,
+					'assetsUrl' => GF_ASSETS_URL,
+					'pluginUrl' => GF_URL,
+					'apiUrl'    => $api_url,
+					'nonce'     => $nonce,
+					'namespace' => GF_ROUTE_PREFIX,
+					'captcha'   => $captcha,
+					'strings'   => $this->get_frontend_strings(),
+					'postId'    => is_singular() ? (int) get_queried_object_id() : 0,
 				)
 			);
 		}
+	}
+
+	/**
+	 * Translatable strings the frontend view scripts render, including the
+	 * aria-labels a screen reader announces. These have to come from PHP --
+	 * text hardcoded in the view scripts is unreachable for any .po file.
+	 *
+	 * @return array<string, string>
+	 */
+	private function get_frontend_strings(): array
+	{
+		return array(
+			'cancelUpload'  => __('Cancel upload', 'gutenform-builder'),
+			'removeFile'    => __('Remove file', 'gutenform-builder'),
+			'uploadFailed'  => __('Upload failed', 'gutenform-builder'),
+			'networkError'  => __('Network error', 'gutenform-builder'),
+			'submitSuccess' => __('Thank you! Your submission has been received.', 'gutenform-builder'),
+			'submitError'   => __('Your submission could not be sent. Please try again.', 'gutenform-builder'),
+		);
+	}
+
+	/**
+	 * Whether the request being rendered contains a Gutenform form.
+	 *
+	 * Checks the queried post's content plus any synced pattern it references,
+	 * and errs on the side of loading for non-singular views (archives, widget
+	 * areas, block themes) where the content isn't a single known post.
+	 *
+	 * @return bool
+	 */
+	private function current_page_has_form(): bool
+	{
+		/**
+		 * Short-circuit the "does this page have a form?" check, for setups
+		 * where forms are rendered from somewhere this can't see.
+		 *
+		 * @param bool|null $has_form True/false to force, null to auto-detect.
+		 */
+		$forced = apply_filters('gutenform/frontend/has_form', null);
+		if (is_bool($forced)) {
+			return $forced;
+		}
+
+		if (! is_singular()) {
+			// Archives, search, block-theme templates: content isn't one known
+			// post, so don't guess -- load as before.
+			return true;
+		}
+
+		$post = get_post();
+		if (! $post instanceof \WP_Post) {
+			return true;
+		}
+
+		if (has_block('gutenform/form', $post)) {
+			return true;
+		}
+
+		// A form may live inside a synced pattern referenced by this post.
+		if (has_block('block', $post)) {
+			foreach (BlockScanner::find_block_refs(parse_blocks($post->post_content)) as $ref_id) {
+				$pattern = get_post($ref_id);
+				if ($pattern instanceof \WP_Post && has_block('gutenform/form', $pattern)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**

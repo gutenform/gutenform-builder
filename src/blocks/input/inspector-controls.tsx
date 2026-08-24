@@ -40,9 +40,9 @@ export const InputInspectorControls = ({ attributes, setAttributes, clientId }: 
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title="Input Field Settings">
+				<PanelBody title={__('inputFieldSettings', 'Input Field Settings')}>
 					<SelectControl
-						label="Type"
+						label={__('type', 'Type')}
 						value={attributes.type as 'text' | 'number' | 'email' | 'tel' | 'url' | 'search' | undefined}
 						onChange={(type) => setAttributes({ type: type as 'text' | 'number' | 'email' | 'tel' | 'url' | 'search' | undefined })}
 						options={[
@@ -56,7 +56,7 @@ export const InputInspectorControls = ({ attributes, setAttributes, clientId }: 
 						__next40pxDefaultSize={true}
 						__nextHasNoMarginBottom={true}
 					/>
-					
+
 					{isEmailType && (
 						<>
 							<ToggleControl

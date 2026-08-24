@@ -5,6 +5,19 @@
  * for the file upload field block.
  */
 
+/**
+ * Frontend strings for this view script.
+ *
+ * These are announced by screen readers, so they must be translatable rather
+ * than hardcoded English. They're localized from PHP onto window.gutenform
+ * (see includes/Assets/Frontend.php); the second argument is the English
+ * fallback used when no translation is present.
+ */
+function t(key: string, fallback: string): string {
+	const strings = (window as any).gutenform?.strings || {};
+	return strings[key] || fallback;
+}
+
 interface UploadedFile {
 	url: string;
 	name: string;
@@ -240,7 +253,7 @@ function initFileUploadField(field: HTMLElement) {
 					<div class="gutenform-file-item-progress-bar" style="width: ${state.progress}%"></div>
 					<span class="gutenform-file-item-progress-text">${state.progress}%</span>
 				</div>
-				<button type="button" class="gutenform-file-item-cancel" aria-label="Cancel upload">×</button>
+				<button type="button" class="gutenform-file-item-cancel" aria-label="${escapeHtml(t('cancelUpload', 'Cancel upload'))}">×</button>
 			`;
 			
 			const cancelBtn = item.querySelector('.gutenform-file-item-cancel');
@@ -261,7 +274,7 @@ function initFileUploadField(field: HTMLElement) {
 					<span class="gutenform-file-item-name">${escapeHtml(uploadedFile.original_name || uploadedFile.name)}</span>
 					<span class="gutenform-file-item-size">${fileSize}</span>
 				</div>
-				<button type="button" class="gutenform-file-item-remove" aria-label="Remove file">×</button>
+				<button type="button" class="gutenform-file-item-remove" aria-label="${escapeHtml(t('removeFile', 'Remove file'))}">×</button>
 			`;
 			
 			const removeBtn = item.querySelector('.gutenform-file-item-remove');
@@ -281,7 +294,7 @@ function initFileUploadField(field: HTMLElement) {
 					<span class="gutenform-file-item-name">${escapeHtml(fileName)}</span>
 					<span class="gutenform-file-item-error">${escapeHtml(state.error || 'Upload failed')}</span>
 				</div>
-				<button type="button" class="gutenform-file-item-remove" aria-label="Remove file">×</button>
+				<button type="button" class="gutenform-file-item-remove" aria-label="${escapeHtml(t('removeFile', 'Remove file'))}">×</button>
 			`;
 			
 			const removeBtn = item.querySelector('.gutenform-file-item-remove');

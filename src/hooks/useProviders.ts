@@ -14,7 +14,17 @@ export interface Provider {
 export interface ProviderTypeField {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'number' | 'textarea' | 'select' | 'checkbox' | 'url' | 'password';
+  type:
+    | 'text'
+    | 'email'
+    | 'number'
+    | 'textarea'
+    | 'select'
+    | 'checkbox'
+    | 'url'
+    | 'password'
+    | 'repeater'
+    | 'field_map';
   required?: boolean;
   default?: any;
   description?: string;
@@ -24,6 +34,12 @@ export interface ProviderTypeField {
   min?: number;
   max?: number;
   pattern?: string;
+  /** Write-only: never returned by the API, masked as bullets instead. */
+  is_secret?: boolean;
+  /** Whether a single form may override this setting. */
+  allow_form_override?: boolean;
+  /** Sub-fields for repeater-type settings. */
+  fields?: Array<{ name: string; label: string; type: string }>;
 }
 
 export interface ProviderType {
@@ -31,6 +47,10 @@ export interface ProviderType {
   title: string;
   icon?: string | null;
   fields: ProviderTypeField[];
+  /** Required providers run for every submission and cannot be switched off per form. */
+  is_required?: boolean;
+  /** Names of settings a single form is allowed to override. */
+  form_overridable?: string[];
 }
 
 export interface ProviderFilters {

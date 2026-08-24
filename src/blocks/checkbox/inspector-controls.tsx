@@ -7,7 +7,7 @@ import { LayoutOrientationControl } from '../../components/block-atoms/LayoutOri
 import { type BlockEditProps } from '@wordpress/blocks';
 import { type CheckboxAttributes } from '@/blockTypes/checkbox';
 import { OptionsRepeater } from '../../controls/OptionsRepeater';
-import { getCheckboxPresets } from './presets';
+import { getCheckboxOptionPresets } from './presets';
 
 type CheckboxInspectorControlsProps = BlockEditProps<CheckboxAttributes>;
 
@@ -33,16 +33,14 @@ export const CheckboxInspectorControls = ({
 		<>
 			<InspectorControls>
 				<PanelBody title={__('checkboxFieldSettings')}>
-					{!attributes.isConsent && (
-						<OptionsRepeater
-							options={options}
-							syncLabelValue={false}
-							onChange={handleOptionsChange}
-							onSyncLabelValueChange={() => {}}
-							presets={getCheckboxPresets().filter((p) => !p.isConsent)}
-							showDescription
-						/>
-					)}
+					<OptionsRepeater
+						options={options}
+						syncLabelValue={false}
+						onChange={handleOptionsChange}
+						onSyncLabelValueChange={() => {}}
+						presets={attributes.isConsent ? [] : getCheckboxOptionPresets()}
+						showDescription
+					/>
 					<SelectControl
 						label={__('style', 'Stil')}
 						value={attributes.styleVariant || 'default'}

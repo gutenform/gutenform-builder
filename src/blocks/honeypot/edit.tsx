@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { type BlockEditProps } from '@wordpress/blocks';
 import { type HoneypotAttributes } from '@/blockTypes/honeypot';
 import './editor.css';
@@ -23,19 +24,19 @@ export default function Edit(props: BlockEditProps<HoneypotAttributes>) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title="HoneyPot Settings">
+				<PanelBody title={__('honeypotSettings', 'HoneyPot Settings')}>
 					<TextControl
-						label="Field Name"
+						label={__('fieldName', 'Field Name')}
 						value={attributes.fieldName}
 						onChange={(value) => setAttributes({ fieldName: value })}
-						help="Name of the hidden field. Bots often fill fields with common names like 'website' or 'url'."
+						help={__('honeypotFieldNameHelp', "Bait name shown in the markup. Bots often fill fields called 'website' or 'url'.")}
 					/>
 				</PanelBody>
 			</InspectorControls>
 			<div className="gutenform-honeypot-placeholder" style={{ padding: '12px', background: '#f5f5f5', border: '1px dashed #ccc', borderRadius: '4px', fontSize: '12px', color: '#666' }}>
-				🕵️ HoneyPot Field (Hidden)
+				{__('honeypotEditorTitle', '🕵️ HoneyPot Field (Hidden)')}
 				<p style={{ margin: '4px 0 0 0', fontSize: '11px' }}>
-					This field will be completely hidden on the frontend. If filled, the submission will be marked as spam.
+					{__('honeypotEditorPlaceholder', 'Completely hidden on the frontend. If it is filled in, the submission is rejected server-side as spam.')}
 				</p>
 			</div>
 		</>

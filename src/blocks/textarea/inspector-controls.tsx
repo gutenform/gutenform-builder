@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, RangeControl } from '@wordpress/components';
 import { type BlockEditProps } from '@wordpress/blocks';
@@ -11,9 +12,9 @@ export const TextareaInspectorControls = ({ attributes, setAttributes, clientId 
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title="Textarea Field Settings">
+				<PanelBody title={__('textareaFieldSettings', 'Textarea Field Settings')}>
 					<RangeControl
-						label="Rows"
+						label={__('rows', 'Rows')}
 						value={attributes.rows}
 						onChange={(rows?: number) => setAttributes({ rows })}
 						min={1}

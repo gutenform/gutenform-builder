@@ -28,7 +28,12 @@ export interface FullscreenTemplateEditorProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   initialHtml?: string
-  onSave: (html: string) => void
+  /**
+   * Called on save in the plain case. Optional because callers that pass
+   * onSaveWithMeta (the form-context editor) never reach this path -- they
+   * previously had to pass a do-nothing onSave just to satisfy the type.
+   */
+  onSave?: (html: string) => void
   /** When provided, form fields etc. are shown in the placeholder list */
   customPlaceholders?: Placeholder[]
   /** When true, show "Use provider layout" checkbox and call onSaveWithMeta on save */
@@ -135,7 +140,7 @@ export function FullscreenTemplateEditor({
     if (onSaveWithMeta && showUseProviderLayoutCheckbox) {
       onSaveWithMeta({ html: htmlString, useProviderLayout })
     } else {
-      onSave(htmlString)
+      onSave?.(htmlString)
     }
     onOpenChange(false)
   }

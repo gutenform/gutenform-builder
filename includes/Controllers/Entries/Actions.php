@@ -509,6 +509,7 @@ class Actions
 			return array(
 				'success' => true,
 				'message' => sprintf(
+					/* translators: %d: number of permanently deleted entries. */
 					_n(
 						'%d entry permanently deleted.',
 						'%d entries permanently deleted.',

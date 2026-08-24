@@ -46,13 +46,12 @@ class DatabaseProviderSeeder
             // Create default Database Provider.
             Providers::create(
                 array(
-                    'name'            => __('Database Provider (Standard)', 'gutenform-builder'),
+                    'name'            => __('Database Provider (Default)', 'gutenform-builder'),
                     'provider_type'   => 'database',
                     'form_identifier' => null, // Global provider
                     'settings'        => array(
                         'mailbox_id'  => $mailbox_id,
-                        'subject'     => __('Neue Formular-Übermittlung: {form_title}', 'gutenform-builder'),
-                        'body'        => '{all_fields}',
+                        'subject'     => __('New Form Submission: {form_title}', 'gutenform-builder'),
                         'from_email'  => get_option('admin_email'),
                     ),
                     'is_active'      => true,

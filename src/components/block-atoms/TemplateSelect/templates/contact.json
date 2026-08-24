@@ -16,10 +16,12 @@
       "required": true
     }],
     ["gutenform/textarea", { "label": { "__": "message", "fallback": "Nachricht" }, "required": true, "rows": 5 }],
-    ["gutenform/select", {
+    ["gutenform/checkbox", {
       "label": { "__": "privacyConsent", "fallback": "Datenschutz-Einwilligung" },
-      "options": [{ "label": { "__": "iAgreeToPrivacy", "fallback": "Ich stimme den Datenschutzbestimmungen zu" }, "value": "yes" }],
-      "required": true
+      "options": [{ "label": { "__": "iAgreeToPrivacyPolicy", "fallback": "Ich stimme der Datenschutzerklärung zu." }, "value": "agreed" }],
+      "required": true,
+      "isConsent": true,
+      "presetName": "consent"
     }],
     ["gutenform/submit", {}],
     ["gutenform/success", {}]

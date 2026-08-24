@@ -38,6 +38,10 @@
 			"type": "boolean",
 			"default": false
 		},
+		"presetName": {
+			"type": "string",
+			"default": ""
+		},
 		"label": { "type": "string", "default": "" },
 		"placeholder": { "type": "string", "default": "" },
 		"help": { "type": "string", "default": "" },

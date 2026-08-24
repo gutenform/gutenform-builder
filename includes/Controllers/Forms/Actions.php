@@ -11,8 +11,11 @@
 
 namespace Gutenform\Controllers\Forms;
 
+use Gutenform\Core\BlockScanner;
 use Gutenform\Models\Mailboxes;
 use Gutenform\Models\Providers;
+
+defined('ABSPATH') || exit;
 
 /**
  * Class Actions
@@ -23,90 +26,6 @@ use Gutenform\Models\Providers;
  */
 class Actions
 {
-
-	/**
-	 * Field block names that count as "form fields".
-	 *
-	 * @var array<string>
-	 */
-	private static $field_block_names = array(
-		'gutenform/input',
-		'gutenform/textarea',
-		'gutenform/select',
-		'gutenform/checkbox',
-		'gutenform/radio',
-		'gutenform/date-time',
-		'gutenform/slider',
-		'gutenform/file',
-	);
-
-	/**
-	 * Recursively find all gutenform/form blocks in a block list.
-	 *
-	 * @param array $blocks Parsed blocks.
-	 * @return array List of form block data (attrs + field_count).
-	 */
-	private function find_form_blocks(array $blocks)
-	{
-		$found = array();
-		foreach ($blocks as $block) {
-			$name = isset($block['blockName']) ? $block['blockName'] : '';
-			if ($name === 'gutenform/form') {
-				$attrs = isset($block['attrs']) ? $block['attrs'] : array();
-				$inner = isset($block['innerBlocks']) ? $block['innerBlocks'] : array();
-				$found[] = array(
-					'attrs'        => $attrs,
-					'field_count'  => $this->count_field_blocks($inner),
-				);
-			}
-			if (!empty($block['innerBlocks'])) {
-				$found = array_merge($found, $this->find_form_blocks($block['innerBlocks']));
-			}
-		}
-		return $found;
-	}
-
-	/**
-	 * Recursively count blocks that are form fields (input, textarea, select, file).
-	 *
-	 * @param array $blocks Parsed blocks.
-	 * @return int
-	 */
-	private function count_field_blocks(array $blocks)
-	{
-		$count = 0;
-		foreach ($blocks as $block) {
-			$name = isset($block['blockName']) ? $block['blockName'] : '';
-			if (in_array($name, self::$field_block_names, true)) {
-				++$count;
-			}
-			if (!empty($block['innerBlocks'])) {
-				$count += $this->count_field_blocks($block['innerBlocks']);
-			}
-		}
-		return $count;
-	}
-
-	/**
-	 * Recursively collect all core/block ref IDs found in a block list.
-	 *
-	 * @param array $blocks Parsed blocks.
-	 * @return array<int> List of wp_block post IDs that are referenced.
-	 */
-	private function find_block_refs(array $blocks)
-	{
-		$refs = array();
-		foreach ($blocks as $block) {
-			$name = isset($block['blockName']) ? $block['blockName'] : '';
-			if ($name === 'core/block' && !empty($block['attrs']['ref'])) {
-				$refs[] = (int) $block['attrs']['ref'];
-			}
-			if (!empty($block['innerBlocks'])) {
-				$refs = array_merge($refs, $this->find_block_refs($block['innerBlocks']));
-			}
-		}
-		return $refs;
-	}
 
 	/**
 	 * Build a map of wp_block ID => list of posts that reference it (post_id, post_title, post_type, edit_link, view_link).
@@ -132,7 +51,7 @@ class Actions
 		$map = array();
 		foreach ($posts as $post) {
 			$blocks = parse_blocks($post->post_content);
-			$refs = $this->find_block_refs($blocks);
+			$refs = BlockScanner::find_block_refs($blocks);
 			$refs = array_unique($refs);
 			$edit_link = get_edit_post_link($post->ID, 'raw');
 			$view_link = get_permalink($post->ID);
@@ -199,7 +118,7 @@ class Actions
 				continue;
 			}
 			$blocks = parse_blocks($post->post_content);
-			$forms = $this->find_form_blocks($blocks);
+			$forms = BlockScanner::find_form_blocks($blocks);
 			if (empty($forms)) {
 				continue;
 			}

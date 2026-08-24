@@ -236,7 +236,11 @@ class Actions
 		if (empty($test_email) || !is_email($test_email)) {
 			return new \WP_Error(
 				'invalid_email',
-				sprintf(__('Invalid test email address after sanitization: %s', 'gutenform-builder'), $test_email_raw),
+				sprintf(
+					/* translators: %s: the email address that failed validation. */
+					__('Invalid test email address after sanitization: %s', 'gutenform-builder'),
+					$test_email_raw
+				),
 				array('status' => 400)
 			);
 		}
@@ -361,7 +365,11 @@ class Actions
 			
 			return new \WP_Error(
 				'invalid_test_email_final',
-				sprintf(__('Invalid test email address before sending: %s', 'gutenform-builder'), $test_email),
+				sprintf(
+					/* translators: %s: the email address that failed validation. */
+					__('Invalid test email address before sending: %s', 'gutenform-builder'),
+					$test_email
+				),
 				array('status' => 400)
 			);
 		}
@@ -386,7 +394,11 @@ class Actions
 		if ($result) {
 			return array(
 				'success' => true,
-				'message' => sprintf(__('Test email sent successfully to %s.', 'gutenform-builder'), $test_email),
+				'message' => sprintf(
+					/* translators: %s: recipient email address. */
+					__('Test email sent successfully to %s.', 'gutenform-builder'),
+					$test_email
+				),
 			);
 		}
 
