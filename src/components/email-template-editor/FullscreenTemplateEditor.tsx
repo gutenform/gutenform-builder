@@ -1,7 +1,7 @@
 "use client"
 
 import "./fullscreen-template-editor.css"
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef, lazy, Suspense } from "react"
 import { Dialog, DialogContent } from "@/components/ui/dialog.jsx"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -12,7 +12,12 @@ import { PlaceholderDraggable } from "@/components/ui/placeholder-draggable"
 import { CustomFieldInput } from "@/components/ui/custom-field-input"
 import { __ } from "@/lib/i18n"
 import { apiGet, type ApiResponse } from "@/lib/api"
-import Editor from "@monaco-editor/react"
+// CodeMirror 6 replaces Monaco here. Monaco's React wrapper fetches the actual
+// editor from cdn.jsdelivr.net at runtime, which is executable third-party code
+// from a CDN -- a WordPress.org guideline 8 exclusion reason. CodeMirror is
+// bundled locally, and is roughly an order of magnitude smaller. Still lazily
+// imported so it stays out of the main admin chunk.
+const HtmlCodeEditor = lazy(() => import("./HtmlCodeEditor"))
 import { useDebounce } from "@/hooks/useDebounce"
 import { X, Save } from "lucide-react"
 import type { Placeholder } from "@/components/ui/placeholder-draggable"
@@ -147,48 +152,8 @@ export function FullscreenTemplateEditor({
 
   const handlePlaceholderInsert = (placeholder: string) => {
     if (editorRef.current) {
-      const editor = editorRef.current
-      const selection = editor.getSelection()
-      if (selection) {
-        const range = {
-          startLineNumber: selection.startLineNumber,
-          startColumn: selection.startColumn,
-          endLineNumber: selection.endLineNumber,
-          endColumn: selection.endColumn,
-        }
-        editor.executeEdits('insert-placeholder', [{
-          range: range,
-          text: placeholder,
-          forceMoveMarkers: true,
-        }])
-        // Set cursor after inserted text
-        editor.setPosition({
-          lineNumber: selection.startLineNumber,
-          column: selection.startColumn + placeholder.length,
-        })
-        editor.focus()
-      } else {
-        // No selection, append at end
-        const model = editor.getModel()
-        const lineCount = model.getLineCount()
-        const lastLine = model.getLineContent(lineCount)
-        const range = {
-          startLineNumber: lineCount,
-          startColumn: lastLine.length + 1,
-          endLineNumber: lineCount,
-          endColumn: lastLine.length + 1,
-        }
-        editor.executeEdits('insert-placeholder', [{
-          range: range,
-          text: placeholder,
-          forceMoveMarkers: true,
-        }])
-        editor.setPosition({
-          lineNumber: lineCount,
-          column: lastLine.length + placeholder.length + 1,
-        })
-        editor.focus()
-      }
+      // Replaces the selection, or inserts at the caret when nothing is selected.
+      editorApi.insertAtSelection(placeholder)
     } else {
       // Fallback: append to end
       setHtml((prev) => String(prev || '') + placeholder)
@@ -214,79 +179,23 @@ export function FullscreenTemplateEditor({
       return
     }
 
-    const editor = editorRef.current
     const htmlString = String(html || '')
-    
+
     // Get the drop position relative to the preview container
     const previewContainer = e.currentTarget
     const rect = previewContainer.getBoundingClientRect()
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
 
-    // Try to find the best insertion point in the HTML
-    // This is a heuristic approach: we'll try to find the nearest text node or element
+    // Heuristic mapping from preview coordinates to a position in the source.
     const insertionPoint = findInsertionPointInHtml(htmlString, x, y, rect.width, rect.height)
-    
+
     if (insertionPoint) {
-      // Insert at the found position
-      const range = {
-        startLineNumber: insertionPoint.line,
-        startColumn: insertionPoint.column,
-        endLineNumber: insertionPoint.line,
-        endColumn: insertionPoint.column,
-      }
-      editor.executeEdits('drop-placeholder-preview', [{
-        range: range,
-        text: data,
-        forceMoveMarkers: true,
-      }])
-      editor.setPosition({
-        lineNumber: insertionPoint.line,
-        column: insertionPoint.column + data.length,
-      })
-      editor.focus()
+      const offset = editorApi.offsetAt(insertionPoint.line, insertionPoint.column)
+      editorApi.insertAt(offset, offset, data)
     } else {
-      // Fallback: insert at cursor position or end
-      const selection = editor.getSelection()
-      if (selection) {
-        const range = {
-          startLineNumber: selection.startLineNumber,
-          startColumn: selection.startColumn,
-          endLineNumber: selection.endLineNumber,
-          endColumn: selection.endColumn,
-        }
-        editor.executeEdits('drop-placeholder-preview', [{
-          range: range,
-          text: data,
-          forceMoveMarkers: true,
-        }])
-        editor.setPosition({
-          lineNumber: selection.startLineNumber,
-          column: selection.startColumn + data.length,
-        })
-        editor.focus()
-      } else {
-        // Append at end
-        const model = editor.getModel()
-        const lineCount = model.getLineCount()
-        const lastLine = model.getLineContent(lineCount)
-        const range = {
-          startLineNumber: lineCount,
-          startColumn: lastLine.length + 1,
-          endLineNumber: lineCount,
-          endColumn: lastLine.length + 1,
-        }
-        editor.executeEdits('drop-placeholder-preview', [{
-          range: range,
-          text: data,
-          forceMoveMarkers: true,
-        }])
-        editor.setPosition({
-          lineNumber: lineCount,
-          column: lastLine.length + data.length + 1,
-        })
-        editor.focus()
-      }
+      // Fallback: insert at the caret / replace the selection.
+      editorApi.insertAtSelection(data)
     }
   }
 
@@ -324,76 +233,89 @@ export function FullscreenTemplateEditor({
     }
   }
 
-  const handleEditorDidMount = (editor: any, monaco: any) => {
-    editorRef.current = editor
-    // Store monaco globally for drag and drop
-    ;(window as any).monaco = monaco
-    
-    // Handle drag and drop from placeholder list
-    const editorContainer = editor.getContainerDomNode()
-    
-    const handleDrop = (e: DragEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      
-      const data = e.dataTransfer?.getData('text/plain')
-      if (!data || !data.startsWith('{') || !data.endsWith('}')) {
-        return
-      }
-      
-      // Get current cursor position or use mouse position
-      let position = editor.getPosition()
-      
-      if (!position) {
-        // Fallback: try to get position from mouse coordinates
-        const rect = editorContainer.getBoundingClientRect()
-        const x = e.clientX - rect.left
-        const y = e.clientY - rect.top
-        
-        // Monaco's getTargetAtClientPoint method
-        if (monaco && monaco.editor) {
-          const target = editor.getTargetAtClientPoint({ clientX: e.clientX, clientY: e.clientY })
-          if (target && target.position) {
-            position = target.position
-          }
-        }
-      }
-      
-      // If still no position, use line 1, column 1
-      if (!position) {
-        position = { lineNumber: 1, column: 1 }
-      }
-      
-      const range = {
-        startLineNumber: position.lineNumber,
-        startColumn: position.column,
-        endLineNumber: position.lineNumber,
-        endColumn: position.column,
-      }
-      
-      editor.executeEdits('drop-placeholder', [{
-        range: range,
-        text: data,
-      }])
-      
-      editor.setPosition({
-        lineNumber: position.lineNumber,
-        column: position.column + data.length,
+  /**
+   * Minimal adapter over the CodeMirror view.
+   *
+   * The call sites below were written against Monaco's line/column + range API;
+   * CodeMirror addresses the document by flat character offset instead. Rather
+   * than sprinkle conversions through every handler, everything goes through
+   * these three operations.
+   */
+  const editorApi = {
+    /** Absolute offset for a 1-based line/column pair, clamped to the document. */
+    offsetAt(line: number, column: number): number {
+      const view = editorRef.current
+      if (!view) return 0
+      const doc = view.state.doc
+      const safeLine = Math.min(Math.max(1, line), doc.lines)
+      const lineInfo = doc.line(safeLine)
+      return Math.min(lineInfo.from + Math.max(0, column - 1), lineInfo.to)
+    },
+
+    /** Replaces the given range (or the selection) and puts the caret after it. */
+    insertAt(from: number, to: number, text: string) {
+      const view = editorRef.current
+      if (!view) return
+      view.dispatch({
+        changes: { from, to, insert: text },
+        selection: { anchor: from + text.length },
       })
-      editor.focus()
+      view.focus()
+    },
+
+    /** Replaces the current selection, or inserts at the caret. */
+    insertAtSelection(text: string) {
+      const view = editorRef.current
+      if (!view) return
+      const range = view.state.selection.main
+      this.insertAt(range.from, range.to, text)
+    },
+
+    /** Appends at the very end of the document. */
+    appendAtEnd(text: string) {
+      const view = editorRef.current
+      if (!view) return
+      const end = view.state.doc.length
+      this.insertAt(end, end, text)
+    },
+  }
+
+  const handleEditorCreated = (view: any) => {
+    editorRef.current = view
+  }
+
+  /**
+   * Drag & drop of a placeholder onto the code editor itself. CodeMirror
+   * exposes posAtCoords(), so the drop lands where the pointer actually is.
+   */
+  const handleEditorDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    const data = e.dataTransfer?.getData('text/plain')
+    if (!data || !data.startsWith('{') || !data.endsWith('}')) {
+      return
     }
-    
-    editorContainer.addEventListener('drop', handleDrop, true)
-    editorContainer.addEventListener('dragover', (e: DragEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      e.dataTransfer!.dropEffect = 'copy'
-    }, true)
-    
-    // Cleanup function
-    return () => {
-      editorContainer.removeEventListener('drop', handleDrop, true)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    const view = editorRef.current
+    if (!view) {
+      setHtml((prev) => String(prev || '') + data)
+      return
     }
+
+    const pos = view.posAtCoords({ x: e.clientX, y: e.clientY })
+    if (pos === null || pos === undefined) {
+      editorApi.insertAtSelection(data)
+      return
+    }
+
+    editorApi.insertAt(pos, pos, data)
+  }
+
+  const handleEditorDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    e.dataTransfer.dropEffect = 'copy'
   }
 
   if (!open) return null
@@ -527,20 +449,19 @@ export function FullscreenTemplateEditor({
                   <Label>{__("htmlEditor") || "HTML Editor"}</Label>
                 </div>
                 <div className="gutenform-te__editor-inner">
-                  <Editor
-                    height="100%"
-                    defaultLanguage="html"
-                    value={String(html || '')}
-                    onChange={(value) => setHtml(String(value || ''))}
-                    onMount={handleEditorDidMount}
-                    theme="vs-dark"
-                    options={{
-                      minimap: { enabled: false },
-                      fontSize: 14,
-                      wordWrap: 'on',
-                      automaticLayout: true,
-                    }}
-                  />
+                  <div
+                    className="gutenform-te__editor-dropzone"
+                    onDrop={handleEditorDrop}
+                    onDragOver={handleEditorDragOver}
+                  >
+                    <Suspense fallback={<div className="gutenform-te__editor-loading">{__("loading") || "Loading…"}</div>}>
+                      <HtmlCodeEditor
+                        value={String(html || '')}
+                        onChange={(value: string) => setHtml(String(value || ''))}
+                        onCreateEditor={handleEditorCreated}
+                      />
+                    </Suspense>
+                  </div>
                 </div>
               </div>
             </div>

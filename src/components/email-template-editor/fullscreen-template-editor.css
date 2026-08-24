@@ -433,3 +433,30 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* Placeholder while the code editor chunk is being fetched (see the lazy()
+   import in FullscreenTemplateEditor.tsx). */
+.gutenform-te__editor-loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	color: #9ca3af;
+	font-size: 13px;
+	background: #1e1e1e;
+}
+
+/* Wrapper that receives placeholder drops for the code editor. */
+.gutenform-te__editor-dropzone {
+	height: 100%;
+	min-height: 0;
+}
+
+.gutenform-te__editor-dropzone .cm-editor {
+	height: 100%;
+}
+
+.gutenform-te__editor-dropzone .cm-scroller {
+	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+	font-size: 13px;
+}

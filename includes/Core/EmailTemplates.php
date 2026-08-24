@@ -81,14 +81,30 @@ class EmailTemplates
      */
     public static function get_template_content(string $template_name)
     {
-        $directories = self::get_template_directories();
-
-        // Check directories in reverse order (theme templates first)
-        foreach (array_reverse($directories) as $directory) {
-            $file_path = $directory . '/' . $template_name . '.html';
-            if (file_exists($file_path)) {
-                return file_get_contents($file_path);
+        // $template_name reaches this method from a REST parameter and from
+        // provider settings, and used to be concatenated straight into a path.
+        // Resolve it against the list of templates that actually exist instead,
+        // so no traversal sequence can escape the template directories.
+        foreach (self::get_available_templates() as $template) {
+            if ($template['name'] !== $template_name) {
+                continue;
             }
+
+            $real_path = realpath($template['path']);
+            if (false === $real_path) {
+                return false;
+            }
+
+            // Belt and braces: the resolved file must still sit inside one of
+            // the configured template directories.
+            foreach (self::get_template_directories() as $directory) {
+                $real_directory = realpath($directory);
+                if ($real_directory && 0 === strpos($real_path, $real_directory)) {
+                    return file_get_contents($real_path);
+                }
+            }
+
+            return false;
         }
 
         return false;

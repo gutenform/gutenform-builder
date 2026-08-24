@@ -113,7 +113,6 @@ class Admin
 			'userInfo'             => $this->get_user_data(),
 			'strings'              => Strings::get_strings(),
 			'providersIconBaseUrl'   => defined('GF_ASSETS_URL') ? GF_ASSETS_URL . '/providers/' : '',
-			'comingSoonProviderIcons' => self::get_coming_soon_provider_icons(),
 		);
 	}
 
@@ -159,21 +158,6 @@ class Admin
 				wp_localize_script($handle, self::OBJ_NAME, $this->get_data());
 			}
 		}
-	}
-
-	/**
-	 * Get icon URLs for Coming Soon providers. Searches plugin assets/providers/.
-	 * Extension priority: svg, png, jpg, jpeg.
-	 *
-	 * @return array<string, string|null> Map of slug to icon URL.
-	 */
-	private static function get_coming_soon_provider_icons(): array {
-		$slugs = array( 'google-sheets', 'salesforce', 'onoffice', 'supabase', 'brevo', 'webhook' );
-		$icons = array();
-		foreach ( $slugs as $slug ) {
-			$icons[ $slug ] = \Gutenform\Providers\AbstractProvider::get_icon_url_for_slug( $slug );
-		}
-		return $icons;
 	}
 
 	/**

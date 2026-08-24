@@ -723,6 +723,69 @@ class Actions
 	}
 
 	/**
+	 * Get the "delete all data on uninstall" opt-in.
+	 *
+	 * @return array|\WP_Error
+	 */
+	public function get_delete_data_on_uninstall()
+	{
+		if (!current_user_can('manage_options')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('You do not have permission to view settings.', 'gutenform-builder'),
+				array('status' => 403)
+			);
+		}
+
+		return array(
+			'success' => true,
+			'enabled' => (bool) get_option('gutenform_delete_data_on_uninstall', false),
+		);
+	}
+
+	/**
+	 * Update the "delete all data on uninstall" opt-in.
+	 *
+	 * Off by default: deleting the plugin must not silently destroy a site's
+	 * form submissions. See uninstall.php.
+	 *
+	 * @param \WP_REST_Request $request
+	 * @return array|\WP_Error
+	 */
+	public function update_delete_data_on_uninstall(\WP_REST_Request $request)
+	{
+		$nonce = $request->get_header('X-WP-Nonce');
+		if (!$nonce || !wp_verify_nonce($nonce, 'wp_rest')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('Security check failed.', 'gutenform-builder'),
+				array('status' => 403)
+			);
+		}
+
+		if (!current_user_can('manage_options')) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__('You do not have permission to manage settings.', 'gutenform-builder'),
+				array('status' => 403)
+			);
+		}
+
+		$params  = $request->get_json_params();
+		$enabled = isset($params['enabled']) ? (bool) $params['enabled'] : false;
+
+		update_option('gutenform_delete_data_on_uninstall', $enabled ? '1' : '', false);
+
+		return array(
+			'success' => true,
+			'message' => $enabled
+				? __('All Gutenform data will be deleted when the plugin is deleted.', 'gutenform-builder')
+				: __('Gutenform data will be kept when the plugin is deleted.', 'gutenform-builder'),
+			'enabled' => $enabled,
+		);
+	}
+
+	/**
 	 * Get admin bar visibility status
 	 *
 	 * @return array|\WP_Error

@@ -1,0 +1,99 @@
+name: Build release package
+
+# Produces the distributable plugin zip.
+#
+# This exists because vendor/ and assets/blocks/ are build output and are not in
+# version control -- a plain `git archive` of this repository is not a working
+# plugin. The zip is assembled from a full build, with .distignore deciding what
+# is excluded.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: composer
+
+      - name: Install PHP dependencies (production only)
+        run: composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Build admin app and blocks
+        run: npm run build
+
+      - name: Verify the build produced what the plugin needs at runtime
+        run: |
+          test -f vendor/autoload.php || { echo "::error::vendor/autoload.php missing"; exit 1; }
+          test -d assets/blocks || { echo "::error::assets/blocks/ missing"; exit 1; }
+          test -f assets/blocks/form/block.json || { echo "::error::blocks were not built"; exit 1; }
+
+      - name: Create distribution archive
+        run: |
+          composer global require wp-cli/dist-archive-command
+          "$(composer config -g home)/vendor/bin/wp" dist-archive . ./gutenform-builder.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gutenform-builder
+          path: gutenform-builder.zip
+
+  # Publishing to the WordPress.org SVN repository. Only runs on a tag, and only
+  # once the repository secrets exist -- so it stays inert until the plugin has
+  # actually been approved and SVN credentials are available.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          tools: composer
+
+      - name: Install PHP dependencies (production only)
+        run: composer install --no-dev --optimize-autoloader --prefer-dist --no-interaction
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Build admin app and blocks
+        run: npm run build
+
+      - name: Deploy to WordPress.org
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: gutenform-builder

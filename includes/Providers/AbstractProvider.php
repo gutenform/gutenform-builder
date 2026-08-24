@@ -363,10 +363,13 @@ abstract class AbstractProvider
      */
     protected function get_form_title(string $form_identifier): string
     {
-        // Try to get the title from Post Meta
-        // This is a simplified implementation - can be extended later
-        // e.g. by storing form titles in a separate table or meta
-        return $form_identifier;
+        // This used to just return the identifier, so every {form_title}
+        // placeholder rendered the slug instead of the form's actual title.
+        // The title is now indexed server-side, so it can be looked up.
+        $form = \Gutenform\Core\FormRegistry::get_instance()->get_form_config($form_identifier);
+        $title = isset($form['config']['form_title']) ? trim((string) $form['config']['form_title']) : '';
+
+        return '' !== $title ? $title : $form_identifier;
     }
 
     /**

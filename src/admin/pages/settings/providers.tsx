@@ -49,21 +49,12 @@ import { Plus, Trash2, Edit2, Settings } from "lucide-react"
 import { EmailPreview } from "@/components/ui/email-preview"
 import { ProviderTypeGrid } from "@/components/providers/ProviderTypeGrid"
 
-// Webhook graduated out of this list -- it is a real, shipping provider now
-// (see includes/Providers/Webhook.php).
-//
-// NOTE for the WordPress.org release: guideline 5 (no trialware) means the free
-// build must not advertise features it cannot deliver, and these tiles use
-// third-party trademarks besides. They belong in the Pro add-on, which
-// registers its providers through the gutenform/available_providers filter.
-// Removing them is tracked as part of the Phase 3 packaging work.
-const COMING_SOON_PROVIDERS = [
-  { slug: "google-sheets", title: "Google Sheets" },
-  { slug: "salesforce", title: "Salesforce" },
-  { slug: "onoffice", title: "onOffice" },
-  { slug: "supabase", title: "Supabase" },
-  { slug: "brevo", title: "Brevo" },
-]
+// The "Coming Soon" provider tiles (Google Sheets, Salesforce, onOffice,
+// Supabase, Brevo) are gone: WordPress.org guideline 5 forbids advertising
+// features the shipped build cannot deliver, and the tiles carried third-party
+// trademarks and logos besides. Those providers live in the Pro add-on, which
+// registers itself through the gutenform/available_providers filter -- so this
+// grid simply shows whatever providers are actually installed.
 import { PlaceholderInput } from "@/components/ui/placeholder-input"
 import { EmailField } from "@/components/ui/email-field"
 import { FullscreenTemplateEditor } from "@/components/email-template-editor/FullscreenTemplateEditor"
@@ -702,10 +693,7 @@ export default function ProvidersPage() {
             title: t.title,
             icon: t.icon ?? null,
           }))}
-          comingSoon={COMING_SOON_PROVIDERS.map((p) => ({
-            ...p,
-            icon: (window as any).gutenForm?.comingSoonProviderIcons?.[p.slug] ?? null,
-          }))}
+          comingSoon={[]}
           onSelectType={(slug) => handleOpenDialog(null, slug)}
         />
       </div>

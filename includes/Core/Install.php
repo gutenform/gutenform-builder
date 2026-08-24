@@ -48,7 +48,6 @@ class Install
 	public function init()
 	{
 
-		// $this->install_pages(); // Not needed - using standard WordPress frontend
 		$this->install_tables();
 		$this->insert_data();
 		Capabilities::grant_role_capabilities();
@@ -74,17 +73,6 @@ class Install
 		$this->install_tables();
 
 		update_option(self::DB_VERSION_OPTION, self::DB_VERSION, false);
-	}
-
-	/**
-	 * Install the pages
-	 *
-	 * @return void
-	 * @deprecated Not needed - using standard WordPress frontend
-	 */
-	private function install_pages()
-	{
-		// Frontend page installation removed - using standard WordPress frontend
 	}
 
 	/**

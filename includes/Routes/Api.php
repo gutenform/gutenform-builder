@@ -108,6 +108,8 @@ Route::prefix(
 		$route->post('/settings/charts-visible', '\Gutenform\Controllers\Settings\Actions@update_charts_visible', $manage_settings);
 		$route->get('/settings/admin-bar', '\Gutenform\Controllers\Settings\Actions@get_admin_bar_enabled', $manage_settings);
 		$route->post('/settings/admin-bar', '\Gutenform\Controllers\Settings\Actions@update_admin_bar_enabled', $manage_settings);
+		$route->get('/settings/delete-data-on-uninstall', '\Gutenform\Controllers\Settings\Actions@get_delete_data_on_uninstall', $manage_settings);
+		$route->post('/settings/delete-data-on-uninstall', '\Gutenform\Controllers\Settings\Actions@update_delete_data_on_uninstall', $manage_settings);
 
 		// Email Logs routes (recipient/subject of every submission -- settings only).
 		$route->get('/email-logs/get', '\Gutenform\Controllers\EmailLogs\Actions@get_email_logs', $manage_settings);

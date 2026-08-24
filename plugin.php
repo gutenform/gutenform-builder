@@ -10,7 +10,6 @@ use Gutenform\Core\Smtp;
 use Gutenform\Core\EmailLogger;
 use Gutenform\Admin\Menu;
 use Gutenform\Admin\AdminBar;
-// use Gutenform\Core\Template; // Not needed - using standard WordPress frontend
 use Gutenform\Assets\Frontend;
 use Gutenform\Assets\Admin;
 use Gutenform\Traits\Base;
@@ -84,7 +83,6 @@ final class Gutenform
 		API::get_instance()->init();
 		Smtp::get_instance()->init();
 		EmailLogger::get_instance()->init();
-		// Template::get_instance()->init(); // Not needed - using standard WordPress frontend
 
 		add_action('init', array($this, 'i18n'), 1);
 		add_action('init', array($this, 'register_blocks'), 10);
