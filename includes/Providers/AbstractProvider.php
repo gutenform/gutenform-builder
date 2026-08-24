@@ -58,6 +58,110 @@ abstract class AbstractProvider
     abstract public function get_settings_fields(): array;
 
     /**
+     * Whether this provider must run for every submission and cannot be
+     * switched off per form. Required feeds are always placed first in the
+     * execution order and their failure fails the submission (see
+     * Controllers\Submissions\Handler).
+     *
+     * @return bool
+     */
+    public function is_required(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Returns the names of settings fields a single form may override, i.e.
+     * those whose definition carries 'allow_form_override' => true.
+     *
+     * Anything not listed here is ignored when it shows up in a form's
+     * providerOverrides, so a form can never rewrite a feed's endpoint,
+     * credentials, or recipient.
+     *
+     * @return array<string>
+     */
+    public function get_form_overridable_settings(): array
+    {
+        $overridable = array();
+
+        foreach ($this->get_settings_fields() as $field) {
+            if (! empty($field['allow_form_override']) && ! empty($field['name'])) {
+                $overridable[] = (string) $field['name'];
+            }
+        }
+
+        return $overridable;
+    }
+
+    /**
+     * Filters a form's requested settings overrides down to what this provider
+     * actually allows a form to change, sanitizing each surviving value
+     * against its declared field type.
+     *
+     * @param array $requested Raw per-form settings overrides.
+     * @return array
+     */
+    public function filter_form_settings_overrides(array $requested): array
+    {
+        if (empty($requested)) {
+            return array();
+        }
+
+        $definitions = array();
+        foreach ($this->get_settings_fields() as $field) {
+            if (! empty($field['name'])) {
+                $definitions[(string) $field['name']] = $field;
+            }
+        }
+
+        $allowed = array();
+
+        foreach ($this->get_form_overridable_settings() as $name) {
+            if (! array_key_exists($name, $requested)) {
+                continue;
+            }
+
+            $definition = $definitions[$name] ?? array();
+            $value      = $requested[$name];
+
+            switch ($definition['type'] ?? 'text') {
+                case 'select':
+                    $options = array();
+                    foreach ($definition['options'] ?? array() as $option) {
+                        if (isset($option['value'])) {
+                            $options[] = (string) $option['value'];
+                        }
+                    }
+                    $value = (string) $value;
+                    // Reject a value that isn't one of the offered options.
+                    if (! empty($options) && ! in_array($value, $options, true)) {
+                        continue 2;
+                    }
+                    $allowed[$name] = $value;
+                    break;
+
+                case 'number':
+                    $allowed[$name] = (int) $value;
+                    break;
+
+                case 'checkbox':
+                    $allowed[$name] = (bool) $value;
+                    break;
+
+                case 'textarea':
+                    $allowed[$name] = wp_kses_post((string) $value);
+                    break;
+
+                default:
+                    $allowed[$name] = sanitize_text_field((string) $value);
+                    break;
+            }
+        }
+
+        return $allowed;
+    }
+
+    /**
      * Returns the icon URL for the provider type.
      * Searches only in plugin assets folder. Priority: svg, png, jpg, jpeg.
      *

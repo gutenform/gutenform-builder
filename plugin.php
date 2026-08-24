@@ -2,6 +2,8 @@
 
 use Gutenform\Core\Api;
 use Gutenform\Core\Capabilities;
+use Gutenform\Core\FormRegistry;
+use Gutenform\Core\Install;
 use Gutenform\Core\Deactivate;
 use Gutenform\Core\Smtp;
 use Gutenform\Core\EmailLogger;
@@ -67,8 +69,14 @@ final class Gutenform
 		// Admin bar (runs on frontend and admin).
 		AdminBar::get_instance()->init();
 
+		// Bring the database schema up to date on existing installs -- migrations
+		// used to run only in the activation hook, so a plugin update that adds
+		// a table (like gutenform_forms) never reached them.
+		Install::get_instance()->maybe_upgrade_database();
+
 		// Initialze core functionalities.
 		Capabilities::get_instance()->init();
+		FormRegistry::get_instance()->init();
 		Frontend::get_instance()->bootstrap();
 		API::get_instance()->init();
 		Smtp::get_instance()->init();

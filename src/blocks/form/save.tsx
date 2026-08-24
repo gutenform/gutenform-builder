@@ -27,13 +27,17 @@ import clsx from 'clsx';
  * @return {Element} Element to render.
  */
 export default function save(props: BlockSaveProps<FormAttributes>) {
+	// Only presentation-level options belong in the markup. Provider selection
+	// and per-feed settings are resolved server-side from the block attributes
+	// (see includes/Core/FormRegistry.php) and are deliberately NOT emitted
+	// here -- the browser used to be able to choose which feeds ran.
 	const options = {
 		formTitle: props.attributes.formTitle,
 		skin: props.attributes.skin || 'default',
-		mailboxId: props.attributes.mailboxId || '1',
 		formId: props.attributes.formId || '',
-		providerIds: props.attributes.providerIds || [],
-		providerOverrides: props.attributes.providerOverrides || {},
+		successMessage: props.attributes.successMessage || '',
+		errorMessage: props.attributes.errorMessage || '',
+		redirectUrl: props.attributes.redirectUrl || '',
 	};
 	const borderProps = getBorderClassesAndStyles( props.attributes );
 	const colorProps = getColorClassesAndStyles( props.attributes );

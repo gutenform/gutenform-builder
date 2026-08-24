@@ -52,14 +52,3 @@ function gf_get_config($config_file_name)
 	}
 	return array();
 }
-
-/**
- * Checks if the provider system should be used.
- *
- * @return bool True if provider system should be used, false otherwise.
- * @since 1.0.0
- */
-function gutenform_use_provider_system(): bool
-{
-	return get_option('gutenform_use_provider_system', true);
-}

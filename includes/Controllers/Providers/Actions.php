@@ -11,7 +11,11 @@
 
 namespace Gutenform\Controllers\Providers;
 
+use Gutenform\Core\Crypto;
 use Gutenform\Models\Providers;
+use Gutenform\Providers\Registry;
+
+defined('ABSPATH') || exit;
 
 /**
  * Class Actions
@@ -22,6 +26,90 @@ use Gutenform\Models\Providers;
  */
 class Actions
 {
+
+	/**
+	 * Placeholder returned in place of a stored secret. A settings payload that
+	 * still carries this value on update means "leave the secret unchanged".
+	 */
+	private const SECRET_MASK = '••••••••';
+
+	/**
+	 * Returns the names of a provider type's secret settings fields.
+	 *
+	 * @param string $provider_type Provider slug.
+	 * @return array<string>
+	 */
+	private function get_secret_field_names(string $provider_type): array
+	{
+		$provider = Registry::get_instance()->get_provider($provider_type);
+		if (! $provider) {
+			return array();
+		}
+
+		$secrets = array();
+		foreach ($provider->get_settings_fields() as $field) {
+			if (! empty($field['is_secret']) && ! empty($field['name'])) {
+				$secrets[] = (string) $field['name'];
+			}
+		}
+
+		return $secrets;
+	}
+
+	/**
+	 * Replaces every secret value in a feed's settings with a mask, so
+	 * credentials are never returned over the REST API.
+	 *
+	 * @param object $provider Feed row.
+	 * @return object
+	 */
+	private function mask_secrets($provider)
+	{
+		if (! $provider || ! is_array($provider->settings)) {
+			return $provider;
+		}
+
+		$settings = $provider->settings;
+		foreach ($this->get_secret_field_names((string) $provider->provider_type) as $name) {
+			if (! empty($settings[$name])) {
+				$settings[$name] = self::SECRET_MASK;
+			}
+		}
+
+		$provider->settings = $settings;
+
+		return $provider;
+	}
+
+	/**
+	 * Encrypts incoming secret values, and preserves the stored value when the
+	 * client sends back the mask (or an empty value) instead of a new secret.
+	 *
+	 * @param array  $incoming      Submitted settings.
+	 * @param array  $existing      Currently stored settings.
+	 * @param string $provider_type Provider slug.
+	 * @return array
+	 */
+	private function protect_secrets(array $incoming, array $existing, string $provider_type): array
+	{
+		foreach ($this->get_secret_field_names($provider_type) as $name) {
+			$submitted = $incoming[$name] ?? '';
+
+			if ('' === $submitted || self::SECRET_MASK === $submitted) {
+				// Unchanged: keep whatever is already stored.
+				if (isset($existing[$name])) {
+					$incoming[$name] = $existing[$name];
+				} else {
+					unset($incoming[$name]);
+				}
+				continue;
+			}
+
+			$incoming[$name] = Crypto::encrypt((string) $submitted);
+		}
+
+		return $incoming;
+	}
 
 	/**
 	 * Creates a new provider.
@@ -35,11 +123,15 @@ class Actions
 			// UNIQUE constraint on provider_type removed - multiple providers per type allowed
 			// form_identifier is optional (NULL = global provider)
 
+			$provider_type = sanitize_text_field((string) $request->get_param('provider_type'));
+			$settings      = $request->get_param('settings') ?? array();
+			$settings      = is_array($settings) ? $settings : array();
+
 			$provider = new Providers();
 			$provider->name            = $request->get_param('name');
-			$provider->provider_type   = $request->get_param('provider_type');
+			$provider->provider_type   = $provider_type;
 			$provider->form_identifier  = $request->get_param('form_identifier') ? sanitize_text_field($request->get_param('form_identifier')) : null;
-			$provider->settings         = $request->get_param('settings') ?? array();
+			$provider->settings         = $this->protect_secrets($settings, array(), $provider_type);
 			$provider->is_active       = $request->get_param('is_active') ?? true;
 			$provider->date_created    = current_time('mysql');
 
@@ -48,7 +140,7 @@ class Actions
 			return array(
 				'success' => true,
 				'message' => __('Provider created successfully.', 'gutenform-builder'),
-				'data'    => $provider,
+				'data'    => $this->mask_secrets($provider),
 			);
 		} catch (\Exception $e) {
 			return new \WP_Error(
@@ -93,6 +185,10 @@ class Actions
 
 			$providers = $query->orderBy('date_created', 'DESC')->get();
 
+			foreach ($providers as $provider) {
+				$this->mask_secrets($provider);
+			}
+
 			return array(
 				'success' => true,
 				'data'    => $providers,
@@ -129,7 +225,7 @@ class Actions
 
 			return array(
 				'success' => true,
-				'data'    => $provider,
+				'data'    => $this->mask_secrets($provider),
 			);
 		} catch (\Exception $e) {
 			return new \WP_Error(
@@ -170,7 +266,7 @@ class Actions
 
 			return array(
 				'success' => true,
-				'data'    => $provider,
+				'data'    => $this->mask_secrets($provider),
 			);
 		} catch (\Exception $e) {
 			return new \WP_Error(
@@ -215,7 +311,17 @@ class Actions
 				$provider->form_identifier = ($form_identifier === null || $form_identifier === '') ? null : sanitize_text_field($form_identifier);
 			}
 			if ($request->has_param('settings')) {
-				$provider->settings = $request->get_param('settings');
+				$incoming = $request->get_param('settings');
+				$incoming = is_array($incoming) ? $incoming : array();
+				$existing = is_array($provider->settings) ? $provider->settings : array();
+
+				// A masked or empty secret means "unchanged" -- never overwrite a
+				// stored credential with the placeholder we handed the client.
+				$provider->settings = $this->protect_secrets(
+					$incoming,
+					$existing,
+					(string) $provider->provider_type
+				);
 			}
 			if ($request->has_param('is_active')) {
 				$provider->is_active = $request->get_param('is_active');
@@ -226,7 +332,7 @@ class Actions
 			return array(
 				'success' => true,
 				'message' => __('Provider updated successfully.', 'gutenform-builder'),
-				'data'    => $provider,
+				'data'    => $this->mask_secrets($provider),
 			);
 		} catch (\Exception $e) {
 			return new \WP_Error(
@@ -291,7 +397,13 @@ class Actions
 					'slug'  => $slug,
 					'title' => $provider->get_title(),
 					'icon'  => $provider->get_icon(),
+					// Field *definitions* only -- never stored values, so no
+					// secret can leak through this endpoint.
 					'fields' => $provider->get_settings_fields(),
+					// Lets the editor render required providers as a locked,
+					// non-removable entry instead of a toggle.
+					'is_required'          => $provider->is_required(),
+					'form_overridable'     => $provider->get_form_overridable_settings(),
 				);
 			}
 

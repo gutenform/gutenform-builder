@@ -45,6 +45,18 @@ class Database extends AbstractProvider
     }
 
     /**
+     * The database feed is mandatory: every submission is stored before any
+     * optional provider (mail, webhook, ...) runs, so a failing integration
+     * can never cost a lead.
+     *
+     * @return bool
+     */
+    public function is_required(): bool
+    {
+        return true;
+    }
+
+    /**
      * Processes a form submission.
      *
      * @param array  $submission_data The form data
@@ -145,30 +157,24 @@ class Database extends AbstractProvider
 
         return array(
             array(
-                'name'        => 'mailbox_id',
-                'label'       => __('Mailbox', 'gutenform-builder'),
-                'type'        => 'select',
-                'required'    => true,
-                'default'     => $this->get_default_mailbox_id(),
-                'description' => __('Select the mailbox where the entry will be stored.', 'gutenform-builder'),
-                'options'     => $mailbox_options,
+                'name'                => 'mailbox_id',
+                'label'               => __('Mailbox', 'gutenform-builder'),
+                'type'                => 'select',
+                'required'            => true,
+                'default'             => $this->get_default_mailbox_id(),
+                'description'         => __('Select the mailbox where the entry will be stored.', 'gutenform-builder'),
+                'options'             => $mailbox_options,
+                // Each form may route its own entries to a different mailbox.
+                'allow_form_override' => true,
             ),
             array(
-                'name'        => 'subject',
-                'label'       => __('Subject', 'gutenform-builder'),
-                'type'        => 'text',
-                'required'    => false,
-                'default'     => __('New Form Submission: {form_title}', 'gutenform-builder'),
-                'description' => __('Subject for the entry. Placeholders like {form_title} will be replaced.', 'gutenform-builder'),
-            ),
-            array(
-                'name'        => 'body',
-                'label'       => __('Message', 'gutenform-builder'),
-                'type'        => 'textarea',
-                'required'    => false,
-                'default'     => '{all_fields}',
-                'description' => __('Message for the entry. Placeholders like {field_name} will be replaced.', 'gutenform-builder'),
-                'rows'        => 6,
+                'name'                => 'subject',
+                'label'               => __('Subject', 'gutenform-builder'),
+                'type'                => 'text',
+                'required'            => false,
+                'default'             => __('New Form Submission: {form_title}', 'gutenform-builder'),
+                'description'         => __('Subject for the entry. Placeholders like {form_title} will be replaced.', 'gutenform-builder'),
+                'allow_form_override' => true,
             ),
             array(
                 'name'        => 'from_email',

@@ -9,6 +9,7 @@ use Gutenform\Database\Migrations\Providers;
 use Gutenform\Database\Migrations\AddFormIdentifierToProviders;
 use Gutenform\Database\Migrations\AddFolderIdToEntries;
 use Gutenform\Database\Migrations\EmailLogs;
+use Gutenform\Database\Migrations\Forms;
 use Gutenform\Database\Migrations\InboxFolders;
 use Gutenform\Database\Seeders\EntryLabelsSeeder as SeedersEntryLabels;
 use Gutenform\Database\Seeders\MailboxesSeeder as SeedersMailboxes;
@@ -28,6 +29,18 @@ class Install
 	use Base;
 
 	/**
+	 * Schema version. Bump whenever install_tables() gains a new table or
+	 * column migration, so existing installs pick it up on the next request
+	 * instead of only on (re)activation.
+	 */
+	public const DB_VERSION = '2';
+
+	/**
+	 * Option key holding the installed schema version.
+	 */
+	private const DB_VERSION_OPTION = 'gutenform_db_version';
+
+	/**
 	 * Initialize the class
 	 *
 	 * @return void
@@ -40,6 +53,27 @@ class Install
 		$this->insert_data();
 		Capabilities::grant_role_capabilities();
 		update_option('gutenform_capabilities_version', Capabilities::VERSION, false);
+		update_option(self::DB_VERSION_OPTION, self::DB_VERSION, false);
+	}
+
+	/**
+	 * Runs pending migrations on an existing install.
+	 *
+	 * Every migration's up() is written to be idempotent (it returns early if
+	 * the table already exists), so this is safe to run whenever the stored
+	 * schema version is behind.
+	 *
+	 * @return void
+	 */
+	public function maybe_upgrade_database()
+	{
+		if (get_option(self::DB_VERSION_OPTION) === self::DB_VERSION) {
+			return;
+		}
+
+		$this->install_tables();
+
+		update_option(self::DB_VERSION_OPTION, self::DB_VERSION, false);
 	}
 
 	/**
@@ -69,6 +103,8 @@ class Install
 		InboxFolders::up();
 		AddFolderIdToEntries::up();
 		EmailLogs::up();
+		// Server-side form index (provider feeds + field schema) -- see Core\FormRegistry.
+		Forms::up();
 	}
 
 	/**

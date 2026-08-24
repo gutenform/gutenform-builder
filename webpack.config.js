@@ -33,35 +33,16 @@ function getSkinEntries() {
 	return entries;
 }
 
-// Get library entries (standalone files that need to be built)
-function getLibraryEntries() {
-	const entries = {};
-	
-	// Add gutenform-entries library
-	const entriesPath = path.resolve(__dirname, 'src/lib/gutenform-entries.ts');
-	if (fs.existsSync(entriesPath)) {
-		// Entry point: lib/gutenform-entries
-		// This will output to assets/lib/gutenform-entries.js
-		entries['lib/gutenform-entries'] = entriesPath;
-	}
-	
-	return entries;
-}
-
 // Export as function to work with wp-scripts flags
 export default (env, argv) => {
 	const config = typeof defaultConfig === 'function' ? defaultConfig(env, argv) : defaultConfig;
-	
+
 	// Get skin entries
 	const skinEntries = getSkinEntries();
-	
-	// Get library entries
-	const libraryEntries = getLibraryEntries();
-	
+
 	const mergedEntry = {
 		...config.entry(),
 		...skinEntries,
-		...libraryEntries,
 	};
 	
 	// Add path alias for @ to src
