@@ -380,7 +380,7 @@ class Actions
 	}
 
 	/**
-	 * Gibt alle verfügbaren Provider-Typen mit ihren Feld-Definitionen zurück.
+	 * Returns all available provider types with their field definitions.
 	 *
 	 * @param \WP_REST_Request $request
 	 * @return array|\WP_Error

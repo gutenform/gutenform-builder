@@ -9,7 +9,7 @@ type SubmitInspectorControlsProps = BlockEditProps<SubmitAttributes>;
 export const SubmitInspectorControls = ({ attributes, setAttributes }: SubmitInspectorControlsProps) => {
 	return (
 		<InspectorControls>
-			<PanelBody title="Submit Settings">
+			<PanelBody title={__('submitSettings', 'Submit Settings')}>
 				<TextControl
 					label={__('buttonLabel')}
 					value={attributes.label}
@@ -18,7 +18,7 @@ export const SubmitInspectorControls = ({ attributes, setAttributes }: SubmitIns
 					__nextHasNoMarginBottom={true}
 				/>
 				<TextControl
-					label="ID"
+					label={__('id', 'ID')}
 					value={attributes.id}
 					onChange={(id) => setAttributes({ id })}
 					__next40pxDefaultSize={true}

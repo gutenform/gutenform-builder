@@ -43,7 +43,7 @@ class Actions {
 	private const MAX_STRING_LEN      = 20000;
 
 	/**
-	 * Verarbeitet eine Formular-Submission.
+	 * Processes a form submission.
 	 *
 	 * @param \WP_REST_Request $request
 	 * @return array|\WP_Error

@@ -1,3 +1,4 @@
+import { __ } from '@/lib/i18n';
 import { type BlockEditProps } from '@wordpress/blocks';
 import { type CaptchaAttributes } from '@/blockTypes/captcha';
 import './editor.css';
@@ -24,20 +25,21 @@ export default function Edit(props: BlockEditProps<CaptchaAttributes>) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title="CAPTCHA Settings">
+				<PanelBody title={__('captchaSettings', 'CAPTCHA Settings')}>
 					<SelectControl
-						label="CAPTCHA Type"
+						label={__('captchaType', 'CAPTCHA Type')}
 						value={attributes.captchaType}
 						options={[
 							{ label: 'FriendlyCaptcha', value: 'friendlycaptcha' },
 							{ label: 'Google reCAPTCHA', value: 'recaptcha' },
 						]}
 						onChange={(value) => setAttributes({ captchaType: value as 'friendlycaptcha' | 'recaptcha' })}
+						help={__('captchaKeysHint', 'Site key and secret are configured once under Gutenform → Settings, not per block.')}
 					/>
 				</PanelBody>
 			</InspectorControls>
 			<FieldWrapper
-				label={attributes.label || 'CAPTCHA'}
+				label={attributes.label || __('captcha', 'CAPTCHA')}
 				onLabelChange={(label) => setAttributes({ label })}
 				help={attributes.help}
 				onHelpChange={(help) => setAttributes({ help })}
@@ -46,7 +48,7 @@ export default function Edit(props: BlockEditProps<CaptchaAttributes>) {
 				<div className="gutenform-captcha-placeholder" style={{ padding: '20px', border: '2px dashed #ccc', textAlign: 'center' }}>
 					{attributes.captchaType === 'friendlycaptcha' ? '🔒 FriendlyCaptcha' : '🛡️ Google reCAPTCHA'}
 					<p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
-						CAPTCHA will be displayed here on the frontend
+						{__('captchaEditorPlaceholder', 'CAPTCHA will be displayed here on the frontend')}
 					</p>
 				</div>
 			</FieldWrapper>

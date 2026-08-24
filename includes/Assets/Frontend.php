@@ -90,13 +90,14 @@ class Frontend
 
 		// Always set the gutenform object inline so it's available before view scripts run
 		$inline_script = sprintf(
-			'window.gutenform = window.gutenform || {}; window.gutenform.assetsUrl = %s; window.gutenform.pluginUrl = %s; window.gutenform.apiUrl = %s; window.gutenform.nonce = %s; window.gutenform.namespace = %s; window.gutenform.captcha = %s;',
+			'window.gutenform = window.gutenform || {}; window.gutenform.assetsUrl = %s; window.gutenform.pluginUrl = %s; window.gutenform.apiUrl = %s; window.gutenform.nonce = %s; window.gutenform.namespace = %s; window.gutenform.captcha = %s; window.gutenform.strings = %s;',
 			wp_json_encode(GF_ASSETS_URL),
 			wp_json_encode(GF_URL),
 			wp_json_encode($api_url),
 			wp_json_encode($nonce),
 			wp_json_encode(GF_ROUTE_PREFIX),
-			wp_json_encode($captcha)
+			wp_json_encode($captcha),
+			wp_json_encode($this->get_frontend_strings())
 		);
 
 		// Try to add inline script to wp-blocks, fallback to wp-util if not available
@@ -127,9 +128,29 @@ class Frontend
 					'nonce'     => $nonce,
 					'namespace' => GF_ROUTE_PREFIX,
 					'captcha'   => $captcha,
+					'strings'   => $this->get_frontend_strings(),
 				)
 			);
 		}
+	}
+
+	/**
+	 * Translatable strings the frontend view scripts render, including the
+	 * aria-labels a screen reader announces. These have to come from PHP --
+	 * text hardcoded in the view scripts is unreachable for any .po file.
+	 *
+	 * @return array<string, string>
+	 */
+	private function get_frontend_strings(): array
+	{
+		return array(
+			'cancelUpload'  => __('Cancel upload', 'gutenform-builder'),
+			'removeFile'    => __('Remove file', 'gutenform-builder'),
+			'uploadFailed'  => __('Upload failed', 'gutenform-builder'),
+			'networkError'  => __('Network error', 'gutenform-builder'),
+			'submitSuccess' => __('Thank you! Your submission has been received.', 'gutenform-builder'),
+			'submitError'   => __('Your submission could not be sent. Please try again.', 'gutenform-builder'),
+		);
 	}
 
 	/**

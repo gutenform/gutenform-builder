@@ -20,6 +20,16 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-metadata/#view-script
  */
 
+/**
+ * Translatable frontend string, localized from PHP onto window.gutenform
+ * (see includes/Assets/Frontend.php). The second argument is the English
+ * fallback used when no translation is available.
+ */
+function formString(key: string, fallback: string): string {
+	const strings = (window as any).gutenform?.strings || {};
+	return strings[key] || fallback;
+}
+
 window.addEventListener('DOMContentLoaded', () => {
 	const form = document.querySelectorAll('.wp-block-gutenform-form');
 	form.forEach(form => {
@@ -174,7 +184,9 @@ window.addEventListener('DOMContentLoaded', () => {
 					showFormMessage(
 						form as HTMLElement,
 						'success',
-						formOptions.successMessage || result.message || 'Thank you! Your submission has been received.'
+						formOptions.successMessage
+							|| result.message
+							|| formString('submitSuccess', 'Thank you! Your submission has been received.')
 					);
 				}
 			} else {
@@ -189,7 +201,9 @@ window.addEventListener('DOMContentLoaded', () => {
 				showFormMessage(
 					form as HTMLElement,
 					'error',
-					result.message || formOptions.errorMessage || 'Your submission could not be sent. Please try again.'
+					result.message
+						|| formOptions.errorMessage
+						|| formString('submitError', 'Your submission could not be sent. Please try again.')
 				);
 			}
 			} finally {

@@ -1,6 +1,6 @@
 import { __ } from "@/lib/i18n";
 import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody, SelectControl, ToggleControl, Notice } from '@wordpress/components';
+import { PanelBody, ToggleControl, Notice } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { FieldControls } from '../../components/block-atoms/FieldControls';
 import { ConditionalLogicControls } from '../../components/block-atoms/ConditionalLogicControls';
@@ -40,23 +40,7 @@ export const InputInspectorControls = ({ attributes, setAttributes, clientId }: 
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title="Input Field Settings">
-					<SelectControl
-						label="Type"
-						value={attributes.type as 'text' | 'number' | 'email' | 'tel' | 'url' | 'search' | undefined}
-						onChange={(type) => setAttributes({ type: type as 'text' | 'number' | 'email' | 'tel' | 'url' | 'search' | undefined })}
-						options={[
-							{ label: __('text'), value: 'text' },
-							{ label: __('number'), value: 'number' },
-							{ label: __('email'), value: 'email' },
-							{ label: __('phone'), value: 'tel' },
-							{ label: __('url'), value: 'url' },
-							{ label: __('search'), value: 'search' },
-						]}
-						__next40pxDefaultSize={true}
-						__nextHasNoMarginBottom={true}
-					/>
-					
+				<PanelBody title={__('inputFieldSettings', 'Input Field Settings')}>
 					{isEmailType && (
 						<>
 							<ToggleControl

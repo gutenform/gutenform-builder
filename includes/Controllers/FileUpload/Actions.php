@@ -151,6 +151,7 @@ class Actions
 			return new \WP_Error(
 				'file_too_large',
 				sprintf(
+					/* translators: %s: maximum file size in megabytes. */
 					__('File is too large. Maximum size is %s MB.', 'gutenform-builder'),
 					$effective_max
 				),
