@@ -16,10 +16,8 @@ release
 *.zip
 dist-ssr
 *.local
-package-lock.json
 pnpm-lock.yaml
 yarn.lock
-composer.lock
 
 # Editor directories and files
 .vscode/*
