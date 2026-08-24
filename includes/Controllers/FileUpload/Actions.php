@@ -34,7 +34,7 @@ class Actions
         if (!wp_verify_nonce($nonce, 'wp_rest')) {
             return new \WP_Error(
                 'invalid_nonce',
-                __('Invalid nonce.', 'gutenform'),
+                __('Invalid nonce.', 'gutenform-builder'),
                 array('status' => 403)
             );
         }
@@ -43,7 +43,7 @@ class Actions
         if (empty($_FILES['file'])) {
             return new \WP_Error(
                 'no_file',
-                __('No file was uploaded.', 'gutenform'),
+                __('No file was uploaded.', 'gutenform-builder'),
                 array('status' => 400)
             );
         }
@@ -117,7 +117,7 @@ class Actions
             return new \WP_Error(
                 'file_too_large',
                 sprintf(
-                    __('File is too large. Maximum size is %s MB.', 'gutenform'),
+                    __('File is too large. Maximum size is %s MB.', 'gutenform-builder'),
                     $effective_max
                 ),
                 array('status' => 400)
@@ -130,7 +130,7 @@ class Actions
             if (!$is_valid) {
                 return new \WP_Error(
                     'invalid_file_type',
-                    __('Invalid file type. Please check the accepted file types.', 'gutenform'),
+                    __('Invalid file type. Please check the accepted file types.', 'gutenform-builder'),
                     array('status' => 400)
                 );
             }
@@ -159,7 +159,7 @@ class Actions
         if (!move_uploaded_file($file['tmp_name'], $file_path)) {
             return new \WP_Error(
                 'move_failed',
-                __('Failed to move uploaded file.', 'gutenform'),
+                __('Failed to move uploaded file.', 'gutenform-builder'),
                 array('status' => 500)
             );
         }
@@ -246,19 +246,19 @@ class Actions
         switch ($error_code) {
             case UPLOAD_ERR_INI_SIZE:
             case UPLOAD_ERR_FORM_SIZE:
-                return __('File exceeds the maximum upload size.', 'gutenform');
+                return __('File exceeds the maximum upload size.', 'gutenform-builder');
             case UPLOAD_ERR_PARTIAL:
-                return __('File was only partially uploaded.', 'gutenform');
+                return __('File was only partially uploaded.', 'gutenform-builder');
             case UPLOAD_ERR_NO_FILE:
-                return __('No file was uploaded.', 'gutenform');
+                return __('No file was uploaded.', 'gutenform-builder');
             case UPLOAD_ERR_NO_TMP_DIR:
-                return __('Missing temporary folder.', 'gutenform');
+                return __('Missing temporary folder.', 'gutenform-builder');
             case UPLOAD_ERR_CANT_WRITE:
-                return __('Failed to write file to disk.', 'gutenform');
+                return __('Failed to write file to disk.', 'gutenform-builder');
             case UPLOAD_ERR_EXTENSION:
-                return __('File upload stopped by extension.', 'gutenform');
+                return __('File upload stopped by extension.', 'gutenform-builder');
             default:
-                return __('Unknown upload error.', 'gutenform');
+                return __('Unknown upload error.', 'gutenform-builder');
         }
     }
 
@@ -275,7 +275,7 @@ class Actions
         if (!wp_verify_nonce($nonce, 'wp_rest')) {
             return new \WP_Error(
                 'invalid_nonce',
-                __('Invalid nonce.', 'gutenform'),
+                __('Invalid nonce.', 'gutenform-builder'),
                 array('status' => 403)
             );
         }
@@ -285,7 +285,7 @@ class Actions
         if (empty($file_url)) {
             return new \WP_Error(
                 'no_url',
-                __('No URL provided.', 'gutenform'),
+                __('No URL provided.', 'gutenform-builder'),
                 array('status' => 400)
             );
         }
@@ -294,7 +294,7 @@ class Actions
         if (!filter_var($file_url, FILTER_VALIDATE_URL)) {
             return new \WP_Error(
                 'invalid_url',
-                __('Invalid URL provided.', 'gutenform'),
+                __('Invalid URL provided.', 'gutenform-builder'),
                 array('status' => 400)
             );
         }
@@ -313,7 +313,7 @@ class Actions
         if (is_wp_error($response)) {
             return new \WP_Error(
                 'download_failed',
-                __('Failed to download file from URL.', 'gutenform'),
+                __('Failed to download file from URL.', 'gutenform-builder'),
                 array('status' => 500)
             );
         }
@@ -322,7 +322,7 @@ class Actions
         if ($response_code !== 200) {
             return new \WP_Error(
                 'download_failed',
-                sprintf(__('Failed to download file. HTTP status: %d', 'gutenform'), $response_code),
+                sprintf(__('Failed to download file. HTTP status: %d', 'gutenform-builder'), $response_code),
                 array('status' => 500)
             );
         }
@@ -339,7 +339,7 @@ class Actions
             return new \WP_Error(
                 'file_too_large',
                 sprintf(
-                    __('File is too large. Maximum size is %s MB.', 'gutenform'),
+                    __('File is too large. Maximum size is %s MB.', 'gutenform-builder'),
                     $effective_max
                 ),
                 array('status' => 400)
@@ -370,7 +370,7 @@ class Actions
             if (!$is_valid) {
                 return new \WP_Error(
                     'invalid_file_type',
-                    __('Invalid file type. Please check the accepted file types.', 'gutenform'),
+                    __('Invalid file type. Please check the accepted file types.', 'gutenform-builder'),
                     array('status' => 400)
                 );
             }
@@ -400,7 +400,7 @@ class Actions
         if ($saved === false) {
             return new \WP_Error(
                 'save_failed',
-                __('Failed to save file.', 'gutenform'),
+                __('Failed to save file.', 'gutenform-builder'),
                 array('status' => 500)
             );
         }

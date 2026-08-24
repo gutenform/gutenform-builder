@@ -16,7 +16,7 @@
     "release": "npm run build && grunt release",
     "rename": "grunt rename --force && npm run change-text-domain && composer dump-autoload",
     "change-text-domain": "grunt change-text-domain --force",
-    "i18n": "wp i18n make-pot . languages/gutenform.pot --domain=gutenform --exclude='*/js/*,build'",
+    "i18n": "wp i18n make-pot . languages/gutenform-builder.pot --domain=gutenform-builder --exclude='*/js/*,build'",
     "i18n:compile": "wp i18n make-mo languages/",
     "block:start": "wp-scripts start --webpack-src-dir=src/blocks --output-path=assets/blocks",
     "block:build": "wp-scripts build --webpack-src-dir=src/blocks --output-path=assets/blocks"

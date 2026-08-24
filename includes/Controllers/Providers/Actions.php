@@ -47,13 +47,13 @@ class Actions
 
 			return array(
 				'success' => true,
-				'message' => __('Provider created successfully.', 'gutenform'),
+				'message' => __('Provider created successfully.', 'gutenform-builder'),
 				'data'    => $provider,
 			);
 		} catch (\Exception $e) {
 			return new \WP_Error(
 				'provider_creation_failed',
-				__('Failed to create provider: ', 'gutenform') . $e->getMessage(),
+				__('Failed to create provider: ', 'gutenform-builder') . $e->getMessage(),
 				array('status' => 500)
 			);
 		}
@@ -100,7 +100,7 @@ class Actions
 		} catch (\Exception $e) {
 			return new \WP_Error(
 				'provider_retrieval_failed',
-				__('Failed to retrieve providers: ', 'gutenform') . $e->getMessage(),
+				__('Failed to retrieve providers: ', 'gutenform-builder') . $e->getMessage(),
 				array('status' => 500)
 			);
 		}
@@ -122,7 +122,7 @@ class Actions
 			if (! $provider) {
 				return new \WP_Error(
 					'provider_not_found',
-					__('Provider not found.', 'gutenform'),
+					__('Provider not found.', 'gutenform-builder'),
 					array('status' => 404)
 				);
 			}
@@ -134,7 +134,7 @@ class Actions
 		} catch (\Exception $e) {
 			return new \WP_Error(
 				'provider_retrieval_failed',
-				__('Failed to retrieve provider: ', 'gutenform') . $e->getMessage(),
+				__('Failed to retrieve provider: ', 'gutenform-builder') . $e->getMessage(),
 				array('status' => 500)
 			);
 		}
@@ -163,7 +163,7 @@ class Actions
 			if (! $provider) {
 				return new \WP_Error(
 					'provider_not_found',
-					__('Provider not found.', 'gutenform'),
+					__('Provider not found.', 'gutenform-builder'),
 					array('status' => 404)
 				);
 			}
@@ -175,7 +175,7 @@ class Actions
 		} catch (\Exception $e) {
 			return new \WP_Error(
 				'provider_retrieval_failed',
-				__('Failed to retrieve provider: ', 'gutenform') . $e->getMessage(),
+				__('Failed to retrieve provider: ', 'gutenform-builder') . $e->getMessage(),
 				array('status' => 500)
 			);
 		}
@@ -196,7 +196,7 @@ class Actions
 		if (! $provider) {
 			return new \WP_Error(
 				'provider_not_found',
-				__('Provider not found.', 'gutenform'),
+				__('Provider not found.', 'gutenform-builder'),
 				array('status' => 404)
 			);
 		}
@@ -225,13 +225,13 @@ class Actions
 
 			return array(
 				'success' => true,
-				'message' => __('Provider updated successfully.', 'gutenform'),
+				'message' => __('Provider updated successfully.', 'gutenform-builder'),
 				'data'    => $provider,
 			);
 		} catch (\Exception $e) {
 			return new \WP_Error(
 				'provider_update_failed',
-				__('Failed to update provider: ', 'gutenform') . $e->getMessage(),
+				__('Failed to update provider: ', 'gutenform-builder') . $e->getMessage(),
 				array('status' => 500)
 			);
 		}
@@ -252,7 +252,7 @@ class Actions
 		if (! $provider) {
 			return new \WP_Error(
 				'provider_not_found',
-				__('Provider not found.', 'gutenform'),
+				__('Provider not found.', 'gutenform-builder'),
 				array('status' => 404)
 			);
 		}
@@ -262,12 +262,12 @@ class Actions
 
 			return array(
 				'success' => true,
-				'message' => __('Provider deleted successfully.', 'gutenform'),
+				'message' => __('Provider deleted successfully.', 'gutenform-builder'),
 			);
 		} catch (\Exception $e) {
 			return new \WP_Error(
 				'provider_deletion_failed',
-				__('Failed to delete provider: ', 'gutenform') . $e->getMessage(),
+				__('Failed to delete provider: ', 'gutenform-builder') . $e->getMessage(),
 				array('status' => 500)
 			);
 		}
@@ -302,7 +302,7 @@ class Actions
 		} catch (\Exception $e) {
 			return new \WP_Error(
 				'provider_types_retrieval_failed',
-				__('Failed to retrieve provider types: ', 'gutenform') . $e->getMessage(),
+				__('Failed to retrieve provider types: ', 'gutenform-builder') . $e->getMessage(),
 				array('status' => 500)
 			);
 		}

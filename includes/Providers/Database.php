@@ -41,7 +41,7 @@ class Database extends AbstractProvider
      */
     public function get_title(): string
     {
-        return __('Database Storage', 'gutenform');
+        return __('Database Storage', 'gutenform-builder');
     }
 
     /**
@@ -60,7 +60,7 @@ class Database extends AbstractProvider
         try {
             // Replace placeholders in subject and from_email
             $subject = $this->replace_placeholders(
-                $provider_settings['subject'] ?? __('New Form Submission: {form_title}', 'gutenform'),
+                $provider_settings['subject'] ?? __('New Form Submission: {form_title}', 'gutenform-builder'),
                 $submission_data,
                 $form_identifier
             );
@@ -126,7 +126,7 @@ class Database extends AbstractProvider
         foreach ($mailboxes as $mailbox) {
             $mailbox_options[] = array(
                 'value' => (string) $mailbox->id,
-                'label' => $mailbox->title . ($mailbox->is_default ? ' (' . __('Default', 'gutenform') . ')' : ''),
+                'label' => $mailbox->title . ($mailbox->is_default ? ' (' . __('Default', 'gutenform-builder') . ')' : ''),
             );
         }
         
@@ -134,44 +134,44 @@ class Database extends AbstractProvider
         if (empty($mailbox_options)) {
             $mailbox_options[] = array(
                 'value' => '1',
-                'label' => __('Default Mailbox', 'gutenform'),
+                'label' => __('Default Mailbox', 'gutenform-builder'),
             );
         }
 
         return array(
             array(
                 'name'        => 'mailbox_id',
-                'label'       => __('Mailbox', 'gutenform'),
+                'label'       => __('Mailbox', 'gutenform-builder'),
                 'type'        => 'select',
                 'required'    => true,
                 'default'     => $this->get_default_mailbox_id(),
-                'description' => __('Select the mailbox where the entry will be stored.', 'gutenform'),
+                'description' => __('Select the mailbox where the entry will be stored.', 'gutenform-builder'),
                 'options'     => $mailbox_options,
             ),
             array(
                 'name'        => 'subject',
-                'label'       => __('Subject', 'gutenform'),
+                'label'       => __('Subject', 'gutenform-builder'),
                 'type'        => 'text',
                 'required'    => false,
-                'default'     => __('New Form Submission: {form_title}', 'gutenform'),
-                'description' => __('Subject for the entry. Placeholders like {form_title} will be replaced.', 'gutenform'),
+                'default'     => __('New Form Submission: {form_title}', 'gutenform-builder'),
+                'description' => __('Subject for the entry. Placeholders like {form_title} will be replaced.', 'gutenform-builder'),
             ),
             array(
                 'name'        => 'body',
-                'label'       => __('Message', 'gutenform'),
+                'label'       => __('Message', 'gutenform-builder'),
                 'type'        => 'textarea',
                 'required'    => false,
                 'default'     => '{all_fields}',
-                'description' => __('Message for the entry. Placeholders like {field_name} will be replaced.', 'gutenform'),
+                'description' => __('Message for the entry. Placeholders like {field_name} will be replaced.', 'gutenform-builder'),
                 'rows'        => 6,
             ),
             array(
                 'name'        => 'from_email',
-                'label'       => __('From Email', 'gutenform'),
+                'label'       => __('From Email', 'gutenform-builder'),
                 'type'        => 'text',
                 'required'    => false,
                 'default'     => get_option('admin_email'),
-                'description' => __('Email address of the sender that will be stored in the entry. Placeholders like {field_email} can be used.', 'gutenform'),
+                'description' => __('Email address of the sender that will be stored in the entry. Placeholders like {field_email} can be used.', 'gutenform-builder'),
             ),
         );
     }

@@ -30,7 +30,7 @@ class Actions
 		if (Demo::has_data()) {
 			return array(
 				'success' => false,
-				'message' => __('Demo data already exists in the database.', 'gutenform'),
+				'message' => __('Demo data already exists in the database.', 'gutenform-builder'),
 			);
 		}
 
@@ -38,12 +38,12 @@ class Actions
 			Demo::run();
 			return array(
 				'success' => true,
-				'message' => __('Demo data has been successfully seeded.', 'gutenform'),
+				'message' => __('Demo data has been successfully seeded.', 'gutenform-builder'),
 			);
 		} catch (\Exception $e) {
 			return array(
 				'success' => false,
-				'message' => __('Error seeding demo data: ', 'gutenform') . $e->getMessage(),
+				'message' => __('Error seeding demo data: ', 'gutenform-builder') . $e->getMessage(),
 			);
 		}
 	}
@@ -78,7 +78,7 @@ class Actions
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => __('You do not have permission to perform this action.', 'gutenform'),
+					'message' => __('You do not have permission to perform this action.', 'gutenform-builder'),
 				),
 				403
 			);
@@ -129,7 +129,7 @@ class Actions
 			return new \WP_REST_Response(
 				array(
 					'success' => true,
-					'message' => __('All database tables have been successfully removed.', 'gutenform'),
+					'message' => __('All database tables have been successfully removed.', 'gutenform-builder'),
 				),
 				200
 			);
@@ -141,7 +141,7 @@ class Actions
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
-					'message' => __('Error removing database tables: ', 'gutenform') . $e->getMessage(),
+					'message' => __('Error removing database tables: ', 'gutenform-builder') . $e->getMessage(),
 				),
 				500
 			);

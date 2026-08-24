@@ -34,7 +34,7 @@ class Actions {
 			if ( EntryLabels::where( 'name', $request->get_param( 'name' ) )->exists() ) {
 				return new \WP_Error(
 					'label_name_exists',
-					__( 'A label with this name already exists.', 'gutenform' ),
+					__( 'A label with this name already exists.', 'gutenform-builder' ),
 					array( 'status' => 400 )
 				);
 			}
@@ -49,13 +49,13 @@ class Actions {
 
 			return array(
 				'success' => true,
-				'message' => __( 'Label created successfully.', 'gutenform' ),
+				'message' => __( 'Label created successfully.', 'gutenform-builder' ),
 				'data'    => $label,
 			);
 		} catch ( \Exception $e ) {
 			return new \WP_Error(
 				'label_creation_failed',
-				__( 'Failed to create label: ', 'gutenform' ) . $e->getMessage(),
+				__( 'Failed to create label: ', 'gutenform-builder' ) . $e->getMessage(),
 				array( 'status' => 500 )
 			);
 		}
@@ -78,7 +78,7 @@ class Actions {
 		} catch ( \Exception $e ) {
 			return new \WP_Error(
 				'label_retrieval_failed',
-				__( 'Failed to retrieve labels: ', 'gutenform' ) . $e->getMessage(),
+				__( 'Failed to retrieve labels: ', 'gutenform-builder' ) . $e->getMessage(),
 				array( 'status' => 500 )
 			);
 		}
@@ -99,7 +99,7 @@ class Actions {
 			if ( ! $label ) {
 				return new \WP_Error(
 					'label_not_found',
-					__( 'Label not found.', 'gutenform' ),
+					__( 'Label not found.', 'gutenform-builder' ),
 					array( 'status' => 404 )
 				);
 			}
@@ -111,7 +111,7 @@ class Actions {
 		} catch ( \Exception $e ) {
 			return new \WP_Error(
 				'label_retrieval_failed',
-				__( 'Failed to retrieve label: ', 'gutenform' ) . $e->getMessage(),
+				__( 'Failed to retrieve label: ', 'gutenform-builder' ) . $e->getMessage(),
 				array( 'status' => 500 )
 			);
 		}
@@ -131,7 +131,7 @@ class Actions {
 		if ( ! $label ) {
 			return new \WP_Error(
 				'label_not_found',
-				__( 'Label not found.', 'gutenform' ),
+				__( 'Label not found.', 'gutenform-builder' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -142,7 +142,7 @@ class Actions {
 				if ( EntryLabels::where( 'name', $request->get_param( 'name' ) )->exists() ) {
 					return new \WP_Error(
 						'label_name_exists',
-						__( 'A label with this name already exists.', 'gutenform' ),
+						__( 'A label with this name already exists.', 'gutenform-builder' ),
 						array( 'status' => 400 )
 					);
 				}
@@ -162,13 +162,13 @@ class Actions {
 
 			return array(
 				'success' => true,
-				'message' => __( 'Label updated successfully.', 'gutenform' ),
+				'message' => __( 'Label updated successfully.', 'gutenform-builder' ),
 				'data'    => $label,
 			);
 		} catch ( \Exception $e ) {
 			return new \WP_Error(
 				'label_update_failed',
-				__( 'Failed to update label: ', 'gutenform' ) . $e->getMessage(),
+				__( 'Failed to update label: ', 'gutenform-builder' ) . $e->getMessage(),
 				array( 'status' => 500 )
 			);
 		}
@@ -188,7 +188,7 @@ class Actions {
 		if ( ! $label ) {
 			return new \WP_Error(
 				'label_not_found',
-				__( 'Label not found.', 'gutenform' ),
+				__( 'Label not found.', 'gutenform-builder' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -206,12 +206,12 @@ class Actions {
 
 			return array(
 				'success' => true,
-				'message' => __( 'Label deleted successfully.', 'gutenform' ),
+				'message' => __( 'Label deleted successfully.', 'gutenform-builder' ),
 			);
 		} catch ( \Exception $e ) {
 			return new \WP_Error(
 				'label_deletion_failed',
-				__( 'Failed to delete label: ', 'gutenform' ) . $e->getMessage(),
+				__( 'Failed to delete label: ', 'gutenform-builder' ) . $e->getMessage(),
 				array( 'status' => 500 )
 			);
 		}
@@ -233,7 +233,7 @@ class Actions {
 		if ( ! $entry ) {
 			return new \WP_Error(
 				'entry_not_found',
-				__( 'Entry not found.', 'gutenform' ),
+				__( 'Entry not found.', 'gutenform-builder' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -241,7 +241,7 @@ class Actions {
 		if ( ! $label ) {
 			return new \WP_Error(
 				'label_not_found',
-				__( 'Label not found.', 'gutenform' ),
+				__( 'Label not found.', 'gutenform-builder' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -262,7 +262,7 @@ class Actions {
 			if ( $exists ) {
 				return new \WP_Error(
 					'label_already_attached',
-					__( 'Label is already attached to this entry.', 'gutenform' ),
+					__( 'Label is already attached to this entry.', 'gutenform-builder' ),
 					array( 'status' => 400 )
 				);
 			}
@@ -279,12 +279,12 @@ class Actions {
 
 			return array(
 				'success' => true,
-				'message' => __( 'Label attached to entry successfully.', 'gutenform' ),
+				'message' => __( 'Label attached to entry successfully.', 'gutenform-builder' ),
 			);
 		} catch ( \Exception $e ) {
 			return new \WP_Error(
 				'label_attach_failed',
-				__( 'Failed to attach label: ', 'gutenform' ) . $e->getMessage(),
+				__( 'Failed to attach label: ', 'gutenform-builder' ) . $e->getMessage(),
 				array( 'status' => 500 )
 			);
 		}
@@ -316,19 +316,19 @@ class Actions {
 			if ( ! $deleted ) {
 				return new \WP_Error(
 					'label_not_attached',
-					__( 'Label is not attached to this entry.', 'gutenform' ),
+					__( 'Label is not attached to this entry.', 'gutenform-builder' ),
 					array( 'status' => 404 )
 				);
 			}
 
 			return array(
 				'success' => true,
-				'message' => __( 'Label detached from entry successfully.', 'gutenform' ),
+				'message' => __( 'Label detached from entry successfully.', 'gutenform-builder' ),
 			);
 		} catch ( \Exception $e ) {
 			return new \WP_Error(
 				'label_detach_failed',
-				__( 'Failed to detach label: ', 'gutenform' ) . $e->getMessage(),
+				__( 'Failed to detach label: ', 'gutenform-builder' ) . $e->getMessage(),
 				array( 'status' => 500 )
 			);
 		}

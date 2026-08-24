@@ -211,7 +211,7 @@ abstract class AbstractProvider
                     $formatted_value = implode(', ', $value);
                 }
             } elseif (is_bool($value)) {
-                $formatted_value = $value ? __('Yes', 'gutenform') : __('No', 'gutenform');
+                $formatted_value = $value ? __('Yes', 'gutenform-builder') : __('No', 'gutenform-builder');
             } else {
                 $formatted_value = (string) $value;
             }
@@ -220,7 +220,7 @@ abstract class AbstractProvider
         }
 
         $table = '<table style="border-collapse:collapse;width:100%;background:#fafbfc;border:1px solid #eaeaea;font-family:sans-serif;font-size:14px;margin:10px 0 15px 0;">';
-        $table .= '<thead><tr style="background:#f0f4f8;"><th style="padding:8px 10px; text-align:left; border-bottom:2px solid #eaeaea;">' . __('Field', 'gutenform') . '</th><th style="padding:8px 10px;text-align:left; border-bottom:2px solid #eaeaea;">' . __('Value', 'gutenform') . '</th></tr></thead>';
+        $table .= '<thead><tr style="background:#f0f4f8;"><th style="padding:8px 10px; text-align:left; border-bottom:2px solid #eaeaea;">' . __('Field', 'gutenform-builder') . '</th><th style="padding:8px 10px;text-align:left; border-bottom:2px solid #eaeaea;">' . __('Value', 'gutenform-builder') . '</th></tr></thead>';
         $table .= '<tbody>' . $rows . '</tbody>';
         $table .= '</table>';
 

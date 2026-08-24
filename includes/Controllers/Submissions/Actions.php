@@ -31,7 +31,7 @@ class Actions {
 		if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
 			return new \WP_Error(
 				'invalid_nonce',
-				__( 'Invalid nonce.', 'gutenform' ),
+				__( 'Invalid nonce.', 'gutenform-builder' ),
 				array( 'status' => 403 )
 			);
 		}
@@ -46,7 +46,7 @@ class Actions {
 		if ( empty( $form_identifier ) ) {
 			return new \WP_Error(
 				'missing_form_identifier',
-				__( 'Form identifier is missing.', 'gutenform' ),
+				__( 'Form identifier is missing.', 'gutenform-builder' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -92,13 +92,13 @@ class Actions {
 		if ( $result['success'] ) {
 			return array(
 				'success' => true,
-				'message' => __( 'Form submitted successfully.', 'gutenform' ),
+				'message' => __( 'Form submitted successfully.', 'gutenform-builder' ),
 				'data'    => $result,
 			);
 		} else {
 			return new \WP_Error(
 				'submission_failed',
-				__( 'Form submission failed.', 'gutenform' ),
+				__( 'Form submission failed.', 'gutenform-builder' ),
 				array(
 					'status'  => 500,
 					'errors'  => $result['errors'],

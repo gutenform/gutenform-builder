@@ -47,13 +47,13 @@ class Actions
 
             return array(
                 'success' => true,
-                'message' => __('Mailbox created successfully.', 'gutenform'),
+                'message' => __('Mailbox created successfully.', 'gutenform-builder'),
                 'data'    => $mailbox,
             );
         } catch (\Exception $e) {
             return new \WP_Error(
                 'mailbox_creation_failed',
-                __('Failed to create mailbox: ', 'gutenform') . $e->getMessage(),
+                __('Failed to create mailbox: ', 'gutenform-builder') . $e->getMessage(),
                 array('status' => 500)
             );
         }
@@ -89,7 +89,7 @@ class Actions
         } catch (\Exception $e) {
             return new \WP_Error(
                 'mailbox_retrieval_failed',
-                __('Failed to retrieve mailboxes: ', 'gutenform') . $e->getMessage(),
+                __('Failed to retrieve mailboxes: ', 'gutenform-builder') . $e->getMessage(),
                 array('status' => 500)
             );
         }
@@ -111,7 +111,7 @@ class Actions
             if (! $mailbox) {
                 return new \WP_Error(
                     'mailbox_not_found',
-                    __('Mailbox not found.', 'gutenform'),
+                    __('Mailbox not found.', 'gutenform-builder'),
                     array('status' => 404)
                 );
             }
@@ -123,7 +123,7 @@ class Actions
         } catch (\Exception $e) {
             return new \WP_Error(
                 'mailbox_retrieval_failed',
-                __('Failed to retrieve mailbox: ', 'gutenform') . $e->getMessage(),
+                __('Failed to retrieve mailbox: ', 'gutenform-builder') . $e->getMessage(),
                 array('status' => 500)
             );
         }
@@ -144,7 +144,7 @@ class Actions
         if (! $mailbox) {
             return new \WP_Error(
                 'mailbox_not_found',
-                __('Mailbox not found.', 'gutenform'),
+                __('Mailbox not found.', 'gutenform-builder'),
                 array('status' => 404)
             );
         }
@@ -171,13 +171,13 @@ class Actions
 
             return array(
                 'success' => true,
-                'message' => __('Mailbox updated successfully.', 'gutenform'),
+                'message' => __('Mailbox updated successfully.', 'gutenform-builder'),
                 'data'    => $mailbox,
             );
         } catch (\Exception $e) {
             return new \WP_Error(
                 'mailbox_update_failed',
-                __('Failed to update mailbox: ', 'gutenform') . $e->getMessage(),
+                __('Failed to update mailbox: ', 'gutenform-builder') . $e->getMessage(),
                 array('status' => 500)
             );
         }
@@ -198,7 +198,7 @@ class Actions
         if (! $mailbox) {
             return new \WP_Error(
                 'mailbox_not_found',
-                __('Mailbox not found.', 'gutenform'),
+                __('Mailbox not found.', 'gutenform-builder'),
                 array('status' => 404)
             );
         }
@@ -208,12 +208,12 @@ class Actions
 
             return array(
                 'success' => true,
-                'message' => __('Mailbox deleted successfully.', 'gutenform'),
+                'message' => __('Mailbox deleted successfully.', 'gutenform-builder'),
             );
         } catch (\Exception $e) {
             return new \WP_Error(
                 'mailbox_deletion_failed',
-                __('Failed to delete mailbox: ', 'gutenform') . $e->getMessage(),
+                __('Failed to delete mailbox: ', 'gutenform-builder') . $e->getMessage(),
                 array('status' => 500)
             );
         }

@@ -40,7 +40,7 @@ class Email extends AbstractProvider
      */
     public function get_title(): string
     {
-        return __('Email Notification', 'gutenform');
+        return __('Email Notification', 'gutenform-builder');
     }
 
     /**
@@ -225,54 +225,54 @@ class Email extends AbstractProvider
         return array(
             array(
                 'name'        => 'to_email',
-                'label'       => __('Email Address', 'gutenform'),
+                'label'       => __('Email Address', 'gutenform-builder'),
                 'type'        => 'email',
                 'required'    => true,
                 'default'     => '',
-                'description' => __('Email address to which the notification will be sent.', 'gutenform'),
+                'description' => __('Email address to which the notification will be sent.', 'gutenform-builder'),
                 'placeholder' => 'admin@example.com',
             ),
             array(
                 'name'        => 'subject',
-                'label'       => __('Subject', 'gutenform'),
+                'label'       => __('Subject', 'gutenform-builder'),
                 'type'        => 'text',
                 'required'    => true,
-                'default'     => __('New Form Submission: {form_title}', 'gutenform'),
-                'description' => __('Email subject. Placeholders like {form_title} will be replaced.', 'gutenform'),
+                'default'     => __('New Form Submission: {form_title}', 'gutenform-builder'),
+                'description' => __('Email subject. Placeholders like {form_title} will be replaced.', 'gutenform-builder'),
             ),
             array(
                 'name'        => 'body',
-                'label'       => __('Message', 'gutenform'),
+                'label'       => __('Message', 'gutenform-builder'),
                 'type'        => 'textarea',
                 'required'    => true,
                 'default'     => '{all_fields}',
-                'description' => __('Email message. HTML allowed. Placeholders like {field_name} will be replaced. Use {content} to inject form-specific content when the form has "Use provider layout" enabled.', 'gutenform'),
+                'description' => __('Email message. HTML allowed. Placeholders like {field_name} will be replaced. Use {content} to inject form-specific content when the form has "Use provider layout" enabled.', 'gutenform-builder'),
                 'rows'        => 6,
             ),
             array(
                 'name'        => 'from_email',
-                'label'       => __('From Email', 'gutenform'),
+                'label'       => __('From Email', 'gutenform-builder'),
                 'type'        => 'text',
                 'required'    => false,
                 'default'     => get_option('admin_email'),
-                'description' => __('Email address of the sender. Placeholders like {field_email} can be used.', 'gutenform'),
+                'description' => __('Email address of the sender. Placeholders like {field_email} can be used.', 'gutenform-builder'),
             ),
             array(
                 'name'        => 'from_name',
-                'label'       => __('From Name', 'gutenform'),
+                'label'       => __('From Name', 'gutenform-builder'),
                 'type'        => 'text',
                 'required'    => false,
                 'default'     => get_bloginfo('name'),
-                'description' => __('Name of the sender.', 'gutenform'),
+                'description' => __('Name of the sender.', 'gutenform-builder'),
             ),
             // Email Template Settings (internal use only)
             array(
                 'name'        => 'email_template',
-                'label'       => __('Template', 'gutenform'),
+                'label'       => __('Template', 'gutenform-builder'),
                 'type'        => 'text',
                 'required'    => false,
                 'default'     => '',
-                'description' => __('Template name (internal use).', 'gutenform'),
+                'description' => __('Template name (internal use).', 'gutenform-builder'),
             ),
         );
     }
