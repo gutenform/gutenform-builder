@@ -98,7 +98,7 @@ class Webhook extends AbstractProvider
             'sslverify'   => true,
             'headers'     => $headers,
             'body'        => $body,
-            'user-agent'  => 'Gutenform/' . (defined('GF_VERSION') ? GF_VERSION : '1.0.0') . '; ' . home_url('/'),
+            'user-agent'  => 'Gutenform/' . (defined('GUTENFORM_VERSION') ? GUTENFORM_VERSION : '1.0.0') . '; ' . home_url('/'),
         );
 
         $response = wp_remote_request($url, $args);

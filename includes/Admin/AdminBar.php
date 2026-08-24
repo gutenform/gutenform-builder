@@ -194,7 +194,7 @@ class AdminBar
 		$handle = 'gutenform-admin-bar';
 
 		if (! wp_style_is($handle, 'registered')) {
-			wp_register_style($handle, false, array(), GF_VERSION);
+			wp_register_style($handle, false, array(), GUTENFORM_VERSION);
 		}
 
 		if (! wp_style_is($handle, 'enqueued')) {

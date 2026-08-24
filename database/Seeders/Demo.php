@@ -34,7 +34,7 @@ class Demo
 		global $wpdb;
 
 		// Read the demo.sql file.
-		$demo_file = GF_DIR . 'src/database/seeds/demo.sql';
+		$demo_file = GUTENFORM_DIR . 'src/database/seeds/demo.sql';
 
 		if (! file_exists($demo_file)) {
 			return;

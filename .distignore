@@ -76,3 +76,7 @@ assets/admin/dist/**/*.js.map
 .DS_Store
 *.log
 *~
+
+# Directory assets for the WordPress.org listing (banners, icons,
+# screenshots). Uploaded to SVN /assets/, never part of the plugin itself.
+.wordpress-org

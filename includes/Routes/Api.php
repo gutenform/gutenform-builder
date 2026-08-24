@@ -20,7 +20,7 @@ use Gutenform\Libs\API\Route;
 defined('ABSPATH') || exit;
 
 Route::prefix(
-	GF_ROUTE_PREFIX,
+	GUTENFORM_ROUTE_PREFIX,
 	function (Route $route) {
 
 		$view_entries    = '\Gutenform\Core\Capabilities::can_view_entries';
@@ -123,6 +123,8 @@ Route::prefix(
 		$route->post('/email-templates/preview', '\Gutenform\Controllers\EmailTemplates\Actions@preview_template', $manage_settings);
 
 		// Allow hooks to add more custom API routes.
-		do_action('gf_api', $route);
+		do_action('gutenform/api', $route);
+		// Renamed in 1.0.0; the old gf_* name still fires so existing add-ons keep working.
+		do_action_deprecated('gf_api', array($route), '1.0.0', 'gutenform/api');
 	}
 );

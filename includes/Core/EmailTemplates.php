@@ -207,7 +207,14 @@ class EmailTemplates
          * @param array $directories Array of directory paths.
          * @return array Modified array of directory paths.
          */
-        $directories = apply_filters('gutenform_email_template_directories', $directories);
+        $directories = apply_filters('gutenform/email_template_directories', $directories);
+        // Renamed in 1.0.0; the old underscore name still runs for compatibility.
+        $directories = apply_filters_deprecated(
+            'gutenform_email_template_directories',
+            array($directories),
+            '1.0.0',
+            'gutenform/email_template_directories'
+        );
 
         // Ensure all directories exist and are readable
         $valid_directories = array();

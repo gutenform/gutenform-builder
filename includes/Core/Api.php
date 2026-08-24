@@ -24,7 +24,7 @@ class API {
 	 * @return void
 	 */
 	public function init() {
-		Config::set_route_file( GF_DIR . '/includes/Routes/Api.php' )
+		Config::set_route_file( GUTENFORM_DIR . '/includes/Routes/Api.php' )
 			->set_namespace( 'Gutenform\Api' )
 			->init();
 	}

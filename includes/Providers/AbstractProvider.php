@@ -195,12 +195,12 @@ abstract class AbstractProvider
     {
         $extensions = array('svg', 'png', 'jpg', 'jpeg');
 
-        if (defined('GF_DIR') && defined('GF_ASSETS_URL')) {
-            $plugin_path = GF_DIR . 'assets/providers/';
+        if (defined('GUTENFORM_DIR') && defined('GUTENFORM_ASSETS_URL')) {
+            $plugin_path = GUTENFORM_DIR . 'assets/providers/';
             foreach ($extensions as $ext) {
                 $filename = $slug . '.' . $ext;
                 if (file_exists($plugin_path . $filename)) {
-                    return GF_ASSETS_URL . '/providers/' . $filename;
+                    return GUTENFORM_ASSETS_URL . '/providers/' . $filename;
                 }
             }
         }
