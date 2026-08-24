@@ -11,7 +11,7 @@
  * form's settings onto the input/step/group the user happens to have selected.
  */
 import { useState } from '@wordpress/element';
-import { Modal, Button } from '@wordpress/components';
+import { Modal } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@/lib/i18n';
 import { type FormAttributes, type FormSettings, type ProviderOverride } from '@/blockTypes/form';
@@ -23,23 +23,15 @@ import { ProvidersSection } from './sections/ProvidersSection';
 import { SpamSection } from './sections/SpamSection';
 import { AfterSubmitSection } from './sections/AfterSubmitSection';
 import { PrivacySection } from './sections/PrivacySection';
-import { AdvancedSection } from './sections/AdvancedSection';
 
-export type SectionId =
-	| 'storage'
-	| 'providers'
-	| 'spam'
-	| 'after-submit'
-	| 'privacy'
-	| 'advanced';
+export type SectionId = 'storage' | 'providers' | 'spam' | 'after-submit' | 'privacy';
 
 const SECTIONS: Array<{ id: SectionId; label: string }> = [
-	{ id: 'storage', label: __('formSettingsStorage', 'Storage & Inbox') },
-	{ id: 'providers', label: __('formSettingsProviders', 'Providers & Actions') },
-	{ id: 'spam', label: __('formSettingsSpam', 'Spam Protection') },
-	{ id: 'after-submit', label: __('formSettingsAfterSubmit', 'After Submit') },
-	{ id: 'privacy', label: __('formSettingsPrivacy', 'Privacy') },
-	{ id: 'advanced', label: __('formSettingsAdvanced', 'Advanced') },
+	{ id: 'storage', label: __('formSettingsStorage') },
+	{ id: 'providers', label: __('formSettingsProviders') },
+	{ id: 'spam', label: __('formSettingsSpam') },
+	{ id: 'after-submit', label: __('formSettingsAfterSubmit') },
+	{ id: 'privacy', label: __('formSettingsPrivacy') },
 ];
 
 export type FormSettingsModalProps = {
@@ -92,14 +84,14 @@ export function FormSettingsModal({ formClientId, onClose }: FormSettingsModalPr
 
 	return (
 		<Modal
-			title={__('formSettings', 'Form Settings')}
+			title={__('formSettings')}
 			onRequestClose={onClose}
 			className="gutenform-form-settings-modal"
 			size="large"
 		>
-			<div className="gutenform-ui" data-theme="auto">
+			<div className="gutenform-ui">
 				<div className="gutenform-form-settings__layout">
-					<nav className="gutenform-form-settings__nav" aria-label={__('formSettings', 'Form Settings')}>
+					<nav className="gutenform-form-settings__nav" aria-label={__('formSettings')}>
 						{SECTIONS.map((section) => (
 							<button
 								key={section.id}
@@ -140,12 +132,6 @@ export function FormSettingsModal({ formClientId, onClose }: FormSettingsModalPr
 						)}
 						{activeSection === 'privacy' && (
 							<PrivacySection
-								formSettings={formSettings}
-								setFormSettings={setFormSettings}
-							/>
-						)}
-						{activeSection === 'advanced' && (
-							<AdvancedSection
 								formSettings={formSettings}
 								setFormSettings={setFormSettings}
 							/>

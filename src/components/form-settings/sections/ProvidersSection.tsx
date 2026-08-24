@@ -1,15 +1,14 @@
 /**
  * Providers & Actions section.
  *
- * Lists the feeds that run for this form. Required providers (the database
- * feed) always appear first as a locked entry -- they can't be removed, which
- * is the visible counterpart to FormRegistry putting them first server-side.
+ * Required feeds (the database) always appear first as a locked entry.
+ * Every other active feed is listed here with an on/off toggle -- no nested
+ * modal, since this panel already lives inside Form Settings.
  */
 import { useState } from '@wordpress/element';
-import { Button, Modal } from '@wordpress/components';
+import { Button, Modal, ToggleControl } from '@wordpress/components';
 import { Lock } from 'lucide-react';
 import { __ } from '@/lib/i18n';
-import { ProviderSelectModal } from '@/controls';
 import { useProviders, useProviderTypes } from '@/hooks/useProviders';
 import { useFormFieldList } from '@/hooks/useFormFieldList';
 import { type FormAttributes, type ProviderOverride } from '@/blockTypes/form';
@@ -25,10 +24,9 @@ type Props = {
 };
 
 export function ProvidersSection({ formClientId, attributes, setAttributes, setProviderOverride }: Props) {
-	const [isSelectOpen, setIsSelectOpen] = useState(false);
 	const [editingProviderId, setEditingProviderId] = useState<number | null>(null);
 
-	const { providers } = useProviders({ is_active: true });
+	const { providers, loading, error } = useProviders({ is_active: true });
 	const { types } = useProviderTypes();
 
 	const providerIds = attributes.providerIds || [];
@@ -44,40 +42,63 @@ export function ProvidersSection({ formClientId, attributes, setAttributes, setP
 
 	const requiredSlugs = types.filter((t) => t.is_required).map((t) => t.slug);
 	const requiredFeeds = providers.filter((p) => requiredSlugs.includes(p.provider_type));
-	// Never list a required feed twice, even if it also sits in providerIds.
-	const optionalFeeds = providers.filter(
-		(p) => providerIds.includes(p.id) && !requiredSlugs.includes(p.provider_type)
-	);
+	const optionalFeeds = providers.filter((p) => !requiredSlugs.includes(p.provider_type));
 
 	const getOverride = (id: number): ProviderOverride =>
 		overrides[String(id)] ?? { useProviderLayout: true, content: '', conditionalShow: null };
 
+	const toggleFeed = (id: number) => {
+		if (providerIds.includes(id)) {
+			setAttributes({ providerIds: providerIds.filter((pid) => pid !== id) });
+		} else {
+			setAttributes({ providerIds: [...providerIds, id] });
+		}
+	};
+
+	const providerMeta = (feed: { provider_type: string; form_identifier?: string | null }) => {
+		const typeLabel = types.find((t) => t.slug === feed.provider_type)?.title || feed.provider_type;
+		const scope = feed.form_identifier ? feed.form_identifier : __('globalProvider');
+		return `${typeLabel} · ${scope}`;
+	};
+
 	return (
 		<>
 			<h3 className="gutenform-form-settings__section-title">
-				{__('formSettingsProviders', 'Providers & Actions')}
+				{__('formSettingsProviders')}
 			</h3>
 			<p className="gutenform-form-settings__section-description">
-				{__(
-					'formSettingsProvidersDescription',
-					'These run in order every time the form is submitted. Storage always runs first, so a failing integration can never lose a submission.'
-				)}
+				{__('formSettingsProvidersDescription')}
 			</p>
+
+			{loading && (
+				<p className="gutenform-form-settings__section-description">{__('loadingProviders')}</p>
+			)}
+			{error && (
+				<p className="gutenform-form-settings__section-description">
+					{__('error')}: {error.message}
+				</p>
+			)}
 
 			{requiredFeeds.map((feed) => (
 				<div
 					key={feed.id}
 					className="gutenform-form-settings__provider-row gutenform-form-settings__provider-row--locked"
 				>
-					<span className="gutenform-form-settings__provider-name">{feed.name}</span>
-					<span className="gutenform-form-settings__lock">
-						<Lock size={13} aria-hidden="true" />
-						{__('alwaysOn', 'Always on')}
-					</span>
+					<div className="gutenform-form-settings__provider-row-header">
+						<div className="gutenform-form-settings__provider-identity">
+							<div className="gutenform-form-settings__provider-name">{feed.name}</div>
+							<div className="gutenform-form-settings__provider-meta">{providerMeta(feed)}</div>
+						</div>
+						<span className="gutenform-form-settings__lock">
+							<Lock size={13} aria-hidden="true" />
+							{__('alwaysOn')}
+						</span>
+					</div>
 				</div>
 			))}
 
 			{optionalFeeds.map((feed) => {
+				const enabled = providerIds.includes(feed.id);
 				const override = getOverride(feed.id);
 				const type = types.find((t) => t.slug === feed.provider_type);
 				const supportsFieldMap = !!type?.fields?.some(
@@ -85,51 +106,66 @@ export function ProvidersSection({ formClientId, attributes, setAttributes, setP
 				);
 
 				return (
-					<div key={feed.id} className="gutenform-form-settings__provider-row">
-						<div style={{ flex: '1 1 auto' }}>
-							<div className="gutenform-form-settings__provider-name">{feed.name}</div>
-
-							<div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
-								<Button variant="secondary" onClick={() => setEditingProviderId(feed.id)}>
-									{__('editTemplate', 'Edit template')}
-								</Button>
+					<div
+						key={feed.id}
+						className={
+							enabled
+								? 'gutenform-form-settings__provider-row'
+								: 'gutenform-form-settings__provider-row gutenform-form-settings__provider-row--off'
+						}
+					>
+						<div className="gutenform-form-settings__provider-row-header">
+							<div className="gutenform-form-settings__provider-identity">
+								<div className="gutenform-form-settings__provider-name">{feed.name}</div>
+								<div className="gutenform-form-settings__provider-meta">{providerMeta(feed)}</div>
 							</div>
-
-							<ProviderConditionalLogicPanel
-								formBlockClientId={formClientId}
-								conditionalShow={override.conditionalShow ?? undefined}
-								onChange={(conditionalShow) =>
-									setProviderOverride(feed.id, { ...override, conditionalShow: conditionalShow ?? null })
-								}
+							<ToggleControl
+								label={__('enableProvider')}
+								hideLabelFromVision
+								checked={enabled}
+								onChange={() => toggleFeed(feed.id)}
+								__nextHasNoMarginBottom={true}
 							/>
+						</div>
 
-							{supportsFieldMap && (
-								<FieldMapEditor
-									fields={fieldList}
-									value={(override.settings?.field_map as Array<{ field: string; key: string }>) || []}
-									onChange={(field_map) =>
+						{enabled && (
+							<div className="gutenform-form-settings__provider-extras">
+								<Button variant="secondary" onClick={() => setEditingProviderId(feed.id)}>
+									{__('editTemplate')}
+								</Button>
+
+								<ProviderConditionalLogicPanel
+									formBlockClientId={formClientId}
+									conditionalShow={override.conditionalShow ?? undefined}
+									onChange={(conditionalShow) =>
 										setProviderOverride(feed.id, {
 											...override,
-											settings: { ...(override.settings || {}), field_map },
+											conditionalShow: conditionalShow ?? null,
 										})
 									}
 								/>
-							)}
-						</div>
+
+								{supportsFieldMap && (
+									<FieldMapEditor
+										fields={fieldList}
+										value={(override.settings?.field_map as Array<{ field: string; key: string }>) || []}
+										onChange={(field_map) =>
+											setProviderOverride(feed.id, {
+												...override,
+												settings: { ...(override.settings || {}), field_map },
+											})
+										}
+									/>
+								)}
+							</div>
+						)}
 					</div>
 				);
 			})}
 
-			<Button variant="secondary" onClick={() => setIsSelectOpen(true)} style={{ marginTop: 8 }}>
-				{__('selectProviders', 'Select providers')}
-			</Button>
-
-			<ProviderSelectModal
-				open={isSelectOpen}
-				onClose={() => setIsSelectOpen(false)}
-				selectedIds={providerIds}
-				onChange={(ids) => setAttributes({ providerIds: ids })}
-			/>
+			{!loading && !error && optionalFeeds.length === 0 && (
+				<p className="gutenform-form-settings__section-description">{__('noOptionalProviders')}</p>
+			)}
 
 			<FullscreenTemplateEditor
 				open={editingProviderId !== null}

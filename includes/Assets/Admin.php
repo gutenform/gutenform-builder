@@ -68,7 +68,7 @@ class Admin
 	{
 		if (in_array($screen, $this->allowed_screens, true)) {
 			$enqueued = Assets\enqueue_asset(
-				GF_DIR . '/assets/admin/dist',
+				GUTENFORM_DIR . '/assets/admin/dist',
 				self::DEV_SCRIPT,
 				$this->get_config()
 			);
@@ -76,7 +76,7 @@ class Admin
 				wp_localize_script(self::HANDLE, self::OBJ_NAME, $this->get_data());
 				// Load translations for JavaScript
 				// Use same path format as load_plugin_textdomain
-				$plugin_rel_path = dirname(plugin_basename(GF_PLUGIN_FILE)) . '/languages';
+				$plugin_rel_path = dirname(plugin_basename(GUTENFORM_PLUGIN_FILE)) . '/languages';
 				wp_set_script_translations(self::HANDLE, 'gutenform-builder', $plugin_rel_path);
 			}
 		}
@@ -112,7 +112,7 @@ class Admin
 			'nonce'                => wp_create_nonce('wp_rest'),
 			'userInfo'             => $this->get_user_data(),
 			'strings'              => Strings::get_strings(),
-			'providersIconBaseUrl'   => defined('GF_ASSETS_URL') ? GF_ASSETS_URL . '/providers/' : '',
+			'providersIconBaseUrl'   => defined('GUTENFORM_ASSETS_URL') ? GUTENFORM_ASSETS_URL . '/providers/' : '',
 		);
 	}
 

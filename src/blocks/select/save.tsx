@@ -37,6 +37,7 @@ export default function save(props: BlockSaveProps<SelectAttributes>) {
 				name={name}
 				id={id}
 				required={required}
+				aria-describedby={help ? `${id}-help` : undefined}
 				{...(optionsPopulated ? { 'data-populated': 'true' } : {})}
 			>
 				{optionsPopulated ? (
@@ -56,7 +57,7 @@ export default function save(props: BlockSaveProps<SelectAttributes>) {
 					</>
 				)}
 			</select>
-			{help && <p className="gutenform-field__help">{help}</p>}
+			{help && <p className="gutenform-field__help" id={`${id}-help`}>{help}</p>}
 		</div>
 	);
 }

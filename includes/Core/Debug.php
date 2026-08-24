@@ -44,6 +44,24 @@ class Debug
     }
 
     /**
+     * Writes a diagnostic line when WP_DEBUG is on.
+     *
+     * Plugin Check flags raw error_log() calls; this is the single gated sink.
+     *
+     * @param string $message Message.
+     * @return void
+     */
+    public static function log(string $message): void
+    {
+        if (! defined('WP_DEBUG') || ! WP_DEBUG) {
+            return;
+        }
+
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- WP_DEBUG-only diagnostic sink.
+        error_log($message);
+    }
+
+    /**
      * Enables debug mode.
      *
      * @return bool True on success, false on failure.

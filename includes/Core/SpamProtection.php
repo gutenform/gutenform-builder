@@ -275,7 +275,9 @@ class SpamProtection
 	 */
 	private function get_client_ip(): string
 	{
-		$remote_addr = isset($_SERVER['REMOTE_ADDR']) ? trim((string) $_SERVER['REMOTE_ADDR']) : '';
+		$remote_addr = isset($_SERVER['REMOTE_ADDR'])
+			? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']))
+			: '';
 
 		return filter_var($remote_addr, FILTER_VALIDATE_IP) !== false ? $remote_addr : '';
 	}

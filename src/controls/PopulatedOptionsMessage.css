@@ -1,0 +1,61 @@
+.gutenform-populated-options-notice {
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.gutenform-populated-options-notice .components-notice__content {
+	min-width: 0;
+	max-width: 100%;
+	overflow: hidden;
+}
+
+.gutenform-populated-options-notice p {
+	margin: 0 0 12px;
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
+.gutenform-populated-options-notice__example {
+	min-width: 0;
+	max-width: 100%;
+	margin-top: 4px;
+}
+
+.gutenform-populated-options-notice__example-label {
+	display: block;
+	margin-bottom: 6px;
+	font-size: 12px;
+	font-weight: 600;
+	color: #1e1e1e;
+}
+
+.gutenform-populated-options-notice__code {
+	margin: 0;
+	padding: 10px 12px;
+	max-width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
+	overflow-x: auto;
+	border-radius: 4px;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 11px;
+	line-height: 1.5;
+	color: #1e1e1e;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	word-break: break-word;
+}
+
+.gutenform-populated-options-notice__code code {
+	display: block;
+	max-width: 100%;
+	background: none;
+	padding: 0;
+	font-size: inherit;
+	color: inherit;
+	white-space: inherit;
+	overflow-wrap: inherit;
+	word-break: inherit;
+}

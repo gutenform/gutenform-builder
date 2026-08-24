@@ -38,11 +38,12 @@ export default function save(props: BlockSaveProps<InputAttributes>) {
 				placeholder={props.attributes.placeholder} 
 				name={props.attributes.name} 
 				id={props.attributes.id} 
+				aria-describedby={props.attributes.help ? `${props.attributes.id}-help` : undefined}
 				required={props.attributes.required} 
 				defaultValue={props.attributes.defaultValue}
 				data-primary-mail={isPrimaryMail ? 'true' : undefined}
 			/>
-			{props.attributes.help && <p className="gutenform-field__help">{props.attributes.help}</p>}
+			{props.attributes.help && <p className="gutenform-field__help" id={`${props.attributes.id}-help`}>{props.attributes.help}</p>}
 		</div>
 	);
 }

@@ -43,8 +43,17 @@ export default function save(props: BlockSaveProps<FileAttributes>) {
 				data-field-id={props.attributes.id}
 				{...dataAttributes}
 			>
+				{/*
+					The drop zone is decorative: dragging is a mouse-only nicety.
+					The real <input type="file"> below stays in the tab order and
+					is only *visually* hidden, so keyboard and screen reader users
+					reach the native file picker. It used to be
+					opacity:0/width:0/pointer-events:none, which removed it from
+					the accessibility tree entirely -- there was no way to upload
+					a file without a mouse.
+				*/}
 				<div className="gutenform-file-upload-zone">
-					<div className="gutenform-file-upload-icon">
+					<div className="gutenform-file-upload-icon" aria-hidden="true">
 						<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
 							<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
 							<polyline points="17 8 12 3 7 8" />
@@ -63,12 +72,12 @@ export default function save(props: BlockSaveProps<FileAttributes>) {
 						multiple={props.attributes.multiple}
 						accept={props.attributes.acceptTypes}
 						required={props.attributes.required}
-						aria-label={props.attributes.label || 'File upload'}
+						aria-describedby={props.attributes.help ? `${props.attributes.id}-help` : undefined}
 					/>
 				</div>
 				<div className="gutenform-file-upload-list"></div>
 			</div>
-			{props.attributes.help && <p className="gutenform-field__help">{props.attributes.help}</p>}
+			{props.attributes.help && <p className="gutenform-field__help" id={`${props.attributes.id}-help`}>{props.attributes.help}</p>}
 		</div>
 	);
 }

@@ -84,7 +84,14 @@ class Menu
 			),
 		);
 
-		$plugin_submenu_pages = apply_filters('gf_submenu_pages', $submenu_pages);
+		$plugin_submenu_pages = apply_filters('gutenform/submenu_pages', $submenu_pages);
+		// Renamed in 1.0.0; the old gf_* name still runs so existing add-ons keep working.
+		$plugin_submenu_pages = apply_filters_deprecated(
+			'gf_submenu_pages',
+			array($plugin_submenu_pages),
+			'1.0.0',
+			'gutenform/submenu_pages'
+		);
 
 		foreach ($plugin_submenu_pages as $submenu) {
 
@@ -106,6 +113,7 @@ class Menu
 	 */
 	public function admin_page()
 	{
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- admin menu router; capability already required by add_menu_page.
 		$page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
 		$settings_slug = $this->parent_slug . '-settings';
 		$forms_usage_slug = $this->parent_slug . '-forms-usage';

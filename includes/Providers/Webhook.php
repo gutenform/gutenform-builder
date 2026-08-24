@@ -14,6 +14,7 @@
 namespace Gutenform\Providers;
 
 use Gutenform\Core\Crypto;
+use Gutenform\Core\Debug;
 use Gutenform\Models\Providers as ProviderModel;
 
 defined('ABSPATH') || exit;
@@ -98,7 +99,7 @@ class Webhook extends AbstractProvider
             'sslverify'   => true,
             'headers'     => $headers,
             'body'        => $body,
-            'user-agent'  => 'Gutenform/' . (defined('GF_VERSION') ? GF_VERSION : '1.0.0') . '; ' . home_url('/'),
+            'user-agent'  => 'Gutenform/' . (defined('GUTENFORM_VERSION') ? GUTENFORM_VERSION : '1.0.0') . '; ' . home_url('/'),
         );
 
         $response = wp_remote_request($url, $args);
@@ -532,9 +533,7 @@ class Webhook extends AbstractProvider
             $feed->settings = $feed_settings;
             $feed->save();
         } catch (\Exception $e) {
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('GutenForm Webhook: failed to record delivery status: ' . $e->getMessage());
-            }
+            Debug::log('GutenForm Webhook: failed to record delivery status: ' . $e->getMessage());
         }
     }
 

@@ -20,7 +20,7 @@ use Gutenform\Libs\API\Route;
 defined('ABSPATH') || exit;
 
 Route::prefix(
-	GF_ROUTE_PREFIX,
+	GUTENFORM_ROUTE_PREFIX,
 	function (Route $route) {
 
 		$view_entries    = '\Gutenform\Core\Capabilities::can_view_entries';
@@ -49,6 +49,8 @@ Route::prefix(
 		$route->post('/entries/delete', '\Gutenform\Controllers\Entries\Actions@delete', $manage_entries);
 		$route->post('/entries/mark-read', '\Gutenform\Controllers\Entries\Actions@mark_read', $manage_entries);
 		$route->post('/entries/empty-trash', '\Gutenform\Controllers\Entries\Actions@empty_trash', $manage_entries);
+		// Exporting is reading, so it needs the view capability rather than manage.
+		$route->get('/entries/export', '\Gutenform\Controllers\Entries\Export@export', $view_entries);
 
 		// Inbox Folders routes.
 		$route->get('/inbox-folders/get', '\Gutenform\Controllers\InboxFolders\Actions@get', $view_entries);
@@ -123,6 +125,8 @@ Route::prefix(
 		$route->post('/email-templates/preview', '\Gutenform\Controllers\EmailTemplates\Actions@preview_template', $manage_settings);
 
 		// Allow hooks to add more custom API routes.
-		do_action('gf_api', $route);
+		do_action('gutenform/api', $route);
+		// Renamed in 1.0.0; the old gf_* name still fires so existing add-ons keep working.
+		do_action_deprecated('gf_api', array($route), '1.0.0', 'gutenform/api');
 	}
 );

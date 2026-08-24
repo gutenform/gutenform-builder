@@ -222,7 +222,7 @@ class FormRegistry
 		$like_block = '%' . $wpdb->esc_like('gutenform/form') . '%';
 		$like_id    = '%' . $wpdb->esc_like($form_identifier) . '%';
 
-		$post_ids = $wpdb->get_col(
+		$post_ids = $wpdb->get_col( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- one-shot lookup of posts containing this form; result is then indexed.
 			$wpdb->prepare(
 				"SELECT ID FROM {$wpdb->posts}
 				 WHERE post_status NOT IN ('trash', 'auto-draft')
@@ -413,8 +413,6 @@ class FormRegistry
 	 */
 	private function log(string $message): void
 	{
-		if (defined('WP_DEBUG') && WP_DEBUG) {
-			error_log('GutenForm FormRegistry: ' . $message);
-		}
+		Debug::log('GutenForm FormRegistry: ' . $message);
 	}
 }

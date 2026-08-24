@@ -13,6 +13,7 @@ namespace Gutenform\Providers;
 
 use Gutenform\Models\Entries;
 use Gutenform\Models\Mailboxes;
+use Gutenform\Core\Debug;
 
 defined('ABSPATH') || exit;
 
@@ -86,13 +87,11 @@ class Database extends AbstractProvider
 
             $mailbox_id = absint($provider_settings['mailbox_id'] ?? 1);
 
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log(sprintf(
+            Debug::log(sprintf(
                     'GutenForm Database Provider: Saving entry to mailbox_id: %d for form "%s"',
                     $mailbox_id,
                     $form_identifier
                 ));
-            }
 
             // GDPR: a form can opt out of storing the submitter's IP entirely.
             $form_settings = is_array($provider_settings['_form_settings'] ?? null) ? $provider_settings['_form_settings'] : array();
@@ -111,24 +110,20 @@ class Database extends AbstractProvider
 
             $result = $entry->save();
 
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                if ($result) {
-                    error_log(sprintf(
+            if ($result) {
+                    Debug::log(sprintf(
                         'GutenForm Database Provider: Entry saved successfully (ID: %d, Mailbox ID: %d) for form "%s"',
                         $entry->id,
                         $entry->mailbox_id,
                         $form_identifier
                     ));
                 } else {
-                    error_log('GutenForm Database Provider Error: Failed to save entry');
+                    Debug::log('GutenForm Database Provider Error: Failed to save entry');
                 }
-            }
 
             return $result;
         } catch (\Exception $e) {
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('GutenForm Database Provider Error: ' . $e->getMessage());
-            }
+            Debug::log('GutenForm Database Provider Error: ' . $e->getMessage());
             return false;
         }
     }

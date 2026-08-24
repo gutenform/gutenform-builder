@@ -71,7 +71,7 @@ class Frontend
 				'gutenform-recaptcha',
 				'https://www.google.com/recaptcha/api.js?render=' . rawurlencode($captcha['recaptcha']['siteKey']),
 				array(),
-				null,
+				GUTENFORM_VERSION,
 				true
 			);
 		}
@@ -79,11 +79,11 @@ class Frontend
 		// Always set the gutenform object inline so it's available before view scripts run
 		$inline_script = sprintf(
 			'window.gutenform = window.gutenform || {}; window.gutenform.assetsUrl = %s; window.gutenform.pluginUrl = %s; window.gutenform.apiUrl = %s; window.gutenform.nonce = %s; window.gutenform.namespace = %s; window.gutenform.captcha = %s; window.gutenform.strings = %s; window.gutenform.postId = %s;',
-			wp_json_encode(GF_ASSETS_URL),
-			wp_json_encode(GF_URL),
+			wp_json_encode(GUTENFORM_ASSETS_URL),
+			wp_json_encode(GUTENFORM_URL),
 			wp_json_encode($api_url),
 			wp_json_encode($nonce),
-			wp_json_encode(GF_ROUTE_PREFIX),
+			wp_json_encode(GUTENFORM_ROUTE_PREFIX),
 			wp_json_encode($captcha),
 			wp_json_encode($this->get_frontend_strings()),
 			wp_json_encode(is_singular() ? (int) get_queried_object_id() : 0)
@@ -111,11 +111,11 @@ class Frontend
 				$view_script_handle,
 				'gutenform',
 				array(
-					'assetsUrl' => GF_ASSETS_URL,
-					'pluginUrl' => GF_URL,
+					'assetsUrl' => GUTENFORM_ASSETS_URL,
+					'pluginUrl' => GUTENFORM_URL,
 					'apiUrl'    => $api_url,
 					'nonce'     => $nonce,
-					'namespace' => GF_ROUTE_PREFIX,
+					'namespace' => GUTENFORM_ROUTE_PREFIX,
 					'captcha'   => $captcha,
 					'strings'   => $this->get_frontend_strings(),
 					'postId'    => is_singular() ? (int) get_queried_object_id() : 0,
@@ -224,10 +224,10 @@ class Frontend
 	public function enqueue_editor_skin_styles()
 	{
 		// Get all available skins from assets directory (built skins)
-		$skins_dir = GF_DIR . '/assets/blocks/skins';
+		$skins_dir = GUTENFORM_DIR . '/assets/blocks/skins';
 		if (!is_dir($skins_dir)) {
 			// Fallback to src/skins for development
-			$skins_dir = GF_DIR . '/src/skins';
+			$skins_dir = GUTENFORM_DIR . '/src/skins';
 			if (!is_dir($skins_dir)) {
 				return;
 			}
@@ -248,15 +248,15 @@ class Frontend
 
 				if (!file_exists($css_file) && !$is_built) {
 					// Fallback: check src/skins for development
-					$src_css_file = GF_DIR . '/src/skins/' . $skin_dir . '/index.css';
+					$src_css_file = GUTENFORM_DIR . '/src/skins/' . $skin_dir . '/index.css';
 					if (file_exists($src_css_file)) {
 						$css_file = $src_css_file;
-						$css_url = GF_URL . '/src/skins/' . $skin_dir . '/index.css';
+						$css_url = GUTENFORM_URL . '/src/skins/' . $skin_dir . '/index.css';
 					} else {
 						continue;
 					}
 				} else {
-					$css_url = GF_ASSETS_URL . '/blocks/skins/' . $skin_dir . '/index.css';
+					$css_url = GUTENFORM_ASSETS_URL . '/blocks/skins/' . $skin_dir . '/index.css';
 				}
 
 				$handle = 'gutenform-skin-' . $skin_dir;
@@ -264,7 +264,7 @@ class Frontend
 					$handle,
 					$css_url,
 					array(),
-					GF_VERSION
+					GUTENFORM_VERSION
 				);
 			}
 		}

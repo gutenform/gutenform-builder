@@ -36,7 +36,7 @@ class AddFormIdentifierToProviders implements Migration {
 	 */
 	public static function up() {
 		global $wpdb;
-		$table_name_prefixed = $wpdb->prefix . self::$table;
+		$table_name_prefixed = esc_sql( $wpdb->prefix . self::$table );
 
 		// Capsule adds the WordPress table prefix automatically; pass name without prefix.
 		if ( ! Capsule::schema()->hasTable( self::$table ) ) {
@@ -53,6 +53,8 @@ class AddFormIdentifierToProviders implements Migration {
 
 		// 1. Remove UNIQUE KEY on provider_type (MySQL only; SQLite may not have had it)
 		if ( $driver === 'mysql' ) {
+			// Table names cannot be bound as prepared-statement parameters.
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, PluginCheck.Security.DirectDB.UnescapedDBParameter
 			$index_exists = $wpdb->get_results(
 				$wpdb->prepare(
 					"SHOW INDEX FROM `{$table_name_prefixed}` WHERE Key_name = %s",
@@ -62,6 +64,7 @@ class AddFormIdentifierToProviders implements Migration {
 			if ( ! empty( $index_exists ) ) {
 				$wpdb->query( "ALTER TABLE `{$table_name_prefixed}` DROP INDEX `uk_provider_type`" );
 			}
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		}
 
 		// 2. Add form_identifier column and index (Schema Builder works on MySQL and SQLite)
@@ -78,7 +81,7 @@ class AddFormIdentifierToProviders implements Migration {
 	 */
 	public static function down() {
 		global $wpdb;
-		$table_name_prefixed = $wpdb->prefix . self::$table;
+		$table_name_prefixed = esc_sql( $wpdb->prefix . self::$table );
 
 		// Capsule adds the WordPress table prefix automatically.
 		if ( ! Capsule::schema()->hasTable( self::$table ) ) {
@@ -92,10 +95,12 @@ class AddFormIdentifierToProviders implements Migration {
 
 		$driver = Capsule::connection()->getDriverName();
 		if ( $driver === 'mysql' ) {
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, PluginCheck.Security.DirectDB.UnescapedDBParameter
 			$wpdb->query(
 				"ALTER TABLE `{$table_name_prefixed}` 
 				ADD UNIQUE KEY `uk_provider_type` (`provider_type`)"
 			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		}
 	}
 }

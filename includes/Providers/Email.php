@@ -12,6 +12,7 @@
 namespace Gutenform\Providers;
 
 use Gutenform\Core\EmailTemplates;
+use Gutenform\Core\Debug;
 
 defined('ABSPATH') || exit;
 
@@ -100,12 +101,10 @@ class Email extends AbstractProvider
                     $body = $this->replace_placeholders($template_content, $submission_data, $form_identifier, true);
                 } else {
                     // Template not found, fall back to regular body
-                    if (defined('WP_DEBUG') && WP_DEBUG) {
-                        error_log(sprintf(
+                    Debug::log(sprintf(
                             'GutenForm Email Provider: Template "%s" not found, using regular body.',
                             $template_name
                         ));
-                    }
                     $body = $this->replace_placeholders(
                         $provider_settings['body'] ?? '',
                         $submission_data,
@@ -143,51 +142,44 @@ class Email extends AbstractProvider
             )
         );
 
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log(sprintf(
+        Debug::log(sprintf(
                 'GutenForm Email Provider: Starting email processing for form "%s"',
                 $form_identifier
             ));
-            error_log(sprintf(
+        Debug::log(sprintf(
                 'GutenForm Email Provider: To: %s, From: %s <%s>, Subject: %s',
                 $to_email,
                 $from_name,
                 $from_email,
                 $subject
             ));
-        }
 
         // Validation
         if (empty($to_email) || ! is_email($to_email)) {
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                // If to_email was a placeholder that couldn't be resolved, provide helpful error
-                $is_placeholder = (strpos($to_email_raw, '{') !== false && strpos($to_email_raw, '}') !== false);
-                if ($is_placeholder && empty($to_email_replaced)) {
-                    error_log(sprintf(
+            $is_placeholder = (strpos($to_email_raw, '{') !== false && strpos($to_email_raw, '}') !== false);
+            if ($is_placeholder && empty($to_email_replaced)) {
+                    Debug::log(sprintf(
                         'GutenForm Email Provider Error: Placeholder "%s" could not be resolved. No primary mail found in form submission. Make sure an email field is marked as primary mail or contains a valid email address.',
                         $to_email_raw
                     ));
                 } else {
-                    error_log(sprintf(
+                    Debug::log(sprintf(
                         'GutenForm Email Provider Error: Invalid to_email address. Original: "%s", Replaced: "%s", Sanitized: "%s"',
                         $to_email_raw,
                         $to_email_replaced,
                         $to_email
                     ));
                 }
-            }
             return false;
         }
 
         // Validate from_email after placeholder replacement
         if (empty($from_email) || ! is_email($from_email)) {
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log(sprintf(
+            Debug::log(sprintf(
                     'GutenForm Email Provider Error: Invalid from_email address after placeholder replacement. Original: "%s", Replaced: "%s"',
                     $provider_settings['from_email'] ?? '',
                     $from_email_raw
                 ));
-            }
             return false;
         }
 
@@ -203,21 +195,19 @@ class Email extends AbstractProvider
         $attachments = $this->get_file_attachments($submission_data);
 
         // 4. Send email
-        if (defined('WP_DEBUG') && WP_DEBUG && !empty($attachments)) {
-            error_log(sprintf(
+        if (! empty($attachments)) {
+            Debug::log(sprintf(
                 'GutenForm Email Provider: Attaching %d file(s) to email',
                 count($attachments)
             ));
         }
         $result = wp_mail($to_email, $subject, $body, $headers, $attachments);
 
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            if ($result) {
-                error_log(sprintf('GutenForm Email Provider: Email sent successfully to %s', $to_email));
+        if ($result) {
+                Debug::log(sprintf('GutenForm Email Provider: Email sent successfully to %s', $to_email));
             } else {
-                error_log(sprintf('GutenForm Email Provider Error: wp_mail() failed for %s. Check WordPress mail configuration.', $to_email));
+                Debug::log(sprintf('GutenForm Email Provider Error: wp_mail() failed for %s. Check WordPress mail configuration.', $to_email));
             }
-        }
 
         return $result;
     }

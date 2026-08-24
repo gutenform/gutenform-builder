@@ -3,6 +3,7 @@
 use Gutenform\Core\Api;
 use Gutenform\Core\Capabilities;
 use Gutenform\Core\FormRegistry;
+use Gutenform\Core\Privacy;
 use Gutenform\Core\PopulatedSelect;
 use Gutenform\Core\Install;
 use Gutenform\Core\Deactivate;
@@ -36,17 +37,65 @@ final class Gutenform
 	 */
 	public function __construct()
 	{
-		// GF_PLUGIN_FILE must point at the main plugin bootstrap file (gutenform-builder.php),
-		// not this file, since plugin_basename()/get_file_data() need the file WordPress
-		// registered as the plugin (the one carrying the plugin header).
-		define('GF_PLUGIN_FILE', __DIR__ . '/gutenform-builder.php');
-		define('GF_DIR', plugin_dir_path(GF_PLUGIN_FILE));
-		define('GF_URL', plugin_dir_url(GF_PLUGIN_FILE));
-		define('GF_ASSETS_URL', GF_URL . '/assets');
-		define('GF_ROUTE_PREFIX', 'gutenform/v1');
+		// GUTENFORM_PLUGIN_FILE must point at the main plugin bootstrap file
+		// (gutenform-builder.php), not this file, since plugin_basename() and
+		// get_file_data() need the file WordPress registered as the plugin (the
+		// one carrying the plugin header).
+		//
+		// The GF_ prefix these constants used to carry is Gravity Forms' prefix,
+		// and they were defined without a guard -- a collision produced a PHP
+		// warning and silently kept the *other* plugin's value. Everything is
+		// GUTENFORM_ now, each guarded.
+		$this->define('GUTENFORM_PLUGIN_FILE', __DIR__ . '/gutenform-builder.php');
+		$this->define('GUTENFORM_DIR', plugin_dir_path(GUTENFORM_PLUGIN_FILE));
+		$this->define('GUTENFORM_URL', plugin_dir_url(GUTENFORM_PLUGIN_FILE));
+		$this->define('GUTENFORM_ASSETS_URL', GUTENFORM_URL . '/assets');
+		$this->define('GUTENFORM_ROUTE_PREFIX', 'gutenform/v1');
 
-		$plugin_data = get_file_data(GF_PLUGIN_FILE, array('Version' => 'Version'));
-		define('GF_VERSION', ! empty($plugin_data['Version']) ? $plugin_data['Version'] : '1.0.0');
+		$plugin_data = get_file_data(GUTENFORM_PLUGIN_FILE, array('Version' => 'Version'));
+		$this->define('GUTENFORM_VERSION', ! empty($plugin_data['Version']) ? $plugin_data['Version'] : '1.0.0');
+
+		$this->define_legacy_aliases();
+	}
+
+	/**
+	 * Defines a constant only when it is not already taken.
+	 *
+	 * @param string $name  Constant name.
+	 * @param mixed  $value Constant value.
+	 * @return void
+	 */
+	private function define($name, $value)
+	{
+		if (! defined($name)) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.VariableConstantNameFound -- $name is always a GUTENFORM_* (or legacy GF_*) constant.
+			define($name, $value);
+		}
+	}
+
+	/**
+	 * Keeps the old GF_* constants working.
+	 *
+	 * Deprecated since 1.0.0 -- they exist purely so an add-on built against an
+	 * earlier build (for example the Pro plugin) does not fatal. Guarded, so a
+	 * plugin that legitimately owns the GF_ prefix wins and we never clobber it.
+	 *
+	 * @return void
+	 */
+	private function define_legacy_aliases()
+	{
+		$aliases = array(
+			'GF_PLUGIN_FILE'  => GUTENFORM_PLUGIN_FILE,
+			'GF_DIR'          => GUTENFORM_DIR,
+			'GF_URL'          => GUTENFORM_URL,
+			'GF_ASSETS_URL'   => GUTENFORM_ASSETS_URL,
+			'GF_ROUTE_PREFIX' => GUTENFORM_ROUTE_PREFIX,
+			'GF_VERSION'      => GUTENFORM_VERSION,
+		);
+
+		foreach ($aliases as $name => $value) {
+			$this->define($name, $value);
+		}
 	}
 
 	/**
@@ -77,6 +126,7 @@ final class Gutenform
 		// Initialze core functionalities.
 		Capabilities::get_instance()->init();
 		FormRegistry::get_instance()->init();
+		Privacy::get_instance()->init();
 		PopulatedSelect::get_instance()->init();
 		\Gutenform\Core\Retention::get_instance()->init();
 		Frontend::get_instance()->bootstrap();
@@ -115,6 +165,7 @@ final class Gutenform
 	 */
 	public function i18n()
 	{
-		load_plugin_textdomain('gutenform-builder', false, dirname(plugin_basename(GF_PLUGIN_FILE)) . '/languages/');
+		// Also shipped as a standalone zip, not only via WordPress.org.
+		load_plugin_textdomain('gutenform-builder', false, dirname(plugin_basename(GUTENFORM_PLUGIN_FILE)) . '/languages/'); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
 	}
 }
