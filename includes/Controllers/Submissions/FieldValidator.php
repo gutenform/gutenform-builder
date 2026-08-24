@@ -139,8 +139,21 @@ class FieldValidator
         $options = $field['options'] ?? array();
 
         // No fixed option list (e.g. a select populated at render time) --
-        // nothing to check the value against.
+        // optionally validate via filter, otherwise accept any scalar value.
         if (empty($options)) {
+            if (! empty($field['options_populated'])) {
+                /**
+                 * Validate a submitted value for a populated select field.
+                 *
+                 * @param string|null $error  Error message, or null when valid.
+                 * @param mixed       $value  Submitted value.
+                 * @param array       $field  Field schema entry.
+                 */
+                $error = apply_filters('gutenform/select/validate_populated_value', null, $value, $field);
+
+                return is_string($error) && '' !== $error ? $error : null;
+            }
+
             return null;
         }
 

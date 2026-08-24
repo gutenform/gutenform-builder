@@ -1,13 +1,11 @@
-import { __ } from '@wordpress/i18n';
-import { PanelRow } from '@wordpress/components';
+import { __ } from '@/lib/i18n';
+import { Notice } from '@wordpress/components';
 
 export const PopulatedOptionsMessage = () => {
 	return (
-		<PanelRow>
-			<p style={{ fontSize: '13px', color: '#646970', margin: 0 }}>
-				{__('Optionen werden dynamisch geladen')}
-			</p>
-		</PanelRow>
+		<Notice status="info" isDismissible={false} className="gutenform-populated-options-notice">
+			<p>{__('populatedOptionsDescription')}</p>
+			<p>{__('populatedOptionsHint')}</p>
+		</Notice>
 	);
 };
-

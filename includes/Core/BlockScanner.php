@@ -189,7 +189,8 @@ class BlockScanner
 			// A select whose options are populated at render time from another
 			// source has no fixed allowlist we can enforce.
 			if ('select' === $type && ! empty($attrs['optionsPopulated'])) {
-				$field['options'] = array();
+				$field['options']            = array();
+				$field['options_populated']  = true;
 			}
 		}
 

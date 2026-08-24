@@ -302,6 +302,9 @@ class Strings
 
 			// Block Editor - Select Field
 			'selectFieldSettings' => __('Select Field Settings', 'gutenform-builder'),
+			'populateOptions' => __('Populate options', 'gutenform-builder'),
+			'populatedOptionsDescription' => __('Options are not managed in the editor. They are filled when the page loads via the gutenform/select/populated_options filter in your theme or plugin.', 'gutenform-builder'),
+			'populatedOptionsHint' => __('Example: add_filter( \'gutenform/select/populated_options\', function ( $options, $context ) { if ( $context[\'name\'] === \'country\' ) { return array( array( \'label\' => \'Germany\', \'value\' => \'de\' ) ); } return $options; }, 10, 2 );', 'gutenform-builder'),
 			// Block Editor - Checkbox Field
 			'checkboxFieldSettings' => __('Checkbox Field Settings', 'gutenform-builder'),
 			'consent' => __('Consent', 'gutenform-builder'),

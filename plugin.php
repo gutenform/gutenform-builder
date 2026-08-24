@@ -3,6 +3,7 @@
 use Gutenform\Core\Api;
 use Gutenform\Core\Capabilities;
 use Gutenform\Core\FormRegistry;
+use Gutenform\Core\PopulatedSelect;
 use Gutenform\Core\Install;
 use Gutenform\Core\Deactivate;
 use Gutenform\Core\Smtp;
@@ -77,6 +78,7 @@ final class Gutenform
 		// Initialze core functionalities.
 		Capabilities::get_instance()->init();
 		FormRegistry::get_instance()->init();
+		PopulatedSelect::get_instance()->init();
 		\Gutenform\Core\Retention::get_instance()->init();
 		Frontend::get_instance()->bootstrap();
 		API::get_instance()->init();

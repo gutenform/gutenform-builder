@@ -90,14 +90,15 @@ class Frontend
 
 		// Always set the gutenform object inline so it's available before view scripts run
 		$inline_script = sprintf(
-			'window.gutenform = window.gutenform || {}; window.gutenform.assetsUrl = %s; window.gutenform.pluginUrl = %s; window.gutenform.apiUrl = %s; window.gutenform.nonce = %s; window.gutenform.namespace = %s; window.gutenform.captcha = %s; window.gutenform.strings = %s;',
+			'window.gutenform = window.gutenform || {}; window.gutenform.assetsUrl = %s; window.gutenform.pluginUrl = %s; window.gutenform.apiUrl = %s; window.gutenform.nonce = %s; window.gutenform.namespace = %s; window.gutenform.captcha = %s; window.gutenform.strings = %s; window.gutenform.postId = %s;',
 			wp_json_encode(GF_ASSETS_URL),
 			wp_json_encode(GF_URL),
 			wp_json_encode($api_url),
 			wp_json_encode($nonce),
 			wp_json_encode(GF_ROUTE_PREFIX),
 			wp_json_encode($captcha),
-			wp_json_encode($this->get_frontend_strings())
+			wp_json_encode($this->get_frontend_strings()),
+			wp_json_encode(is_singular() ? (int) get_queried_object_id() : 0)
 		);
 
 		// Try to add inline script to wp-blocks, fallback to wp-util if not available
@@ -129,6 +130,7 @@ class Frontend
 					'namespace' => GF_ROUTE_PREFIX,
 					'captcha'   => $captcha,
 					'strings'   => $this->get_frontend_strings(),
+					'postId'    => is_singular() ? (int) get_queried_object_id() : 0,
 				)
 			);
 		}

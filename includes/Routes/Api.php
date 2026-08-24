@@ -91,6 +91,9 @@ Route::prefix(
 		// See Controllers\FileUpload\Actions.
 		$route->post('/upload', '\Gutenform\Controllers\FileUpload\Actions@upload', Route::ALLOW_PUBLIC);
 
+		// Populated select options (public fallback when render-time filter did not run).
+		$route->get('/select/populated-options', '\Gutenform\Controllers\Select\Actions@get_populated_options', Route::ALLOW_PUBLIC);
+
 		// Settings routes.
 		$route->get('/settings/smtp', '\Gutenform\Controllers\Settings\Actions@get_smtp_settings', $manage_settings);
 		$route->post('/settings/smtp', '\Gutenform\Controllers\Settings\Actions@save_smtp_settings', $manage_settings);
