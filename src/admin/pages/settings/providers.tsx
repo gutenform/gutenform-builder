@@ -250,7 +250,11 @@ function DynamicField({
             {field.required && <span className="text-destructive ml-1">*</span>}
           </FormLabel>
           <Select
-            value={value ?? field.default ?? ''}
+            // Option values are strings, but settings come back from PHP as
+            // JSON -- mailbox_id is an int. Radix matches the selected item by
+            // strict equality, so an unconverted 1 never matched "1" and the
+            // trigger rendered blank even though a value was stored.
+            value={value != null && value !== '' ? String(value) : (field.default != null ? String(field.default) : '')}
             onValueChange={onChange}
           >
             <FormControl>
