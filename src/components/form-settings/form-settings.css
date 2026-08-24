@@ -32,34 +32,15 @@
 	--ring: 221.2 83.2% 53.3%;
 	--radius: 0.5rem;
 
-	color: hsl(var(--foreground));
+	/*
+	 * The WP admin modal chrome is always light. Do not follow
+	 * prefers-color-scheme here -- OS dark mode would paint nav labels
+	 * near-white on a white panel.
+	 */
+	color: #1e1e1e;
+	background: #fff;
 	font-size: 13px;
 	line-height: 1.5;
-}
-
-/* The editor renders in a dark scheme when the admin colour scheme is dark. */
-@media (prefers-color-scheme: dark) {
-	.gutenform-ui[data-theme='auto'] {
-		--background: 222.2 84% 4.9%;
-		--foreground: 210 40% 98%;
-		--card: 222.2 84% 4.9%;
-		--card-foreground: 210 40% 98%;
-		--popover: 222.2 84% 4.9%;
-		--popover-foreground: 210 40% 98%;
-		--primary: 217.2 91.2% 59.8%;
-		--primary-foreground: 222.2 47.4% 11.2%;
-		--secondary: 217.2 32.6% 17.5%;
-		--secondary-foreground: 210 40% 98%;
-		--muted: 217.2 32.6% 17.5%;
-		--muted-foreground: 215 20.2% 65.1%;
-		--accent: 217.2 32.6% 17.5%;
-		--accent-foreground: 210 40% 98%;
-		--destructive: 0 62.8% 30.6%;
-		--destructive-foreground: 210 40% 98%;
-		--border: 217.2 32.6% 17.5%;
-		--input: 217.2 32.6% 17.5%;
-		--ring: 224.3 76.3% 48%;
-	}
 }
 
 /*
@@ -93,65 +74,121 @@
 	margin: 0;
 }
 
-/* The modal itself: give the content area room and kill the default padding. */
+/*
+ * Keep the WP modal header in normal flow so the sidebar never slides
+ * underneath "Form Settings". Older WP versions position the header
+ * absolutely and rely on content margin-top; newer ones use sticky
+ * plus negative horizontal margins. Reset both.
+ */
 .gutenform-form-settings-modal .components-modal__content {
+	display: flex;
+	flex-direction: column;
 	padding: 0;
 	margin-top: 0;
 }
 
 .gutenform-form-settings-modal .components-modal__header {
-	margin-bottom: 0;
+	position: relative;
+	top: auto;
+	right: auto;
+	left: auto;
+	z-index: 2;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	height: auto;
+	min-height: 60px;
+	margin: 0;
+	padding: 16px 24px;
 	border-bottom: 1px solid #e0e0e0;
+	background: #fff;
+}
+
+.gutenform-form-settings-modal .gutenform-ui {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
 }
 
 .gutenform-form-settings__layout {
 	display: flex;
+	flex: 1 1 auto;
 	min-height: 460px;
 	max-height: min(70vh, 640px);
 }
 
 .gutenform-form-settings__nav {
-	flex: 0 0 200px;
-	border-right: 1px solid hsl(var(--border));
-	padding: 12px 8px;
+	flex: 0 0 220px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 16px 12px;
+	border-right: 1px solid #e0e0e0;
+	background: #f6f7f7;
 	overflow-y: auto;
 }
 
-.gutenform-form-settings__nav-item {
+.gutenform-form-settings-modal .gutenform-ui .gutenform-form-settings__nav-item {
 	display: block;
 	width: 100%;
-	text-align: left;
+	margin: 0;
 	padding: 8px 12px;
 	border: 0;
-	border-radius: var(--radius);
+	border-radius: 6px;
 	background: transparent;
+	background-color: transparent;
+	box-shadow: none;
+	appearance: none;
+	-webkit-appearance: none;
+	text-align: left;
+	text-decoration: none;
+	text-shadow: none;
+	font-family: inherit;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.4;
+	color: #1e1e1e;
+	opacity: 1;
 	cursor: pointer;
-	color: hsl(var(--foreground));
 }
 
-.gutenform-form-settings__nav-item:hover {
-	background: hsl(var(--muted));
+.gutenform-form-settings-modal .gutenform-ui .gutenform-form-settings__nav-item:hover,
+.gutenform-form-settings-modal .gutenform-ui .gutenform-form-settings__nav-item:focus,
+.gutenform-form-settings-modal .gutenform-ui .gutenform-form-settings__nav-item:focus-visible {
+	background: #e0e0e0;
+	background-color: #e0e0e0;
+	color: #1e1e1e;
+	opacity: 1;
+	box-shadow: none;
+	outline: none;
 }
 
-.gutenform-form-settings__nav-item[aria-current='true'] {
-	background: hsl(var(--primary));
-	color: hsl(var(--primary-foreground));
+.gutenform-form-settings-modal .gutenform-ui .gutenform-form-settings__nav-item[aria-current='true'],
+.gutenform-form-settings-modal .gutenform-ui .gutenform-form-settings__nav-item[aria-current='true']:hover,
+.gutenform-form-settings-modal .gutenform-ui .gutenform-form-settings__nav-item[aria-current='true']:focus,
+.gutenform-form-settings-modal .gutenform-ui .gutenform-form-settings__nav-item[aria-current='true']:focus-visible {
+	background: #3858e9;
+	background-color: #3858e9;
+	color: #fff;
+	opacity: 1;
 }
 
 .gutenform-form-settings__panel {
 	flex: 1 1 auto;
-	padding: 20px 24px;
+	padding: 24px 28px;
 	overflow-y: auto;
+	background: #fff;
 }
 
 .gutenform-form-settings__section-title {
 	font-size: 15px;
 	font-weight: 600;
 	margin: 0 0 4px;
+	color: #1e1e1e;
 }
 
 .gutenform-form-settings__section-description {
-	color: hsl(var(--muted-foreground));
+	color: #646970;
 	margin: 0 0 16px;
 }
 
@@ -161,26 +198,72 @@
 
 .gutenform-form-settings__provider-row {
 	display: flex;
-	align-items: center;
+	flex-direction: column;
+	align-items: stretch;
 	gap: 10px;
-	padding: 10px 12px;
-	border: 1px solid hsl(var(--border));
-	border-radius: var(--radius);
+	padding: 12px;
+	border: 1px solid #e0e0e0;
+	border-radius: 6px;
 	margin-bottom: 8px;
+	background: #fff;
 }
 
-.gutenform-form-settings__provider-row--locked {
-	background: hsl(var(--muted));
+.gutenform-form-settings__provider-row--locked,
+.gutenform-form-settings__provider-row--off {
+	background: #f6f7f7;
+}
+
+.gutenform-form-settings__provider-row-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.gutenform-form-settings__provider-identity {
+	flex: 1 1 auto;
+	min-width: 0;
 }
 
 .gutenform-form-settings__provider-name {
-	flex: 1 1 auto;
 	font-weight: 500;
+	color: #1e1e1e;
+}
+
+.gutenform-form-settings__provider-meta {
+	margin-top: 2px;
+	font-size: 12px;
+	font-weight: 400;
+	color: #646970;
+}
+
+.gutenform-form-settings__provider-row-header .components-toggle-control {
+	margin: 0;
+}
+
+.gutenform-form-settings__provider-extras {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 10px;
+	padding-top: 10px;
+	border-top: 1px solid #e0e0e0;
 }
 
 .gutenform-form-settings__lock {
-	color: hsl(var(--muted-foreground));
+	color: #646970;
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
+	flex-shrink: 0;
+	font-size: 12px;
+}
+
+.gutenform-success-screen-toolbar-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding-inline: 2px;
+	font-size: 13px;
+	font-weight: 500;
+	white-space: nowrap;
 }

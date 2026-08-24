@@ -4,9 +4,9 @@
  * addFilter('editor.BlockEdit').
  *
  * There is deliberately ONE BlockControls here with two ToolbarGroups (steps,
- * form settings) rather than two competing HOCs -- the parent-form lookup is
- * identical for both, and two separate BlockControls would fight over toolbar
- * placement.
+ * success screen + form settings) rather than two competing HOCs -- the
+ * parent-form lookup is identical for both, and two separate BlockControls
+ * would fight over toolbar placement.
  */
 import { __ } from '@/lib/i18n';
 import { BlockControls } from '@wordpress/block-editor';
@@ -18,6 +18,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { Plus, Settings } from 'lucide-react';
 import BlockIcon from '../../components/block-atoms/BlockIcon';
 import { FormSettingsModal } from '../../components/form-settings/FormSettingsModal';
+import { SuccessScreenToolbarButton } from '../../components/form-settings/SuccessScreenToolbarButton';
 
 const withFormToolbar = createHigherOrderComponent((BlockEdit: any) => {
 	return (props: any) => {
@@ -58,6 +59,7 @@ const withFormToolbar = createHigherOrderComponent((BlockEdit: any) => {
 				return {
 					formClientId,
 					activeStep: formAttrs?.activeStep ?? 0,
+					successView: !!formAttrs?.successView,
 					steps: stepBlocks.map((b: any, i: number) => ({
 						clientId: b.clientId,
 						title: b.attributes.title || `Step ${i + 1}`,
@@ -74,7 +76,7 @@ const withFormToolbar = createHigherOrderComponent((BlockEdit: any) => {
 			return <BlockEdit { ...props } />;
 		}
 
-		const { formClientId, activeStep, steps } = formData;
+		const { formClientId, activeStep, successView, steps } = formData;
 
 		const handleSwitchStep = (step: { clientId: string; index: number }) => {
 			updateBlockAttributes(formClientId, { activeStep: step.index });
@@ -119,9 +121,15 @@ const withFormToolbar = createHigherOrderComponent((BlockEdit: any) => {
 						</ToolbarGroup>
 					)}
 					<ToolbarGroup>
+						<SuccessScreenToolbarButton
+							successView={successView}
+							onToggle={() =>
+								updateBlockAttributes(formClientId, { successView: !successView })
+							}
+						/>
 						<ToolbarButton
 							icon={<BlockIcon icon={Settings} clean={true} />}
-							label={__('formSettings', 'Form Settings')}
+							label={__('formSettings')}
 							onClick={() => setIsSettingsOpen(true)}
 						/>
 					</ToolbarGroup>

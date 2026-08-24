@@ -1,41 +1,12 @@
 "use client"
 
 import { __ } from "@/lib/i18n";
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { useState, useEffect } from "react"
 
-import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/use-toast"
 import { apiGet, apiPost } from "@/lib/api"
-import { Separator } from "@/components/ui/separator"
-
-const generalFormSchema = z.object({
-  licenseKey: z
-    .string()
-    .min(1, {
-      message: __("licenseKeyRequired"),
-    })
-    .optional(),
-})
-
-type GeneralFormValues = z.infer<typeof generalFormSchema>
-
-const defaultValues: Partial<GeneralFormValues> = {
-  licenseKey: "",
-}
 
 export function GeneralForm() {
   const [debugEnabled, setDebugEnabled] = useState(false)
@@ -45,12 +16,6 @@ export function GeneralForm() {
   const [adminBarEnabled, setAdminBarEnabled] = useState(true)
   const [adminBarLoading, setAdminBarLoading] = useState(true)
   const [adminBarSaving, setAdminBarSaving] = useState(false)
-
-  const form = useForm<GeneralFormValues>({
-    resolver: zodResolver(generalFormSchema),
-    defaultValues,
-    mode: "onChange",
-  })
 
   useEffect(() => {
     loadDebugStatus()
@@ -129,74 +94,35 @@ export function GeneralForm() {
     }
   }
 
-  function onSubmit(data: GeneralFormValues) {
-    toast({
-      title: __("settingsSaved"),
-      description: __("settingsSavedDescription"),
-    })
-    // TODO: Implement API call to save settings
-  }
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="licenseKey"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{__('licenseKey')}</FormLabel>
-              <FormControl>
-                <Input 
-                  type="password"
-                  placeholder={__("enterLicenseKey")} 
-                  {...field} 
-                />
-              </FormControl>
-              <FormDescription>
-                {__('licenseKeyDescription')}
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+    <div className="space-y-8">
+      <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+        <div className="space-y-0.5">
+          <Label className="text-base">{__('debugMode')}</Label>
+          <p className="text-[0.8rem] text-muted-foreground">
+            {__('debugModeDescription')}
+          </p>
+        </div>
+        <Switch
+          checked={debugEnabled}
+          onCheckedChange={handleDebugToggle}
+          disabled={debugLoading || debugSaving}
         />
-        <Button type="submit">{__('saveChanges')}</Button>
+      </div>
 
-        <Separator />
-
-        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-          <div className="space-y-0.5">
-            <FormLabel className="text-base">{__('debugMode')}</FormLabel>
-            <FormDescription>
-              {__('debugModeDescription')}
-            </FormDescription>
-          </div>
-          <FormControl>
-            <Switch
-              checked={debugEnabled}
-              onCheckedChange={handleDebugToggle}
-              disabled={debugLoading || debugSaving}
-            />
-          </FormControl>
-        </FormItem>
-
-        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-          <div className="space-y-0.5">
-            <FormLabel className="text-base">{__('adminBarMenu')}</FormLabel>
-            <FormDescription>
-              {__('adminBarMenuDescription')}
-            </FormDescription>
-          </div>
-          <FormControl>
-            <Switch
-              checked={adminBarEnabled}
-              onCheckedChange={handleAdminBarToggle}
-              disabled={adminBarLoading || adminBarSaving}
-            />
-          </FormControl>
-        </FormItem>
-      </form>
-    </Form>
+      <div className="flex flex-row items-center justify-between rounded-lg border p-4">
+        <div className="space-y-0.5">
+          <Label className="text-base">{__('adminBarMenu')}</Label>
+          <p className="text-[0.8rem] text-muted-foreground">
+            {__('adminBarMenuDescription')}
+          </p>
+        </div>
+        <Switch
+          checked={adminBarEnabled}
+          onCheckedChange={handleAdminBarToggle}
+          disabled={adminBarLoading || adminBarSaving}
+        />
+      </div>
+    </div>
   )
 }
-

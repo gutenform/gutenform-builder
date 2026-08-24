@@ -2,6 +2,16 @@
  * The following styles get applied inside the editor only.
  */
 
+.gutenform-success-screen-toolbar-button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding-inline: 2px;
+	font-size: 13px;
+	font-weight: 500;
+	white-space: nowrap;
+}
+
 /* Change template modal – warning notice */
 .gutenform-change-template-modal .gutenform-change-template-modal__warning {
 	margin: 0 0 1rem 0;

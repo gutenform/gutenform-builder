@@ -1,5 +1,6 @@
 /**
- * After Submit section: what the visitor sees once the form is sent.
+ * After Submit section: redirect and error copy. The success screen itself
+ * is edited on the canvas via the toolbar toggle, not as a text field here.
  */
 import { TextControl, TextareaControl, Notice } from '@wordpress/components';
 import { __ } from '@/lib/i18n';
@@ -16,35 +17,18 @@ export function AfterSubmitSection({ attributes, setAttributes }: Props) {
 	return (
 		<>
 			<h3 className="gutenform-form-settings__section-title">
-				{__('formSettingsAfterSubmit', 'After Submit')}
+				{__('formSettingsAfterSubmit')}
 			</h3>
 			<p className="gutenform-form-settings__section-description">
-				{__(
-					'formSettingsAfterSubmitDescription',
-					'If the form contains a Success block, that is shown on success. Otherwise the message below is displayed inline.'
-				)}
+				{__('formSettingsAfterSubmitDescription')}
 			</p>
 
 			<div className="gutenform-form-settings__field">
 				<TextareaControl
-					label={__('successMessage', 'Success message')}
-					value={attributes.successMessage || ''}
-					onChange={(successMessage) => setAttributes({ successMessage })}
-					placeholder={__('successMessageDefault', 'Thank you! Your submission has been received.')}
-					rows={2}
-					__nextHasNoMarginBottom={true}
-				/>
-			</div>
-
-			<div className="gutenform-form-settings__field">
-				<TextareaControl
-					label={__('errorMessage', 'Error message')}
+					label={__('errorMessage')}
 					value={attributes.errorMessage || ''}
 					onChange={(errorMessage) => setAttributes({ errorMessage })}
-					placeholder={__(
-						'errorMessageDefault',
-						'Your submission could not be sent. Please try again.'
-					)}
+					placeholder={__('errorMessageDefault')}
 					rows={2}
 					__nextHasNoMarginBottom={true}
 				/>
@@ -52,14 +36,11 @@ export function AfterSubmitSection({ attributes, setAttributes }: Props) {
 
 			<div className="gutenform-form-settings__field">
 				<TextControl
-					label={__('redirectUrl', 'Redirect URL')}
+					label={__('redirectUrl')}
 					value={redirectUrl}
 					onChange={(value) => setAttributes({ redirectUrl: value })}
 					placeholder="https://example.com/thank-you"
-					help={__(
-						'redirectUrlHelp',
-						'If set, the visitor is sent here after a successful submission instead of seeing a message.'
-					)}
+					help={__('redirectUrlHelp')}
 					__next40pxDefaultSize={true}
 					__nextHasNoMarginBottom={true}
 				/>
@@ -67,10 +48,7 @@ export function AfterSubmitSection({ attributes, setAttributes }: Props) {
 
 			{redirectUrl !== '' && !/^https?:\/\//i.test(redirectUrl) && !redirectUrl.startsWith('/') && (
 				<Notice status="warning" isDismissible={false}>
-					{__(
-						'redirectUrlInvalid',
-						'Enter an absolute URL (https://…) or a path starting with a slash.'
-					)}
+					{__('redirectUrlInvalid')}
 				</Notice>
 			)}
 		</>

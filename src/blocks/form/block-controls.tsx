@@ -5,10 +5,11 @@ import { ToolbarGroup, ToolbarButton, Modal } from '@wordpress/components';
 import { type BlockEditProps } from '@wordpress/blocks';
 import { type FormAttributes } from '@/blockTypes/form';
 import { type TemplateArray } from '@wordpress/blocks';
-import { Eye, EyeOff, LayoutTemplate, Settings } from 'lucide-react';
+import { LayoutTemplate, Settings } from 'lucide-react';
 import BlockIcon from '../../components/block-atoms/BlockIcon';
 import TemplateSelect from '../../components/block-atoms/TemplateSelect';
 import { FormSettingsModal } from '../../components/form-settings/FormSettingsModal';
+import { SuccessScreenToolbarButton } from '../../components/form-settings/SuccessScreenToolbarButton';
 
 type FormBlockControlsProps = BlockEditProps<FormAttributes> & {
 	hasBlocks?: boolean;
@@ -41,17 +42,15 @@ export const FormBlockControls = ({
 							onClick={() => setIsTemplateModalOpen(true)}
 						/>
 					)}
-					<ToolbarButton
-						icon={attributes.successView ? <BlockIcon icon={Eye} clean={true} /> : <BlockIcon icon={EyeOff} clean={true} />}
-						label={__('toggleSuccessView')}
-						onClick={() => setAttributes({ successView: !attributes.successView })}
-						isActive={attributes.successView}
+					<SuccessScreenToolbarButton
+						successView={!!attributes.successView}
+						onToggle={() => setAttributes({ successView: !attributes.successView })}
 					/>
 				</ToolbarGroup>
 				<ToolbarGroup>
 					<ToolbarButton
 						icon={<BlockIcon icon={Settings} clean={true} />}
-						label={__('formSettings', 'Form Settings')}
+						label={__('formSettings')}
 						onClick={() => setIsSettingsOpen(true)}
 					/>
 				</ToolbarGroup>
