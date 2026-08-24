@@ -174,24 +174,37 @@ class Export
 	 */
 	private function build_csv(array $columns, array $rows): string
 	{
-		$handle = fopen('php://temp', 'r+');
-
-		fputcsv($handle, $columns);
+		$lines = array($this->csv_line($columns));
 
 		foreach ($rows as $row) {
 			$line = array();
 			foreach ($columns as $column) {
-				$line[] = $this->neutralize_formula(isset($row[$column]) ? $row[$column] : '');
+				$line[] = $this->neutralize_formula(isset($row[$column]) ? (string) $row[$column] : '');
 			}
-			fputcsv($handle, $line);
+			$lines[] = $this->csv_line($line);
 		}
 
-		rewind($handle);
-		$csv = stream_get_contents($handle);
-		fclose($handle);
-
 		// UTF-8 BOM so Excel opens umlauts correctly instead of mojibake.
-		return "\xEF\xBB\xBF" . $csv;
+		return "\xEF\xBB\xBF" . implode("\n", $lines);
+	}
+
+	/**
+	 * @param array<int, string> $fields Field values.
+	 * @return string
+	 */
+	private function csv_line(array $fields): string
+	{
+		$escaped = array();
+		foreach ($fields as $field) {
+			$field = (string) $field;
+			if (strpbrk($field, ",\"\n\r") !== false) {
+				$escaped[] = '"' . str_replace('"', '""', $field) . '"';
+			} else {
+				$escaped[] = $field;
+			}
+		}
+
+		return implode(',', $escaped);
 	}
 
 	/**

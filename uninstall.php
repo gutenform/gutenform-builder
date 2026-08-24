@@ -67,7 +67,7 @@ if ($gutenform_delete_data) {
 	foreach ($gutenform_tables as $gutenform_table) {
 		// Table names cannot be bound as prepared-statement parameters, and these
 		// are internal constants rather than user input.
-		$wpdb->query('DROP TABLE IF EXISTS `' . $wpdb->prefix . $gutenform_table . '`'); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$wpdb->query('DROP TABLE IF EXISTS `' . esc_sql($wpdb->prefix . $gutenform_table) . '`'); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, PluginCheck.Security.DirectDB.UnescapedDBParameter
 	}
 
 	// Uploaded form attachments (wp-content/uploads/gutenform/).
@@ -75,20 +75,11 @@ if ($gutenform_delete_data) {
 	$gutenform_base       = trailingslashit($gutenform_upload_dir['basedir']) . 'gutenform';
 
 	if (is_dir($gutenform_base)) {
-		$gutenform_iterator = new RecursiveIteratorIterator(
-			new RecursiveDirectoryIterator($gutenform_base, FilesystemIterator::SKIP_DOTS),
-			RecursiveIteratorIterator::CHILD_FIRST
-		);
-
-		foreach ($gutenform_iterator as $gutenform_file) {
-			if ($gutenform_file->isDir()) {
-				@rmdir($gutenform_file->getPathname()); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-			} else {
-				@unlink($gutenform_file->getPathname()); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-			}
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		if (WP_Filesystem()) {
+			global $wp_filesystem;
+			$wp_filesystem->delete($gutenform_base, true);
 		}
-
-		@rmdir($gutenform_base); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 	}
 }
 
@@ -125,7 +116,7 @@ if ($gutenform_timestamp) {
 }
 
 // Transients created by the upload-token store and the submission rate limiter.
-$wpdb->query(
+$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- deleting this plugin's transients on uninstall.
 	$wpdb->prepare(
 		"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
 		$wpdb->esc_like('_transient_gutenform_') . '%',

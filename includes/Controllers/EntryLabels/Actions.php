@@ -196,8 +196,9 @@ class Actions {
 		try {
 			// Remove all relations before deleting.
 			global $wpdb;
-			$wpdb->delete(
-				$wpdb->prefix . 'gutenform_entry_label_rel',
+			$rel_table = $wpdb->prefix . 'gutenform_entry_label_rel';
+			$wpdb->delete( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- relation table has no cache group.
+				$rel_table,
 				array( 'label_id' => $id ),
 				array( '%d' )
 			);
@@ -250,10 +251,10 @@ class Actions {
 			global $wpdb;
 			$rel_table = $wpdb->prefix . 'gutenform_entry_label_rel';
 
-			// Check if relation already exists.
-			$exists = $wpdb->get_var(
+			// Check if relation already exists. Table name is a plugin constant, not user input.
+			$exists = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$rel_table} WHERE entry_id = %d AND label_id = %d",
+					"SELECT COUNT(*) FROM {$rel_table} WHERE entry_id = %d AND label_id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 					$entry_id,
 					$label_id
 				)
@@ -267,7 +268,7 @@ class Actions {
 				);
 			}
 
-			$wpdb->insert(
+			$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- relation table has no cache group.
 				$rel_table,
 				array(
 					'entry_id'    => $entry_id,
@@ -304,7 +305,7 @@ class Actions {
 			global $wpdb;
 			$rel_table = $wpdb->prefix . 'gutenform_entry_label_rel';
 
-			$deleted = $wpdb->delete(
+			$deleted = $wpdb->delete( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- relation table has no cache group.
 				$rel_table,
 				array(
 					'entry_id' => $entry_id,

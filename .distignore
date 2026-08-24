@@ -67,6 +67,7 @@ providersetup.md
 # --- Build output that must not ship ---
 release
 artifacts
+*.zip
 artworks
 bin
 *.map

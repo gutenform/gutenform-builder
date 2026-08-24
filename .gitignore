@@ -13,6 +13,7 @@ dist
 # Built Gutenberg block bundles (regenerate with npm run block:build)
 assets/blocks/
 release
+*.zip
 dist-ssr
 *.local
 package-lock.json

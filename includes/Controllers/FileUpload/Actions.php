@@ -81,7 +81,8 @@ class Actions
 	 */
 	public function upload(\WP_REST_Request $request)
 	{
-		if (empty($_FILES['file'])) {
+		$uploaded = $request->get_file_params();
+		if (empty($uploaded['file']) || ! is_array($uploaded['file'])) {
 			return new \WP_Error(
 				'no_file',
 				__('No file was uploaded.', 'gutenform-builder'),
@@ -93,16 +94,20 @@ class Actions
 		$max_file_size = absint($request->get_param('max_file_size') ?? 0);
 		$accept_types  = sanitize_text_field($request->get_param('accept_types') ?? '');
 
-		$files = array();
-		if (is_array($_FILES['file']['name'])) {
-			$file_count = count($_FILES['file']['name']);
+		$file_field = $uploaded['file'];
+		$files      = array();
+		if (isset($file_field['name']) && is_array($file_field['name'])) {
+			$file_count = count($file_field['name']);
 			for ($i = 0; $i < $file_count; $i++) {
+				if (! isset($file_field['name'][$i], $file_field['tmp_name'][$i])) {
+					continue;
+				}
 				$file = array(
-					'name'     => $_FILES['file']['name'][$i],
-					'type'     => $_FILES['file']['type'][$i],
-					'tmp_name' => $_FILES['file']['tmp_name'][$i],
-					'error'    => $_FILES['file']['error'][$i],
-					'size'     => $_FILES['file']['size'][$i],
+					'name'     => sanitize_file_name(wp_unslash((string) $file_field['name'][$i])),
+					'type'     => isset($file_field['type'][$i]) ? sanitize_mime_type((string) $file_field['type'][$i]) : '',
+					'tmp_name' => (string) $file_field['tmp_name'][$i],
+					'error'    => isset($file_field['error'][$i]) ? absint($file_field['error'][$i]) : UPLOAD_ERR_NO_FILE,
+					'size'     => isset($file_field['size'][$i]) ? absint($file_field['size'][$i]) : 0,
 				);
 				$result = $this->process_single_file($file, $field_name, $max_file_size, $accept_types);
 				if (is_wp_error($result)) {
@@ -111,7 +116,21 @@ class Actions
 				$files[] = $result;
 			}
 		} else {
-			$result = $this->process_single_file($_FILES['file'], $field_name, $max_file_size, $accept_types);
+			if (empty($file_field['tmp_name'])) {
+				return new \WP_Error(
+					'no_file',
+					__('No file was uploaded.', 'gutenform-builder'),
+					array('status' => 400)
+				);
+			}
+			$file = array(
+				'name'     => isset($file_field['name']) ? sanitize_file_name(wp_unslash((string) $file_field['name'])) : '',
+				'type'     => isset($file_field['type']) ? sanitize_mime_type((string) $file_field['type']) : '',
+				'tmp_name' => (string) $file_field['tmp_name'],
+				'error'    => isset($file_field['error']) ? absint($file_field['error']) : UPLOAD_ERR_NO_FILE,
+				'size'     => isset($file_field['size']) ? absint($file_field['size']) : 0,
+			);
+			$result = $this->process_single_file($file, $field_name, $max_file_size, $accept_types);
 			if (is_wp_error($result)) {
 				return $result;
 			}

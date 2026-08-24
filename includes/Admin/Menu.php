@@ -113,6 +113,7 @@ class Menu
 	 */
 	public function admin_page()
 	{
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- admin menu router; capability already required by add_menu_page.
 		$page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
 		$settings_slug = $this->parent_slug . '-settings';
 		$forms_usage_slug = $this->parent_slug . '-forms-usage';

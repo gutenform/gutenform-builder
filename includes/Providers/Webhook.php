@@ -14,6 +14,7 @@
 namespace Gutenform\Providers;
 
 use Gutenform\Core\Crypto;
+use Gutenform\Core\Debug;
 use Gutenform\Models\Providers as ProviderModel;
 
 defined('ABSPATH') || exit;
@@ -532,9 +533,7 @@ class Webhook extends AbstractProvider
             $feed->settings = $feed_settings;
             $feed->save();
         } catch (\Exception $e) {
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('GutenForm Webhook: failed to record delivery status: ' . $e->getMessage());
-            }
+            Debug::log('GutenForm Webhook: failed to record delivery status: ' . $e->getMessage());
         }
     }
 

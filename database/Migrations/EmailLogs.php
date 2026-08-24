@@ -71,9 +71,6 @@ class EmailLogs implements Migration
      */
     public static function down()
     {
-        global $wpdb;
-        $table_name = $wpdb->prefix . self::$table;
-
-        $wpdb->query("DROP TABLE IF EXISTS " . $table_name);
+        Capsule::schema()->dropIfExists(self::$table);
     }
 }

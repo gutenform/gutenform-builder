@@ -57,9 +57,7 @@ class Deactivate
 		wp_enqueue_script('jquery');
 
 		// Debug: Output plugin basename for troubleshooting
-		if (defined('WP_DEBUG') && WP_DEBUG) {
-			error_log('Gutenform Deactivate: Plugin basename = ' . $plugin_basename);
-		}
+		Debug::log('Gutenform Deactivate: Plugin basename = ' . $plugin_basename);
 
 ?>
 		<script type="text/javascript">

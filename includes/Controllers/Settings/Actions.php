@@ -321,13 +321,11 @@ class Actions
 		$headers[] = 'Reply-To: ' . $from_email;
 		$headers[] = 'Content-Type: text/html; charset=UTF-8';
 
-		if (defined('WP_DEBUG') && WP_DEBUG) {
-			error_log(sprintf(
+		Debug::log(sprintf(
 				'Gutenform SMTP Test: Sending test email to %s from %s',
 				$test_email,
 				$from_email
 			));
-		}
 
 		// Capture PHPMailer errors
 		global $phpmailer;
@@ -374,14 +372,12 @@ class Actions
 			);
 		}
 
-		if (defined('WP_DEBUG') && WP_DEBUG) {
-			error_log(sprintf(
+		Debug::log(sprintf(
 				'Gutenform SMTP Test: Calling wp_mail() with to=%s, subject=%s, headers=%s',
 				$test_email,
 				$subject,
 				implode(' | ', $headers)
 			));
-		}
 
 		$result = wp_mail($test_email, $subject, $message, $headers);
 		

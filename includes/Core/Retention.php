@@ -109,8 +109,6 @@ class Retention
 	 */
 	private function log(string $message): void
 	{
-		if (defined('WP_DEBUG') && WP_DEBUG) {
-			error_log('GutenForm Retention: ' . $message);
-		}
+		Debug::log('GutenForm Retention: ' . $message);
 	}
 }

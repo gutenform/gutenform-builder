@@ -2,6 +2,7 @@
 
 namespace Gutenform\Controllers\Database;
 
+use Gutenform\Core\Debug;
 use Gutenform\Database\Seeders\Demo;
 use Gutenform\Database\Migrations\Mailboxes;
 use Gutenform\Database\Migrations\Entries;
@@ -72,9 +73,7 @@ class Actions
 	{
 		// Check user capabilities
 		if (! current_user_can('activate_plugins')) {
-			if (defined('WP_DEBUG') && WP_DEBUG) {
-				error_log('Gutenform: Database remove - Permission denied for user: ' . get_current_user_id());
-			}
+			Debug::log('Gutenform: Database remove - Permission denied for user: ' . get_current_user_id());
 			return new \WP_REST_Response(
 				array(
 					'success' => false,
@@ -84,47 +83,14 @@ class Actions
 			);
 		}
 
-		if (defined('WP_DEBUG') && WP_DEBUG) {
-			error_log('Gutenform: Starting database table removal...');
-		}
-
-		// delete all data from the database
-		if (defined('WP_DEBUG') && WP_DEBUG) {
-			error_log('Gutenform: Deleting all data from the database...');
-		}
-
-		global $wpdb;
-		$wpdb->query("DELETE FROM " . $wpdb->prefix . Entries::$table);
-		$wpdb->query("DELETE FROM " . $wpdb->prefix . EntryLabels::$labels_table);
-		$wpdb->query("DELETE FROM " . $wpdb->prefix . EntryLabels::$rel_table);
-		$wpdb->query("DELETE FROM " . $wpdb->prefix . Mailboxes::$table);
-		$wpdb->query("DELETE FROM " . $wpdb->prefix . Providers::$table);
-
 		try {
-			// Remove all tables in reverse order of dependencies
-			if (defined('WP_DEBUG') && WP_DEBUG) {
-				error_log('Gutenform: Removing Entries table...');
-			}
+			// Drop tables in reverse order of dependencies. DROP removes the rows.
+			Debug::log('Gutenform: Starting database table removal...');
 			Entries::down();
-
-			if (defined('WP_DEBUG') && WP_DEBUG) {
-				error_log('Gutenform: Removing EntryLabels table...');
-			}
 			EntryLabels::down();
-
-			if (defined('WP_DEBUG') && WP_DEBUG) {
-				error_log('Gutenform: Removing Mailboxes table...');
-			}
 			Mailboxes::down();
-
-			if (defined('WP_DEBUG') && WP_DEBUG) {
-				error_log('Gutenform: Removing Providers table...');
-			}
 			Providers::down();
-
-			if (defined('WP_DEBUG') && WP_DEBUG) {
-				error_log('Gutenform: All database tables removed successfully.');
-			}
+			Debug::log('Gutenform: All database tables removed successfully.');
 
 			return new \WP_REST_Response(
 				array(
@@ -134,10 +100,8 @@ class Actions
 				200
 			);
 		} catch (\Exception $e) {
-			if (defined('WP_DEBUG') && WP_DEBUG) {
-				error_log('Gutenform: Error removing database tables: ' . $e->getMessage());
-				error_log('Gutenform: Stack trace: ' . $e->getTraceAsString());
-			}
+			Debug::log('Gutenform: Error removing database tables: ' . $e->getMessage());
+			Debug::log('Gutenform: Stack trace: ' . $e->getTraceAsString());
 			return new \WP_REST_Response(
 				array(
 					'success' => false,

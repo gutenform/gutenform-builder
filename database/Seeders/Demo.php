@@ -11,6 +11,7 @@
 namespace Gutenform\Database\Seeders;
 
 use Prappo\WpEloquent\Database\Capsule\Manager as Capsule;
+use Gutenform\Core\Debug;
 
 defined('ABSPATH') || exit;
 
@@ -70,9 +71,7 @@ class Demo
 				Capsule::connection()->getPdo()->exec($statement);
 			} catch (\Exception $e) {
 				// Log error but continue with other statements.
-				if (defined('WP_DEBUG') && WP_DEBUG) {
-					error_log('Gutenform Demo Seeder Error: ' . $e->getMessage());
-				}
+				Debug::log('Gutenform Demo Seeder Error: ' . $e->getMessage());
 			}
 		}
 	}

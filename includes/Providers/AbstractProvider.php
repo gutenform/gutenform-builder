@@ -385,7 +385,9 @@ abstract class AbstractProvider
      */
     protected function get_client_ip(): string
     {
-        $remote_addr = isset($_SERVER['REMOTE_ADDR']) ? trim((string) $_SERVER['REMOTE_ADDR']) : '';
+        $remote_addr = isset($_SERVER['REMOTE_ADDR'])
+            ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']))
+            : '';
 
         /**
          * Filters which $_SERVER header (if any) to trust for the client IP ahead of
@@ -397,7 +399,8 @@ abstract class AbstractProvider
         $trusted_header = apply_filters('gutenform/client_ip/trusted_header', null);
 
         if (! empty($trusted_header) && array_key_exists($trusted_header, $_SERVER)) {
-            foreach (explode(',', $_SERVER[$trusted_header]) as $ip) {
+            $forwarded = sanitize_text_field(wp_unslash((string) $_SERVER[$trusted_header]));
+            foreach (explode(',', $forwarded) as $ip) {
                 $ip = trim($ip);
                 if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
                     return $ip;

@@ -173,9 +173,7 @@ class Handler
                 ->where('is_active', true)
                 ->get();
         } catch (\Exception $e) {
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('GutenForm Handler: failed to load provider feeds: ' . $e->getMessage());
-            }
+            Debug::log('GutenForm Handler: failed to load provider feeds: ' . $e->getMessage());
             return array();
         }
 

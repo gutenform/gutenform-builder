@@ -71,7 +71,7 @@ class Frontend
 				'gutenform-recaptcha',
 				'https://www.google.com/recaptcha/api.js?render=' . rawurlencode($captcha['recaptcha']['siteKey']),
 				array(),
-				null,
+				GUTENFORM_VERSION,
 				true
 			);
 		}

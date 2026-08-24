@@ -68,6 +68,7 @@ final class Gutenform
 	private function define($name, $value)
 	{
 		if (! defined($name)) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.VariableConstantNameFound -- $name is always a GUTENFORM_* (or legacy GF_*) constant.
 			define($name, $value);
 		}
 	}
@@ -164,6 +165,7 @@ final class Gutenform
 	 */
 	public function i18n()
 	{
-		load_plugin_textdomain('gutenform-builder', false, dirname(plugin_basename(GUTENFORM_PLUGIN_FILE)) . '/languages/');
+		// Also shipped as a standalone zip, not only via WordPress.org.
+		load_plugin_textdomain('gutenform-builder', false, dirname(plugin_basename(GUTENFORM_PLUGIN_FILE)) . '/languages/'); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound
 	}
 }

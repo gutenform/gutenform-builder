@@ -79,11 +79,7 @@ class EntryLabels implements Migration
 	 */
 	public static function down()
 	{
-		global $wpdb;
-		$labels_table = $wpdb->prefix . self::$labels_table;
-		$rel_table    = $wpdb->prefix . self::$rel_table;
-
-		$wpdb->query("DROP TABLE IF EXISTS " . $labels_table);
-		$wpdb->query("DROP TABLE IF EXISTS " . $rel_table);
+		Capsule::schema()->dropIfExists(self::$rel_table);
+		Capsule::schema()->dropIfExists(self::$labels_table);
 	}
 }
