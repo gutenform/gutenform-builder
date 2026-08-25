@@ -7,8 +7,9 @@
 # inside the release zip.
 #
 # Everything the plugin needs at runtime must NOT be listed here:
-#   assets/  includes/  libs/  database/  languages/  vendor/
-#   gutenform-builder.php  plugin.php  uninstall.php  readme.txt  LICENSE
+#   assets/  includes/  libs/  database/  languages/  vendor/  composer.json
+#   composer.lock  gutenform-builder.php  plugin.php  uninstall.php  readme.txt
+#   LICENSE
 #
 # Patterns follow gitignore semantics: a bare name like `src` matches at EVERY
 # depth, so it also swallows vendor/prappo/wp-eloquent/src -- which broke the
@@ -29,12 +30,13 @@
 /.storybook
 
 # --- Dependencies / lockfiles ---
+# composer.json/composer.lock ship alongside /vendor so Plugin Check can see
+# what populated it (a vendor dir without composer.json is flagged as an
+# unneeded/unexplained folder).
 /node_modules
 /package.json
 /package-lock.json
 /yarn.lock
-/composer.json
-/composer.lock
 
 # --- Build & tooling configs ---
 /webpack.config.js

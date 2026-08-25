@@ -12,6 +12,8 @@ namespace Gutenform\Libs\Assets;
 use Exception;
 use WP_HTML_Tag_Processor;
 
+defined('ABSPATH') || exit;
+
 const VITE_CLIENT_SCRIPT_HANDLE = 'vite-client';
 
 /**
