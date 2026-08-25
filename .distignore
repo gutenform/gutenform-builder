@@ -9,67 +9,74 @@
 # Everything the plugin needs at runtime must NOT be listed here:
 #   assets/  includes/  libs/  database/  languages/  vendor/
 #   gutenform-builder.php  plugin.php  uninstall.php  readme.txt  LICENSE
+#
+# Patterns follow gitignore semantics: a bare name like `src` matches at EVERY
+# depth, so it also swallows vendor/prappo/wp-eloquent/src -- which broke the
+# 1.0.0 zip with a fatal error on activation (autoload_files.php requires
+# .../src/Support/helpers.php). Anything meant only for the plugin root MUST be
+# written with a leading slash. Only the glob patterns below (*.zip, *.map,
+# *.log, .DS_Store, .git) are intentionally recursive.
 
 # --- Version control / CI ---
 .git
-.gitignore
-.gitattributes
-.github
-.distignore
+/.gitignore
+/.gitattributes
+/.github
+/.distignore
 
 # --- Sources (compiled into assets/ at build time) ---
-src
-.storybook
+/src
+/.storybook
 
 # --- Dependencies / lockfiles ---
-node_modules
-package.json
-package-lock.json
-yarn.lock
-composer.json
-composer.lock
+/node_modules
+/package.json
+/package-lock.json
+/yarn.lock
+/composer.json
+/composer.lock
 
 # --- Build & tooling configs ---
-webpack.config.js
-webpack.config.cjs
-vite.config.js
-vite.admin.config.js
-postcss.config.cjs
-postcss.config.js
-tailwind.config.js
-tsconfig.json
-components.json
-phpcs.xml.dist
-phpunit.xml.dist
-phpstan.neon.dist
-.prettierrc.json
-.prettierignore
-.editorconfig
-.wp-env.json
-.envrc
-shell.nix
-.cursor
+/webpack.config.js
+/webpack.config.cjs
+/vite.config.js
+/vite.admin.config.js
+/postcss.config.cjs
+/postcss.config.js
+/tailwind.config.js
+/tsconfig.json
+/components.json
+/phpcs.xml.dist
+/phpunit.xml.dist
+/phpstan.neon.dist
+/.prettierrc.json
+/.prettierignore
+/.editorconfig
+/.wp-env.json
+/.envrc
+/shell.nix
+/.cursor
 
 # --- Tests ---
-tests
-test-results
+/tests
+/test-results
 
 # --- Docs & internal planning (not shipped to users) ---
-documentation
-planned_features
-readme-assets
-README.md
-README-boilerplate.md
-CONTRIBUTING.md
-provider-integration-plan.md
-providersetup.md
+/documentation
+/planned_features
+/readme-assets
+/README.md
+/README-boilerplate.md
+/CONTRIBUTING.md
+/provider-integration-plan.md
+/providersetup.md
 
 # --- Build output that must not ship ---
-release
-artifacts
+/release
+/artifacts
 *.zip
-artworks
-bin
+/artworks
+/bin
 *.map
 assets/admin/dist/**/*.js.map
 
@@ -80,4 +87,4 @@ assets/admin/dist/**/*.js.map
 
 # Directory assets for the WordPress.org listing (banners, icons,
 # screenshots). Uploaded to SVN /assets/, never part of the plugin itself.
-.wordpress-org
+/.wordpress-org
